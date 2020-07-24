@@ -483,6 +483,6 @@ In this tutorial, you’ve learned how to generate an account, query balance, tr
 In the next part of this tutorial series, we will write our own Ethereum smart contract from scratch with Solidity and learn how you can build your own coin that is exchangeable with USDC. We’ll also be using the techniques learned today to interact with that contract. Stay tuned.
 
 
-
+原文链接：https://blog.coinbase.com/introduction-to-building-on-defi-with-ethereum-and-usdc-part-1-ea952295a6e2
 
 
