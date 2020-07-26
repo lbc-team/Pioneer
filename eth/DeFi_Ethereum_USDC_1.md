@@ -106,7 +106,7 @@ Open the project folder (**solidity-tutorial**) in Visual Studio Code. The first
 
 Before you can do anything on Ethereum, you need to have an account. Accounts are often called “wallets”, because they can contain digital assets like ETH and USDC. End users typically create accounts by using an Ethereum wallet app like [Coinbase Wallet](https://wallet.coinbase.com/) or [Metamask](https://metamask.io/), but creating an account programmatically is really simple as well, using the excellent [ethers.js](https://github.com/ethers-io/ethers.js/) library that comes preinstalled with the template.
 
-在以太坊上做任何事情之前，你需要有一个帐户。账户通常被称为“钱包”，因为它们可以包含像ETH和USDC这样的数字资产。终端用户通常使用一个Ethereum钱包应用(Coinbase钱包)(https://wallet.coinbase.com/)或(Metamask) (https://metamask.io/)来创建钱包,但通过使用优秀的第三方库[ethers.js](https://github.com/ethers-io/ethers.js/)方式创建一个账户也很简单。
+在以太坊上做任何事情之前，你需要有一个帐户。账户通常被称为“钱包”，因为它们可以包含像ETH和USDC这样的数字资产。终端用户通常使用一个Ethereum钱包应用[Coinbase钱包](https://wallet.coinbase.com/)或[Metamask](https://metamask.io/)来创建钱包,但通过使用优秀的第三方库[ethers.js](https://github.com/ethers-io/ethers.js/)方式创建一个账户也很简单。
 
 
 Create a new JavaScript file called **createWallet.js** in the **src** folder, and enter the following code:
@@ -154,8 +154,11 @@ Ethereum is a decentralized network of thousands of computers around the world, 
 以太坊是一个去中心化的网络，由世界各地成千上万台计算机组成，但是它们并不是免费运费的。要在区块链上执行变更状态，如存储和更新数据，你必须用ETH向网络支付一笔交易费，在以太网上也称为“gas”。gas费用和增加新区块获得的奖金就是激励矿工运算的激励。这个过程被称为“挖矿”，不断做运算的被称为“挖矿者”。我们将在稍后的教程中再次讨论这个问题(gas，gas价格和gas限制)。
 
 ## Obtaining Testnet ETH
+## 获得测试网络ETH
 
 Now that you have an account, you should deposit some ETH. We don’t want to waste real money while developing, so we are going to get some fake-ETH meant for developing and testing on the test network (“testnet”) instead. There are many different Ethereum testnets, but we are going to be using Ropsten because of the ease of obtaining test tokens. First, let’s check your current balance using [Etherscan](https://ropsten.etherscan.io/), a block explorer for Ethereum. You can do that by entering the following URL in your browser, replacing **YOUR_ADDRESS** with the address you created earlier, starting with **0x**.
+
+现在你有了账户，你应该存一些ETH。在开发的时候我们不想浪费真正的ETH，所以我们需要一些假eth用于开发和测试网络(“testnet”)。现在有许多不同的Ethereum 测试网络，我们将会使用Ropsten，因为获得测试代币比较容易。首先，让我们使用[Etherscan](https://ropsten.etherscan.io/)检查当前余额，这是一个以太坊的块浏览器。您可以在浏览器中输入以下URL，将**你的地址**替换为之前创建的地址，从**0x**开始。
 
 [https://ropsten.etherscan.io/address/**YOUR_ADDRESS**](https://ropsten.etherscan.io/address/YOUR_ADDRESS)
 
