@@ -126,8 +126,8 @@ Save the file, and execute the code using Node.js as follows:
 保存文件，然后使用Node.js来执行文件
 
 ```
-$ **node src/createWallet.js**Mnemonic: rabbit enforce proof always embrace tennis version reward scout shock license wing
-Address: 0xB3512cF013F71598F359bd5CA3f53C1F4260956a
+$ **node src/createWallet.js**Mnemonic: caveat expect rebel donate vault space gentle visa all garage during culture
+Address: 0x742B802F28622E1fdc47Df948D61303b4BA52114
 ```
 
 What just happened? Well, you got yourself a brand-spanking new Ethereum account. The “mnemonic” or perhaps more commonly referred to as “recovery phrase” is a human-readable representation of the cryptographic key that is needed to perform actions from the account, and the address is the name and identifier of the account. Copy those down somewhere. On a side note, the mnemonic shown in this post has been slightly altered to discourage you from using it, please use your own!
@@ -168,22 +168,32 @@ Now that you have an account, you should deposit some ETH. We don’t want to wa
 
 You should see that your balance is 0 ETH. Keep this tab open, and open [Ropsten Ethereum Faucet](https://faucet.ropsten.be/) in a different tab. In the faucet page, enter your address and click on the “Send me” button. The transaction may take as little as a few seconds to a minute or two to complete. Check Etherscan again in a bit, and you should see a new balance of 1 ETH and an incoming transaction in the list.
 
+你可以看到现在余额是0。保持该页面打开，并在另一个页面中打开[Ropsten Ethereum Faucet](https://faucet.ropsten.be/)。在第二个页面中，输入你的地址，然后点击“发送我”按钮。完成后可能只需要几秒钟到一两分钟。稍后再次检查Etherscan，您应该会看到一个新的余额为1 ETH。
+
 ![](https://img.learnblockchain.cn/2020/07/24/15955740098521.jpg)
 *Source:* [*faucet.ropsten.be*](https://faucet.ropsten.be/)
 
-
-
 # Getting ETH Balance Programmatically
+# 通过程序的方式获取ETH余额
 
 ## *Connecting to Ethereum*
+## 连接以太坊网络
 
 Using Etherscan to view the balance is useful, but it is also easy to view it with code as well. Before we get back to the code however, we need a way to connect to Ethereum. There are many ways to do it, including running a network node yourself on your computer, but by far the quickest and the easiest way is to do it through a managed node provider such as [INFURA](https://infura.io/) or [Alchemy](https://alchemyapi.io/). Head over to [INFURA](https://infura.io/), create a free account and create a new project to obtain the API Key (Project ID).
 
+使用Etherscan查看余额是有用的，但是使用代码也可以很容易查看余额。然而，在我们写代码之前，我们需要一种连接到以太坊网络。有许多方法可以实现，包括在自己的计算机上运行一个网络节点，但到目前为止，最快和最简单的方法是通过一个托管节点来实现，例如[INFURA](https://infura.io/)或[Alchemy](https://alchemyapi.io/)。前往[INFURA](https://infura.io/)，创建一个免费帐户并创建一个新项目来获取API密钥(项目ID)。
+
+
 > *ℹ️* [Go Ethereum (“geth”)](https://geth.ethereum.org/) and [Open Ethereum](https://github.com/openethereum/openethereum#readme) (formerly known as Parity Ethereum) are the two most widely used Ethereum node software.
 
+> *ℹ️* [Go Ethereum (“geth”)](https://geth.ethereum.org/) 和 [Open Ethereum](https://github.com/openethereum/openethereum#readme)(正式地叫做Parity Ethereum)。这两个是最为广泛使用地节点软件。
+
 ## Viewing ETH Balance with Code
+## 通过代码查看ETH余额
 
 First, let’s write code that reads and derives the account back from the mnemonic. Create a new JavaScript file called **wallet.js** in the **src** folder, and enter the following code:
+
+首先，通过读取助记符进入到我们的账户中。在**src**文件夹下，创建一个名为**wallet.js**的JavaScript文件。敲入以下代码:
 
 ```
 const ethers = require("ethers");
@@ -201,13 +211,18 @@ module.exports = wallet;
 
 Replace the mnemonic string in the code with your own. Please note that in production code, the mnemonic shouldn’t be hard-coded like that. Instead it should be read from a config file or an environment variable, so that it does not get leaked accidentally for instance by having it checked into a source code repository.
 
+用您自己的字符串替换代码中的助记符字符串。请注意，在生产中，助记符不应该像这样直接写在代码中。理想的是它从配置文件或环境变量中读取，这样它就不会因为写在源代码中而泄漏。
+
 Executing the code, you should be able to see the same address as the one you got earlier:
+执行代码，你应该能够看到和之前相同的地址
 
 ```
 $ **node src/wallet.js**Address: 0xB3512cF013F71598F359bd5CA3f53C1F4260956a
 ```
 
 Next, create a new file called **provider.js** in the same folder. In this file, we will be initializing a provider object with the INFURA API key we obtained earlier. Be sure to replace the API key string with your own:
+
+接下来，在同一个文件夹中,创建一个名为**provider.js**的新文件。在这个文件中，我们将使用前面获得的INFURA API密钥。记得替换的API你自己的api key:
 
 ```
 const ethers = require("ethers");
@@ -238,13 +253,19 @@ main();
 ```
 
 Run the code, and you’ll see your ETH balance!
+执行代码，你就可以看到余额了
+
 ```
 $ **node src/getBalance.js**Address: 0xB3512cF013F71598F359bd5CA3f53C1F4260956a
 ETH Balance: 1.0
 ```
 ## Token Denominations
+## 代币换算
 
 The code we just created is pretty self-explanatory, but you may be wondering what **ethers.utils.formatUnits(balance, 18)** does. Well, ETH is actually divisible to 18 decimal places, and the smallest denomination unit is called “wei” (pronounced “way”). In other words, one ETH is equivalent to 1,000,000,000,000,000,000 wei. Another commonly seen denomination is Gwei (pronounced “Giga-way”), which is 1,000,000,000 wei. The **getBalance** method happens to return the result in wei, so we have to convert it back to ETH by multiplying the result by 10¹⁸. The full list of the denominations can be found [here](https://ethdocs.org/en/latest/ether.html).
+
+我们刚刚创建的代码非常容易理解，但是你会想知道**ethers.utils.formatUnits(balance, 18)**的作用。嗯，ETH实际上有18位，最小的单位叫“wei”(发音为“way”)。换句话说，一个ETH等于1000,000,000,000,000,000,000 wei。另一个常见的单位是Gwei(发音为“Giga-way”)，也就是1,000,000,000 wei。**getBalance**方法恰好在wei中返回了结果，因此我们必须通过将结果乘以10的18次方将其转换回ETH。你可以在这里找到全部的名称(https://ethdocs.org/en/latest/ether.html)。
+
 
 > *ℹ️* You can also use **ethers.utils.formatEther(balance)**, which is a shorthand for **ethers.utils.formatUnits(balance, 18)**.
 
@@ -255,8 +276,11 @@ The ETH in your account is feeling a little bit lonely, so let’s also get some
 ![](https://img.learnblockchain.cn/2020/07/24/15955742039661.jpg)
 
 ## Making a Transaction to Call a Smart Contract Function
+## 完成一次交易来调用智能合约
 
 In Ethereum smart contracts there are mainly two types of functions: read-write and read-only. The former may result in a change in the data stored in the blockchain, and the latter purely reads, but never writes. Read-only functions can be called without creating a transaction and therefore without a transaction fee, unless called as part of a read-write function. Read-write functions on the other hand must be called inside a transaction, and the transaction fee (gas) must be paid. Invoking the **gimmeSome** function results in a change in the USDC balances stored in the blockchain, therefore it has to be called inside a transaction.
+
+在以太坊的智能合约中有主要有两类方法：读写和只读。第一种方式可以修改区块链上的数据，而第二种仅仅是读取区块链上的数据，但是不能修改数据。只读的方法不同通过交易来调用，所以不会耗费ETH,除非是在读写方法中的一部分。读写方法是一定要通过交易来调用，所以一定会消耗ETH。调用**gimmeSome**方法会改变USDC数量的改变，所以必须通过完成一次交易。
 
 Calling a smart contract function requires some extra steps, but it is not too difficult. First, we need to find the full interface of the function we’d like to call, also known as the function signature or the function prototype. Look for **gimmeSome** again in the contract source code and you will find that the interface is the following:
 
@@ -456,6 +480,7 @@ Insufficient balance to send 100.0 (You have 0.89328474)
 ```
 
 ## Transferring USDC
+## 交易USDC
 
 You will be able to use the majority of the code for USDC. The main differences are that USDC has 6 decimal places, and that you have to use the **transfer** function of the ERC20 spec to perform the transaction. You also pass the arguments “**to**” and “**value**” to the **transfer** smart contract function, rather than the Ethereum transaction itself.
 
@@ -537,11 +562,15 @@ Transaction confirmed in block 8162963
 
 
 # Congratulations!
+# 恭喜
 
 In this tutorial, you’ve learned how to generate an account, query balance, transfer tokens, and call smart contract functions. You might think that you still don’t know very much about crypto, but you now actually know enough to be able to build your own crypto wallet application. We’ve been writing command-line scripts to keep things simple, but how about building one with a nice web-based graphical interface for homework?
 
+在本教程中，你学习了如何生成钱包、查询余额、转移代币和调用智能合约。你可能觉得自己还不太了解区块链，不过你已经有足够的知识，去构建自己加密钱包应用程序。为了保持简单，我们一直在编写命令行脚本，那么是否可以尝试构建一个图形界面的网页呢?
+
 In the next part of this tutorial series, we will write our own Ethereum smart contract from scratch with Solidity and learn how you can build your own coin that is exchangeable with USDC. We’ll also be using the techniques learned today to interact with that contract. Stay tuned.
 
+在本教程系列的下一部分中，我们将从头开始用solidity编写智能合约，并学习如何构建自己的硬币，可与USDC交换。我们还将使用今天学到的技术来与我们构建的合约进行互动。请继续关注。
 
 原文链接：https://blog.coinbase.com/introduction-to-building-on-defi-with-ethereum-and-usdc-part-1-ea952295a6e2
 
