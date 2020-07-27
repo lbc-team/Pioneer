@@ -164,4 +164,5 @@ Now go and save on some gas with cloning. Gas costs are particularly high again 
 
 Have you tried the `CloneFactory` before? Can you think of other reasons why use it or not use it? Let me know in the comments.
 
+原文链接：https://soliditydeveloper.com/clonefactory
 
