@@ -4,7 +4,7 @@
 lines=$(($(cat $1 | grep -v ^$ | wc -l)))
 reviews=$((lines/4))
 
-echo "- Markdown文件： [$1](https://github.com/lbc-team/Pioneer/blob/master/layer2/Ethereum-Smart-Contracts-in-L2-Optimistic-Rollup.md)"
+echo "- Markdown文件： [$1](https://github.com/lbc-team/Pioneer/blob/master/$1)"
 echo "- 预计翻译时间： 5 天"
 echo "- 预计校对时间： 3 天"
 echo "- 翻译奖励学分： $lines 分"
