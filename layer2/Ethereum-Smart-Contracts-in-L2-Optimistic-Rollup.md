@@ -1,189 +1,276 @@
-# Ethereum Smart Contracts in L2: **Optimistic Rollup**
+# 二层网络上的以太坊智能合约: **Optimistic Rollup**
 
 
 
-This post outlines optimistic rollup: a construction which enables autonomous smart contracts on layer 2 (L2) using the [OVM](https://medium.com/plasma-group/introducing-the-ovm-db253287af50). The construction borrows heavily from both plasma and zkRollup designs, and builds on [shadow chains](https://blog.ethereum.org/2014/09/17/scalability-part-1-building-top/) as described by Vitalik. **This construction resembles plasma but trades off some scalability to enable running fully general (eg. Solidity) smart contracts in layer 2, secured by layer 1.** Scalability is proportional to the bandwidth of data availability oracles which include Eth1, Eth2, or even [Bitcoin Cash or ETC](https://ethresear.ch/t/bitcoin-cash-a-short-term-data-availability-layer-for-ethereum/5735) — providing a near term scalable EVM-like chain in layer 2.
+
+
+这篇文章概述了optimistic rollup：一种使用[OVM](https://medium.com/plasma-group/introducing-the-ovm-db253287af50)在二层网网络上启用智能合约的结构。 该构造大量借鉴了plasma和zkRollup设计，并以Vitalik所描述的 [shadow chains](https://blog.ethereum.org/2014/09/17/scalability-part-1-building-top/) 为基础 。 **此结构类似于[Plasma](https://learnblockchain.cn/tags/Plasma)，但放弃了一些扩展性，以便在二层网络中运行完全通用的智能合约（例如Solidity），同时还享有和一层网络相同的安全性**。optimistic rollup的可扩展性与一层网络数据可用带宽成正比，一层网络可以包括Eth1，Eth2， 甚至[Bitcoin现金或以太坊经典](https://ethresear.ch/t/bitcoin-cash-a-short-term-data-availability-layer-for-ethereum/5735)，optimistic rollup都可以在二层网络上提供类EVM的链。
+
+> 备注：下文中二层网络将使用简写 L2 ，相应的以太坊主网（或其他网络）称为 L1
+
+
 
 ![1_qk6yWTozTxMfZXZILtvpAQ](https://img.learnblockchain.cn/pics/20200727225147.png)
 
 
 
-# Quick Overview
+# 快速概述
 
-Let’s start with some intuitions for how optimistic rollup works end to end on mainnet Ethereum, then dive in deep.
+让我们先从一些直觉开始，了解如何在以太坊主网上进行 optimistic rollup，然后再深入研究。
 
-The following is a chronicle of the life of an optimistic rollup smart contract… named Fred:
 
-1. Developer writes a Solidity contract named Fred. Hello Fred!
-2. Developer sends transaction off-chain to a bonded **aggregator** (a layer 2 block producer) which deploys the contract.
-   — Anyone with a bond may become an aggregator.
-   — There are multiple aggregators on the same chain.
-   — Fees are paid however the aggregator wants (account abstraction / meta transactions).
-   — Developer gets an instant guarantee that the transaction will be included or else the aggregator loses their bond.
-3. Aggregator locally applies the transaction & computes the new state root.
-4. Aggregator submits an Ethereum transaction (paying gas) which contains the transaction & state root (an optimistic rollup block).
-5. If **anyone** downloads the block & finds that it is invalid, they may prove the invalidity with `verify_state_transition(prev_state, block, witness)` which:
-   — Slashes the malicious aggregator & any aggregator who built on top of the invalid block.
-   — Rewards the prover with a portion of the aggregator’s bond.
-6. Fred the smart contract is safe, happy & secure knowing her deployment transaction is now a part of every valid future optimistic rollup state. Plus Fred can be sent mainnet ERC20’s deposited into L2! Yay!
 
-That’s it! The behavior of users & smart contracts should be very similar to what we see today on Ethereum mainnet, except, it scales! Now let’s explore how this whole thing is possible.
+以下是 optimistic rollup智能合约（名为Fred）的生命历程：
 
-# Optimistic Rollup In Depth
+1. 开发人员编写了一个名为Fred的Solidity合约。
 
-To begin let’s define what it means to create a permissionless smart contract platform like Ethereum. There are three properties we must satisfy to build one of these lovely state machines:
+2. 开发人员将交易在链下发送到绑定的**聚合商(aggregator)**（L2的区块生产者），聚合商负责部署合约。
+   — 任何支付了保证金的人都可以称为聚合商(aggregator)。
+   — 同一条链上有多个聚合商。
+   — 可以支付费用，但聚合商需要（帐户抽象/[元交易](https://learnblockchain.cn/article/584)）。
+   — 开发人员可以即时确认交易，否则聚合商将损失保证金。
 
-1. **Available head state** — Any relevant party can download the current head state.
-2. **Valid head state** — The head state is valid (eg. no invalid state transitions).
-3. **Live head state** — Any interested party can submit transactions which transition the head state.
+3. 聚合商在本地处理交易并计算新的状态根。
 
-You’ll notice that Ethereum layer 1 satisfies these three properties because we believe 1) miners do not mine on unavailable blocks, 2) miners do not mine on invalid blocks[*](https://eprint.iacr.org/2015/702.pdf); and 3) not all miners will censor transactions. However, it doesn’t currently scale.
+4. 聚合商提交以太坊交易(支付gas费用)，其中包含交易和状态根（一个optimistic rollup区块）。
 
-On the other hand, under some similar security assumptions, optimistic rollup can provide all three guarantees at scale. To understand the construction & security assumptions we’ll go over each property we’d like to ensure individually.
+5. 如果**任何人**下载了该块并发现其无效，则可以使用`verify_state_transition(prev_state, block, witness)`来证明其无效， 将：
 
-# #1: Available head state
+   — 删除恶意聚合的区块以及在无效块之上构建的任何聚合区块。
+   — 用聚合商的部分保证金奖励证明者。
 
-Optimistic rollup uses classic rollup techniques ([outlined here](https://ethresear.ch/t/on-chain-scaling-to-potentially-500-tx-sec-through-mass-tx-validation/3477)) to ensure data availability of the current state. The technique is simple — block producers (called aggregators) pass all blocks which include transactions & state roots through calldata (ie. the input to an Ethereum function) on Ethereum mainnet. The calldata block is then merklized & a single 32 byte state root is stored. For reference, calldata is 2,000 gas per 32 bytes while storage is 20,000 gas. Additionally, the gas cost of calldata will be reduced by almost 5x in the [Istanbul hard fork](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-1679.md).
+6. Fred 知道自己的部署交易现在已成为每个未来有效的optimistic rollup状态的一部分，因此有安全保障。可以将Fred的主网ERC20发送到L2中！ 好极了！
 
-Notably, we can use data availability oracles other than the Ethereum mainnet including [Bitcoin Cash](https://ethresear.ch/t/bitcoin-cash-a-short-term-data-availability-layer-for-ethereum/5735) and Eth2. With Eth2 phase 1 all shards can serve as data availability oracles, scaling TPS linearly in the number of shards. This is enough throughput that we will hit other scalability bottlenecks before we run out of available data, for example state computation.
+   
 
-## Security Assumptions
+仅此而已！ 用户和智能合约的行为应该与我们今天在以太坊主网上看到的非常相似，只是扩容了！ 现在，让我们探讨一下这整个过程的可能性。
 
-Here we assume honest majority on Ethereum mainnet. In addition, if we use Eth2, ETC, or Bitcoin Cash, we similarly inherit their honest majority assumptions.
 
-> Under these assumptions, using a trusted availability oracle to publish all transactions we can ensure that anyone can compute the current head state, satisfying property #1.
 
-# #2: Valid head state
+# 深入Optimistic Rollup
 
-The next property we need to ensure is a valid head state. In zkRollup we use zero-knowledge proofs to ensure validity. While this is a great solution in the long term, for now it is not possible to create efficient zkProofs for arbitrary state transitions. However, there’s still hope for a general purpose EVM-style state machine! We can use a cryptoeconomic validity game similar to plasma / truebit.
+首先，让我们定义创建像以太坊这样的无许可智能合约平台的含义。 构建这些可爱的状态机之必须满足三个属性：
 
-## Cryptoeconomic Validity Game
+1. **可用的（availabe）总体状态** — 任何相关方都可以下载当前的总体状态。
+2. **有效的（valid）总体状态** — 总体状态是有效的 (例如：没有无效的状态转换)。
+3. **活跃的（live）总体状态** — 任何感兴趣的一方都可以提交转换总体状态的交易。
 
-At a high level the block submission & validity game is as follows:
+>  译者注：总体状态对应的原文是 head state， 直译或许是头部状态， 不过中文里貌似没有这个说法。
 
-1. Aggregators post a security deposit to start producing blocks.
-2. Each block contains `[access_list, transactions, post_state_root]`.
-3. All blocks are committed to a `ROLLUP_CHAIN` contract by a bonded aggregator on a first come first serve basis (or round robin if desired).
-4. **Anyone** may prove a block invalid, **winning a portion of the aggregator’s security deposit**.
 
-To prove a block invalid you must prove one of the three following properties:
 
-```
-1. INVALID_BLOCK: The committed block is *invalid*. 
-   This is calculated with `is_valid_transition(prev_state, block, witness) => boolean`
-2. SKIPPED_VALID_BLOCK: The committed block "skipped" a valid block.
-3. INVALID_PARENT: The committed block's parent is invalid.
-```
+您会注意到以太坊L1满足了这三个属性，因为我们相信：
 
-These three state transition validity conditions can be visualized as:
+1. 矿工不会在不可用的区块上进行挖矿;
+
+2. 矿工不会在无效的区块上进行挖矿[*](https://eprint.iacr.org/2015/702.pdf)；
+
+3. 并非所有矿工都会审查交易。
+
+   
+
+但是，以太坊目前无法扩容。另一方面，在一些类似的安全假设下，optimistic rollup 可以大规模扩容下，提供这三个保证。 为了了解构造和安全性的假设，将逐一检查我们希望分别确保的每个属性。
+
+
+
+# #1: 可用的总体状态
+
+
+
+Optimistic rollup 使用经典 rollup技术（[此处概述](https://ethresear.ch/t/on-chain-scaling-to-potentially-500-tx-sec-through-mass-tx-validation/3477)）来确保当前状态数据的可用性。该技术很简单-区块生产者（称为聚合商）通过以太坊主网上的calldata（调用以太坊函数的输入参数）传递所有区块的交易和状态根。calldata数据将默克尔化来并存储一个32字节的状态根。提示：calldata为每32字节2,000 gas，而存储成本为20,000 gas。此外，在[伊斯坦布尔硬分叉](https://learnblockchain.cn/2019/11/21/istanbul-update)中，calldata的gas成本降低了近5倍。
+
+值得注意的是，我们也可以使用除以太坊主网之外的其他网络作为L1提供数据可用性，包括 [Bitcoin Cash](https://ethresear.ch/t/bitcoin-cash-a-short-term-data-availability-layer-for-ethereum/5735) 和[Eth2]([https://learnblockchain.cn/tags/%E4%BB%A5%E5%A4%AA%E5%9D%8A2.0](https://learnblockchain.cn/tags/以太坊2.0))。在Eth2阶段1中，所有分片都可以作为L1提供数据可用性，以分片数量线性地扩容TPS。这样的吞吐量是足够的，直到遇到其他可扩展性瓶颈（例如状态计算）。
+
+
+
+## 安全假设
+
+在这里，我们假设以太坊主网上多数是诚实的。 另外，如果我们使用Eth2、ETC或Bitcoin Cash，我们也将类似假设。
+
+
+
+> 在这些假设下，使用可信的L1来发布所有交易，我们可以确保任何人都可以计算当前的总体状态，从而满足属性1。
+
+# #2: 有效的总体状态
+
+我们需要确保的第二个属性是有效的总体状态。 在zkRollup中，使用零知识证明来确保有效性。 从长远来看，这是一个不错的解决方案，但目前无法为任意状态转换创建有效的zkProofs。 但是，仍然有希望使用通用的EVM型状态机！ 我们可以使用plasma/[truebit](https://learnblockchain.cn/tags/TrueBit)类似的加密经济学进行有效性博弈。
+
+## 密码经济学有效性博弈
+
+从较高层次来看，区块提交和有效性博弈规则如下：
+
+1. 聚合商提交保证金才能开始生产区块。
+2. 每个区块包含 `[access_list, transactions, post_state_root]`.
+3. 有保证金的聚合商将按照“先到先得”的原则（或根据需要使用轮流方式）将所有区块提交到`ROLLUP_CHAIN`合约。
+4. **任何人**都可能证明该区块无效，**并赢得了聚合商的部分保证金**。
+
+
+
+要证明一个块无效，必须证明以下三个属性之一：
+
+
+1. INVALID_BLOCK: 提交的块是无效。
+   这是通过`is_valid_transition(prev_state, block, witness) => boolean`计算的。
+2. SKIPPED_VALID_BLOCK: 提交的块“忽略”了一个有效块。
+3. INVALID_PARENT: 提交的块的父块是无效的。
+
+
+
+这三个状态转换有效性条件如图所示：
 
 ![1_cv_RR7vxY0BW89QKr7mRsA](https://img.learnblockchain.cn/pics/20200727225247.png)
 
 
 
-There are a few interesting properties that fall out of this state validity game:
+该状态有效性博弈具有一些有趣的属性：
 
-1. **Pluggable validity checkers**: We can define different validity checkers for `is_valid_transition(…)` allowing us to use different VMs to run smart contracts including EVM and WASM.
-2. **Only one valid chain**: Blocks are submitted to Ethereum which gives us a total ordering of transactions & blocks. This enables us to deterministically decide the “head” block, and thereby require aggregators to prune invalid blocks before submitting a new block.
-3. **Sharded validation**: This validity game can be played out at an individual UTXO basis. Instead of invalidating full blocks, we partially invalidate them — similar to Plasma Cash. Note that this **does not** require proving all invalid transitions up front for a single block. Partial block invalidation means we can validate only UTXOs for contracts we care about to secure our state. To learn more about how UTXOs enable parallelism [check out this Cryptoeconomics.study video](https://www.youtube.com/watch?v=-xoCoZGJ9AQ)!
 
-## A Note on Watchtowers
 
-One challenge to adoption of L2 has been the added complexity of [watchtowers](https://blockonomi.com/watchtowers-bitcoin-lightning-network/). Users contracting watchtowers adds yet another entity to manage to an already complex system. Thankfully, watchtowers are naturally incentivized by the optimistic rollup cryptoeconomic validity game! All data is available & therefore anyone running a full node stands to gain the security bond of **all** aggregators who build on their invalid chain. This risk incentivizes aggregators to be watchtowers, validating the chain they are building on — mitigating the verifiers dilemma.
+1. **可插拔的有效性检查器**: 我们可以为`is_valid_transition(…)`定义不同的有效性检查器，从而允许我们使用不同的VM（包括EVM和WASM在内）来运行智能合约。
+2. **仅有一条有效链**: 提交到以太坊的区块，可以确定交易和区块的总顺序。 这使我们能够确定性地确定“头(head)”块，从而要求聚合商在提交新块之前删减无效的块。
+3. **部分验证**: 此有效性博弈可以以单个UTXO为基础进行。方案使用部分无效取代全部区块整体无效 -- 这类似于Plasma Cash。 请注意，并不需要证明一个块的所有无效转换。 部分区块无效验证意味着我们可以只验证我们关心的状态， 以确保安全。 要了解有关UTXO如何实现并行性请查看[Cryptoeconomics.study视频](https://www.youtube.com/watch?v=-xoCoZGJ9AQ)！
 
-## A Note on Plasma
+## 有关瞭望塔
 
-Many plasma constructions also rely on cryptoeconomic validity games; however, in plasma autonomous smart contract state enforcement is impossible without zkProofs or a [fisherman’s game](https://github.com/ethereum/research/wiki/A-note-on-data-availability-and-erasure-coding#what-is-the-data-availability-problem) during a data withholding attack (the data availability problem). Thankfully rollup gets around the data availability problem by posting the minimal information needed to compute state transitions on-chain. Still, plasma is critical if we want to scale up to transactions per second in the hundreds of thousands (and more) — a long term necessity but not a requirement in the medium term for many smart contracts.
+>  译者注：瞭望塔是一个帮助用户监视交易欺诈的实体，因为普通用户很难实时在线，瞭望塔则可以充当用户的代理。
 
-## Security Assumptions
 
-1. This cryptoeconomic validity game works with **a single honest or even rational verifier** assumption. We can say it is a “rational” verifier as opposed to “honest” because they may be economically incentivized with challenge games.
-2. Additionally we assume the mainnet is **live**, meaning it is not censoring all incoming transactions attempting to prove invalidity. Note that the aggregator unbonding period is in some sense the liveness assumption on the mainnet (eg. if we require a 1 month unbonding period, then invalidity must be proven within that month to forfeit that bond).
 
-> Under these assumptions, all invalid blocks / state transitions will be discarded leaving us with a *single* valid head state, satisfying property #2.
+采用L2的挑战之一是[瞭望塔](https://blockonomi.com/watchtowers-bitcoin-lightning-network/)的复杂性。 与用户签约的瞭望塔，是另一个加入的来管理已经复杂的系统实体。 幸运的是，optimistic rollup 加密经济有效性博弈自然地激励了瞭望塔！ 所有数据都是可用的，因此任何人都可以运行全节点验证无效交易以获得“所有”构建无效链的聚合商的保证金。 这种风险激励将促使聚合商成为瞭望塔，从而验证他们建立的链，从而减轻了验证者的困境。
 
-# #3: Live Head State
 
-The final property we must satisfy is liveness, often known as censorship resistance. The key insights which ensures this are:
 
-1. Anyone with a bond size above `MINIMUM_BOND_SIZE` may become an aggregator for the same rollup chain.
-2. Because honest aggregators may prune invalid blocks, the chain **does not halt** in the event of an invalid block.
+## 有关Plasma
 
-With these two properties we’ve already got liveness! Honest aggregators may always submit blocks which fork around invalid blocks & so even if there’s just one non-censoring aggregator your transaction will eventually get through — similar to mainnet.
+许多plasma构造也依赖于加密经济学的有效性博弈。 但是，在没有zkProofs或数据劫持攻击的[渔夫博弈](https://github.com/ethereum/research/wiki/A-note-on-data-availability-and-erasure-coding#what-is-the-data-availability-problem)（数据可用性问题）情况下，在plasma中执行合约自治是不可能的。 值得庆幸的是，rollup 通过发布计算链上状态转换所需的最少信息来解决数据可用性问题。 不过，如果我们想扩容到每秒数十万（甚至更多）的交易 plasma 仍然是至关重要，但是这是远期的需要，但对于许多智能合约而言，从中期来看并不是必需的。
 
-## A Note on Liveness vs Instant Confirmations
 
-One property we really want is instant confirmations. This way we can give users sub-second feedback that their transaction will be processed. We can achieve this by designating short-lived aggregator monopolies on blocks. The downside is that it trades off censorship resistance because now a single party can censor for some period of time. Would love to hear about any research on this tradeoff!
 
-## Security Assumptions
+## 安全假设
 
-With two security assumptions we get liveness:
+1. 加密经济学有效性博弈是基于**诚实甚至理性的验证者**假设下工作的。 我们可以说他是“理性”的验证者，而不是“诚实”的验证者，因为挑战博弈可能会从经济上激励他们。
 
-1. There exists a non-censoring aggregator.
-2. Mainnet Ethereum is not censoring.
+2. 另外，我们假设主网是**活跃的**，这意味着它不会审查所有试图证明无效的交易（译者注：**审查意味着干预**，这里的意思是指：证明无效的交易并不会选择性的干预，例如如丢弃该交易）。 请注意，从某种意义上说，聚合商的解除保证金退出期限是主网上的活跃性假设（例如，如果我们需要1个月的保证金退出期限，需要在该月内证明提交无效性证明，才能罚没保证金）。
 
-> Under these assumptions, the optimistic rollup chain will be able to progress & mutate the head state based on any valid user transactions, satisfying property #3.
+   
 
-> Now all three properties are satisfied & we’ve got a permissionless smart contract platform in Ethereum L2!
+> 在这些假设下，所有无效块或状态转换都将被丢弃，从而使我们获得一个有效总体状态，并满足属性 #2。
 
-# Scalability Metrics
+# #3: 活跃的总体状态
 
-The following estimates are **purely based on data availability**. In practice other bottlenecks could be hit, one being state calculation. However, this does provide a useful upper bound.
+我们必须满足的最终属性是活跃，通常被称为抗审查能力。 确保这一点的关键是：
 
-## **ERC20 Transfers with ETH1 Data availability**
 
-Calculations are based on [this little call-data calculation python script](https://gist.github.com/karlfloersch/1bf6ab7871f41e3a5a921c0a007ad5c6).
 
-Note that these ERC20 transfers are calldata optimized. Additionally note that the nice thing about Optimistic Rollup is we aren’t limited to ERC20 transfers!
+1. 保证金大小超过`MINIMUM_BOND_SIZE`的任何人都可能成为同一rollup链的聚合商。
 
-**ECDSA Signature**
-~100 TPS without EIP 2028
-~450 TPS with EIP 2028 (coming in October 2019)
+2. 由于诚实的聚合商可能会移除无效的块，因此即便产生了无效区块，链也**不会停止**。
 
-**BLS Signature / SNARK-ed Signatures**
-~400 TPS without EIP 2028
-~2000 TPS with EIP 2028 (coming in October 2019)
+   
 
-## With external availability oracles (eg. ETH2, Bitcoin Cash)
+有了这两个属性，我们就可以保持活跃！诚实的聚合商可能总是避免提交无效区块，因此，即使只有一个非审查性聚合商，你的交易最终也会得到确定，这与主网类似。
 
-***~linear in relation to the amount of throughput the availability oracle can handle.\***
 
-*That’s a lot more than 2000 TPS!*
 
-# Optimistic Rollup vs Plasma
+## 有关活跃与即时确认
 
-Optimistic Rollup shares much in common with Plasma. Both use aggregators to commit to blocks on mainnet with a cryptoeconomic validity game ensuring safety. The sole divergence is whether or not we have an availability receipt ensuring block availability.
+
+
+我们真正想要的一个属性是即时确认。 这样就可以为用户提供亚秒级的反馈，表明他们的交易将被处理。 我们可以通过在块上指定聚合器短时的垄断出块来实现这一目标。 缺点是，它降低了抗审查能力，因为现在一个参与方一段时间内具备了审查。 很想听听有关此权衡的任何研究！
+
+
+
+## 安全假设
+
+保持活跃基于两个安全性假设：
+
+1. 存在一个非审查聚合商。
+2. 以太坊主网是非审查的
+
+> 在这些假设下，optimistic rollup 链将能够基于任何有效的用户交易来进化和变更总体状态 （满足属性#3）。
+
+
+
+现在，这三个属性均已满足，并且我们在以太坊L2中提供了一个无许可的智能合约平台！
+
+
+
+# 可扩展性指标
+
+以下估算是**完全基于数据可用性 **。 实际上，可能会遇到其他瓶颈，其中一个是状态计算。 但是，这确实提供了可用的上限。
+
+
+
+## 在ETH1数据可用性下的ERC20 转账
+
+计算基于 [一个简单的 call-data 计算 python 脚本](https://gist.github.com/karlfloersch/1bf6ab7871f41e3a5a921c0a007ad5c6).
+
+
+
+请注意，这些 ERC20 转账对calldata 进行了优化。 另外请注意，Optimistic Rollup 的好处是我们不仅限于ERC20传输！
+
+
+
+**ECDSA 签名**
+~100 TPS： 未采用 EIP 2028 时
+~450 TPS： 采用 EIP 2028 后 ( 2019年 10 月已经很到主网)
+
+**BLS 签名 / SNARK-ed 签名**
+~400 TPS ： 未采用 EIP 2028 时
+~2000 TPS ： 采用 EIP 2028 后 ( 2019年 10 月已经很到主网)
+
+## 在其他的数据可用性下（ 如 ETH2, Bitcoin Cash)
+
+
+
+**与L1可以处理的吞吐量的数量成线性关系**。
+
+超过2000 TPS！
+
+
+
+# Optimistic Rollup 与 Plasma
+
+Optimistic Rollup与Plasma有很多共同点。 两者都使用聚合商通过加密经济有效性博弈来确保安全性，从而在主网上提交区块。 唯一的区别是是否具有确保区块可用的可用性收据。
 
 
 
 ![1_XM9jBBbYE20kFC7PIngipA](https://img.learnblockchain.cn/pics/20200727225426.png)
 
-The similarities between the two solutions allows for lots of shared infrastructure & code between the two constructions. In a mature layer 2 ecosystem it’s likely that we will see rollup, plasma, and state channels all working together in the same client (a smart wallet). Oh, have I mentioned the [OVM](https://medium.com/plasma-group/introducing-the-ovm-db253287af50)? 😁
+
+
+两种解决方案之间的相似之处使得两者之间可以共享许多基础架构和代码。 在成熟的L2生态系统中，我们很可能会看到rollup，plasma和[状态通道](https://learnblockchain.cn/tags/%E7%8A%B6%E6%80%81%E9%80%9A%E9%81%93)在同一个客户端（智能钱包）中一起工作。 哦，我是否提到过[OVM]（https://medium.com/plasma-group/introducing-the-ovm-db253287af50）？ 😁
+
+
 
 # Yay Optimistic Rollup 🎉
 
-Optimistic Rollup occupies a nice niche in the space of layer 2 constructions. It trades off some scalability for general purpose smart contracts, simplicity, & security. Plus being able to run secure smart contracts means that it can even be used to adjudicate other layer 2 solutions like plasma and state channels!
 
-> Call it “the layer 1 of layer 2s.”
 
-Anyway, enough research — time to implement a robust, comprehensive, and user friendly Ethereum layer 2! 😍
-
-------
-
-*Special thanks to Vitalik Buterin for working through these ideas with me and for coming up with much of this.*
-
-*Additionally, thank you Ben Jones for much of this and Jinglan Wang, Kevin Ho & Jesse Walden for edits.*
-
-**Update**: Shout out to the great and related work by John Adler in his article on Merged Consensus which can be compared to optimistic rollups — Check it out [here](https://ethresear.ch/t/minimal-viable-merged-consensus/5617)! Plus [this proposal](https://ethresear.ch/t/multi-threaded-data-availability-on-eth-1/5899) to improve Eth1’s ability to act as a data availability oracle — more tps!
-
-[Plasma Group Blog](https://medium.com/plasma-group?source=post_sidebar--------------------------post_sidebar-)
+Optimistic Rollup会在L2中占据一席之地。 它在通用智能合约平台，简单性，安全性和扩展性之间做了一些权衡。 再加上其能够安全的运行智能合约，意味着它甚至可以用于裁定其他第二层解决方案，例如Plasma和状态通道！
 
 
 
-#### Thanks to Vitalik Buterin and Jesse Walden.
+> 就把它称为二代 L2 中的 L1 吧。
 
 
 
-From: https://medium.com/plasma-group/ethereum-smart-contracts-in-l2-optimistic-rollup-2c1cef2ec537
+无论如何，研究已经够了，是时候实施强大，全面且用户友好的以太坊第2层了！ 😍
 
-Athor: [Karl Floersch](https://medium.com/@karl_dot_tech?source=post_page-----2c1cef2ec537----------------------)
+
+
+---
+
+*特别感谢Vitalik Buterin与我一起解决这些想法并提出了很多建议*。
+
+此外，还要感谢Ben Jones所做的大部分工作以及Jinglan Wang，Kevin Ho 和Jesse Walden 的编辑。
+
+**更新**：John Adler 在他的《合并共识》中的文章与optimistic rollups 进行了对比分析，参考[此处](https://ethresear.ch/t/minimal-viable-merged-consensus/5617),另外，[此提案](https://ethresear.ch/t/multi-threaded-data-availability-on-eth-1/5899)可以提高 ETH1 的数据可用性 - 更多的 TPS！
+
+[Plasma Group Blog]（https://medium.com/plasma-group?source=post_sidebar--------------------------post_sidebar-）
+
+
+
+原文: https://medium.com/plasma-group/ethereum-smart-contracts-in-l2-optimistic-rollup-2c1cef2ec537
+
+作者: [Karl Floersch](https://medium.com/@karl_dot_tech?source=post_page-----2c1cef2ec537----------------------)
