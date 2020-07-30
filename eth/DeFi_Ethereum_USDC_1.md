@@ -7,14 +7,14 @@
 
 At Coinbase, our mission is to build an open financial system. We strongly believe that increasing economic freedom will make the world a better place. Decentralized Finance, or DeFi for short — an open, borderless, and programmable version of finance — is an inseparable part of that vision.
 
-在Coinbase，我们希望可以创建一个开放的金融系统。我们坚信提高金融的自由度可以让世界更美好。去中心化金融，简称DeFi是一个开发，无界限并且可以程序化的金融，是提供金融自由度的一种方式。
+在Coinbase，我们希望可以创建一个开放的金融系统。我们坚信提高金融的自由度可以让世界更美好。去中心化金融，简称DeFi是一个开放，无界限并且可以程序化的金融，是提供金融自由度的一种方式。
 
 ## Smart Contracts
 ## 智能合约
 
 DeFi is powered by smart contracts running on decentralized networks such as Ethereum (“the blockchain”) and digital currencies like USD Coin (USDC), a tokenization of US Dollars on the blockchain. The idea of smart contracts is actually quite simple. Nick Szabo, a pioneer in digital currency and cryptography who [originally came up with the idea](https://www.fon.hum.uva.nl/rob/Courses/InformationInSpeech/CDROM/Literature/LOTwinterschool2006/szabo.best.vwh.net/idea.html) in 1997 described the vending machine as the ancestor of smart contracts.
 
-DeFi 是由智能合约驱动的，由在去中心化网络上比如以太坊（区块链）和数字货币比如USD币，可以理解成在区块链上的美元。智能合约其实是很好理解的，Nick Szabo是数字货币和加密学的先驱，在1997年他[最早提出智能合约]((https://www.fon.hum.uva.nl/rob/Courses/InformationInSpeech/CDROM/Literature/LOTwinterschool2006/szabo.best.vwh.net/idea.html) )并将其比喻为自动贩卖机。
+DeFi 是由智能合约驱动的，由在去中心化网络上比如以太坊（区块链）和数字货币比如USD币，可以理解成在区块链上的美元组成。智能合约其实是很好理解的，Nick Szabo是数字货币和加密学的先驱者，在1997年他[最早提出智能合约]((https://www.fon.hum.uva.nl/rob/Courses/InformationInSpeech/CDROM/Literature/LOTwinterschool2006/szabo.best.vwh.net/idea.html) )并将其比喻为自动贩卖机。
 
 The vending machine is an automated version of a contract, expressed in the form of electrical hardware:
 
@@ -28,22 +28,22 @@ The vending machine is an automated version of a contract, expressed in the form
 
 The vending machine is able to manage its contractual obligations completely autonomously without human intervention.
 
-自动贩卖机可以在无人干涉情况下，很好的履约他的合约精神。
+自动贩卖机可以在无人干涉情况下，很好的履行他的合约精神。
 
 Modern smart contracts work the same way, but the contractual clauses are expressed as executable computer code as opposed to being implemented in hardware. The decentralized nature of the network on top of which smart contracts are run ensures that they are executed as written and that no single entity is able to bend the rules or manipulate the outcome. One important caveat is that because the network executes the code verbatim, faulty smart contract code can result in unexpected consequences (“code is law”).
 
-现代智能合约工作原理也是类似的，合约的条件是用可执行的代码来设定的。去中心化网络保证按要求执行，并且任何人都不能破坏规则或者修改结果。因为网络会一字不差地执行代码，有瑕疵地智能合约会产生预想不到的结果。（“code is law”）
+现代智能合约工作原理也是类似的，合约的条件是用可执行的代码来设定的。去中心化网络保证按要求执行，并且任何人都不能破坏规则或者修改结果。因为网络会一字不差地执行代码，有瑕疵的智能合约会产生预想不到的结果。（“code is law”）
 
 ## No Better Time Than Now
 ## 把握当下
 
 A lot of people find building on crypto and blockchain very intimidating and think it is only accessible to hard-core computer scientists. While that may have been true as recently as just a few years ago, tooling and developer UX have improved significantly since then, and anyone with basic programming skills can start building ([or BUIDLing](https://en.wikipedia.org/wiki/Hodl)).
 
-很多人觉得在区块链上去搭建东西比较困难，认为只有高级玩家可以尝试。但是近几年出现来了很多工具，开放者界面，帮助编程能力一般的人去实现搭建。
+很多人觉得在区块链上去搭建东西比较困难，认为只有高级玩家可以尝试。但是近几年出现来了很多工具，开发者界面，帮助编程能力一般的人去实现搭建。
 
 The DeFi ecosystem is currently undergoing explosive growth. [USDC reached a $1B market cap in less than 2 years](https://medium.com/centre-blog/usdc-market-cap-exceeds-1-billion-fastest-growing-digital-dollar-stablecoin-to-do-so-c5ba314474ca), and the total value of assets stored in various DeFi services blew past $2B in less than 3 years. There really has not been a better time to start developing in this space.
 
-DeFi生态在最近有爆发式地增长。[USDC不到2年达到10亿美元市值](https://medium.com/centre-blog/usdc-market-cap-exceeds-1-billion-fastest-growing-digital-dollar-stablecoin-to-do-so-c5ba314474ca)，同时DeFi涉及的服务在不到3年的时间，总价值超过20亿美金。当下可谓是在DeFi发展的最佳时机。
+在最近，DeFi生态有爆发式地增长。[USDC不到2年达到10亿美元市值](https://medium.com/centre-blog/usdc-market-cap-exceeds-1-billion-fastest-growing-digital-dollar-stablecoin-to-do-so-c5ba314474ca)，同时DeFi涉及的服务在不到3年的时间，总价值超过20亿美金。当下可谓是DeFi发展的最佳时机。
  
 ![](https://img.learnblockchain.cn/2020/07/24/15955628861882.jpg)
 
@@ -53,21 +53,21 @@ DeFi生态在最近有爆发式地增长。[USDC不到2年达到10亿美元市�
 
 The tutorial below serves as a simple guide to begin developing your own DeFi smart contracts. It is our hope that such a guide will help democratize the creation of a global, open financial system.
 
-下面的教程主要目的是介绍开发自己的DeFi智能合约。我们希望，这将有助于创建一个全球、开放的金融体系。
+下面的教程主要目的是介绍如何开发自己的DeFi智能合约。我们希望，这可以帮助创建一个全球、开放的金融体系。
 
 # Getting Started
 # 开始
 
 This tutorial series assumes that you have some experience with [JavaScript](https://en.wikipedia.org/wiki/JavaScript), which is the most widely used programming language in the world. You will also be introduced to [Solidity](https://solidity.readthedocs.io/), a smart contract programming language used on [Ethereum](https://ethereum.org/), which is the most widely used smart contract blockchain in the world. Finally, you will get to interact with [USDC](https://www.coinbase.com/usdc), the most widely adopted fiat-backed stablecoin in DeFi applications.
 
-本系列教程假设你有使用[JavaScript](https://en.wikipedia.org/wiki/JavaScript)的经验，这是世界上使用最广泛的编程语言。你还将学习[Solidity](https://solidity.readthedocs.io/)，在[Ethereum](https://ethereum.org/)上使用的智能合约编程语言。最后，你也会认识[USDC](https://www.coinbase.com/usdc)，这是DeFi应用程序中最广泛采用的由法币支持的稳定代币。
+本系列教程假设你有使用[JavaScript](https://en.wikipedia.org/wiki/JavaScript)的经验，这是世界上使用最广泛的编程语言。你还将学习[Solidity](https://solidity.readthedocs.io/)，[Ethereum](https://ethereum.org/)上使用的智能合约编程语言。最后，你也会认识[USDC](https://www.coinbase.com/usdc)，这是DeFi应用程序中最广泛采用的由法币支持的稳定代币。
 
 ## Setting up the Development Environment
 ## 设置开发环境
 
 To get started, we’re going to need a Unix-like environment and [Node.js v12.x](https://nodejs.org/) (the latest LTS release) installed on it. macOS is natively a Unix environment, and Windows users can get it by installing [Ubuntu on WSL](https://ubuntu.com/wsl) from the Microsoft Store. More detailed steps can be found [here for macOS](https://treehouse.github.io/installation-guides/mac/node-mac.html), and [here for Windows](https://docs.microsoft.com/en-us/windows/nodejs/setup-on-wsl2). As for the text editor, [Visual Studio Code](https://code.visualstudio.com/) is strongly recommended because the project template you’ll be using comes pre-configured for it, but you can technically use any editor. Oh, and I prefer [Vim keybindings over Emacs](https://xkcd.com/378/).
 
-首先，我们需要一个类unix的环境，并在上面安装[Node.js v12.x](https://nodejs.org/) (LTS的最新版本)。macOS本身就是Unix环境，Windows用户可以通过从微软商店安装[Ubuntu on WSL](https://ubuntu.com/wsl)来获得它。更详细的步骤可以macOS查看[这里](https://treehouse.github.io/installing-guides/mac/nod-mac.html)，Windows查看[这里](https://docs.microsoft.com/en-us/windows/nodejs/setup-on-wsl2)。对于文本编辑器，强烈推荐使用[Visual Studio Code](https://code.visualstudio.com/)，因为你将使用的项目模板是预先配置的，但你可以使用任何编辑器。哦，我更喜欢[Vim而不是Emacs](https://xkcd.com/378/)。
+首先，我们需要一个类unix的环境，并在上面安装[Node.js v12.x](https://nodejs.org/) (LTS的最新版本)。macOS本身就是Unix环境，Windows用户可以通过从微软商店安装[Ubuntu on WSL](https://ubuntu.com/wsl)来获得它。更详细的步骤macOS可以查看[这里](https://treehouse.github.io/installing-guides/mac/nod-mac.html)，Windows查看[这里](https://docs.microsoft.com/en-us/windows/nodejs/setup-on-wsl2)。对于文本编辑器，强烈推荐使用[Visual Studio Code](https://code.visualstudio.com/)，因为你将使用的项目模板是预先配置的，但你可以使用任何编辑器。哦，我更喜欢[Vim而不是Emacs](https://xkcd.com/378/)。
 
 
 ## Setting up the Project
@@ -89,14 +89,14 @@ $ **yarn**                       # Install project dependencies
 ```
 You may see some compilation errors as yarn tries to build native extensions. Those are optional and it is safe to ignore the errors. As long as you see the “Done” message at the end, you’re good to go.
 
-当yarn在安装的时候，你可能会看到一些编译错误。这些是可选的，忽略错误是安全的。只要你看到最后的“完成”信息，你就可以开始了。
+当yarn在安装的时候，你可能会看到一些编译错误。你可以忽略这些错误。当你最后看到“完成”信息，你就可以开始了。
 
 ## Opening the Project in Visual Studio Code
 ## 在Visual Studio Code打开项目
 
 Open the project folder (**solidity-tutorial**) in Visual Studio Code. The first time the project is open, Visual Studio Code may prompt you to install extensions. Go ahead and click on “Install All”, this will add various useful extensions such as automatic code formatting and Solidity syntax highlighting to the editor.
 
-在Visual Studio Code中打开项目文件夹(**solidity-tutorial**)。项目第一次打开时，Visual Studio Code可能会提示你安装扩展。继续并点击“安装所有”，这将增加各种有用的扩展，如自动代码格式和solidity语法高亮。
+在Visual Studio Code中打开项目文件夹(**solidity-tutorial**)。项目第一次打开时，Visual Studio Code可能会提示你安装扩展。继续并点击“安装所有”，这将增加各种有用的扩展，如代码自动格式化和solidity语法高亮。
 
 ![](https://img.learnblockchain.cn/2020/07/24/15955721532271.jpg)
 
@@ -132,7 +132,7 @@ Address: 0x742B802F28622E1fdc47Df948D61303b4BA52114
 
 What just happened? Well, you got yourself a brand-spanking new Ethereum account. The “mnemonic” or perhaps more commonly referred to as “recovery phrase” is a human-readable representation of the cryptographic key that is needed to perform actions from the account, and the address is the name and identifier of the account. Copy those down somewhere. On a side note, the mnemonic shown in this post has been slightly altered to discourage you from using it, please use your own!
 
-刚才发生了什么?好吧，你得到了一个全新的Ethereum账号。“mnemonic”是“助记符”或被称为的“恢复短语”，是用于帐户执行操作所需的加密密钥，地址是帐户的名称。记得把它们写下来。另外，为了防止你们使用我助记符，我已经做了轻微的修改，请使用你自己的!
+刚才发生了什么？好吧，你得到了一个全新的Ethereum账号。“mnemonic”是“助记符”或被称为的“恢复短语”，是用于帐户执行操作所需的加密密钥，地址是帐户的名称。记得把它们写下来。另外，为了防止你们使用我的助记符，我已经做了轻微的修改，请使用你自己的!
 
 Think of those as the password and the account number to your bank account, except you could create one in just a few seconds, and you didn’t have to fill out an application form or share any personal information. You can also run this code wherever you are.
 
@@ -144,21 +144,21 @@ Think of those as the password and the account number to your bank account, exce
 
 > *ℹ️* Technically, you haven’t really “created” an account per se. Instead, what you created was a private/public key pair. If you are curious about what is actually happening under the hood, read about [elliptic-curve cryptography](https://en.wikipedia.org/wiki/Elliptic-curve_cryptography), and the Bitcoin and Ethereum specifications [BIP39](https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki), [BIP32](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki), [EIP55](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-55.md) and their implementation [in this project](https://github.com/petejkim/wallet.ts).
 
-> *ℹ️*从技术上讲,你并没有真正“创造”一个帐户本身。相反，你创建的是一个私有/公共密钥对。如果你是好奇到底发生了什么，可以看下[椭圆曲线密码学](https://en.wikipedia.org/wiki/Elliptic-curve_cryptography)，比特币和Ethereum规范[BIP39](https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki), [BIP32](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki),[EIP55](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-55.md)及其[在本项目中](https://github.com/petejkim/wallet.ts)的实现方式。
+> *ℹ️*从技术上讲，你并没有真正“创造”一个帐户本身。相反，你创建的是一个私有/公共密钥对。如果你是好奇到底发生了什么，可以看下[椭圆曲线密码学](https://en.wikipedia.org/wiki/Elliptic-curve_cryptography)，比特币和Ethereum规范[BIP39](https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki), [BIP32](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki),[EIP55](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-55.md)及其[在本项目中](https://github.com/petejkim/wallet.ts)的实现方式。
 
 ## About Gas and Mining
 ## 关于Gas和挖矿
 
 Ethereum is a decentralized network of thousands of computers around the world, and they don’t exactly do work for free. To perform any state change on the blockchain such as storing and updating data, you have to pay the network operators a transaction fee in Ether (ETH), also known as “gas” on Ethereum. This, along with the bonus reward the operators get for adding new blocks to the chain, is what incentivizes them to keep their computers up and running. This process is called “mining” and the network operators are called “miners”. We will be revisiting this later in this tutorial (Gas, Gas Price and Gas Limit).
 
-以太坊是一个去中心化的网络，由世界各地成千上万台计算机组成，但是它们并不是免费运费的。要在区块链上执行变更状态，如存储和更新数据，你必须用ETH向网络支付一笔交易费，在以太坊上也称为“gas”。gas费用和增加新区块获得的奖金就是激励矿工运算的激励。这个过程被称为“挖矿”，不断做运算的被称为“挖矿者”。我们将在稍后的教程中再次讨论这个问题(gas，gas价格和gas限制)。
+以太坊是一个去中心化的网络，由世界各地成千上万台计算机组成，但是它们并不是免费运行的。要在区块链上执行变更状态，如存储和更新数据，你必须用向网络用ETH支付一笔交易费，在以太坊上也称为“gas”。gas费用和增加新区块获得的奖金就是激励矿工运算的激励。这个过程被称为“挖矿”，不断做运算的被称为“挖矿者”。我们将在稍后的教程中再次讨论这个问题(gas，gas价格和gas限制)。
 
 ## Obtaining Testnet ETH
 ## 获得测试网络ETH
 
 Now that you have an account, you should deposit some ETH. We don’t want to waste real money while developing, so we are going to get some fake-ETH meant for developing and testing on the test network (“testnet”) instead. There are many different Ethereum testnets, but we are going to be using Ropsten because of the ease of obtaining test tokens. First, let’s check your current balance using [Etherscan](https://ropsten.etherscan.io/), a block explorer for Ethereum. You can do that by entering the following URL in your browser, replacing **YOUR_ADDRESS** with the address you created earlier, starting with **0x**.
 
-现在你有了账户，你应该存一些ETH。在开发的时候我们不想浪费真正的ETH，所以我们需要一些假eth用于开发和测试网络(“testnet”)。现在有许多不同的Ethereum 测试网络，我们将会使用Ropsten，因为获得测试代币比较容易。首先，让我们使用[Etherscan](https://ropsten.etherscan.io/)检查当前余额，这是一个以太坊的块浏览器。你可以在浏览器中输入以下URL，将**你的地址**替换为之前创建的地址，从**0x**开始。
+现在你有了账户，你应该存一些ETH。在开发的时候我们不想浪费真正的ETH，所以我们需要一些ETH用于开发和测试网络(“testnet”)。现在有许多不同的Ethereum测试网络，我们将会使用Ropsten，因为获得测试代币比较容易。首先，让我们使用[Etherscan](https://ropsten.etherscan.io/)检查当前余额，这是一个以太坊的区块信息的浏览器。你可以在浏览器中输入以下URL，将**你的地址**替换为之前创建的地址，从**0x**开始。
 
 [https://ropsten.etherscan.io/address/**YOUR_ADDRESS**](https://ropsten.etherscan.io/address/YOUR_ADDRESS)
 
@@ -187,7 +187,7 @@ Using Etherscan to view the balance is useful, but it is also easy to view it wi
 
 > *ℹ️* [Go Ethereum (“geth”)](https://geth.ethereum.org/) and [Open Ethereum](https://github.com/openethereum/openethereum#readme) (formerly known as Parity Ethereum) are the two most widely used Ethereum node software.
 
-> *ℹ️* [Go Ethereum (“geth”)](https://geth.ethereum.org/) 和 [Open Ethereum](https://github.com/openethereum/openethereum#readme)(正式地叫做Parity Ethereum)。这两个是最为广泛使用地节点软件。
+> *ℹ️* [Go Ethereum (“geth”)](https://geth.ethereum.org/) 和 [Open Ethereum](https://github.com/openethereum/openethereum#readme)（正式地叫做Parity Ethereum）。这两个是最为广泛使用地节点软件。
 
 ## Viewing ETH Balance with Code
 ## 通过代码查看ETH余额
@@ -224,7 +224,7 @@ $ **node src/wallet.js**Address: 0xB3512cF013F71598F359bd5CA3f53C1F4260956a
 
 Next, create a new file called **provider.js** in the same folder. In this file, we will be initializing a provider object with the INFURA API key we obtained earlier. Be sure to replace the API key string with your own:
 
-接下来，在同一个文件夹中,创建一个名为**provider.js**的新文件。在这个文件中，我们将使用前面获得的INFURA API密钥。记得替换的API你自己的api key:
+接下来，在同一个文件夹中,创建一个名为**provider.js**的新文件。在这个文件中，我们将使用前面获得的INFURA API密钥。记得替换成你自己的api key:
 
 ```
 const ethers = require("ethers");
@@ -269,7 +269,7 @@ ETH Balance: 1.0
 
 The code we just created is pretty self-explanatory, but you may be wondering what **ethers.utils.formatUnits(balance, 18)** does. Well, ETH is actually divisible to 18 decimal places, and the smallest denomination unit is called “wei” (pronounced “way”). In other words, one ETH is equivalent to 1,000,000,000,000,000,000 wei. Another commonly seen denomination is Gwei (pronounced “Giga-way”), which is 1,000,000,000 wei. The **getBalance** method happens to return the result in wei, so we have to convert it back to ETH by multiplying the result by 10¹⁸. The full list of the denominations can be found [here](https://ethdocs.org/en/latest/ether.html).
 
-我们刚刚创建的代码非常容易理解，但是你会想知道**ethers.utils.formatUnits(balance, 18)**的作用。嗯，ETH实际上有18位，最小的单位叫“wei”(发音为“way”)。换句话说，一个ETH等于1000,000,000,000,000,000,000 wei。另一个常见的单位是Gwei(发音为“Giga-way”)，也就是1,000,000,000 wei。**getBalance**方法恰好在wei中返回了结果，因此我们必须通过将结果乘以10的18次方将其转换回ETH。你可以在这里找到全部的名称(https://ethdocs.org/en/latest/ether.html)。
+我们刚刚创建的代码非常容易理解，但是你会想知道**ethers.utils.formatUnits(balance, 18)**的作用。嗯，ETH实际上有18位，最小的单位叫“wei”(发音为“way”)。换句话说，一个ETH等于1000,000,000,000,000,000,000 wei。另一个常见的单位是Gwei(发音为“Giga-way”)，也就是1,000,000,000 wei。**getBalance**方法是以wei中返回了结果，因此我们必须通过将结果乘以10的18次方将其转换回ETH。你可以在[这里](https://ethdocs.org/en/latest/ether.html)找到全部的单位名称。
 
 
 > *ℹ️* You can also use **ethers.utils.formatEther(balance)**, which is a shorthand for **ethers.utils.formatUnits(balance, 18)**.
@@ -369,19 +369,19 @@ Voilà! You’ve made your first Ethereum transaction with code! Check your addr
 
 Earlier, I mentioned that we are giving the transaction 20 Gwei of gas price to speed up the transaction and the script also prints the amount of gas used. What do all these things mean? Well, Ethereum is a network comprised of network operators. Think of it as a world computer. It is not a free computer though, and every instruction you run on this computer costs money. This computer is also shared by everyone around the world, which means everyone must compete with each other to get their time on this computer.
 
-之前我提到过，我们给这笔交易20 Gwei的Gas费用来加快交易速度，程序也显示了使用的Gas的量。这一切意味着什么?嗯，以太坊是由网络运营商组成的网络。可以把它想象成一台世界计算机。这不是一台免费的电脑，你在这台电脑上运行的每条指令都要花钱。这台电脑也被全世界的人共享，这意味着每个人都必须互相竞争，以获得他们在这台电脑的效率。
+之前我提到过，我们给这笔交易20 Gwei的gas费用来加快交易速度，程序也显示了使用的gas的量。这一切意味着什么?嗯，以太坊是由网络运营商组成的网络。可以把它想象成一台世界计算机。这不是一台免费的电脑，你在这台电脑上运行的每条指令都要花钱。这台电脑也被全世界的人共享，这意味着每个人都必须互相竞争，以获得他们在这台电脑的效率。
 
 How do we make this fair? Well, we can auction off time on this computer, and the more you are willing to pay for each compute instruction you run on this computer, the more the network operators (miners) will likely be giving you the time. This sure isn’t perfect, as it could have an effect where only the rich are able to have the privilege of using this system. However it is the least bad solution we have until the system is made much more scalable and can accommodate much more transactions.
 
-我们怎样才能做到公平呢?嗯，我们可以把这台电脑上的时间进行拍卖，你愿意出的价越高，你执行的效率也更快。这当然不是十全十美的，因为可能会导致只有有很多ETH的人才有特权使用这个电脑。然而，在系统变得更可扩展并能够容纳更多事务之前，这是我们可以选择的一个可行解决方案。
+我们怎样才能做到公平呢?嗯，我们可以把这台电脑上的时间进行拍卖，你愿意出的价越高，你执行的效率也更快。这当然不是十全十美的，因为可能会导致只有有很多ETH的人才有特权使用这个电脑。然而，在系统变得更可扩展并能够容纳更多交易之前，这是我们可以选择的一个可行解决方案。
 
 Coming back to the blockchain jargon, the “gas used” is the amount of computing resources you’ve consumed as a result of running the transaction and the “gas price” is how much you are willing to pay per unit of gas. In general, the higher you are willing to pay, the higher priority your transaction will have, and the faster it will be confirmed by the network. In our case, we used 20 Gwei as the gas price, and the gas used was 35,121 (you can also find this by inspecting the transaction in Etherscan), so the total gas cost is 35,121 * 20 Gwei = 702,420 Gwei or 0.00070242 ETH.
 
-用区块链的术语来描述Gas就是“gas used”是在完成交易所消耗的计算资源的数量，“gas price”是你愿意为每一单位gas支付的价格。一般来说，你愿意支付的金额越高，你的交易优先级就越高，通过网络确认的速度也就越快。上面我们使用20 Gwei作为gas price，所使用的gas为35,121(可以在Etherscan中查看交易)，所以总共使用gas费用为为35,121 * 20 Gwei = 702,420 Gwei或0.00070242 ETH。
+用区块链的术语来描述gas就是“gas used”是在完成交易所消耗的计算资源的数量，“gas price”是你愿意为每一单位gas支付的价格。一般来说，你愿意支付的金额越高，你的交易优先级就越高，通过网络确认的速度也就越快。上面我们使用20 Gwei作为gas价格，所使用的gas为35,121(可以在Etherscan中查看交易)，所以总共使用gas费用为为35,121 * 20 Gwei = 702,420 Gwei或0.00070242 ETH。
 
 Since gas costs money, you might want to set an upper limit of the maximum gas you are willing to spend. Luckily, you can set a “gas limit”. If the transaction ends up needing more gas than the gas limit specified, the transaction will fail instead of continuing with the execution and consuming more gas than you’re willing to pay. One side effect to be mindful of is that if the execution ends up failing due to the limit, the amount of gas already spent will not be refunded back to you.
 
-因为gas需要消耗金钱，你可能想要设定你愿意花费的最大gas。幸运的是，你可以通过“gas limit”设置。如果交易最终需要的gas超过规定的上限，交易就会失败，而不是继续执行。需要注意的是如果交易因为gas限制而失败，已经花费的gas将不会退还给你。
+因为gas需要消耗金钱，你可能想要设定你愿意花费的最多gas。幸运的是，你可以通过“gas limit”设置。如果交易最终需要的gas超过规定的上限，交易就会失败，而不会继续执行。需要注意的是如果交易因为gas限制而失败，已经花费的gas将不会退还给你。
 
 ## Calling a Smart Contract Function to Read Data
 ## 调用智能合约的方式读取数据
