@@ -123,9 +123,7 @@ Open up our frontend `App.js` in `packages/react-app/src` with your editor.
 `injectedProvider` : Starts with a [burner provider](https://www.npmjs.com/package/burner-provider) (instant account on page load), but then you can hit `connect` to bring in a more secure wallet powered by [Web3Modal](https://github.com/Web3Modal/web3modal). This provider acts as our **signer** for sending transactions to *both* our local and mainnet chains.
 
 💡 Blockchains have a network of nodes that hold the current state. We could run our own node if we wanted access to the Ethereum network, but we don’t want our users to have to sync the chain just to use our app. Instead, we’ll talk to an infrastructure “provider” using simple web requests.
-
-![1_KLLE4FdXon9cev8CWvgT-Q -1-](https://img.learnblockchain.cn/2020/07/29/1_KLLE4FdXon9cev8CWvgT-Q (1).gif)
-
+![1_KLLE4FdXon9cev8CWvgT-Q](https://img.learnblockchain.cn/2020/07/30/1_KLLE4FdXon9cev8CWvgT-Q.gif)
 
 
 * * *
