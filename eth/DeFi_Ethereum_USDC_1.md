@@ -35,12 +35,11 @@ Modern smart contracts work the same way, but the contractual clauses are expres
 现代智能合约工作原理也是类似的，合约的条件是用可执行的代码来设定的。去中心化网络保证按要求执行，并且任何人都不能破坏规则或者修改结果。因为网络会一字不差地执行代码，有瑕疵地智能合约会产生预想不到的结果。（“code is law”）
 
 ## No Better Time Than Now
-## 握紧当下
+## 把握当下
 
 A lot of people find building on crypto and blockchain very intimidating and think it is only accessible to hard-core computer scientists. While that may have been true as recently as just a few years ago, tooling and developer UX have improved significantly since then, and anyone with basic programming skills can start building ([or BUIDLing](https://en.wikipedia.org/wiki/Hodl)).
 
 很多人觉得在区块链上去搭建东西比较困难，认为只有高级玩家可以尝试。但是近几年出现来了很多工具，开放者界面，帮助编程能力一般的人去实现搭建。
-
 
 The DeFi ecosystem is currently undergoing explosive growth. [USDC reached a $1B market cap in less than 2 years](https://medium.com/centre-blog/usdc-market-cap-exceeds-1-billion-fastest-growing-digital-dollar-stablecoin-to-do-so-c5ba314474ca), and the total value of assets stored in various DeFi services blew past $2B in less than 3 years. There really has not been a better time to start developing in this space.
 
@@ -123,6 +122,7 @@ console.log(`Address: ${wallet.address}`);
 ```
 
 Save the file, and execute the code using Node.js as follows:
+
 保存文件，然后使用Node.js来执行文件
 
 ```
@@ -144,31 +144,32 @@ Think of those as the password and the account number to your bank account, exce
 
 > *ℹ️* Technically, you haven’t really “created” an account per se. Instead, what you created was a private/public key pair. If you are curious about what is actually happening under the hood, read about [elliptic-curve cryptography](https://en.wikipedia.org/wiki/Elliptic-curve_cryptography), and the Bitcoin and Ethereum specifications [BIP39](https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki), [BIP32](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki), [EIP55](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-55.md) and their implementation [in this project](https://github.com/petejkim/wallet.ts).
 
-> *ℹ️*从技术上讲,你并没有真正“创造”一个帐户本身。相反，您创建的是一个私有/公共密钥对。如果你是好奇到底发生了什么,可以看下[椭圆曲线密码学](https://en.wikipedia.org/wiki/Elliptic-curve_cryptography),比特币和Ethereum规范[BIP39](https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki), [BIP32](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki),[EIP55](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-55.md)及其[在本项目中](https://github.com/petejkim/wallet.ts)的实现方式。
+> *ℹ️*从技术上讲,你并没有真正“创造”一个帐户本身。相反，你创建的是一个私有/公共密钥对。如果你是好奇到底发生了什么，可以看下[椭圆曲线密码学](https://en.wikipedia.org/wiki/Elliptic-curve_cryptography)，比特币和Ethereum规范[BIP39](https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki), [BIP32](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki),[EIP55](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-55.md)及其[在本项目中](https://github.com/petejkim/wallet.ts)的实现方式。
 
 ## About Gas and Mining
 ## 关于Gas和挖矿
 
 Ethereum is a decentralized network of thousands of computers around the world, and they don’t exactly do work for free. To perform any state change on the blockchain such as storing and updating data, you have to pay the network operators a transaction fee in Ether (ETH), also known as “gas” on Ethereum. This, along with the bonus reward the operators get for adding new blocks to the chain, is what incentivizes them to keep their computers up and running. This process is called “mining” and the network operators are called “miners”. We will be revisiting this later in this tutorial (Gas, Gas Price and Gas Limit).
 
-以太坊是一个去中心化的网络，由世界各地成千上万台计算机组成，但是它们并不是免费运费的。要在区块链上执行变更状态，如存储和更新数据，你必须用ETH向网络支付一笔交易费，在以太网上也称为“gas”。gas费用和增加新区块获得的奖金就是激励矿工运算的激励。这个过程被称为“挖矿”，不断做运算的被称为“挖矿者”。我们将在稍后的教程中再次讨论这个问题(gas，gas价格和gas限制)。
+以太坊是一个去中心化的网络，由世界各地成千上万台计算机组成，但是它们并不是免费运费的。要在区块链上执行变更状态，如存储和更新数据，你必须用ETH向网络支付一笔交易费，在以太坊上也称为“gas”。gas费用和增加新区块获得的奖金就是激励矿工运算的激励。这个过程被称为“挖矿”，不断做运算的被称为“挖矿者”。我们将在稍后的教程中再次讨论这个问题(gas，gas价格和gas限制)。
 
 ## Obtaining Testnet ETH
 ## 获得测试网络ETH
 
 Now that you have an account, you should deposit some ETH. We don’t want to waste real money while developing, so we are going to get some fake-ETH meant for developing and testing on the test network (“testnet”) instead. There are many different Ethereum testnets, but we are going to be using Ropsten because of the ease of obtaining test tokens. First, let’s check your current balance using [Etherscan](https://ropsten.etherscan.io/), a block explorer for Ethereum. You can do that by entering the following URL in your browser, replacing **YOUR_ADDRESS** with the address you created earlier, starting with **0x**.
 
-现在你有了账户，你应该存一些ETH。在开发的时候我们不想浪费真正的ETH，所以我们需要一些假eth用于开发和测试网络(“testnet”)。现在有许多不同的Ethereum 测试网络，我们将会使用Ropsten，因为获得测试代币比较容易。首先，让我们使用[Etherscan](https://ropsten.etherscan.io/)检查当前余额，这是一个以太坊的块浏览器。您可以在浏览器中输入以下URL，将**你的地址**替换为之前创建的地址，从**0x**开始。
+现在你有了账户，你应该存一些ETH。在开发的时候我们不想浪费真正的ETH，所以我们需要一些假eth用于开发和测试网络(“testnet”)。现在有许多不同的Ethereum 测试网络，我们将会使用Ropsten，因为获得测试代币比较容易。首先，让我们使用[Etherscan](https://ropsten.etherscan.io/)检查当前余额，这是一个以太坊的块浏览器。你可以在浏览器中输入以下URL，将**你的地址**替换为之前创建的地址，从**0x**开始。
 
 [https://ropsten.etherscan.io/address/**YOUR_ADDRESS**](https://ropsten.etherscan.io/address/YOUR_ADDRESS)
 
 ![](https://img.learnblockchain.cn/2020/07/24/15955734131072.jpg)
 *Source:* [*ropsten.etherscan.io*](https://ropsten.etherscan.io/)
+*来源:* [*ropsten.etherscan.io*](https://ropsten.etherscan.io/)
 
 
 You should see that your balance is 0 ETH. Keep this tab open, and open [Ropsten Ethereum Faucet](https://faucet.ropsten.be/) in a different tab. In the faucet page, enter your address and click on the “Send me” button. The transaction may take as little as a few seconds to a minute or two to complete. Check Etherscan again in a bit, and you should see a new balance of 1 ETH and an incoming transaction in the list.
 
-你可以看到现在余额是0。保持该页面打开，并在另一个页面中打开[Ropsten Ethereum Faucet](https://faucet.ropsten.be/)。在第二个页面中，输入你的地址，然后点击“发送我”按钮。完成后可能只需要几秒钟到一两分钟。稍后再次检查Etherscan，您应该会看到一个新的余额为1 ETH。
+你可以看到现在余额是0。保持该页面打开，并在另一个页面中打开[Ropsten Ethereum Faucet](https://faucet.ropsten.be/)。在第二个页面中，输入你的地址，然后点击“发送我”按钮。完成后可能只需要几秒钟到一两分钟。稍后再次检查Etherscan，你应该会看到一个新的余额为1 ETH。
 
 ![](https://img.learnblockchain.cn/2020/07/24/15955740098521.jpg)
 *Source:* [*faucet.ropsten.be*](https://faucet.ropsten.be/)
@@ -181,7 +182,7 @@ You should see that your balance is 0 ETH. Keep this tab open, and open [Ropsten
 
 Using Etherscan to view the balance is useful, but it is also easy to view it with code as well. Before we get back to the code however, we need a way to connect to Ethereum. There are many ways to do it, including running a network node yourself on your computer, but by far the quickest and the easiest way is to do it through a managed node provider such as [INFURA](https://infura.io/) or [Alchemy](https://alchemyapi.io/). Head over to [INFURA](https://infura.io/), create a free account and create a new project to obtain the API Key (Project ID).
 
-使用Etherscan查看余额是有用的，但是使用代码也可以很容易查看余额。然而，在我们写代码之前，我们需要一种连接到以太坊网络。有许多方法可以实现，包括在自己的计算机上运行一个网络节点，但到目前为止，最快和最简单的方法是通过一个托管节点来实现，例如[INFURA](https://infura.io/)或[Alchemy](https://alchemyapi.io/)。前往[INFURA](https://infura.io/)，创建一个免费帐户并创建一个新项目来获取API密钥(项目ID)。
+我们可以使用Etherscan查看余额，但是使用代码也可以很容易查看余额。在我们写代码之前，我们需要连接到以太坊网络。有许多方法可以实现，包括在自己的计算机上运行一个网络节点，但到目前为止，最快和最简单的方法是通过一个托管节点来实现，例如[INFURA](https://infura.io/)或[Alchemy](https://alchemyapi.io/)。前往[INFURA](https://infura.io/)，创建一个免费帐户并创建一个新项目来获取API密钥(项目ID)。
 
 
 > *ℹ️* [Go Ethereum (“geth”)](https://geth.ethereum.org/) and [Open Ethereum](https://github.com/openethereum/openethereum#readme) (formerly known as Parity Ethereum) are the two most widely used Ethereum node software.
@@ -211,9 +212,10 @@ module.exports = wallet;
 
 Replace the mnemonic string in the code with your own. Please note that in production code, the mnemonic shouldn’t be hard-coded like that. Instead it should be read from a config file or an environment variable, so that it does not get leaked accidentally for instance by having it checked into a source code repository.
 
-用您自己的字符串替换代码中的助记符字符串。请注意，在生产中，助记符不应该像这样直接写在代码中。理想的是它从配置文件或环境变量中读取，这样它就不会因为写在源代码中而泄漏。
+用你自己的字符串替换代码中的助记符字符串。请注意，在生产中，助记符不应该像这样直接写在代码中。理想的是它从配置文件或环境变量中读取，这样它就不会因为写在源代码中而泄漏。
 
 Executing the code, you should be able to see the same address as the one you got earlier:
+
 执行代码，你应该能够看到和之前相同的地址
 
 ```
@@ -238,6 +240,8 @@ module.exports = provider;
 
 Finally, we will use both **wallet.js** and **provider.js** we created in a new file called **getBalance.js** in the same folder to get ETH balance:
 
+最后，我们会引用**wallet.js**和**provider.js**来在同一目录下创建新的文件**getBalance.js**
+
 ```
 const ethers = require("ethers");
 const wallet = require("./wallet");
@@ -253,6 +257,7 @@ main();
 ```
 
 Run the code, and you’ll see your ETH balance!
+
 执行代码，你就可以看到余额了
 
 ```
@@ -269,9 +274,15 @@ The code we just created is pretty self-explanatory, but you may be wondering wh
 
 > *ℹ️* You can also use **ethers.utils.formatEther(balance)**, which is a shorthand for **ethers.utils.formatUnits(balance, 18)**.
 
+> *ℹ️* 你也可以使用 **ethers.utils.formatEther(balance)**, 相当于**ethers.utils.formatUnits(balance, 18)**的简写.
+
 # Obtaining Testnet USDC
+# 获得测试网络的USDC
 
 The ETH in your account is feeling a little bit lonely, so let’s also get some USDC in it as well. I’ve deployed a pseudo [USDC smart contract](https://ropsten.etherscan.io/token/0x68ec573C119826db2eaEA1Efbfc2970cDaC869c4) on the Ropsten testnet. There isn’t a fancy faucet website for it, but the contract contains a function that will give you some free testnet USDC when called. If you navigate to the [contract code tab in Etherscan](https://ropsten.etherscan.io/address/0x68ec573C119826db2eaEA1Efbfc2970cDaC869c4#code) and search for **gimmeSome** in the contract source code. That is the function we’ll be calling to get some USDC sent to our account.
+
+你账户里的只有ETH，略显孤单，所以我们打算增加一些USDC。我已经在Ropsten testnet上部署了一个[伪USDC智能合约](https://ropsten.etherscan.io/token/0x68ec573C119826db2eaEA1Efbfc2970cDaC869c4)。虽然我们没有专门获得免费USDC的网站，但是在合约中已经包含了该功能，当你调用它时，它会给你一些免费的testnet USDC。你可以在Etherscan中的[合约代码栏目](https://ropsten.etherscan.io/address/0x68ec573C119826db2eaEA1Efbfc2970cDaC869c4#code)找到合约，并在合约源代码中搜索**gimmeSome**。我们将调用这个函数来将一些USDC发送到我们的帐户。
+
 
 ![](https://img.learnblockchain.cn/2020/07/24/15955742039661.jpg)
 
@@ -284,15 +295,25 @@ In Ethereum smart contracts there are mainly two types of functions: read-write 
 
 Calling a smart contract function requires some extra steps, but it is not too difficult. First, we need to find the full interface of the function we’d like to call, also known as the function signature or the function prototype. Look for **gimmeSome** again in the contract source code and you will find that the interface is the following:
 
+调用智能合约的方法需要再多些步骤，但是也不复杂。第一，你要读懂你要调用方法，了解方法的原型或者参数。我们看下**gimmeSome**方法的源码如下：
+
 ```
 function gimmeSome() external
 ```
 
 It is a really simple function that does not take in any arguments, and it is marked as **external**, which means that this function can only be called from outside, and not from other functions within this contract. That is OK because we will be calling this function directly in a transaction.
 
+这是一个没有任何参数的方法，而且被标记为**external**，表示只能从外部可以调用，不能别合约内部调用。这个对我们来说不影响，因为我们就是从外部调用。
+
+
 > *ℹ️* The **gimmeSome** function does not exist in the [“real” USDC contract](https://etherscan.io/address/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48) deployed on the main Ethereum network, for obvious reasons.
 
+>**gimmeSome** 方法在部署在主链上的[真实的USDC合约](https://etherscan.io/address/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48) 是没有该方法的。
+
 Create a new file called **getTestnetUSDC.js** in the **src** folder and enter the following code:
+
+在**src** 文件夹下创建一个新文件，命名为**getTestnetUSDC.js**，然后输入以下代码
+
 ```
 const ethers = require("ethers");
 const wallet = require("./wallet");
@@ -320,7 +341,11 @@ main();
 
 The code first instantiates a contract object (**new ethers.Contract**) with the interface of the function we are interested in, **gimmeSome**, and points it at the address of the testnet USDC contract: [0x68ec⋯69c4](https://ropsten.etherscan.io/address/0x68ec573C119826db2eaEA1Efbfc2970cDaC869c4). You can then call any of the functions you’ve listed. **gimmeSome** function does not take in any arguments on its own, but you can specify transaction options as the last argument. In this case, we are giving it 20 Gwei of gas price, which should speed up the transaction. All methods that interact with the network are asynchronous in nature and return a [**Promise**](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise), so we are using JavaScript’s [**await**](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await) expression. The code then prints the transaction hash, which is a unique identifier of your transaction that can be used to track the progress. It then waits until the transaction is confirmed.
 
+一开始通过 **gimmeSome**的接口以及在测试网络的地址USDC contract: [0x68ec⋯69c4](https://ropsten.etherscan.io/address/0x68ec573C119826db2eaEA1Efbfc2970cDaC869c4). 实例化了一个合约对象(**new ethers.Contract**)。 这个方法是不需要任何参数，但是你可以在最后加入一个参数。这次我20 Gwei的gas费，来加快完成速度。与网络交互的所有方法在本质上是异步的,返回一个[**Promise**](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise),所以我们使用JavaScript的[**await**](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await)。完成后会返回交易的hash值，这是用于查看交易的惟一标识符。
+
 Run the code, and you will see something like the following:
+
+运行该代码，你将看到如下内容:
 
 ```
 $ **node src/getTestnetUSDC.js**Address: 0xB3512cF013F71598F359bd5CA3f53C1F4260956a
@@ -331,25 +356,41 @@ Gas used: 35121
 
 Voilà! You’ve made your first Ethereum transaction with code! Check your address and the transaction hash in [Ropsten Etherscan](https://ropsten.etherscan.io/). You should now see that you now have 10 testnet USDC, and a little less than 1 ETH, due to the gas paid to execute the transaction.
 
+好的，祝贺你通过代码的方式完成了第一次ETH的交易。在[Ropsten Etherscan](https://ropsten.etherscan.io/)查看下你的账户地址和交易hash。你应该可以查看到，账户里有10个测试USDC,ETH的余额小于1，因为支付了gas费用。
+
 ![](https://img.learnblockchain.cn/2020/07/24/15955743524825.jpg)
 
 > *ℹ️* If you inspect the transaction in Etherscan, you will find that it is a transaction that sends zero (0) ETH to the contract address along with 4 bytes of data. If the function call had arguments, there would be more than just 4 bytes of data. If you want to learn about how this data is encoded, read the [Ethereum contract ABI specification](https://solidity.readthedocs.io/en/v0.6.10/abi-spec.html).
 
+> *ℹ️*如果你在看Etherscan交易,你会发现这是一笔发送0个ETH连同4个字节的数据到合约地址。如果调用方法时有参数，就会有超过4字节的数据。如果你想了解该数据是如何编码的，请阅读[Ethereum合约ABI规范](https://solidity.readthedocs.io/en/v0.6.10/abi-spec.html)。
+
 ## Gas, Gas Price and Gas Limit
+## Gas，Gas费用 和 Gas限制
 
 Earlier, I mentioned that we are giving the transaction 20 Gwei of gas price to speed up the transaction and the script also prints the amount of gas used. What do all these things mean? Well, Ethereum is a network comprised of network operators. Think of it as a world computer. It is not a free computer though, and every instruction you run on this computer costs money. This computer is also shared by everyone around the world, which means everyone must compete with each other to get their time on this computer.
 
+之前我提到过，我们给这笔交易20 Gwei的Gas费用来加快交易速度，程序也显示了使用的Gas的量。这一切意味着什么?嗯，以太坊是由网络运营商组成的网络。可以把它想象成一台世界计算机。这不是一台免费的电脑，你在这台电脑上运行的每条指令都要花钱。这台电脑也被全世界的人共享，这意味着每个人都必须互相竞争，以获得他们在这台电脑的效率。
+
 How do we make this fair? Well, we can auction off time on this computer, and the more you are willing to pay for each compute instruction you run on this computer, the more the network operators (miners) will likely be giving you the time. This sure isn’t perfect, as it could have an effect where only the rich are able to have the privilege of using this system. However it is the least bad solution we have until the system is made much more scalable and can accommodate much more transactions.
+
+我们怎样才能做到公平呢?嗯，我们可以把这台电脑上的时间进行拍卖，你愿意出的价越高，你执行的效率也更快。这当然不是十全十美的，因为可能会导致只有有很多ETH的人才有特权使用这个电脑。然而，在系统变得更可扩展并能够容纳更多事务之前，这是我们可以选择的一个可行解决方案。
 
 Coming back to the blockchain jargon, the “gas used” is the amount of computing resources you’ve consumed as a result of running the transaction and the “gas price” is how much you are willing to pay per unit of gas. In general, the higher you are willing to pay, the higher priority your transaction will have, and the faster it will be confirmed by the network. In our case, we used 20 Gwei as the gas price, and the gas used was 35,121 (you can also find this by inspecting the transaction in Etherscan), so the total gas cost is 35,121 * 20 Gwei = 702,420 Gwei or 0.00070242 ETH.
 
+用区块链的术语来描述Gas就是“gas used”是在完成交易所消耗的计算资源的数量，“gas price”是你愿意为每一单位gas支付的价格。一般来说，你愿意支付的金额越高，你的交易优先级就越高，通过网络确认的速度也就越快。上面我们使用20 Gwei作为gas price，所使用的gas为35,121(可以在Etherscan中查看交易)，所以总共使用gas费用为为35,121 * 20 Gwei = 702,420 Gwei或0.00070242 ETH。
+
 Since gas costs money, you might want to set an upper limit of the maximum gas you are willing to spend. Luckily, you can set a “gas limit”. If the transaction ends up needing more gas than the gas limit specified, the transaction will fail instead of continuing with the execution and consuming more gas than you’re willing to pay. One side effect to be mindful of is that if the execution ends up failing due to the limit, the amount of gas already spent will not be refunded back to you.
 
+因为gas需要消耗金钱，你可能想要设定你愿意花费的最大gas。幸运的是，你可以通过“gas limit”设置。如果交易最终需要的gas超过规定的上限，交易就会失败，而不是继续执行。需要注意的是如果交易因为gas限制而失败，已经花费的gas将不会退还给你。
+
 ## Calling a Smart Contract Function to Read Data
+## 调用智能合约的方式读取数据
 
 You were able to check that you received 10 USDC on Etherscan, but let’s confirm that by checking the balance with code.
+你可以在Etherscan上查看到收到了10个USDC，让我们通过代码检查余额来确认这一点。
 
 Let’s modify the existing file **getBalance.js** in the **src** folder, with the following content:
+我们修改下**src**文件夹下的**getBalance.js**文件
 
 ```
 const ethers = require("ethers");
@@ -381,11 +422,17 @@ main();
 
 USDC is an ERC20 token, so it contains all of the methods defined in the [ERC20 specification](https://eips.ethereum.org/EIPS/eip-20). **balanceOf** is one of them, and its interface is taken straight from the spec. **balanceOf** is a read-only function, so it can be called for free and does not need to be submitted as a transaction. Finally, it is important to note that USDC uses 6 decimal places of precision as opposed to 18 that many other ERC20 tokens use.
 
+USDC是ERC20代币，因此它包含[ERC20规范](https://eips.ethereum.org/EIPS/eip-20)中定义的所有方法。**balanceOf**就是其中之一，它的接口直接来自规范定义的。 **balanceOf**是一个只读函数，所以它可以免费调用。最后，值得注意的是，USDC使用6位小数精度，而其他许多ERC20代币使用18位小数。
+
 ![](https://img.learnblockchain.cn/2020/07/24/15955744064056.jpg)
 
 > *ℹ️* You can learn more about Solidity functions [here](https://solidity.readthedocs.io/en/v0.6.11/contracts.html#functions).
 
+> *ℹ️*  你可以在[这里](https://solidity.readthedocs.io/en/v0.6.11/contracts.html#functions)了解更多关于Solidity方法。
+
 Run the code, and now you will see USDC balance as well:
+
+执行以下代码，你就可以看到USDC余额
 
 ```
 $ **node src/getBalance.js**Address: 0xB3512cF013F71598F359bd5CA3f53C1F4260956a
@@ -394,12 +441,18 @@ USDC Balance: 10.0
 ```
 
 # Transferring ETH and USDC
+# 使用ETH和USDC
 
 Now let’s check out how we can spend ETH and USDC we have in our account.
 
+现在我们来看看怎么可以使用账户中的ETH和USDC
+
 ## Transferring ETH
+## 使用ETH
 
 Create **transferETH.js** in the **src** folder and enter the following code:
+
+在**src**文件夹下创建**transferETH.js**文件
 
 ```
 const ethers = require("ethers");
@@ -456,7 +509,11 @@ main(process.argv.slice(2));
 
 This code, while lengthier than the previous ones, is really just a combination of everything you’ve learned so far. This script takes in two command line arguments. The first one is the recipient address, and the second is the amount to send. It then ensures that the address provided is valid, the amount provided is not negative and that the account has enough balance to be able to send the amount requested. It then submits the transaction and waits for it to be confirmed.
 
+这段代码虽然比前面的代码长，但实际上只是将之前所学的代码组合起来。这段代码中主要有两个参数。第一个是接受地址，第二个是要发送的金额。然后确保提供的地址是有效的，提供的金额不是负数，并且帐户有足够的余额能够发送请求的金额。然后，提交交易并等待它被确认。
+
 Create a new account using the **createWallet.js** script we created earlier, and try sending money to the new address:
+
+用之前的**createWallet.js**创建一个新账户，然后尝试向这个地址转些ETH
 
 ```
 $ **node src/createWallet.js**Mnemonic: napkin invite special reform cheese hunt refuse ketchup arena bag love caution
@@ -471,6 +528,8 @@ Transaction confirmed in block 8162896
 
 You can verify the result in [Etherscan](https://ropsten.etherscan.io/). Let’s also test that the validation logic works:
 
+你可以在[Etherscan](https://ropsten.etherscan.io/)看到结果，我们再来测试验证逻辑是有效的。
+
 ```
 $ **node src/transferETH.js foo**Address: 0xB3512cF013F71598F359bd5CA3f53C1F4260956a
 Invalid address: foo$ **node src/transferETH.js 0xDdAC089Fe56F0a9C70e6a04C74DCE52F86a91e13 0.1.2**Address: 0xB3512cF013F71598F359bd5CA3f53C1F4260956a
@@ -484,7 +543,11 @@ Insufficient balance to send 100.0 (You have 0.89328474)
 
 You will be able to use the majority of the code for USDC. The main differences are that USDC has 6 decimal places, and that you have to use the **transfer** function of the ERC20 spec to perform the transaction. You also pass the arguments “**to**” and “**value**” to the **transfer** smart contract function, rather than the Ethereum transaction itself.
 
+上面很大一部的代码可以用到这里，主要的区别是USDC是精确到6位，还有你是使用ERC20 规范中的**transfer**。入参依然是“**to**” and “**value**”，然后调用智能合约的**transfer** 方法。
+
+
 Create **transferUSDC.js** in the same folder and enter the following:
+在同一文件下创建**transferUSDC.js**文件
 
 ```
 const ethers = require("ethers");
@@ -551,6 +614,9 @@ main(process.argv.slice(2));
 ```
 
 Try it out, it should work just as well:
+
+试一试，你应该可以看到以下结果：
+
 ```
 $ **node src/transferUSDC.js 0xDdAC089Fe56F0a9C70e6a04C74DCE52F86a91e13 1**Address: 0xB3512cF013F71598F359bd5CA3f53C1F4260956a
 Transferring 1.0 USDC to 0xDdAC089Fe56F0a9C70e6a04C74DCE52F86a91e13...
