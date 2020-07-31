@@ -1,32 +1,44 @@
-# Automatically verify Truffle smart contracts on Etherscan
+# 用 Truffle 插件自动在Etherscan上验证合约代码
 
 
 
-Etherscan is the most popular explorer in the Ethereum space. And one of its big features is [verifying the source code of smart contracts](https://medium.com/etherscan-blog/verifying-contracts-on-etherscan-f995ab772327). This allows users of smart contracts to understand what a contract is doing before using it. This **increases trust in these smart contract**, and benefits their developers because **users will feel more comfortable** using their smart contracts.
+Etherscan是以太坊上最受欢迎的浏览器。 它的一大功能是[验证智能合约的源代码](https://medium.com/etherscan-blog/verifying-contracts-on-etherscan-f995ab772327)。 使用户可以在使用合约之前通过源码了解合约的功能。 从而**增加用户对合约的信任**，也因此使开发者受益。
 
-The main way smart contract developers can add their verified code on Etherscan is through the form on their website, but unfortunately **this is a lot of manual work**. You need to enter things like compiler version and constructor parameters, and you need to provide the contract source code in a flattened format that needs to exactly match the deployed code.
 
-What some people do is flattening their Truffle contracts using a command line tool and using the browser-based Remix IDE to deploy the flattened source code. Then they copy the same flattened code to the Etherscan verification form. This is a **very cumbersome process that should be automated**.
 
-This is why I created [truffle-plugin-verify](https://www.npmjs.com/package/truffle-plugin-verify), a Truffle plugin that can be used to automatically verify your Truffle contracts through the Etherscan API. The plugin is an Open Source project with many different contributors, including some developers at [Ren](https://renproject.io/). With this plugin you can verify your contracts with just a simple command:
+通过Etherscan网站表单提交代码是验证代码的主要方法，但是这**需要很多手动工作**。 需要输入诸如编译器版本和构造函数参数之类的内容，并且需要提交展开后的合约源代码（译者注：这里是指当合约引用了其他的文件时，需要把引用展开），该合约源代码需要与部署的代码完全匹配。
+
+有些人使用命令行工具来展开Truffle合约，并使用基于浏览器的Remix IDE来部署展开后的源代码。 然后，把相同的展开后的源代码复制到Etherscan验证表单提交。 这是一个非常繁琐的过程，应该自动化。
+
+
+
+这是为什么我创建了 [truffle-plugin-verify](https://www.npmjs.com/package/truffle-plugin-verify) 插件，它通过Etherscan API来自动验证Truffle合约。 此插件是一个开源项目，有许多不同的参与者，包括[Ren](https://renproject.io/)的一些开发人员。 使用这个插件只需一个简单的命令即可验证合约：
 
 ```shell
 truffle run verify ContractName
 ```
 
-## Prerequisites
+## 依赖条件
 
-For this guide we assume you already have a Truffle project with a deployment process set up. If you don't, you can refer to [this Truffle tutorial](https://truffleframework.com/tutorials/using-infura-custom-provider) that shows how to set up deployment of Truffle projects with Infura.
 
-**Note:** You can also check out the [source code](https://github.com/rkalis/truffle-plugin-verify/tree/master/docs/kalis-me-tutorial-code) for this guide on GitHub.
 
-## The contract
+本文中，我们假设您已经有一个可部署的Truffle项目。 如果没有，可以参考[此Truffle教程](https://learnblockchain.cn/2019/03/30/dapp_noteOnChain)，该教程也说明了如何使用Infura设置Truffle项目的部署。
 
-If you've read any of my [previous](https://kalis.me/check-events-solidity-smart-contract-test-truffle/) [articles](https://kalis.me/assert-reverts-solidity-smart-contract-test-truffle/), you know that I'm a fan of using a simple Casino contract as an example. With this contract a player can bet ETH on a number from 1 to 10. To make sure the contract does not go underwater, the player can only bet a small percentage of the contract's total balance.
+你也可以查看本文在GitHub上的[源代码](https://github.com/rkalis/truffle-plugin-verify/tree/master/docs/kalis-me-tutorial-code)。
 
-The winning number is generated as a modulo operation on the current block number. This is fine for testing, but be aware that it would be easily abused in production.
 
-In this guide, we will specifically split up the contract further so it's spread out over multiple files. This allows us to showcase the full functionality of the plugin.
+
+## 合约
+
+我们以 Casino 合约为例。在合约中，玩家可以下注 1-10个ETH。为确保合约不会亏空，玩家只能押注合约总金额的一小部分。
+
+
+
+中奖号码是对当前区块号进行模运算的结果。 这个运算在测试中可以的，但是要注意，在正式生产中可能会被滥用。
+
+在本文中，我们将专门对合约进行进一步拆分，以使合约分散到多个文件中。便于展示插件的全部功能。
+
+
 
 #### contracts/Killable.sol
 
@@ -90,20 +102,28 @@ contract Casino is Killable {
 }
 ```
 
-## Verifying the contract
+## 验证合约
 
-Now that we have our contract ready, we can show how simple it is to verify this contract with truffle-plugin-verify.
+现在我们已经准备好合约，我们可以展示使用truffle-plugin-verify验证该合约有多么简单。
 
-### 1. Install & enable truffle-plugin-verify
 
-You can install the Truffle plugin using npm or yarn:
+
+
+
+### 1. 安装 & 启用 truffle-plugin-verify
+
+可以使用npm或yarn安装Truffle插件：
 
 ```bash
 npm install -D truffle-plugin-verify
 yarn add -D truffle-plugin-verify
 ```
 
-When it is installed, you should add the following to your `truffle-config.js` or `truffle.js` file to enable the plugin with Truffle:
+
+
+安装后，将以下内容添加到`truffle-config.js`或`truffle.js`文件中，以便Truffle启用该插件：
+
+
 
 ```javascript
 module.exports = {
@@ -115,11 +135,15 @@ module.exports = {
 }
 ```
 
-### 2. Create an Etherscan API key and add it to Truffle
+### 2. 创建一个Etherscan API密钥并将其添加到Truffle
 
 ![img](https://img.learnblockchain.cn/pics/20200724222939.png!lbc)
 
-To create an Etherscan API key, you first need to create an account on the [Etherscan website](https://etherscan.io/). After creating an account, you can add a new API key on your [profile page](https://etherscan.io/myapikey), as seen in the image above. After creating a new key, it should be added to `truffle-config.js` or `truffle.js` under `api_keys`:
+
+
+要创建Etherscan API密钥，首先需要在[Etherscan网站](https://etherscan.io/)上创建一个帐户。 创建帐户后，可以在[个人资料页](https://etherscan.io/myapikey)上添加新的API密钥，如上图所示。 创建新密钥后，将其添加到`truffle-config.js` 或 `truffle.js`文件的`api_keys`下的：
+
+
 
 ```javascript
 module.exports = {
@@ -131,9 +155,11 @@ module.exports = {
 }
 ```
 
-Of course you shouldn't commit this API key to your Git repository, so I suggest using [dotenv](https://www.npmjs.com/package/dotenv) to store the API key in a gitignored `.env` file and read it from there.
 
-After following these steps, your full config file should look like this:
+
+当前，你可以不提交 API key到代码库中，建议使用 [dotenv](https://www.npmjs.com/package/dotenv) 来保存 API key， 然后在git 库中忽略 `.env`文件，然后在`truffle-config.js` 或 `truffle.js`配置文件读取它，读取方式如下：
+
+
 
 ```javascript
 var HDWalletProvider = require("truffle-hdwallet-provider");
@@ -157,17 +183,21 @@ module.exports = {
 };
 ```
 
-Your specific config file might be different, but as long as you have a public network deployment set up, and your plugins and api_keys lists are set correctly, you should be good to go.
+你的配置文件可能和上面有所不同，但是只要设置了公共网络部署，并且正确设置了`plugins`和`api_keys`就可以。
 
-### 3. Deploy & verify the contract
 
-Now that everything is set up to use truffle-plugin-verify, the only thing left is to actually deploy and verify the smart contract.
+
+### 3. 部署及验证合约
+
+truffle-plugin-verify的使用设置好了，接下来就是实际部署和验证智能合约。
+
+部署：
 
 ```bash
 truffle migrate --network rinkeby
 ```
 
-This should take some time, and will show information about the deployment, finally displaying something similar to this:
+这将花费一些时间，部署完之后，将显示以下类似的内容：
 
 ```bash
 Summary
@@ -176,25 +206,29 @@ Summary
 > Final cost:          0.0146786 ETH
 ```
 
-With the contract deployed we can use truffle-plugin-verify to run the Etherscan verification of our Casino contract:
+部署合同后，我们就可以使用truffle-plugin-verify对我们的Casino合同进行Etherscan验证：
+
+
 
 ```bash
 truffle run verify Casino --network rinkeby
 ```
 
-This will again take some time, and eventually return:
+依旧需要花费一些时间，并最终返回：
 
 ```bash
 Pass - Verified: https://rinkeby.etherscan.io/address/0xAf6e21d371f1F3D2459D352242564451af9AA23F#contracts
 ```
 
-## Conclusion
-
-We've discussed how cumbersome Etherscan verification can be when doing it through their online form, as there are several manual steps to go through every time you deploy a contract. In this article we have shown that truffle-plugin-verify offers a simple and automatic replacement for the manual verification process. It is easy to install, and can be used to verify any smart contract with just one easy command.
-
-------
+## 结论
 
 
 
-From: https://kalis.me/verify-truffle-smart-contracts-etherscan/
+本文中，我们讨论了通过Etherscan在线表单进行验证代码的麻烦程度，因为每次部署合约时都需要执行几个手动步骤。 在本文中，我们通过 truffle-plugin-verify者只需一个简单的命令就可以验证任何智能合约，这为手动验证提供一种简单、自动的替代方法。
+
+
+
+原文来自: https://kalis.me/verify-truffle-smart-contracts-etherscan/
+
+译者：Tiny熊
 
