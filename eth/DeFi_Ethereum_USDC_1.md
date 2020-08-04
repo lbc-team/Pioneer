@@ -1,6 +1,7 @@
 # 介绍通过以太坊和USDC搭建去中心化金融系统
 
 *作者* [*Pete Kim*](https://twitter.com/petejkim)
+![](https://img.learnblockchain.cn/2020/08/03/15964206854048.jpg)
 
 在Coinbase，我们希望可以创建一个开放的金融系统。我们坚信提高金融的自由度可以让世界更美好。去中心化金融，简称DeFi是一个开放，无界限并且可以程序化的金融，是提供金融自由度的一种方式。
 
