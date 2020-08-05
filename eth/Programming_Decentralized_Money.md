@@ -121,10 +121,9 @@ yarn run deploy
 
 `injectedProvider` : 程序会先启动[burner provider](https://www.npmjs.com/package/burner-provider)(页面加载后的即时帐户)，但随后您可以点击`connect`以引入由[ Web3Modal](https://github.com/Web3Modal/web3modal)支持的更安全的钱包。该provider会对发送到我们的本地和主网的交易机型**签名**。
 
-💡 区块链有是一个节点网络，每一节点都拥有当前状态。如果我们想访问以太坊网络，我们可以运行自己的节点，但我们不希望用户仅因为使用我们的应用程序就必须同步整条链；因此，我们将使用简单的Web请求与基础设施“provider”进行交互。
+💡 区块链是一个节点网络，每一节点都拥有当前状态。如果我们想访问以太坊网络，我们可以运行自己的节点，但我们不希望用户仅因为使用我们的应用程序就必须同步整条链；因此，我们将使用简单的Web请求与基础设施“provider”进行交互。
 
-![1_KLLE4FdXon9cev8CWvgT-Q -1-](https://img.learnblockchain.cn/2020/07/29/1_KLLE4FdXon9cev8CWvgT-Q (1).gif)
-
+![1_KLLE4FdXon9cev8CWvgT-Q -1-](https://img.learnblockchain.cn/2020/07/29/1_KLLE4FdXon9cev8CWvgT-Q.gif)
 
 
 * * *
