@@ -1,23 +1,23 @@
 
 
-# 🛠 Programming Decentralized Money
+# 🛠 编程去中心化货币
 
-## a straightforward guide to building smart contract applications
+## 构建智能合约应用程序的简单指南
 
 ![](https://img.learnblockchain.cn/2020/07/28/15959043339610.jpg)[Austin Thomas Griffith](https://medium.com/@austin_48503)
 
 * * *
 
 
-***[Part 1] 📄 Building a Smart Contract Wallet on Ethereum with Social Recovery in Solidity and React***
+***[第1部分] 📄 使用Solidity 和 React在以太坊上构建具有社交恢复特性的智能合约钱包***
 
-*[ ☢️ alpha release: May 15, 2020 — updated: May 16, 2020]*
+*[ ☢️ alpha版本: 2020.05.15 — 更新: 2020.05.16]*
 
-[ 🙋‍♂️ Join [this temporary Telegram group](https://t.me/joinchat/KByvmRe5wkR-8F_zz6AjpA) for feedback/troubleshooting ]
+[ 🙋‍♂️ 反馈或者遇到问题，加入 [临时电报群](https://t.me/joinchat/KByvmRe5wkR-8F_zz6AjpA) ]
 
 * * *
 
-# 🏃‍♀️ SpeedRun:
+# 🏃‍♀️ 快速过一遍:
 
 [https://www.youtube.com/watch?v=7rq3TPL-tgI](https://www.youtube.com/watch?v=7rq3TPL-tgI)
 
@@ -25,31 +25,30 @@
 * * *
 
 
-# 🤩 Introduction
-
-My first “A ha!” moment with Ethereum was reading these 10 lines of code:
+# 🤩 前言
+我第一次对以太坊感到兴奋的时刻是阅读这10行代码的时候：
 ![](https://img.learnblockchain.cn/2020/07/28/15959046766713.jpg)
 
-💡 This code keeps track of an `owner` when the contract is created and only lets the `owner` call `withdraw()` using a `require()` statement.
+💡 该代码在创建合约时会跟踪`owner`，并且只允许“owner”使用`require()`语句调用`withdraw()` 。
 
-*🤔 OH! This smart contract controls its own money. It has an address and a balance, it can send and receive funds, it can even interact with other smart contracts.*
+*🤔 啊！ 该智能合约控制自己的资金。 它具有地址和余额，可以发送和接收资金，甚至可以与其他智能合约进行交互。*
 
-*🤖 It’s an always-on, public *state machine* that you can program and anyone in the world can interact with it!*
+*🤖 这是一台永远在线的公共 *状态机* ，您可以对其编程，世界上任何人都可以与它交互！*
 
-
-* * *
-
-# 👩‍💻 Prerequisites
-
-You will need [NodeJS>=10](https://nodejs.org/en/download/), [Yarn](https://classic.yarnpkg.com/en/docs/install/), and [Git](https://git-scm.com/downloads) installed.
-
-This tutorial will assume that you have a basic understanding of [web app development](https://reactjs.org/tutorial/tutorial.html) and maybe even a little exposure to [core Ethereum concepts](https://www.youtube.com/watch?v=9LtBDy67Tho&feature=youtu.be&list=PLJz1HruEnenCXH7KW7wBCEBnBLOVkiqIi&t=13). You can always [read more about Solidity](https://solidity.readthedocs.io/en/v0.6.7/introduction-to-smart-contracts.html) in the docs, but try this first:
 
 * * *
 
-# 🙇‍♀️ Getting Started
+# 👩‍💻 先决条件
 
-Open up a terminal and clone the 🏗 [scaffold-eth](https://github.com/austintgriffith/scaffold-eth) repo. This comes with everything we need to prototype and build a decentralized application:
+你需要实现安装 [NodeJS>=10](https://nodejs.org/en/download/), [Yarn](https://classic.yarnpkg.com/en/docs/install/)和 [Git](https://git-scm.com/downloads).
+
+本教程将假定您对[Web应用程序开发](https://reactjs.org/tutorial/tutorial.html) 有基本的了解，并且稍微接触过[以太坊核心概念](https://www.youtube.com/watch?v=9LtBDy67Tho&feature=youtu.be&list=PLJz1HruEnenCXH7KW7wBCEBnBLOVkiqIi&t=13)。您可以随时在文档中[阅读有关Solidity的更多信息](https://solidity.readthedocs.io/en/v0.6.7/introduction-to-smart-contracts.html),但是先试试这个吧:
+
+* * *
+
+# 🙇‍♀️ 开始
+
+打开一个终端并克隆 🏗 [scaffold-eth](https://github.com/austintgriffith/scaffold-eth)仓库。 这包含了我们为构建去中心化应用程序原型所需的一切：
 
 ```
 git clone https://github.com/austintgriffith/scaffold-eth
@@ -58,51 +57,51 @@ git checkout part1-smart-contract-wallet-social-recovery
 yarn install
 ```
 
-*☢️ Warning, you might get warnings that look like errors when you run* `*yarn install*` *continue on and run the next three commands. It will probably work!*
+*☢️ 警告，运行 *`* yarn install *`* 继续并运行接下来的三个命令时，您可能会收到看起来像错误的警告,它可能没有影响！*
 
-💡 Notice how we are grabbing the `part1-smart-contract-wallet-social-recovery` branch for this tutorial. 🏗 [scaffold-eth](https://github.com/austintgriffith/scaffold-eth) is a fork-able Ethereum development stack and each tutorial will be a branch you can fork and use!
+💡 注意本教程是如何获取`part1-smart-contract-wallet-social-recovery`分支的。  🏗[scaffold-eth](https://github.com/austintgriffith/scaffold-eth)是一个可fork的以太坊开发技术栈，每个教程都是一个分支，您可以fork和使用!
 
-Open the code locally in your favorite editor and take a look around:
+在您喜欢的编辑器中本地打开代码，然后概览一下：
 
-In `packages/buidler/contracts` you will find `SmartContractWallet.sol`. This is our smart contract (backend).
+在`packages/buidler/contracts`中，您可以找到`SmartContract Wallet.sol`, 这是我们的智能合约(后端)。
 
-In `packages/react-app/src` is `App.js` and `SmartContractWallet.js` this is our web app (frontend).
+在`packages/react-app/src`中的 `App.js` 和 `SmartContractWallet.js` 是我们的web应用程序(前端).
 
 ![](https://img.learnblockchain.cn/2020/07/28/15959051423719.jpg)
 
-Start your frontend:
+打开您的前端:
 
 ```
 yarn start
 ```
 
-*☢️ Warning, your CPU will go nuts without running the next two lines too:*
+*☢️ 警告，如果没有运行接下来的两行，您的CPU会抽风:*
 
-Fire up a local blockchain powered by 👷 [Buidler](https://buidler.dev/) in a second terminal:
+在第二个终端中启动由👷[Builder](https://buidler.dev/)驱动的本地区块链:
 
 ```
 yarn run chain
 ```
 
-In a third terminal, compile and deploy your contract:
+在第三个终端中，编译并部署合约：
 
 ```
 yarn run deploy
 ```
 
-*☢️ Warning, there are a few different directories in this project named “contracts”. Take an extra second to make sure you have found* `*SmartContractWallet.sol*` *in the* `*packages/buidler/contracts*` *folder.*
+*☢️ 警告，此项目中有几个名为“contracts”的目录。 、多花一点时间，以确保您在*`*packages/buidler/contracts*`*文件夹中* `*packages/buidler/contracts*` *folder.*
 
-💡 The code from our smart contract is compiled into “artifacts” called `bytecode` and an `ABI` . This `ABI` defines how to interface with our contract and the `bytecode` is “machine code”. You can find these artifacts in the folder: `packages/buidler/artifacts`.
+💡 我们智能合约中的代码被编译为称为`字节码`和`ABI`的“工件”(artifacts)。 这个`ABI`定义了如何与我们的合约对接，而`bytecode`是“机器代码”。 您可以在文件夹中找到以下工件： `packages/buidler/artifacts`.
 
-💡 To deploy a contract, the `bytecode` is sent in a transaction and then our contract will live at specific `address` on our local chain. These artifacts are automatically injected into our frontend so we can interface with our contract.
+💡 为了部署合约，首先在交易中发送`字节码`，然后我们的合约将在本地链上的特定`地址`运行。 这些工件会自动注入到我们的前端，以便我们可以与合约进行交互。
 
-Open [http://localhost:3000](http://localhost:3000) in a web browser:
+在浏览器中打开 [http://localhost:3000](http://localhost:3000) :
 
 ![](https://img.learnblockchain.cn/2020/07/28/15959063898250.jpg)
 
 
 
-🗺 Let’s take a quick tour of this scaffolding to get a lay of the land… 🔭
+🗺 让我们快速浏览一下这个脚手架，为后面的做铺垫… 🔭
 
 
 
@@ -112,41 +111,43 @@ Open [http://localhost:3000](http://localhost:3000) in a web browser:
 
 # 🛰 Providers
 
-Open up our frontend `App.js` in `packages/react-app/src` with your editor.
+使用您的编辑器在`packages/react-app/src`中打开前端`App.js`。
 
-🏗 scaffold-eth has *three* different [**providers**](https://github.com/austintgriffith/scaffold-eth#-web3-providers) for you in `App.js`:
+🏗 在`App.js`中scaffold-eth 有三个不同的 [**providers**](https://github.com/austintgriffith/scaffold-eth#-web3-providers) :
 
-`mainnetProvider` : [Infura](http://infura.io) backed **readonly** main Ethereum network. This is used to get mainnet balances and talk to existing live contracts like the price of ETH from Uniswap or an ENS name lookup.
+`mainnetProvider` : [Infura](http://infura.io)支持**只读**的以太坊主网，它用于获取主网余额并与现有的运行的合约交互，例如Uniswap的ETH价格或ENS域名查询。
 
-`localProvider` : [Buidler](http://buidler.dev) **local** chain where your contracts get deployed while we are iterating on the Solidity locally. The local faucet is powered by the first account from this provider.
+`localProvider` : [Buidler](http://buidler.dev) 是**本地**链，当我们在本地对Solidity进行迭代时，将您的合约部署到这里。本地的水龙头由该provider的第一个帐户提供。
 
-`injectedProvider` : Starts with a [burner provider](https://www.npmjs.com/package/burner-provider) (instant account on page load), but then you can hit `connect` to bring in a more secure wallet powered by [Web3Modal](https://github.com/Web3Modal/web3modal). This provider acts as our **signer** for sending transactions to *both* our local and mainnet chains.
-
-💡 Blockchains have a network of nodes that hold the current state. We could run our own node if we wanted access to the Ethereum network, but we don’t want our users to have to sync the chain just to use our app. Instead, we’ll talk to an infrastructure “provider” using simple web requests.
-![1_KLLE4FdXon9cev8CWvgT-Q](https://img.learnblockchain.cn/2020/07/30/1_KLLE4FdXon9cev8CWvgT-Q.gif)
+`injectedProvider` : 程序会先启动[burner provider](https://www.npmjs.com/package/burner-provider)(页面加载后的即时帐户)，但随后您可以点击`connect`以引入由[ Web3Modal](https://github.com/Web3Modal/web3modal)支持的更安全的钱包。该provider充当我们的**签名人**，用于将交易发送到我们的本地和主网。
 
 
-* * *
+💡 区块链有一个拥有当前状态的节点网络，如果我们想访问以太坊网络，我们可以运行自己的节点，但我们不希望用户仅因为使用我们的应用程序就必须同步整条链。因此，我们将使用简单的Web请求与基础架构“provider”进行交互。
 
-
-# 🔗 Hooks
-
-We will also leverage a bunch of [tasty hooks](https://github.com/austintgriffith/scaffold-eth#-hooks) from 🏗 scaffold-eth like `useBalance()` to track an address’s balance or `useContractReader()` to keep our state in sync with our contracts. Read more about React hooks [here](https://reactjs.org/docs/hooks-overview.html).
+![1_KLLE4FdXon9cev8CWvgT-Q -1-](https://img.learnblockchain.cn/2020/07/29/1_KLLE4FdXon9cev8CWvgT-Q.gif)
 
 
 * * *
 
 
-# 🎛 Components
+# 🔗 钩子(Hooks)
 
-This scaffolding also brings along a bunch of [handy components](https://github.com/austintgriffith/scaffold-eth/blob/master/README.md#-components) for building decentralized applications. A good example is the `<AddressInput/>` we’ll see in just a bit. Read more about React components [here](https://reactjs.org/docs/components-and-props.html).
+我们还将利用🏗scaffold-eth中的一堆[美味钩子](https://github.com/austintgriffith/scaffold-eth#-hooks)比如`userBalance()`来追踪地址的余额或`useContractReader()`使我们的状态与合约保持同步。在[此处](https://reactjs.org/docs/hooks-overview.html)阅读更多有关React挂钩的信息。
+
 
 * * *
 
 
-# ⚙️ Functions
+# 🎛 组件(Components)
 
-Let’s create a function called `isOwner()` in`SmartContractWallet.sol` in `packages/buidler/contracts`. This function lets us ask the wallet if a certain address is the owner:
+这个脚手架还带来了许多用于构建Dapp的[方便组件](https://github.com/austintgriffith/scaffold-eth/blob/master/README.md#-components)。 一个很好的例子是我们很快就会看到的`<AddressInput />`。 在[此处](https://reactjs.org/docs/components-and-props.html)阅读有关React组件的更多信息。
+
+* * *
+
+
+# ⚙️ 函数(Functions)
+
+我们在`packages/buidler/contracts`中的`SmartContractWallet.sol`中创建一个 `isOwner()`的函数. 这个函数可以查询钱包是否是某个地址的所有者：
 
 ```
 function isOwner(address possibleOwner) public view returns (bool) {
@@ -154,11 +155,12 @@ function isOwner(address possibleOwner) public view returns (bool) {
 }
 ```
 
-💡 Notice how this function is marked as `view`? Functions can write to the state **or** just read from it. When we need to write to the state we have to pay gas to send a transaction to the contract, but reading is easy and cheap because we can just ask any provider for the state.
+💡 注意该函数为什么被标记为“view”？ 函数可以写入状态**或**读取状态。 当我们需要写入状态时，我们必须支付gas才能将交易发送给合约，但是读状态既简单又便宜，因为我们可以向任何provider询问状态。
 
-*🤔 OH! To call a function on a smart contract you send a transaction to the contract’s address.*
 
-Let’s also create a *write* function called `updateOwner()` that lets the current owner set a new owner:
+*🤔 啊! 要在智能合约上调用函数，您需要将交易发送到合约的地址。*
+
+我们再创建一个名为`updateOwner()`的 *write* 函数，该函数使当前所有者可以设置新的所有者:
 
 ```
 function updateOwner(address newOwner) public {
@@ -167,53 +169,53 @@ function updateOwner(address newOwner) public {
 }
 ```
 
-💡 We are using `msg.sender` and `msg.value`, you can read more about [units and global variables here](https://solidity.readthedocs.io/en/v0.6.7/units-and-global-variables.html). `msg.sender` is the address that sent the transaction and `msg.value` is the amount of ether sent with the transaction.
+💡 我们正在使用`msg.sender`和`msg.value`，您可以在此处详细了解[单位和全局变量](https://solidity.readthedocs.io/zh/v0.6.7/units-and-global-variables.html)。 `msg.sender`是发送交易的地址，`msg.value`是随交易发送的以太币数量。
 
-💡 Notice how that `require()` statement makes sure that the `msg.sender` is the current `owner`. If this isn’t true it will `revert()` and the whole transaction is reversed.
+💡 注意`require()`语句如何确保`msg.sender`是当前的所有者。 如果这不是真的，它将`revert()`，并且整个交易都被撤消。
 
-*🤔 OH! Ethereum transactions are atomic; either everything works or everything is reversed. If we send one token to Alice and in the same contract call we fail to take one token from Bob, the entire transaction reverses.*
+*🤔 啊！以太坊交易是原子的; 要么一切正常，要么一切撤销。如果我们将一个代币发送给Alice，并且在同一合约调用中，我们未能从Bob那里获取一个代币，则整个交易将被撤消。*
 
-Save, compile, and deploy your contract:
+保存，编译和部署合约:
 
 ```
 yarn run deploy
 ```
 
-When the contract comes up, we can see that your address is not the owner:
+合约执行后，我们可以看到您的地址不是所有者:
 
 ![](https://img.learnblockchain.cn/2020/07/28/15959083398949.jpg)
 
 
-Let’s pass in our account to the smart contract when it is deployed so we are the owner. First, copy your account from the top right:
+让我们在部署智能合约时将我们的帐户地址传递给智能合约，以便我们成为所有者。 首先，从右上角复制您的帐户：
 
 ![1_LWdTy9h-Rv_fbJUgS15iEw](https://img.learnblockchain.cn/2020/07/29/1_LWdTy9h-Rv_fbJUgS15iEw.gif)
 
-Then, edit the file `SmartContractWallet.args` in `packages/buidler/contracts` and change the address to your address. Then, redeploy:
+然后，在`packages/builder/contracts`中编辑文件`SmartContract Wallet.args`，并将地址更改为您的地址。 然后，重新部署：
 
 ```
 yarn run deploy
 ```
 
-💡 We are using an automatic script that tries to find our contracts and get them deployed. Eventually, we will need a more customized solution, but you can take a peek at `scripts/deploy.js` in the `packages/buidler` directory.
+💡 我们正在使用一个自动化脚本，该脚本试图找到我们的合约并进行部署。 最终，我们将需要一个更具定制性的解决方案，但是您可以浏览`packages/buidler`目录中的`scripts/deploy.js`。
 
-Your address should now be the owner of the contract:
+您的地址现在应该是合约的所有者：
 
 ![](https://img.learnblockchain.cn/2020/07/28/15959085928296.jpg)
 
-⛽️ You’ll need some test ether to pay the gas to interact with your contract:
+⛽️ 您需要一些测试ether支付与合约交互所需的gas：
 
-Follow the “✅ TODO LIST” and send our account some test ETH. Copy your address from the top right and paste it into the faucet in the bottom left (and hit send). You can give your addresses all the test ether you want.
+仿照“✅TODO LIST”并向我们的帐户发送一些测试ETH。 从右上方复制您的地址，然后将其粘贴到左下方的水龙头中(然后单击发送)。 您可以为您的地址提供所有想要的测试ether。
 
-Then, try to deposit some funds into your smart contract with the `📥 Deposit` button:
+然后，尝试使用“📥Deposit”按钮将一些资金存入您的智能合约中:
 
 ![](https://img.learnblockchain.cn/2020/07/28/15959099861240.jpg)
 
 
-*☢️ This should fail, transactions sending value to your smart contract will revert because we haven’t added a “fallback” function, yet.*
+*☢️ 该操作将失败，因为向我们的智能合约传递价值的交易将被撤销，因为我们尚未添加“fallback”函数。*
 
 ![](https://img.learnblockchain.cn/2020/07/28/15959121577641.jpg)
 
-Let’s add a `payable` `fallback()` function to `SmartContractWallet.sol` so it can accept transactions. Edit your smart contract in `packages/buidler` to add:
+让我们在`SmartContractWallet.sol`中添加一个`payable` `fallback()`函数，使其可以接受交易。 在` packages/buidler`中编辑您的智能合约并添加:
 
 ```
 fallback() external payable {    
@@ -221,19 +223,19 @@ fallback() external payable {
 }
 ```
 
-*🤖 The “fallback” function gets called automatically whenever someone interacts with our contract without specifying a function name to call. For example, if they just send ETH directly to the contract address.*
+*🤖 每当有人与我们的合约进行交互而未指定要调用的函数名称时，都会自动调用“fallback”函数。 例如，如果他们将ETH直接发送到合约地址。*
 
-Compile and redeploy your smart contract with:
+编译并重新部署您的智能合约:
 
 ```
 yarn run deploy
 ```
 
-🎉 Now when you deposit funds it should accept them!
+🎉 现在，当您存入资金时，合约应该执行成功!
 
 ![1_ntUlRyaaZ3UxmV8kGO5YyA](https://img.learnblockchain.cn/2020/07/29/1_ntUlRyaaZ3UxmV8kGO5YyA.gif)
 
-But this is *programmable money*, let’s add some code to limit the amount of total ETH to 0.005 ($1.00 at today’s price) just to be sure no one puts a million dollars in our unaudited contract 😅. **Replace** your `fallback()` with:
+但这是“可编程的货币”，让我们添加一些代码以将总ETH的数量限制为0.005(按今天的价格为1.00美元)，以确保没有人在我们的未经审计的合同中投入100万美元😅。 **替换** 您的 `fallback()` 为:
 
 ```
 uint constant public limit = 0.005 * 10**18;
@@ -241,19 +243,19 @@ fallback() external payable {
   require(((address(this)).balance) 
 ```
 
-💡 Notice how we multiply by 10¹⁸ ? Solidity doesn’t support floating points so everything is an integer. 1 ETH equals 10¹⁸ wei. Further, if you send a transaction with the value 1, that means 1 wei, the smallest possible unit in Ethereum. The price of 1 ETH at the time of writing this is:
+💡 注意我们为何乘以10¹⁸？  Solidity不支持浮点数，只支持整数。1 ETH等于10¹⁸wei。 此外，如果您发送的交易值为1，则是1 wei，wei是以太坊中允许的最小单位。 在撰写本文时，1 ETH的价格是:
 
 ![](https://img.learnblockchain.cn/2020/07/28/15959122997530.jpg)
 
-Now redeploy and try depositing a bunch of times. You should get an error once you reach the limit.
+现在重新部署并尝试多次depositing，调用次数达到上限后，您应该会得到一个错误:
 
 ![](https://img.learnblockchain.cn/2020/07/28/15959124138003.jpg)
 
-💡 Notice how we have valuable feedback in the frontend with the message from the second argument of the `require()` statement in our smart contract. Use this to help you debug your smart contract along with the `console.log` that shows up in your `yarn run chain` terminal:
+💡 请注意，在智能合约中，前端如何通过`require()`语句第二个参数的消息获得有价值的反馈。使用它来以及在`yarn run chain`终端中显示的`console.log`帮助您调试智能合约:
 
 ![](https://img.learnblockchain.cn/2020/07/28/15959198340880.jpg)
 
-You can adjust the wallet limit or even just redeploy a fresh contract to reset everything:
+您可以调整钱包限额，甚至只是重新部署新合同即可重置所有内容:
 
 ```
 yarn run deploy
@@ -262,25 +264,25 @@ yarn run deploy
 * * *
 
 
-# 💾 Storage and Computation
+# 💾 存储和计算(Storage and Computation)
 
-Let’s say we want to keep track of friends’ addresses that are allowed to interact with our contract. We could keep a `whilelist[]` [array](https://solidity.readthedocs.io/en/v0.6.7/types.html?highlight=arrays#fixed-size-byte-arrays) but then we would have to loop through the array comparing values to see if a given address is on the whitelist. We could also keep track of a [mapping](https://solidity.readthedocs.io/en/v0.6.7/types.html?highlight=mapping#mapping-types) but then we won’t be able to iterate through them. We’ll have to decide which is best. 🧐
+假设我们要跟踪允许与我们的合约交互的朋友的地址。 我们可以保留一个`whilelist []`[array](https://solidity.readthedocs.io/en/v0.6.7/types.html?highlight=arrays#fixed-size-byte-arrays)，但随后我们将拥有遍历数组比较值以查看给定地址是否在白名单中。 我们还可以使用`[mapping]`(https://solidity.readthedocs.io/en/v0.6.7/types.html?highlight=mapping#mapping-types)来追踪，但是我们将无法迭代他们。 我们必须抉择哪个种方式更好。 🧐
 
-💡 Storing data on-chain is relatively expensive. Every single miner around the world needs to execute and store every single state change. You need to be mindful of expensive loops or excessive computation. It’s worth [exploring some examples](https://solidity.readthedocs.io/en/v0.6.7/solidity-by-example.html) and [reading more about the EVM](https://solidity.readthedocs.io/en/v0.6.7/introduction-to-smart-contracts.html#index-6).
+💡 在链上存储数据相对昂贵。 世界各地的每个矿工都需要执行和存储每个状态更改。 您需要注意昂贵的循环或过多的计算。 值得[探索一些示例](https://solidity.readthedocs.io/en/v0.6.7/solidity-by-example.html)和[阅读有关EVM的更多信息](https://solidity.readthedocs.io/en/v0.6.7/introduction-to-smart-contracts.html#index-6)。
 
-*🤔 OH! That’s why this thing is so resilient / censorship resistant. Thousands of (incentivized) third parties are all executing the same code and agreeing on the state they all store without a centralized authority. It’s unstoppable! 🤖 😳*
+*🤔 啊! 这就是为什么这个东西如此具有弹性/抗审查性的原因。 数千个(受激励的)第三方都在执行相同的代码，并且在没有中央授权的情况下就它们存储的状态达成一致。 它永不停止！ 🤖 😳*
 
-Back in the smart contract, let’s use a [mapping](https://solidity.readthedocs.io/en/v0.6.7/types.html?highlight=mapping#mapping-types) to store balances. We *can’t* iterate over all the friends inside the contract but it allows us quick read and write access to a `bool` for any given `address`. Add this code to your contract:
+回到智能合约中，让我们使用[mapping](https://solidity.readthedocs.io/en/v0.6.7/types.html?highlight=mapping#mapping-types)存储余额。 我们*无法*遍历合约中的所有朋友，但是它允许我们快速读取和写入任何给定地址的`bool`访问权限。 将此代码添加到您的合约中:
 
 ```
 mapping(address => bool) public friends;
 ```
 
-💡 Notice how we labeled this `friends` mapping as `public`? This is a public blockchain, so you should assume everything is public.
+💡 注意我们为什么将这个`friends`映射标记为`public`？ 这是一个公链，所以您应该假设一切都是公共的。
 
-*☢️ Warning: even if we set this mapping to* `*private*`*, that just means external contracts can’t read it,* ***everyone can still read private values* ***off-chain****.***
+*☢️ 警告：即使我们将此映射设置为 *`* private *`* ，也仅表示外部合同无法读取它，* ***任何人仍然可以* ***链下*** *读取私有变量*** :
 
-Create a function that lets us call `updateFriend()` to `true` or `false`:
+创建一个函数 `updateFriend()`并设置它的 `true` 或 `false`参数:
 
 ```
 function updateFriend(address friendAddress, bool isFriend) public {
@@ -290,9 +292,9 @@ function updateFriend(address friendAddress, bool isFriend) public {
 }
 ```
 
-*💡 Notice how we are reusing a specific line of code that requires the* `*msg.sender*` *is the* `*owner*`*? You could clean this up using a* [*modifier*](https://solidity.readthedocs.io/en/v0.6.7/structure-of-a-contract.html?highlight=modifiers#function-modifiers)*. Then, every time you need a function that can only be run by the owner you can add an* `*onlyOwner*``*modifier*` *to the function instead of this line. (totally optional)*
+* 💡 注意我们为什么重用需要 *`* msg.sender *`* 为`* owner *`*的特定代码行？ 您可以使用* [* modifier *](https://solidity.readthedocs.io/en/v0.6.7/structure-of-a-contract.html?highlight=modifiers#function-modifiers)*进行清理。 然后，每当您需要一个只能由所有者运行的函数时，可以在函数中添加 *`* onlyOwner *``* modifier *`* ，而不是此行。完全可选).*
 
-Now let’s deploy this and move back to our frontend:
+现在，我们来部署它并回到前端:
 
 ```
 yarn run deploy
@@ -301,19 +303,19 @@ yarn run deploy
 * * *
 
 
-*🤔 OH! We can make small incremental changes to both the frontend and smart contract in parallel. This tight dev loops lets us iterate quickly and test new ideas or mechanics.*
+*🤔 啊! 我们可以同时对前端合约和智能合约进行小的增量更改。 这个紧密的开发循环使我们能够快速迭代并测试新的想法或机制。*
 
 
 * * *
 
 
-We will want to add a form to the `display` in `SmartContractWallet.js` in the `packages/react-app/src` directory. First, let’s add a state variable:
+我们将要在`packages/react-app/src`目录中的`SmartContractWallet.js`中的`display`中添加一个表单。 首先，让我们添加一个状态变量:
 
 ```
 const [ friendAddress, setFriendAddress ] = useState("")
 ```
 
-Then, let’s create a function that *creates a function* that calls `updateFriend()`:
+然后，让我们创建一个变量，该变量 *创建一个函数*，该函数调用`updateFriend()`::
 
 ```
 const updateFriend = (isFriend)=>{
@@ -324,11 +326,11 @@ const updateFriend = (isFriend)=>{
 }
 ```
 
-💡 Notice the structure of the code for calling a function on our contract: `*contract*`.`*functionname*`( `*args*` ) all wrapped in a `tx()` so we can track transaction progress. You can also `await` this `tx()` function to get the resulting hash, status, etc.
+💡 注意在我们的合约上调用函数的代码结构：`* contract *`. ` * functionname *`(`* args *`)全部包裹在`tx()`中，因此我们可以跟踪交易进度。 您还可以`等待`此`tx()`函数以获取生成的哈希，状态等。
 
-*🤖 When you write* `*address public owner*` *it will automatically create a “getter” function for this* `*owner*` *variable and we can get that really easily with the* `*useContractReader()*` *hook.*
+*🤖 当您写入`*地址公共所有者*`地址时，它会自动为此变量创建一个“ getter”函数，我们可以通过`* useContractReader()*`钩子轻松地获取它。*
 
-Next, let’s create an `ownerDisplay` section that only displays for the `owner`. This will display an `AddressInput` with two buttons for `updateFriend(false)` and `updateFriend(true)`.
+接下来，让我们创建一个`ownerDisplay`部分，该部分仅针对`owner`显示。 这将显示一个带有两个按钮的`AddressInput`(地址输入)，分别用于`updateFriend(false)`和`updateFriend(true)`。
 
 ```
 let ownerDisplay = []if(props.address==owner){
@@ -348,55 +350,55 @@ let ownerDisplay = []if(props.address==owner){
 }
 ```
 
-Finally, add the `{ownerDisplay}` to the `display` under the owner row:
+最后，将`{ownerDisplay}`添加到所有者行下的`display`中:
 
 ![](https://img.learnblockchain.cn/2020/07/28/15959202903031.jpg)
 
-Try clicking around after your app 🔥 hot reloads. (You can navigate to [http://localhost:3000](http://localhost:3000/) in a new browser or in incognito mode to get get a new session account to copy a new address.)
+在您的应用程序🔥重新热加载后，尝试点击一下。(您可以在新的浏览器或隐身模式下导航到[http://localhost：3000](http//localhost:3000/)以获取获取新的会话帐户以复制新地址。)
 
 ![1_AttSC5qoeUxbL-gqP49nxw](https://img.learnblockchain.cn/2020/07/29/1_AttSC5qoeUxbL-gqP49nxw.gif)
  
-It’s kind of hard to tell what’s going on without being able to iterate through the addresses. It is hard to list all our friends and what their status is in the frontend.
+如果不进行地址迭代，很难知道在发生什么，也很难列出我们所有的朋友以及他们在前端的状态。
 
-This is a job for *events*.
+这是*events*的工作.
 
 
 * * *
 
 
-# 🛎 Events
+# 🛎 事件(Events)
 
-Events are almost like a form of storage. They are relatively cheap to emit from a smart contract during execution, but the key is that smart contracts can’t *read* events.
+事件几乎就像是一种存储形式。 它们在执行过程中从智能合约中发出的成本相对较低，但关键是智能合约不能*读取*事件。
 
-Let’s head back over to the smart contract `SmartContractWallet.sol`.
+让我们回到智能合约 `SmartContractWallet.sol`.
 
-Create an event above or below the `updateFriend()` function:
+在`updateFriend()`函数上方或下方创建一个事件:
 
 ```
 event UpdateFriend(address sender, address friend, bool isFriend);
 ```
 
-Then, inside the `updateFriend()` function, add this `emit`:
+然后，在`updateFriend()`函数中，添加此`emit`:
 
 ```
 emit UpdateFriend(msg.sender,friendAddress,isFriend);
 ```
 
-Compile and deploy the changes:
+编译并部署更改:
 
 ```
 yarn run deploy
 ```
 
-Then, in our frontend, we can add an event listener hook. Add this code with the rest of our hooks in `SmartContractWallet.js`:
+然后，在前端，我们可以添加事件监听器钩子。 将此代码与我们的其他钩子一起添加到`SmartContractWallet.js`:
 
 ```
 const friendUpdates = useEventListener(readContracts,contractName,"UpdateFriend",props.localProvider,1);
 ```
 
-*(This ^line is already added for you because it is used for the TODO list 😅.)*
+*(此^行已为您添加，因为它用于TODO List😅。）*
 
-In our render, right after the , add a  display:
+在我们的渲染中，在之后添加一个显示:
 
 ```
 <List
@@ -415,21 +417,21 @@ In our render, right after the , add a  display:
 />
 ```
 
-🎉 Now when it reloads we should be able to add and remove friends!
+🎉 现在，当它重新加载时，我们应该能够添加和删除朋友！
 ![1_odLcQnTvb5-J15GkB0LJ_A](https://img.learnblockchain.cn/2020/07/29/1_odLcQnTvb5-J15GkB0LJ_A.gif)
 
 
 * * *
 
-# 👨‍👩‍👧‍👦 Social Recovery
+# 👨‍👩‍👧‍👦 社交恢复(Social Recovery)
 
-Now that we have `friends` set in our contract, let’s create a “recovery mode” that they can trigger.
+现在我们在合约中设置了“朋友”，让我们创建一个可以触发的“恢复模式”.
 
-Let’s imagine that somehow we lost the [private key](https://www.youtube.com/watch?v=9LtBDy67Tho&list=PLJz1HruEnenCXH7KW7wBCEBnBLOVkiqIi&index=4&t=0s) for the `owner` and now we are locked out of our smart contract wallet. We need to have one of our friends trigger some kind of recovery.
+让我们想象一下，我们以某种方式丢失了“所有者”的[私有密钥](https://www.youtube.com/watch?v=9LtBDy67Tho&list=PLJz1HruEnenCXH7KW7wBCEBnBLOVkiqIi&index=4&t=0s)，现在我们被锁定在智能合约钱包之外了 。我们需要让我们的一个朋友触发某种恢复。
 
-We also need to be sure that if a friend accidentally (or maliciously 😏) triggers the recovery and we still have access to the `owner` account we can cancel the recovery within some `timeDelay` in seconds.
+我们还需要确保，如果某个朋友意外(或恶意😏)触发了恢复并且我们仍然可以访问`所有者`帐户，我们可以在几秒钟内的`timeDelay`内取消恢复。
 
-First, let’s setup a few variables in `SmartContractWallet.sol`:
+首先，我们在`SmartContractWallet.sol`中设置一些变量 :
 
 ```
 uint public timeToRecover = 0;
@@ -437,7 +439,7 @@ uint constant public timeDelay = 120; //seconds
 address public recoveryAddress;
 ```
 
-Then give the owner the ability to set the `recoveryAddress`:
+然后赋予所有者设置`recoveryAddress`的函数:
 
 ```
 function setRecoveryAddress(address _recoveryAddress) public {
@@ -449,14 +451,14 @@ function setRecoveryAddress(address _recoveryAddress) public {
 * * *
 
 
-*☢️ There is a lot of copy and pasting of code in this tutorial. Be sure to take a second to slow down and read it to understand what is going on. 🧐*
+*☢️ 本教程中有很多代码需要复制和粘贴。 请务必花一点时间放慢速度并阅读，以了解发生了什么。🧐*
 
-*💬 If you are ever stuck and frustrated, hit me with a* [*Twitter DM*](https://twitter.com/austingriffith) *and we’ll see if we can figure it out together!* [*Github issues*](https://github.com/austintgriffith/scaffold-eth/issues) *work great for feedback too!*
+*💬 如果您曾经感到困惑和沮丧，请给在* [*Twitter DM*](https://twitter.com/austingriffith)*上给我留言，我们将看看能否一起解决！* [* Github issues*  ](https://github.com/austintgriffith/scaffold-eth/issues)*也非常适合反馈！*
 
 * * *
 
 
-Let’s add a function for our friends to call to help us recover our funds:
+让我们为朋友添加一个函数，以帮助我们收回资金:
 
 ```
 function friendRecover() public {
@@ -466,9 +468,9 @@ function friendRecover() public {
 }
 ```
 
-💡We use `block.timestamp`, you can read more about [special variables here](https://solidity.readthedocs.io/en/v0.6.7/units-and-global-variables.html?highlight=units#block-and-transaction-properties).
+💡我们使用`block.timestamp`，您可以在[特殊变量这里](https://solidity.readthedocs.io/zh/v0.6.7/units-and-global-variables.html?highlight=units#block-and-transaction-properties)阅读更多内容.
 
-If `friendRecover()` is accidentally triggered, we want our owner to be able to cancel the recovery:
+如果不小心触发了`friendRecover()`，我们希望所有者能够取消恢复:
 
 ```
 function cancelRecover() public {
@@ -478,7 +480,7 @@ function cancelRecover() public {
 }
 ```
 
-Finally, if we are in recovery mode and enough time has passed, 🤖 anyone can destroy our contract and send all its ether to the `recoveryAddress`:
+最后，如果我们处于恢复模式并且已经过去了足够的时间, 🤖 任何人都可以销毁我们的合约并将其所有以太币发送到`recoveryAddress`:
 
 ```
 function recover() public {
@@ -488,23 +490,23 @@ function recover() public {
 }
 ```
 
-💡 `[selfdestruct()](https://solidity.readthedocs.io/en/v0.6.8/cheatsheet.html?highlight=selfdestruct#global-variables)` will remove our smart contract from the blockchain and return all funds to the `recoveryAddress`.
+💡 [selfdestruct()](https://solidity.readthedocs.io/en/v0.6.8/cheatsheet.html?highlight=selfdestruct#global-variables)将从区块链中删除我们的智能合约，并将所有资金返还到`recoveryAddress`.
 
-*☢️ Warning, a smart contract with an* `*owner*` *that can call* `*selfdestruct()*` *at any time really isn’t “decentralized”. Developers should be very mindful about building mechanisms that no individual or organization can control or censor.*
+*☢️ 警告，具有*`*owner*`*且可以随时调用*`* selfdestruct()*`*的智能合约实际上并不是“去中心化”的。 开发人员应非常注意任何个人或组织都无法控制或审查的机制。*
 
-Let’s compile, deploy, and move back over to our frontend:
+让我们编译，部署并回到前端:
 
 ```
 yarn run deploy
 ```
 
-In our `SmartContractWallet.js`, with our other hooks, we will want to track the `recoveryAddress`:
+在我们的`SmartContractWallet.js`和其他钩子中，我们将要跟踪`recoveryAddress`。:
 
 ```
 const [ recoveryAddress, setRecoveryAddress ] = useState("")
 ```
 
-Here is the code for a form that lets the owner set the `recoveryAddress` :
+这是让所有者设置`recoveryAddress`表单的代码 :
 
 ```
 ownerDisplay.push(
@@ -529,20 +531,20 @@ ownerDisplay.push(
 )
 ```
 
-Then we want to track the `currentRecoveryAddress` from our contract with:
+然后我们要跟踪与我们的合约中的`currentRecoveryAddress`:
 
 ```
 const currentRecoveryAddress = useContractReader(readContracts,contractName,"recoveryAddress",1777);
 ```
 
-Let’s also track the `timeToRecover` and the `localTimestamp`:
+我们还要跟踪`timeToRecover`和`localTimestamp`:
 
 ```
 const timeToRecover = useContractReader(readContracts,contractName,"timeToRecover",1777);
 const localTimestamp = useTimestamp(props.localProvider)
 ```
 
-And display the recover address using `<Address />` right after the recovery button. Plus, we’ll add a button for the owner to `cancelRecover()`. Put this code right after the `setRecoveryAddress()` button:
+并在恢复按钮之后使用`<Address />`显示恢复地址。 另外，我们将为所有者添加一个按钮到`cancelRecover()`。 将此代码放在“setRecoveryAddress()”按钮之后:
 
 ```
 {timeToRecover&&timeToRecover.toNumber()>0 ? (
@@ -565,15 +567,15 @@ And display the recover address using `<Address />` right after the recovery but
 
 ![1_-UVGEbIIH3avYWyQ0TImRg](https://img.learnblockchain.cn/2020/07/29/1_-UVGEbIIH3avYWyQ0TImRg.gif)
 
-💡 We are using [ENS](https://ens.domains/) here to translate a name to an address and back. This works similar to traditional DNS where you can register a name.
+💡 我们在这里使用[ENS](https://ens.domains/)将名称转换为地址并返回。 这类似于传统的DNS，您可以在其中注册名称.
 
-Now in our hooks, let’s track if the user `isFriend`:
+现在，让我们来跟踪用户是否是`isFriend`:
 
 ```
 const isFriend = useContractReader(readContracts,contractName,"friends",[props.address],1777);
 ```
 
-If they are a friend, let’s show them a button to call `friendRecover()` and then eventually `recover()` once the `localTimestamp` is *after* `timeToRecover`. Add this big "else if” at the end of the owner check `if(props.address==owner){`:
+如果他们是朋友，请给他们显示一个按钮，以调用`friendRecover()`，然后在`localTimestamp`在`timeToRecover`之后*最终*调用`recover()`。 在所有者的末尾添加这个大的`else if`，请检查`if(props.address == owner){`:
 
 ```
 }else if(isFriend){
@@ -609,57 +611,57 @@ If they are a friend, let’s show them a button to call `friendRecover()` and t
 }
 ```
 
-🚀 Try it all out, get a feel for the app. Tweak the contracts, tweak the frontend. It’s *yours* now! 😬
+🚀 尝试一下，感受一下该应用程序。 玩玩合约，玩玩前端。 现在它是您的！ 😬
 
-💡 You can create as many accounts to play around with as you need with different browsers and incognito modes. Then use the faucet to give them some ether.
+💡 您可以根据需要使用不同的浏览器和隐身模式创建尽可能多的帐户。 然后用水龙头给他们一些ether。
 
-*☢️ Warning, we are getting the timestamp from our local chain and blocks aren’t mined at a regular interval like on a real chain. Therefore, we will have to send some transactions here and there to get the timestamp to update. ⏰*
+*☢️ 警告，我们正在从本地链中获取时间戳，并且不会像真实链那样定期地出块。 因此，我们将不得不在这里和那里发送一些事务以获取更新的时间戳。⏰*
 
 ![1_1Mqo-87iqGEswsyaT4jI2g](https://img.learnblockchain.cn/2020/07/29/1_1Mqo-87iqGEswsyaT4jI2g.gif)
 
-Working demo where the account on the left owns the wallet, makes account on the right a friend, and then eventually the friend recovers ether
+上面是运行的Demo，其中左边的帐户拥有钱包，在右边的帐户中成为朋友，然后最终该朋友恢复以太币：
 
 * * *
 
-# 🎉 Congratulations!
+# 🎉 祝贺!
 
-We’ve built a decentralized application around a smart contract wallet with a safety limit and social recovery!!!
+我们围绕智能合约钱包构建了去中心化应用程序，并具有安全限制和社交回馈功能!!!
 
-You should have enough context to clone 🏗 [scaffold-eth](https://github.com/austintgriffith/scaffold-eth) and maybe even build the greatest unstoppable app yet!!!
+您应该已经有足够的了解，甚至可以克隆 🏗 [scaffold-eth](https://github.com/austintgriffith/scaffold-eth) 来构建出迄今为止最强大的应用!!!
 
-Imaging if this wallet had some sort of 🤖 autonomous market layer where anyone in the world could buy and sell assets with dynamic pricing?
+想象这个钱包是否具有某种🤖自治市场层，世界上任何人都可以以动态定价买卖资产?
 
-What if we minted 🧩 collectibles and sold them on a curve?!
+我们甚至可以铸造🧩收藏品并在curve上出售它们?!
 
-What if we created an 🧙‍♂️instant wallet for sending and receiving funds quickly?!
+我们甚至可以创建了一个🧙‍♂️即时钱包以快速发送和接收资金?!
 
-What if we built a ⛽️ gas-less app for smooth user onboarding!?
+我们甚至可以构建⛽️gas花费很少应用程序以使用户愿意上车!?
 
-What if we created a 🕹 game with commit/reveal random numbers?!
+我们甚至可以用`提交/显示`随机数创建了一个🕹游戏?!
 
-What if we created a local 🔮 prediction market that just our friends and friends’ friends could participate in?!
+我们甚至可以创建一个本地🔮预测市场，只有我们的朋友和朋友的朋友可以参与?!
 
-What if we deployed a 👨‍💼$me token and then built an application that lets holders stake toward you building your next application?!
+我们甚至可以部署了👨‍💼$me代币并构建一个应用程序，持有人可以向您投资下一个应用程序？?!
 
-What if we could stream those 👨‍💼$me tokens for help sessions about building cool things on 🏗 [scaffold-eth](https://github.com/austintgriffith/scaffold-eth)!?!
-
-
-* * *
-
-
-
-> 🤩 Oh the possibilities!!! 📟 📠 🧭 🕰 📡 💎 ⚖️ 🔮 🚀
-
+我们可以将这些👨‍💼me代币流化为用于在🏗[scaffold-eth](https://github.com/austintgriffith/scaffold-eth)上构建有趣事物的帮助资源!?!
 
 
 * * *
 
 
 
-📓 If you would like to learn more about Solidity I recommend playing [Ethernaut](https://ethernaut.openzeppelin.com/), [Crypto Zombies](https://cryptozombies.io/), and then maybe even [RTFM](https://solidity.readthedocs.io/en/v0.6.8/). 🤣
+> 🤩 啊，简直无限可能!!! 📟 📠 🧭 🕰 📡 💎 ⚖️ 🔮 🚀
 
-Head over to [https://ethereum.org/developers](https://ethereum.org/developers/) for more resources.
 
-*💬 Feel free to hit me with a* [*Twitter DM*](https://twitter.com/austingriffith) *or* [*in the repo*](https://github.com/austintgriffith/scaffold-eth)*! Thanks!!!*
+
+* * *
+
+
+
+📓 如果您想了解有关Solidity的更多信息，建议您玩[Ethernaut](https://ethernaut.openzeppelin.com/)，[Crypto Zombies](https://cryptozombies.io/)，然后甚至是[RTFM](https://solidity.readthedocs.io/en/v0.6.8/)。🤣
+
+前往[https://ethereum.org/developers](https://ethereum.org/developers/)了解更多资源.
+
+*💬 随时在 *[*Twitter DM*](https://twitter.com/austingriffith)* 或* [*github仓库*](https://github.com/austintgriffith/scaffold-eth)给我留言 *! 谢谢!!!*
 
 原文链接：https://medium.com/@austin_48503/programming-decentralized-money-300bacec3a4f
