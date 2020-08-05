@@ -1,52 +1,55 @@
 # Delegation and Voting with EIP-712 Signatures
-# 通过EIP-712签名来完成授权和投票
+# 按照EIP-712规范签名完成委托和投票
 
 ![](https://img.learnblockchain.cn/2020/07/29/15960092035766.jpg)
 
 Compound’s governance system is powered by [COMP token](https://etherscan.io/address/0xc00e94cb662c3520282e6f5717214004a7f26888), which is distributed to users of the protocol. COMP token holders receive voting power on a 1–1 basis to the amount of COMP held; this voting power can be delegated to any address, and then can be used to vote on proposals.
-Compound的监管制度是由发放给用户的[COMP token](https://etherscan.io/address/0xc00e94cb662c3520282e6f5717214004a7f26888)来驱动的。COMP代币持有者拥有与持有量1：1的投票权。投票权利可以通过委托给任意一个地址去给提案投票。
 
+Compound的监管制度是由发放给用户的[COMP代币](https://etherscan.io/address/0xc00e94cb662c3520282e6f5717214004a7f26888)来驱动的。COMP代币持有者拥有与持有量1：1的投票权。投票权利可以委托给任意一个地址，让其去给提案投票。
 
 There are two methods by which a user can delegate their voting rights or cast votes on proposals: either calling the relevant functions (**delegate**, **castVote**) directly; or using by-signature functionality (**delegateBySig**, **castVotebySig**).
-用户可以通过两种方式委托他们的投票权或投票的提案:可以直接调用函数(**delegate**, **castVote**)或通过签名功能函数(**delegateBySig**， **castVotebySig**)。
+
+用户可以通过两种方式委托他们的投票权:可以直接调用函数(**delegate**, **castVote**)或通过签名功能函数(**delegateBySig**， **castVotebySig**)。
 
 A key benefit to users of by-signature functionality is that they can create a signed delegate or vote transaction for free, and have a trusted third-party spend ETH on gas fees and write it to the blockchain for them. In this guide, we will focus on code examples around this type of functionality.
-通过签名功能函数的好处是用户可以免费完成委托和投票，同时会有第三方花费gas fee帮他们写到区块链中。在本次教程中，我们重点展示这类函数的例子。
+
+通过签名功能函数的好处是用户可以免费完成委托和投票，同时会有第三方花费gas 费用将其投票结果写到区块链中。在本次教程中，我们重点展示这类函数的例子。
 
 # Delegate By Signature
-# 通过签名委托
+# 使用签名实现委托
 
 By using an [EIP-712](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-712.md) “typed-structured data” signature, [COMP token](https://etherscan.io/address/0xc00e94cb662c3520282e6f5717214004a7f26888) holders can delegate their voting rights to any Ethereum address. The COMP smart contract’s **delegateBySig** [method](https://compound.finance/docs/governance#delegate-by-signature) is available to users that have a signed delegation transaction.
 
-通过使用[EIP-712](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-712.md) 规范定义的结构化数据签名方式，[COMP token](https://etherscan.io/address/0xc00e94cb662c3520282e6f5717214004a7f26888)持有者可以委托给任何一个以太坊地址。任何用户有过签字委托转账的，都可以调用COMP智能合约中**delegateBySig** [method](https://compound.finance/docs/governance#delegate-by-signature)
+按照[EIP-712](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-712.md) 规范定义的结构化数据签名方式，[COMP代币](https://etherscan.io/address/0xc00e94cb662c3520282e6f5717214004a7f26888)持有者可以委托给任何一个以太坊地址。任何用户只要有过签字委托转账的，都可以调用COMP智能合约中**delegateBySig** [函数](https://compound.finance/docs/governance#delegate-by-signature)
 
 
 A use case for these signatures might be that a delegate wishes to recruit COMP holders to delegate their votes to the delegatee, and to enable them to do so with very low friction.
-使用这种方式的场景可能是，一个委托希望获得COMP持有者将他们的选票委托给被委托的人，并使他们能够以非常低的摩擦来完成这项工作。
+
+这种方式的使用场景可能是，一个委托者希望联合其他COMP持有者将他们的选票委托给第三方，并希望他以非常低的成本来完成这项工作。
 
 The delegatee can create a web page where users sign a **delegateBySig** transaction using MetaMask and their private key, which would then be posted to the delegatee’s web server. Later on, the delegatee can batch signatures into a single Ethereum transaction, and officially collect the voting rights of their constituents by executing the **delegateBySig** method.
 
-被委托者可以创建一个网页，使得用户可以通过Metamask和私钥完成**delegateBySig** 转账，这样被委托者就能收集到签名信息。之后，被委托者可以将签名信息打包，批量一次写入到以太坊中，再执行**delegateBySig**函数就可以正式的收集到选民的投票权利。
+被委托者可以创建一个网页，让用户通过Metamask和私钥完成**delegateBySig** 转账，这样被委托者就能收集到签名信息。之后，被委托者可以将签名信息打包，批量一次写入到以太坊中，再执行**delegateBySig**函数就可以正式的收集到用户的投票权利。
 
 # Cast Vote By Signature
 # 通过签名投票
 
 With the same type of signature as **delegateBySig**, users can enable a third party to submit a vote on their behalf in any single [Compound governance proposal](https://compound.finance/governance/proposals). The Governor smart contract’s **castVoteBySig** [method](https://compound.finance/docs/governance#cast-vote-by-signature) is available to anyone that has a signed vote transaction.
 
-同**delegateBySig**一样，用户也可以委托第三方给 [Compound管理提案](https://compound.finance/governance/proposals)投票。任何用户有过签字投票转账的，都可以调用智能合约中**castVoteBySig** [函数][method](https://compound.finance/docs/governance#cast-vote-by-signature)
+同**delegateBySig**一样，用户也可以委托第三方给 [Compound管理提案](https://compound.finance/governance/proposals)投票。任何用户只要有过签字投票转账，都可以调用智能合约中**castVoteBySig** [函数](https://compound.finance/docs/governance#cast-vote-by-signature)
 
 The third party in this scenario, submitting the COMP-holder’s signed transaction, could be the same as in the **delegateBySig** example, however the voting power that they hold is for only a single proposal, instead of indefinitely. The signatory still holds the power to vote on their own behalf in the proposal if the third party has not yet published the signed transaction that was given to them.
 
-这种提交用户签名转账和 **delegateBySig**的情况
+第三方提交用户签名转账和**delegateBySig**的情况是一样的，但是投票权利仅限于一个提案，并非无限制的提案。在第三方正式将投票结果发送到以太坊之前，原有的用户依然保留自主投票的权利。
 
 # Delegate By Signature in a Web3 Site
-# 在Web3中通过签名委托
+# 在Web3中使用签名实现委托
 
 Using [this code example](https://github.com/compound-developers/compound-governance-examples/tree/master/signature-examples), anyone can create a simple web page that enables users to delegate their voting rights, by signature, to another address. We’ll assume that all users that visit this page are using [MetaMask](https://metamask.io/) to utilize Web3 functionality.
 
 ![](https://img.learnblockchain.cn/2020/07/29/15960093052035.jpg)
 
-使用[如下代码](https://github.com/compound-developers/compound-governance-examples/tree/master/signature-examples),任何人可以创建一个提供用户通过签名委托投票权利的的网页，我们假设所有的用户都是用 [MetaMask](https://metamask.io/)来调用函数。
+使用[如下代码](https://github.com/compound-developers/compound-governance-examples/tree/master/signature-examples),任何人可以创建一个让用户使用签名来委托投票权利的的网页，我们假设所有的用户都是用 [MetaMask](https://metamask.io/)来调用函数。
 
 
 When a user visits the page, they can see their selected Web3 wallet address, and their current Compound governance delegate address. They can fill in the address of the third party that they want to delegate their voting rights to. In practice, this address can be hard-coded into the web page.
@@ -54,18 +57,20 @@ When a user visits the page, they can see their selected Web3 wallet address, an
 当一个用户访问这个页面时，他们可以看到自己选中的钱包地址和默认的Compound管理地址。他们可以将需要委托的地址填到这个地址中。在实际应用中，这个地址可以固定写成你要委托的目标地址。
 
 Next, the user will click “Create Delegation Signature” which will trigger a MetaMask approval of the data that is to be signed. The MetaMask documentation has an in-depth description of [signing data](https://docs.metamask.io/guide/signing-data.html).
-接下来，用户会点击“创建委托签名”[Create Delegation Signature],这个会触发Metamask执行数据签名。Metamas的文档里有详细的关于[数据签名](https://docs.metamask.io/guide/signing-data.html)的介绍。
+
+接下来，用户会点击“创建委托签名（Create Delegation Signature）“,这个会触发Metamask执行数据签名。Metamas的文档里有详细的关于[数据签名](https://docs.metamask.io/guide/signing-data.html)的介绍。
 
 ![](https://img.learnblockchain.cn/2020/07/29/15960096123400.jpg)
 
 Here is the event handler that executes when the user clicks the button.
+
 当用户点击按钮是，会执行如下触发事件：
 
 ```
 sign.onclick = async () => {
   const _delegatee = delegateTo.value;
   const _nonce = await comp.methods.nonces(myAccount).call();
-  const _expiry = 10e9; // expiration of signature, in seconds since unix epoch
+  const _expiry = 10e9; // expiration of signature, in seconds since unix epoch 以时间戳样式的账户过期时间
   const _chainId = web3.currentProvider.networkVersion;
   const msgParams = createDelegateBySigMessage(compAddress, _delegatee, _expiry, _chainId, _nonce);
   web3.currentProvider.sendAsync({
@@ -105,6 +110,7 @@ The code utilizes the **eth_signTypedData_v4** [method](https://docs.metamask.io
 3. 以时间戳样式的账户过期时间
 
 The typed-structured data signature method accepts the signatory address alongside a JSON string. The EIP-712 specification defines the types, struct, and domain that make up the data that is to be signed. This is implemented in a simple method, which is called in the button-click event handler.
+
 这个结构化数据签名函数可以接受签名地址加上JSON格式的字符串。EIP-712规范定义了需要签名的数据的types, struct和domain。这个会通过按钮触发事件实现。
 
 ```
