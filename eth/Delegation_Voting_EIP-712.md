@@ -155,7 +155,7 @@ The [full web page code example](https://github.com/compound-developers/compound
 
 Just like in the Delegate By Signature example, a web page can be made for users to create a vote signature. If a user wishes to give away their “ballot” to a third party, that user must sign separate “for” and “against” transactions, and the third-party may choose which transaction to publish.
 
-和委托一样，也可以创建一个网页来完成投票签名。用户在委托投票权利的时候，“赞同”和“反对”的委托需要分开转账，第三方可以选择最终发布哪一个委托。
+和委托一样，投票也可以创建一个网页来完成。用户在委托投票权利的时候，“赞同”和“反对”的委托需要分开转账，第三方可以选择最终发布哪一个委托。
 
 The structured data object for creating vote signatures is slightly different from a delegate signature. In this case, the user needs a “Ballot” definition.
 这个结构化数据和上面的委托签名稍许不同，这里用户需要定义“Ballot”
@@ -182,7 +182,8 @@ const createVoteBySigMessage = (govAddress, proposalId, support, chainId = 1) =>
 ```
 
 Clicking “Create Vote Signatures” will prompt the user to sign a “for” and an “against” transaction. Similar to the **delegateBySig** method, votes can be cast by passing 2 parameters to the **castVoteBySig** method.
-点击创建投票签名“Create Vote Signatures”之后，会弹出让用户选择签名“赞成”和“反对”转账。与**delegateBySig**函数一致，通过传递2个参数来调用**castVoteBySig**函数。
+
+点击“创建投票签名（Create Vote Signatures）”之后，会弹出让用户选择签名“赞成”和“反对”转账。与**delegateBySig**函数一致，通过传递2个参数来调用**castVoteBySig**函数。
 
 1. The unique ID of the Compound governance proposal (auto-incrementing integer).
 1. Compound管理提案唯一编号（自动增加）
@@ -190,9 +191,11 @@ Clicking “Create Vote Signatures” will prompt the user to sign a “for” a
 2. 布尔值来表示赞成还是反对提案
 
 Additionally, the user must pass the signature, which must be broken up into 3 parameters, known as **v**, **r**, and **s** (implemented in the previous section).
-另外用户还要传入分成3部分**v**, **r**和**s**的签名，
+另外用户还要传入分成3部分的签名，通常分为**v**, **r**和**s**
 
 The [full web page code example](https://github.com/compound-developers/compound-governance-examples/tree/master/signature-examples) for casting a vote with an EIP-712 signature is available in the [governance examples GitHub repository](https://github.com/compound-developers/compound-governance-examples).
+
+按照EIP-712规范投票[完整页面代码](https://github.com/compound-developers/compound-governance-examples/tree/master/signature-examples)可以在[compound管理代码仓库](https://github.com/compound-developers/compound-governance-examples)查看。
 
 # Batch and Publish Signatures with a Script or a Smart Contract
 # 通过脚本或者智能合约打包和发布签名
@@ -202,6 +205,7 @@ Once a user has collected signed transactions for Compound governance, they need
 用户完成收集签名后，他们需要将这些转账发布到以太坊上。交易所和钱包可以通过以下代码管理多个用户的私钥
 
 A collection of signed transactions can be published to the blockchain all at once using JSON RPC or a smart contract. This example uses only Web3.js in a Node.js script. The script will create and batch-publish delegation signatures for a collection of private keys.
+
 一次性可以通过JSON RPC或者智能合约将收集好的签名转账发布到区块链上。以下代码仅使用了Web3.js实现批量发布委托签名的功能
 
 ```
@@ -224,9 +228,16 @@ await batch.execute();
 
 *Gas used: 454740*
 
+*Gas使用量: 306046*
+
 The **web3.BatchRequest** object batches the **delegateBySig** transactions and publishes them to the blockchain. The [full Node.js example](https://github.com/compound-developers/compound-governance-examples/tree/master/signature-examples/batch-publish-examples) is available in the [governance examples GitHub repository](https://github.com/compound-developers/compound-governance-examples). For more information on the Web3.js batching, see the [documentation](https://web3js.readthedocs.io/en/v1.2.9/web3.html#batchrequest).
 
+**web3.BatchRequest**对象将**delegateBySig** 签名打包，然后发布到区块链上。[完整的Node.js代码](https://github.com/compound-developers/compound-governance-examples/tree/master/signature-examples/batch-publish-examples) 可以在[compound管理代码仓库](https://github.com/compound-developers/compound-governance-examples)查看。更多关于Web.js打包可以查看[文档]
+(https://web3js.readthedocs.io/en/v1.2.9/web3.html#batchrequest).
+
+
 The same functionality can be implemented with a Solidity smart contract. By comparison, this method uses marginally less gas than the Web3 batch approach.
+
 使用Solidity智能合约也可以到达同样的效果，经过对比，这种方式消耗的gas更少。
 
 ```
