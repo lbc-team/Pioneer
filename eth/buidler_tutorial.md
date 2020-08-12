@@ -1,97 +1,124 @@
-# Buidler's tutorial for beginners
+# Buidler 新手教程
 
 
 
-![Teacher Buidler](https://img.learnblockchain.cn/pics/20200810093036.svg)
+## 1. 概述
 
-# 1. Overview
+欢迎来到**Buidler**的初学者指南，看看如何基于**Buidler**进行以太坊合约和dApp开发。
 
-Welcome to our beginners guide to Ethereum contracts and dApp development. This tutorial is aimed at hackathon participants who are getting setup to quickly build something from scratch.
-
-To orchestrate this process we're going to use **Buidler**, which is a task runner that facilitates building on Ethereum. It helps developers manage and automate the recurring tasks that are inherent to the process of building smart contracts and dApps, as well as easily introducing more functionality around this workflow. This means compiling and testing at the very core.
-
-**Buidler** also comes built-in with **Buidler EVM**, a local Ethereum network designed for development. It allows you to deploy your contracts, run your tests and debug your code.
-
-In this tutorial we'll guide you through:
-
-- Setting up your Node.js environment for Ethereum development
-- Creating and configuring a **Buidler** project
-- The basics of a Solidity smart contract that implements a token
-- Writing automated tests for your contract using [Ethers.js](https://docs.ethers.io/ethers.js/html/) and [Waffle](https://getwaffle.io/)
-- Debugging Solidity with `console.log()` using **Buidler EVM**
-- Deploying your contract to **Buidler EVM** and Ethereum testnets
-
-To follow this tutorial you should be able to:
-
-- Write code in [JavaScript](https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/JavaScript_basics)
-- Operate a [terminal](https://en.wikipedia.org/wiki/Terminal_emulator)
-- Use [git](https://git-scm.com/doc)
-- Understand the basics of how [smart contracts](https://ethereum.org/learn/#smart-contracts) work
-- Set up a [Metamask](https://metamask.io/) wallet
-
-If you can't do any of the above, follow the links and take some time to get learn the basics.
+**Buidler**是一个方便在以太坊上进行构建的任务运行器。使用它可以帮助开发人员管理和自动化构建智能合约和dApp的过程中固有的重复任务，以及轻松地围绕此工作流程引入更多功能。
 
 
 
-# 2. Setting up the environment
+**Buidler**还内置了**Buidler EVM**，后者是为开发而设计的本地以太坊网络。 它允许你部署合约，运行测试和**调试代码**。
 
-Most Ethereum libraries and tools are written in JavaScript, and so is **Buidler**. If you're not familiar with Node.js, it's a JavaScript runtime built on Chrome's V8 JavaScript engine. It's the most popular solution to run JavaScript outside of a web browser and **Buidler** is built on top of it.
 
-## Installing Node.js
 
-You can [skip](https://buidler.dev/tutorial/setting-up-the-environment.html#checking-your-environment) this section if you already have a working Node.js `>=10.0` installation. If not, here's how to install it on Ubuntu, MacOS and Windows.
+在本教程中，我们将指导你完成以下操作：
 
-### Linux
+- 为以太坊开发设置Node.js环境
 
-#### Ubuntu
+- 创建和配置 Buidler 项目
 
-Copy and paste these commands in a terminal:
+- 实现Solidity智能合约代币
+
+- 使用 [Ethers.js](https://docs.ethers.io/ethers.js/html/) 和 [Waffle](https://getwaffle.io/)为合约编写自动化测试
+
+- 使用**Buidler EVM**通过`console.log()`调试Solidity
+
+- 将合约部署到**Buidler EVM**和以太坊测试网
+
+  
+
+要完成本教程，你应该能够：
+
+- 编写 [JavaScript](https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/JavaScript_basics)
+- 打开 [terminal](https://en.wikipedia.org/wiki/Terminal_emulator)
+- 使用 [git](https://git-scm.com/doc)
+- 了解 [smart contracts](https://ethereum.org/learn/#smart-contracts) 基础知识
+- 设置 [Metamask](https://metamask.io/)钱包
+
+
+
+如果你不具备上述知识，请访问链接并花一些时间来学习基础知识。
+
+
+
+
+
+## 2. 环境搭建
+
+
+
+大多数以太坊库和工具都是用JavaScript编写的，**Buidler**也是如此。 如果你不熟悉Node.js，它是基于Chrome的V8 JavaScript引擎构建的JavaScript运行时。 这是在网络浏览器之外运行JavaScript的最受欢迎的解决方案，**Buidler **就是建立Node.js之上。
+
+
+
+### 安装 Node.js
+
+如果你已经安装了的Node.js`> = 10.0`，则可以跳过本节。 如果没有，请按照以下步骤在Ubuntu，MacOS和Windows上安装它。
+
+#### Linux
+
+##### Ubuntu
+
+将以下命令复制并粘贴到终端中：
 
 ```text
 sudo apt update
 sudo apt install curl git
-sudo apt install build-essential # We need this to build native dependencies
+sudo apt install build-essential ## 构建工具，我们需要它来建立本地依赖
 curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
 sudo apt install nodejs
 ```
 
-### MacOS
+#### MacOS
 
-Make sure you have `git` installed. Otherwise, follow [these instructions](https://www.atlassian.com/git/tutorials/install-git).
+确保你已安装`git`。 否则，请遵循[这些说明](https://www.atlassian.com/git/tutorials/install-git)安装。
 
-There are multiple ways of installing Node.js on MacOS. We will be using [Node Version Manager (nvm)](http://github.com/creationix/nvm). Copy and paste these commands in a terminal:
+
+
+在MacOS上有多种安装Node.js的方法。 我们将使用 [Node 版本管理器(nvm)](http://github.com/creationix/nvm)。 将以下命令复制并粘贴到终端中：
+
+
 
 ```text
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.35.2/install.sh | bash
 nvm install 10
 nvm use 10
 nvm alias default 10
-npm install npm --global # Upgrade npm to the latest version
-npm install -g node-gyp # Make sure we have node-gyp installed
-# This next setp is needed to build native dependencies.
-# A popup will appear and you have to proceed with an installation.
-# It will take some time, and may download a few GB of data.
+npm install npm --global ## 将npm升级到最新版本
+npm install -g node-gyp ## 确保我们已安装node-gyp
+## 下一步需要构建本地依赖项。
+## 将会出现一个弹出窗口，你必须继续进行安装。
+## 这将需要一些时间，并且可能会下载几个G的数据。
 xcode-select --install
 ```
 
-### Windows
+#### Windows
 
-Installing Node.js on Windows requires a few manual steps. We'll install git, Node.js 10.x and NPM's Windows Build Tools. Download and run these:
+在Windows上安装Node.js需要一些手动步骤。 我们将安装git，Node.js 10.x和NPM的Windows构建工具。 下载并运行以下命令：
 
-1. [Git's installer for Windows](https://git-scm.com/download/win)
-2. `node-v10.XX.XX-x64.msi` from [here](https://nodejs.org/dist/latest-v10.x)
 
-Then [open your terminal as Administrator](https://www.howtogeek.com/194041/how-to-open-the-command-prompt-as-administrator-in-windows-8.1/) and run the following command:
+
+1. [Git的Windows安装程序](https://git-scm.com/download/win)
+2. 从 [这里](https://nodejs.org/dist/latest-v10.x)下载`node-v10.XX.XX-x64.msi` 
+
+然后 [以管理员身份打开终端](https://www.howtogeek.com/194041/how-to-open-the-command-prompt-as-administrator-in-windows-8.1/) 并运行以下命令：
 
 ```text
 npm install --global --production windows-build-tools
 ```
 
-It will take several minutes and may download a few GB of data.
+这将需要几分钟，并且可能会下载几GB的数据。
 
-## Checking your environment
 
-To make sure your development environment is ready, copy and paste these commands in a new terminal:
+
+### 检查环境
+
+为了确保你的开发环境已经准备就绪，请将以下命令复制并粘贴到新的终端中：
+
+
 
 ```text
 git clone https://github.com/nomiclabs/ethereum-hackathon-setup-checker.git
@@ -99,45 +126,60 @@ cd ethereum-hackathon-setup-checker
 npm install
 ```
 
-If this is succesful you should see a confirmation message meaning that your development environment is ready. Feel free to delete the repository directory and move on to [Creating a new Buidler project](https://buidler.dev/tutorial/creating-a-new-buidler-project.html).
+如果成功，你将看到一条确认消息，表示你的开发环境已准备就绪。 你可以随时删除这个检查环境的代码库目录，然后在 [创建新的Buidler项目](https://buidler.dev/tutorial/creating-a-new-buidler-project.html)中继续前进。
 
-If any of them failed, your environment is not properly setup. Make sure you have `git` and Node.js `>=10.0` installed. If you're seeing errors mentioning "node-gyp", make sure you installed the build tools mentioned before.
 
-If you have an older version of Node.js, please refer to the next section.
 
-##  Upgrading your Node.js installation
+如果遇到提示失败，则说明你的环境未正确设置。 确保已经安装了git和Node.js `>= 10.0`。 如果看到提到“ node-gyp”的错误，请确保安装了前面提到的构建工具。
 
-If your version of Node.js is older than `10.0` follow the instructions below to upgrade. After you are done, go back to [Checking your environment](https://buidler.dev/tutorial/setting-up-the-environment.html#checking-your-environment).
 
-### Linux
 
-#### Ubuntu
+如果你有旧版本的Node.js，请参阅下一节。
 
-1. Run `sudo apt remove nodejs` in a terminal to remove Node.js.
-2. Find the version of Node.js that you want to install [here](https://github.com/nodesource/distributions#debinstall) and follow the instructions.
-3. Run `sudo apt update && sudo apt install nodejs` in a terminal to install Node.js again.
+###  升级 Node.js
 
-### MacOS
+如果你的Node.js版本低于 `10.0` ，请按照以下说明进行升级。 完成后，请返回 [检查环境](https://buidler.dev/tutorial/setting-up-the-environment.html#checking-your-environment)。
 
-You can change your Node.js version using [nvm](http://github.com/creationix/nvm). To upgrade to Node.js `12.x` run these in a terminal:
+
+
+#### Linux
+
+##### Ubuntu
+
+1. 在控制台运行 `sudo apt remove nodejs` 以删除 node.js
+2. 在[此处](https://github.com/nodesource/distributions#debinstall)中找到要安装的Node.js版本，然后按照说明进行操作。
+3. 在控制台运行  `sudo apt update && sudo apt install nodejs` 以再次安装新的 node.js
+
+#### MacOS
+
+你可以使用[nvm](http://github.com/creationix/nvm)更改Node.js版本。 要升级到Node.js`12.x`，请在终端中运行以下命令：
+
+
 
 ```text
 nvm install 12
 nvm use 12
 nvm alias default 12
-npm install npm --global # Upgrade npm to the latest version
-npm install -g node-gyp # Make sure we have node-gyp installed
+npm install npm --global ## Upgrade npm to the latest version
+npm install -g node-gyp ## Make sure we have node-gyp installed
 ```
 
-###  Windows
+####  Windows
 
-You need to follow the [same installation instructions](https://buidler.dev/tutorial/setting-up-the-environment.html#windows) as before but choose a different version. You can check the list of all available versions [here](https://nodejs.org/en/download/releases/).
 
-# 3. Creating a new Buidler project
 
-We'll install **Buidler** using the npm CLI. The **N**ode.js **p**ackage **m**anager is a package manager and an online repository for JavaScript code.
+你需要像以前一样遵循[安装说明](https://buidler.dev/tutorial/setting-up-the-environment.html#windows)，但选择其他版本。 你可以在[此处](https://nodejs.org/en/download/releases/)检查所有可用版本的列表。
 
-Open a new terminal and run these commands:
+
+
+## 3. 创建新的 Buidler 工程
+
+
+
+我们将使用npm 命令行安装**Builder **。 NPM是一个Node.js软件包管理器和一个JavaScript代码在线存储库。
+打开一个新终端并运行以下命令：
+
+
 
 ```text
 mkdir buidler-tutorial 
@@ -146,17 +188,17 @@ npm init --yes
 npm install --save-dev @nomiclabs/buidler 
 ```
 
-> TIP
+> 提示：安装**Builder**将安装一些以太坊JavaScript依赖项，因此请耐心等待。
 
->  Installing **Buidler** will install some Ethereum JavaScript dependencies, so be patient.
+在安装**Builder**的目录下运行：
 
-In the same directory where you installed **Buidler** run:
+
 
 ```text
 npx buidler
 ```
 
-Select `Create an empty buidler.config.js` with your keyboard and hit enter.
+使用键盘选择 “创建一个新的builder.config.js(`Create an empty buidler.config.js`)”，然后回车。
 
 
 
@@ -179,31 +221,43 @@ $ npx buidler
   Quit
 ```
 
-When **Buidler** is run, it searches for the closest `buidler.config.js` file starting from the current working directory. This file normally lives in the root of your project and an empty `buidler.config.js` is enough for **Buidler** to work. The entirety of your setup is contained in this file.
 
-## Buidler's architecture
 
-**Buidler** is designed around the concepts of **tasks** and **plugins**. The bulk of **Buidler**'s functionality comes from plugins, which as a developer [you're free to choose](https://buidler.dev/plugins/) the ones you want to use.
+在运行**Buidler**时，它将从当前工作目录开始搜索最接近的`buidler.config.js`文件。 这个文件通常位于项目的根目录下，一个空的`buidler.config.js`足以使**Buidler**正常工作。
 
-### Tasks
 
-Every time you're running **Buidler** from the CLI you're running a task. e.g. `npx buidler compile` is running the `compile` task. To see the currently available tasks in your project, run `npx buidler`. Feel free to explore any task by running `npx buidler help [task]`.
 
-> TIP
+### Buidler 架构
 
->  You can create your own tasks. Check out the [Creating a task](https://buidler.dev/guides/create-task.html) guide.
+**Buidler**是围绕**task(任务)**和**plugins(插件)**的概念设计的。 **Buidler **的大部分功能来自插件，作为开发人员，你[可以自由选择](https://buidler.dev/plugins/)你要使用的插件。
 
-### Plugins
 
-**Buidler** is unopinionated in terms of what tools you end up using, but it does come with some built-in defaults. All of which can be overriden. Most of the time the way to use a given tool is by consuming a plugin that integrates it into **Buidler**.
 
-For this tutorial we are going to use the Ethers.js and Waffle plugins. They'll allow you to interact with Ethereum and to test your contracts. We'll explain how they're used later on. To install them, in your project directory run:
+#### Tasks(任务)
+
+每次你从CLI运行**Buidler**时，你都在运行任务。 例如 `npx buidler compile`正在运行`compile`任务。 要查看项目中当前可用的任务，运行`npx buidler`。 通过运行`npx buidler help [task]`，可以探索任何任务。
+
+
+
+> 提示：你可以创建自己的任务。 请查看[创建任务](https://buidler.dev/guides/create-task.html)指南。
+
+
+
+#### Plugins(插件)
+
+在最终选择哪种工具，**Buidler**并不是排他的，但是它确实内置了一些特性，所有这些也都可以覆盖。 大多数时候，使用给定工具的方法是使用将其集成到**Buidler**中的插件。
+
+
+
+在本教程中，我们将使用Ethers.js和Waffle插件。 他们允许你与以太坊进行交互并测试合约。 稍后我们将解释它们的用法。 要安装它们，请在项目目录中运行：
 
 ```text
 npm install --save-dev @nomiclabs/buidler-ethers ethers @nomiclabs/buidler-waffle ethereum-waffle chai
 ```
 
-Add the highlighted lines to your `buidler.config.js` so that it looks like this:
+
+
+将高亮行添加到你的`builder.config.js`中，如下所示：
 
  
 
@@ -217,31 +271,35 @@ module.exports = {
 };
 ```
 
-We're only invoking `buidler-waffle` here because it depends on `buidler-ethers` so adding both isn't necessary.
+我们在这里仅调用`builder-waffle`，因为它依赖于`builder-ethers`，因此不需要同时添加两者。
 
-# 4. Writing and compiling smart contracts
 
-We're going to create a simple smart contract that implements a token that can be transferred. Token contracts are most frequently used to exchange or store value. We won't go in depth into the Solidity code of the contract on this tutorial, but there's some logic we implemented that you should know:
 
-- There is a fixed total supply of tokens that can't be changed.
-- The entire supply is assigned to the address that deploys the contract.
-- Anyone can receive tokens.
-- Anyone with at least one token can transfer tokens.
-- The token is non-divisible. You can transfer 1, 2, 3 or 37 tokens but not 2.5.
+## 4. 编写和编译合约
 
->  TIP
+我们将创建一个简单的智能合约，该合约实现可以转让的代币。 代币合约最常用于交换或存储价值。 在本教程中，我们将不深入讨论合约的Solidity代码，但是我们实现一些逻辑你应该知道：
 
-> You might have heard about ERC20, which is a token standard in Ethereum. Tokens such as DAI, USDC, MKR and ZRX follow the ERC20 standard which allows them all to be compatible with any software that can deal with ERC20 tokens. **For simplicity's sake the token we're going to build is \*not\* an ERC20.**
 
-## Writing smart contracts
 
-Start by creating a new directory called `contracts` and create a file inside the directory called `Token.sol`.
+- 代币有固定的发行总量，并且总量是无法更改的。
+- 整个发行总量都分配给了部署合约的地址。
+- 任何人都可以接收代币。
+- 拥有至少一个代币的任何人都可以转让代币。
+- 代币不可分割。 你可以转让1、2、3或37个代币，但不能转让2.5个代币。
 
-Paste the code below into the file and take a minute to read the code. It's simple and it's full of comments explaining the basics of Solidity.
+>  提示：你可能听说过ERC20，这是以太坊中的代币标准。 DAI，USDC，MKR和ZRX之类的代币都遵循ERC20标准，使这些代币都可以与任何能处理ERC20代币的软件兼容。 **为了简单起见，我们要构建的代币不是ERC20**。
 
-> TIP
+### 编写合约
 
-> To get syntax highlighting you should add Solidity support to your text editor. Just look for Solidity or Ethereum plugins. We recommend using Visual Studio Code or Sublime Text 3.
+首先创建一个名为 `contracts` 的新目录，然后在目录内创建一个名为`Token.sol`的文件。
+
+
+
+将下面的代码粘贴到文件中，花一点时间阅读代码。 它很简单，并且有很多解释[Solidity基础语法](https://learnblockchain.cn/docs/solidity/)的注释。
+
+
+
+> 提示：在文本编辑器中添加相应的插件(搜索Solidity 或 Ethereum 插件)可以支持Solidity语法高亮，我们建议使用Visual Studio Code或Sublime Text 3。
 
 ```solidity
 // Solidity files have to start with this pragma.
@@ -265,7 +323,7 @@ contract Token {
     mapping(address => uint256) balances;
 
     /**
-     * Contract initialization.
+     * 合约构造函数
      *
      * The `constructor` is executed only once when the contract is created.
      * The `public` modifier makes a function callable from outside the contract.
@@ -278,7 +336,7 @@ contract Token {
     }
 
     /**
-     * A function to transfer tokens.
+     * 代币转账.
      *
      * The `external` modifier makes a function *only* callable from outside
      * the contract.
@@ -295,7 +353,7 @@ contract Token {
     }
 
     /**
-     * Read only function to retrieve the token balance of a given account.
+     * 读取某账号的代币余额
      *
      * The `view` modifier indicates that it doesn't modify the contract's
      * state, which allows us to call it without executing a transaction.
@@ -306,13 +364,13 @@ contract Token {
 }
 ```
 
-> TIP
+> 提示：`*.sol` 的Solidity 合约文件的后缀。 我们建议将文件名与其包含的合约名一致，这是一种常见的做法。
 
-> `*.sol` is used for Solidity files. We recommend matching the file name to the contract it contains, which is a common practice.
+### 编译合约
 
-## Compiling contracts
+要编译合约，请在终端中运行 `npx buidler compile` 。 `compile`任务是内置任务之一。
 
-To compile the contract run `npx buidler compile` in your terminal. The `compile` task is one of the built-in tasks.
+
 
 ```text
 $ npx buidler compile
@@ -320,17 +378,23 @@ Compiling...
 Compiled 1 contract successfully
 ```
 
-The contract has been successfully compiled and it's ready to be used.
+合约已成功编译，可以使用了。
 
-# 5. Testing contracts
 
-Writing automated tests when building smart contracts is of crucial importance, as your user's money is what's at stake. For this we're going to use **Buidler EVM**, a local Ethereum network designed for development that is built-in and the default network in **Buidler**. You don't need to setup anything to use it. In our tests we're going to use ethers.js to interact with the Ethereum contract we built in the previous section, and [Mocha](https://mochajs.org/) as our test runner.
 
-## Writing tests
+## 5. 测试合约
 
-Create a new directory called `test` inside our project root directory and create a new file called `Token.js`.
+为智能合约编写自动化测试至关重要，因为事关用户资金。 为此，我们将使用**Buidler EVM**，这是一个内置的以太坊网络，专门为开发而设计，并且是**Buidler **中的默认网络。 你无需进行任何设置即可使用它。 在我们的测试中，我们将使用[ethers.js](https://learnblockchain.cn/docs/ethers.js/)与上一节中构建的以太坊合约进行交互，并使用 [Mocha](https://mochajs.org/) 作为测试框架。
 
-Let's start with the code below. We'll explain it next, but for now paste this into `Token.js`:
+
+
+### 编写测试用例
+
+在项目根目录中创建一个名为`test`的新目录，并创建一个名为`Token.js`的新文件。
+
+让我们从下面的代码开始。 接下来，我们将对其进行解释，但现在将其粘贴到`Token.js`中：
+
+
 
 ```js
 const { expect } = require("chai");
@@ -350,7 +414,9 @@ describe("Token contract", function() {
 });
 ```
 
-On your terminal run `npx buidler test`. You should see the following output:
+在终端上运行`npx buidler test`。 你应该看到以下输出：
+
+
 
 ```text
 $ npx buidler test
@@ -364,63 +430,83 @@ All contracts have already been compiled, skipping compilation.
   1 passing (663ms)
 ```
 
-This means the test passed. Let's now explain each line:
+这意味着测试通过了。 现在我们逐行解释一下：
 
 ```js
 const [owner] = await ethers.getSigners();
 ```
 
-A `Signer` in ethers.js is an object that represents an Ethereum account. It's used to send transactions to contracts and other accounts. Here we're getting a list of the accounts in the node we're connected to, which in this case is **Buidler EVM**, and only keeping the first one.
 
-The `ethers` variable is available in the global scope. If you like your code always being explicit, you can add this line at the top:
+
+ethers.js中的`Signer`是代表以太坊账户的对象。 它用于将交易发送到合约和其他帐户。 在这里，我们获得了所连接节点中的帐户列表，在本例中节点为**Buidler EVM**，并且仅保留第一个帐户。
+
+
+
+`ethers`变量在全局作用域下都可用。 如果你希望代码始终是明确的，则可以在顶部添加以下行：
 
 ```js
 const { ethers } = require("@nomiclabs/buidler");
 ```
 
-> TIP
-
->  To learn more about `Signer`, you can look at the [Signers documentation](https://docs.ethers.io/ethers.js/html/api-wallet.html).
+> 提示：要了解有关`Signer`的更多信息，可以查看[Signers文档](https://docs.ethers.io/ethers.js/html/api-wallet.html)。
 
 ```js
 const Token = await ethers.getContractFactory("Token");
 ```
 
-A `ContractFactory` in ethers.js is an abstraction used to deploy new smart contracts, so `Token` here is a factory for instances of our token contract.
+ethers.js中的`ContractFactory`是用于部署新智能合约的抽象，因此此处的`Token`是我们代币合约实例的工厂。
 
 ```js
 const buidlerToken = await Token.deploy();
 ```
 
-Calling `deploy()` on a `ContractFactory` will start the deployment, and return a `Promise` that resolves to a `Contract`. This is the object that has a method for each of your smart contract functions.
+在`ContractFactory`上调用`deploy()`将启动部署，并返回解析为`Contract`的`Promise`。 该对象包含了智能合约所有函数的方法。
+
+
 
 ```js
 await buidlerToken.deployed();
 ```
 
-When you call on `deploy()` the transaction is sent, but the contract isn't actually deployed until the transaction is mined. Calling `deployed()` will return a `Promise` that resolves once this happens, so this code is blocking until the deployment finishes.
+当你调用`deploy()`时，将发送交易，但是直到该交易打包出块后，合约才真正部署。 调用`deployed()`将返回一个`Promise`，因此该代码将阻塞直到部署完成。
+
+
 
 ```js
 const ownerBalance = await buidlerToken.balanceOf(owner.getAddress());
 ```
 
-Once the contract is deployed, we can call our contract methods on `buidlerToken` and use them to get the balance of the owner account by calling `balanceOf()`.
 
-Remember that the owner of the token who gets the entire supply is the account that makes the deployment, and when using the `buidler-ethers` plugin `ContractFactory` and `Contract` instances are connected to the first signer by default. This means that the account in the `owner` variable executed the deployment, and `balanceOf()` should return the entire supply amount.
+
+部署合约后，我们可以在`buidlerToken` 上调用我们的合约方法，通过调用`balanceOf()`来获取所有者帐户的余额。
+
+
+
+请记住，获得全部代币发行量的账户是进行部署的帐户，并且在使用 `buidler-ethers` 插件时，默认情况下， `ContractFactory`和`Contract`实例连接到第一个签名者。 这意味着`owner`变量中的帐户执行了部署，而`balanceOf()`应该返回全部发行量。
+
+
 
 ```js
 expect(await buidlerToken.totalSupply()).to.equal(ownerBalance);
 ```
 
-Here we're again using our `Contract` instance to call a smart contract function in our Solidity code. `totalSupply()` returns the token's supply amount and we're checking that it's equal to `ownerBalance`, as it should.
-
-To do this we're using [Chai](https://www.chaijs.com/) which is an assertions library. These asserting functions are called "matchers", and the ones we're using here actually come from [Waffle](https://getwaffle.io/). This is why we're using the `buidler-waffle` plugin, which makes it easier to assert values from Ethereum. Check out [this section](https://ethereum-waffle.readthedocs.io/en/latest/matchers.html) in Waffle's documentation for the entire list of Ethereum-specific matchers.
-
-### Using a different account
-
-If you need to send a transaction from an account (or `Signer` in ethers.js speak) other than the default one to test your code, you can use the `connect()` method in your ethers.js `Contract` to connect it to a different account. Like this:
 
 
+在这里，我们再次使用`Contract`实例调用Solidity代码中合约函数。 `totalSupply()`返回代币的发行量，我们检查它是否等于`ownerBalance`。
+
+
+
+为此，我们使用[Chai](https://www.chaijs.com/)，这是一个断言库。 这些断言函数称为“匹配器”，我们在此使用的实际上来自[Waffle](https://getwaffle.io/)。 这就是为什么我们使用`buidler-waffle`插件，这使得从以太坊上断言值变得更容易。 请查看Waffle文档中的[此部分](https://ethereum-waffle.readthedocs.io/en/latest/matchers.html)，了解以太坊特定匹配器的完整列表。
+
+
+
+
+
+#### 使用不同的账号
+
+
+
+如果你需要从默认帐户以外的其他帐户(或ethers.js 中的 `Signer`)发送交易来测试代码，则可以在ethers.js的`Contract`中使用`connect()`方法来将其连接到其他帐户。 像这样：
 
 
 
@@ -448,9 +534,15 @@ describe("Transactions", function () {
 });
 ```
 
-### Full coverage
 
-Now that we've covered the basics you'll need for testing your contracts, here's a full test suite for the token with a lot of additional information about Mocha and how to structure your tests. We recommend reading through.
+
+#### 完整测试
+
+
+
+既然我们已经介绍了测试合约所需的基础知识，一下是代币的完整测试用例，其中包含有关Mocha以及如何构组织测试的许多信息。 我们建议你通读。
+
+
 
 ```js
 // We import Chai to use its asserting functions here.
@@ -584,7 +676,9 @@ describe("Token contract", function () {
 });
 ```
 
-This is what the output of `npx buidler test` should look like against the full test suite:
+这是 `npx buidler test`在完整测试用例下输出的样子：
+
+
 
 ```text
 $ npx buidler test
@@ -603,21 +697,23 @@ All contracts have already been compiled, skipping compilation.
   5 passing (1s)
 ```
 
-Keep in mind that when you run `npx buidler test`, your contracts will be compiled if they've changed since the last time you ran your tests.
+请记住，当你运行`npx buidler test`时，如果你的合约在上次运行测试后发生了修改，则会对其进行重新编译。
 
 
 
-# 6. Debugging with Buidler EVM
-
-**Buidler** comes built-in with **Buidler EVM**, a local Ethereum network designed for development. It allows you to deploy your contracts, run your tests and debug your code. It's the default network **Buidler** connects to, so you don't need to setup anything for it to work. Just run your tests.
-
-## Solidity `console.log`
-
-When running your contracts and tests on **Buidler EVM** you can print logging messages and contract variables calling `console.log()` from your Solidity code. To use it you have to import **Buidler**'s`console.log` from your contract code.
-
-This is what it looks like:
 
 
+## 6. 用 Buidler EVM 调试
+
+**Buidler**内置了**Buidler EVM **，这是一个专为开发而设计的以太坊网络。 它允许你部署合约，运行测试和调试代码。 这是**Buidler**所连接的默认网络，因此你无需进行任何设置即可工作。 你只需运行测试就好。
+
+
+
+### Solidity `console.log`
+
+在**Buidler EVM**上运行合约和测试时，你可以在Solidity代码中调用`console.log()`打印日志信息和合约变量。 你必须先从合约代码中导入**Buidler **的`console.log`再使用它。
+
+像这样：
 
 ```solidity
 pragma solidity ^0.6.0;
@@ -629,9 +725,7 @@ contract Token {
 }
 ```
 
-Add some `console.log` to the `transfer()` function as if you were using it in JavaScript:
-
-
+就像在JavaScript中使用一样，将一些`console.log`添加到`transfer()`函数中：
 
 
 
@@ -647,7 +741,7 @@ function transfer(address to, uint256 amount) external {
 }
 ```
 
-The logging output will show when you run your tests:
+运行测试时，将输出日志记录：
 
 
 
@@ -678,19 +772,31 @@ Trying to send 100 tokens to 0xe5904695748fe4a84b40b3fc79de2277660bd1d3
   5 passing (2s)
 ```
 
-Check out the [documentation](https://buidler.dev/buidler-evm/#console-log) to learn more about this feature.
+请查看[buidler 文档](https://buidler.dev/buidler-evm/#console-log)以了解有关此功能的更多信息。
 
-# 7. Deploying to a live network
 
-Once you're ready to share your dApp with other people what you may want to do is deploy to a live network. This way others can access an instance that's not running locally on your system.
 
-There's the Ethereum network that deals with real money which is called "mainnet", and then there are other live networks that don't deal with real money but do mimic the real world scenario well, and can be used by others as a shared staging environment. These are called "testnets" and Ethereum has multiple ones: *Ropsten*, *Kovan*, *Rinkeby* and *Goerli*. We recommend you deploy your contracts to the *Ropsten* testnet.
+## 7. 部署
 
-At the software level, deploying to a testnet is the same as deploying to mainnet. The only difference is which network you connect to. Let's look into what the code to deploy your contracts using ethers.js would look like.
+准备好与其他人分享dApp后，你可能要做的就是将其部署到真实的以太坊网络中。 这样，其他人可以访问不在本地系统上运行的实例。
 
-The main concepts used are `Signer`, `ContractFactory` and `Contract` which we explained back in the [testing](https://buidler.dev/tutorial/testing-contracts.html) section. There's nothing new that needs to be done when compared to testing, given that when you're testing your contracts you're *actually* making a deployment to your development network. This makes the code very similar, or the same.
 
-Let's create a new directory `scripts` inside the project root's directory, and paste the following into a `deploy.js` file:
+
+具有真实价值的以太坊网络被称为“主网”，然后还有一些不具有真实价值但能够很好地模拟主网的网络，它可以被其他人共享阶段的环境。 这些被称为“测试网”，以太坊有多个：*Ropsten*，*Kovan*，*Rinkeby*和*Goerli*。 我们建议你将合约部署到*Ropsten*测试网。
+
+
+
+在应用软件层，部署到测试网与部署到主网相同。 唯一的区别是你连接到哪个网络。 让我们研究一下使用ethers.js部署合约的代码是什么样的。
+
+
+
+主要概念是`Signer`，`ContractFactory`和`Contract`，我们在[测试](https://buidler.dev/tutorial/testing-contracts.html)部分中对此进行了解释。 与测试相比，并没有什么新的内容，因为当你测试合约时，你实际上是在向开发网络进行部署。 因此代码非常相似或相同。
+
+
+
+让我们在项目根目录的目录下创建一个新的目录`scripts`，并将以下内容粘贴到 `deploy.js`文件中：
+
+
 
 ```js
 async function main() {
@@ -720,13 +826,21 @@ main()
   });
 ```
 
-To indicate **Buidler** to connect to a specific Ethereum network when running any tasks, you can use the `--network` parameter. Like this:
+
+
+为了在运行任何任务时指示**Builder**连接到特定的以太坊网络，可以使用`--network`参数。 像这样：
+
+
 
 ```text
 npx buidler run scripts/deploy.js --network <network-name>
 ```
 
-In this case, running it without the `--network` parameter would get the code to run against an embedded instance of **Buidler EVM**, so the deployment actually gets lost when **Buidler** finishes running, but it's still useful to test that our deployment code works:
+
+
+在这种情况下，如果不使用`--network` 参数来运行它，则代码将再次部署在**Buidler EVM **上，因此，当**Buidler**完成运行时，部署实际上会丢失，但是它用来测试我们的部署代码时仍然有用：
+
+
 
 ```text
 $ npx buidler run scripts/deploy.js
@@ -736,9 +850,9 @@ Account balance: 10000000000000000000000
 Token address: 0x7c2C195CD6D34B8F845992d380aADB2730bB9C6F
 ```
 
-## Deploying to remote networks
+### 部署到线上网络
 
-To deploy to a remote network such as mainnet or any testnet, you need to add a `network` entry to your `buidler.config.js` file. We’ll use Ropsten for this example, but you can add any network similarly:
+要部署到诸如主网或任何测试网之类的线上网络，你需要在`buidler.config.js` 文件中添加一个`network`条目。 在此示例中，我们将使用Ropsten，但你可以类似地添加其他网络：
 
 
 
@@ -765,78 +879,93 @@ module.exports = {
 };
 ```
 
-We're using [Infura](https://infura.io/), but pointing `url` to any Ethereum node or gateway would work. Go grab your `INFURA_PROJECT_ID` and come back.
+我们这里使用[Infura](https://infura.io/)，但是你将url指向其他任何以太坊节点或网关都是可以。请你从https://infura.io/网站复制 Project ID，替换`INFURA_PROJECT_ID`。
 
-To deploy on Ropsten you need to send ropsten-ETH into the address that's going to be making the deployment. You can get some ETH for testnets from a faucet, a service that distributes testing-ETH for free. [Here's the one for Ropsten](https://faucet.metamask.io/), you'll have to change Metamask's network to Ropsten before transacting.
 
-TIP
 
-You can get some ETH for other testnets following these links:
+要在Ropsten上进行部署，你需要将ropsten-ETH发送到将要进行部署的地址中。 你可以从水龙头获得一些用于测试网的ETH，水龙头服务免费分发测试使用的ETH。 [这是Ropsten的一个水龙头](https://faucet.metamask.io/)，你必须在进行交易之前将Metamask的网络更改为Ropsten。
 
-- [Kovan faucet](https://faucet.kovan.network/)
-- [Rinkeby faucet](https://faucet.rinkeby.io/)
-- [Goerli faucet](https://goerli-faucet.slock.it/)
 
-Finally, run:
+
+> 提示：你可以通过以下链接为其他测试网获取一些ETH
+>
+> * [Kovan faucet](https://faucet.kovan.network/)
+> * [Rinkeby faucet](https://faucet.rinkeby.io/)
+> * [Goerli faucet](https://goerli-faucet.slock.it/)
+
+最后运行：
 
 ```text
 npx buidler run scripts/deploy.js --network ropsten
 ```
 
-If everything went well, you should see the deployed contract address.
+如果一切顺利，你应该看到已部署的合约地址。
 
-# 8. Buidler Hackathon Boilerplate Project
 
-If you want to get started with your dApp quickly or see what this whole project looks like with a frontend, you can use our hackathon boilerplate repo.
 
-https://github.com/nomiclabs/buidler-hackathon-boilerplate
+## 8. Buidler 前端模板项目
 
-## What's included
+如果你想快速开始使用dApp或使用前端查看整个项目，可以使用我们的[hackathon模板库](https://github.com/nomiclabs/buidler-hackathon-boilerplate)。
 
-- The Solidity contract we used in this tutorial
-- A test suite using ethers.js and Waffle
-- A minimal front-end to interact with the contract using ethers.js
 
-###  Solidity contract & tests
 
-In the root of the repo you'll find the **Buidler** project we put together through this tutorial with the `Token` contract. To refresh your memory on what it implements:
+### 包含了哪些内容
 
-- There is a fixed total supply of tokens that can't be changed.
-- The entire supply is assigned to the address that deploys the contract.
-- Anyone can receive tokens.
-- Anyone with at least one token can transfer tokens.
-- The token is non-divisible. You can transfer 1, 2, 3 or 37 tokens but not 2.5.
+- 我们在本教程中使用的Solidity合约
+- 使用ethers.js和Waffle的测试用例
+- 使用ethers.js与合约进行交互的最小前端
 
-###  Frontend app
+####  合约及测试
 
-In `frontend/` you'll find a simple app that allows the user to do two things:
+在项目仓库的根目录中，你会发现本教程的`Token`合约已经放在里面，回顾一下其实现的内容：
 
-- Check the connected wallet's balance
-- Send tokens to an address
 
-It's a separate npm project and it was created using `create-react-app`, so this means that it uses webpack and babel.
 
-### Frontend file architecture
+- 代币有固定的发行总量，并且总量是无法更改的。
+
+- 整个发行总量都分配给了部署合约的地址。
+
+- 任何人都可以接收代币。
+
+- 拥有至少一个代币的任何人都可以转让代币。
+
+- 代币不可分割。 你可以转让1、2、3或37个代币，但不能转让2.5个代币。
+
+  
+
+####  前端应用
+
+在 `frontend/` 下你会发现一个简单的前端应用，它允许用户执行以下两项操作：
+
+- 查看已连接钱包的账户余额
+- 代币转账
+
+这是一个单独的npm项目，是使用 `create-react-app`创建的，这意味着它使用了webpack和babel。
+
+
+
+#### 前端目录结构
 
 - ```
   src/ 
   ```
 
-  contains all the code
+  包含了所有代码
 
   - ```
   src/components
     ```
   
-    contains the react components
+    包含了 react 组件
 
-    - `Dapp.js` is the only file with business logic. This is where you'd replace the code with your own if you were to use this as boilerplate
-- Every other component just renders HTML, no logic.
-    - `src/contracts` has the ABI and address of the contract and these are automatically generated by the deployment script
+    - `Dapp.js` 是唯一具有业务逻辑的文件。 如果用作模板使用，请在此处用自己的代码替换它
+- 其他组件仅渲染HTML，没有逻辑。
+  
+    - `src/contracts` 具有合约的ABI和地址，这些由部署脚本自动生成。
 
-## How to use it
+### 如何使用
 
-First clone the repository, and then to get the contracts deployed:
+首先克隆代码库，然后部署合约：
 
 ```text
 cd buidler-hackathon-boilerplate/
@@ -844,13 +973,15 @@ npm install
 npx buidler node
 ```
 
-Here we just install the npm project's dependencies, and by running `npx buidler node` we spin up an instance of **Buidler EVM** that you can connect to using MetaMask. In a different terminal in the same directory, run:
+在这里，我们仅需要安装npm项目的依赖项，然后运行`npx buidler node`启动一个可以公MetaMask连接的**Buidler EVM**实例。 在同一目录下的另一个终端中运行：
 
 ```text
 npx buidler --network localhost run scripts/deploy.js
 ```
 
-This will deploy the contract to **Buidler EVM**. After this completes run:
+这会将合约部署到**Builder EVM**。 完成此运行后：
+
+
 
 ```text
 cd buidler-hackathon-boilerplate/frontend/
@@ -858,28 +989,42 @@ npm install
 npm run start
 ```
 
-To start the react web app. Open http://localhost:3000/ in your browser and you should see this: ![img](https://buidler.dev/front-5.png)
+启动react Web应用后，在浏览器中打开http://localhost:3000/，你应该看到以下内容：
 
-Set your network in MetaMask to `localhost:8545`, and click the button. You should then see this:
+![img](https://img.learnblockchain.cn/pics/20200811150131.png)
 
-![img](https://buidler.dev/front-2.png)
+在MetaMask中将你的网络设置为`localhost:8545`，然后单击“Connect Wallet”按钮。 然后，你应该看到以下内容：
 
-What's happening here is that the frontend code to show the current wallet's balance is detecting that the balance is `0`, so you wouldn't be able to try the transfer functionality. By running:
+
+
+![img](https://img.learnblockchain.cn/pics/20200811150224.png)
+
+前端代码正在检测到当前钱包余额为“ 0”，因此你将无法使用转账功能。运行：
+
+
 
 ```text
 npx buidler --network localhost faucet <your address>
 ```
 
-You'll run a custom **Buidler** task we included that uses the balance of the deploying account to send 100 MBT and 1 ETH to your address. This will allow you to send tokens to another address.
 
-You can check out the code for the task in [`/tasks/faucet.js`](https://github.com/nomiclabs/buidler-hackathon-boilerplate/blob/master/tasks/faucet.js), which is required from `buidler.config.js`.
+
+你运行的是自定义**Builder**任务，该任务使用部署帐户的余额向你的地址发送100 MBT和1 ETH。 之后你就可以将代币发送到另一个地址。
+
+
+
+你可以在[`/tasks/faucet.js`](https://github.com/nomiclabs/buidler-hackathon-boilerplate/blob/master/tasks/faucet.js)中查看任务的代码， 它需要在`buidler.config.js`引入。
+
+
 
 ```text
 $ npx buidler --network localhost faucet 0x0987a41e73e69f60c5071ce3c8f7e730f9a60f90
 Transferred 1 ETH and 100 tokens to 0x0987a41e73e69f60c5071ce3c8f7e730f9a60f90
 ```
 
-In the terminal where you ran `npx buidler node` you should also see:
+在运行`npx buidler node`的终端中，你还应该看到：
+
+
 
 ```text
 eth_sendTransaction
@@ -895,24 +1040,34 @@ eth_sendTransaction
     Transferring from 0xc783df8a850f42e7f7e57013759c285caa701eb6 to 0x0987a41e73e69f60c5071ce3c8f7e730f9a60f90 100 tokens
 ```
 
-Showing the `console.log` output from the `transfer()` function in our contract, and this is what the web app will look like after you run the faucet task: ![img](https://buidler.dev/front-6.png)
+上面显示了合约中`transfer()`函数的`console.log`输出，这是运行水龙头任务后Web应用的界面：
 
-Try playing around with it and reading the code. It's full of comments explaining what's going on and clearly indicating what code is Ethereum boilerplate and what's actually dApp logic. This should make the repository easy to reuse for your project.
+ ![front-6](https://img.learnblockchain.cn/pics/20200811151458.png)
 
-# 9. Final thoughts
 
-Congratulations on finishing the tutorial!
 
-Here are some links you might find useful throughout your journey:
+试着去阅读这份代码。 里面有很多注释解释了代码所做的事情，它清楚地表明哪些代码是以太坊模板，哪些是实际的dApp逻辑。 让我们在项目中重用它非常方便。
 
-- [Buidler's Hackathon Boilerplate](https://github.com/nomiclabs/buidler-hackathon-boilerplate)
-- [Buidler's documentation site](https://buidler.dev/getting-started/)
+
+
+## 9. 最后的想法
+
+恭喜你完成了本教程！
+
+以下是在开发旅程中可能会有用的一些链接：
+
+- [Buidler模板工程](https://github.com/nomiclabs/buidler-hackathon-boilerplate)
+- [Buidler's 文档](https://buidler.dev/getting-started/)
 - [Telegram Buidler Support Group](https://t.me/BuidlerSupport)
-- [Ethers.js Documentation](https://docs.ethers.io/ethers.js/html/)
-- [Waffle Documentation](https://getwaffle.io/)
-- [Mocha Documentation](https://mochajs.org/)
-- [Chai Documentation](https://www.chaijs.com/)
+- [Ethers.js 文档](https://docs.ethers.io/ethers.js/html/) 及 [ethers.js文档中文版](https://learnblockchain.cn/docs/ethers.js/)
+- [Waffle 文档](https://getwaffle.io/)
+- [Mocha 文档](https://mochajs.org/)
+- [Chai 文档](https://www.chaijs.com/)
 
-Happy hacking!
+
 
 ![img](https://buidler.dev/cool-buidler.svg)
+
+
+
+原文链接：https://buidler.dev/tutorial/
