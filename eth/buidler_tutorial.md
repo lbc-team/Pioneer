@@ -946,22 +946,14 @@ npx buidler run scripts/deploy.js --network ropsten
 
 #### 前端目录结构
 
-- ```
-  src/ 
-  ```
 
-  包含了所有代码
+`src`: 包含了所有代码
 
-  - ```
-  src/components
-    ```
+`src/components` : 包含了 react 组件
+
+`src/components/Dapp.js` 是唯一具有业务逻辑的文件。 如果用作模板使用，请在此处用自己的代码替换它，其他组件仅渲染HTML，没有逻辑。
   
-    包含了 react 组件
-
-    - `Dapp.js` 是唯一具有业务逻辑的文件。 如果用作模板使用，请在此处用自己的代码替换它
-- 其他组件仅渲染HTML，没有逻辑。
-  
-    - `src/contracts` 具有合约的ABI和地址，这些由部署脚本自动生成。
+`src/contracts` ：具有合约的ABI和地址，这些由部署脚本自动生成。
 
 ### 如何使用
 
