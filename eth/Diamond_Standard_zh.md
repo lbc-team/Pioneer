@@ -36,7 +36,7 @@ ERC-1155多令牌标准提到了升级合同的钻石标准(EIP-2535)。
 
 ​		[排球火](http://joeyzacherl.com/2018/10/volleyfire-liquidity-provider-for-decentralized-exchanges/)，一个分散式交易所的流动性供应商正在使用钻石标准。
 
-排球火的开发人员乔伊·扎克尔发布了一个名为[Diamond Setter](https://github.com/lampshade9909/DiamondSetter)的Python工具，它是钻石的合约经理。以下是他的博客文章:[钻石制造器，以太坊智能合约管理器](http://joeyzacherl.com/2020/06/diamond-setter-ethereum-smart-contract-manager)
+排球火的开发人员乔伊·扎克尔发布了一个名为[Diamond Setter](https://github.com/lampshade9909/DiamondSetter)的Python工具，它是钻石的合约经理。以下是他的博客文章:[Diamond Setter,以太坊智能合约管理器](http://joeyzacherl.com/2020/06/diamond-setter-ethereum-smart-contract-manager)
 
 ​		Ronan Sandford ([wighawag](https://twitter.com/wighawag))是一位杰出的智能合同开发人员，也是ERC-1155标准的作者，他[宣布](https://twitter.com/wighawag/status/1280992800545349644)他正在致力于在[buidler-deploy](https://github.com/wighawag/buidler-deploy#readme)中增加对钻石的支持，从而使钻石的部署/切割变得非常容易。buidler-deploy是一种将合约部署到任何网络、跟踪它们并复制相同环境进行测试的机制。
 
