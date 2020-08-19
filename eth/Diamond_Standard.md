@@ -6,16 +6,16 @@
 
 ​		即使没有实现大型标准，一些开发人员也会希望开发大型合约，以便将相关代码放在同一个以太坊地址下。而且，如果状态和功能一起保存在同一个以太坊地址下，那么访问和修改合约存储就更容易、更灵活。
 
-### 怎么办呢?
+### [](#怎么办呢)怎么办呢?
 
 ​		有人提议增加或取消合约的最大规模限制。但维塔利克.布特林(Vitalik Buterin)出于技术原因反对该协议，并捍卫使用“代理合约”和“委托合约”的做法。代理合约是指通过使用称为“delegatecall”的低层操作通过调用其他合约功能来保持当前合约较小规模的合约。
 
 基于以上分歧，我认为把如何操作进行标准化会是一个好主意。如何创建代理合约来模拟可能超过24kb大小限制的大型合约。
 
-​	   这就是为什么我制定了钻石标准。标准规范了你如何创建一个小合约，这个合约可以使用任何数量的其他合约的代码，就好像它是自己的代码一样。
+​	   这就是为什么我制定了[钻石标准](https://github.com/ethereum/EIPs/issues/2535)。标准规范了你如何创建一个小合约，这个合约可以使用任何数量的其他合约的代码，就好像它是自己的代码一样。
 ​		执行钻石标准的合约称为钻石。“钻石”一词用于将钻石与只能从单个合约借用代码的常规合约和代理合约区分开来。此外，术语“钻石”用于概念化钻石如何工作。
 
-​		真正的钻石有不同的侧面，叫做切面。可以设想，一个钻石在以太坊也有不同的一面。每一个钻石借用功能的合同都是不同的侧面或琢面（“facet“）。
+​		真正的钻石有不同的侧面，叫做切面。可以设想，一个钻石在以太坊也有不同的一面。每一个钻石借用功能的合约都是不同的侧面或琢面（“facet“）。
 
 ​	钻石标准扩展了类比其“钻石切割”的功能，用于增加，替换，或删除切面和功能。这类似于给予一个真正的钻石新琢面，通过字面上的切割它。
 ​		此外，钻石标准提供了4个功能称为“放大镜”，返回关于什么方面和功能存在的钻石。在钻石行业，“放大镜”是一种用来检查钻石的小放大镜。
@@ -26,15 +26,15 @@
 
 
 
-### 钻石标准越来越受欢迎
+### [](#钻石标准越来越受欢迎)钻石标准越来越受欢迎
 
-​		上个月，[共识调查对](https://diligence.consensys.net)Codefi的合约进行了一次公共安全审计。共识调查建议Codefi使用钻石标准来解决合约最大规模限制问题。
+​		上个月，[ConsenSys Diligence](https://diligence.consensys.net) 对[Codefi](https://codefi.consensys.net/)的合约进行了一次公共安全审计。ConsenSys Diligence[建议](https://diligence.consensys.net/audits/2020/06/codefi-erc1400-assessment/#diamond-standard)Codefi使用钻石标准来解决合约最大规模限制问题。
 
-ERC-1155多令牌标准提到了升级合约的钻石标准(EIP-2535)。
+ERC-1155多代币标准[提到](https://eips.ethereum.org/EIPS/eip-1155#upgrades)了升级合约的钻石标准(EIP-2535)。
 
 许多个人和公司联系了我，告诉我他们正在使用钻石标准或正在为他们的系统实现钻石标准。以下是一些公开发表过相关文章的人提供的一些信息:
 
-​		[排球火](http://joeyzacherl.com/2018/10/volleyfire-liquidity-provider-for-decentralized-exchanges/)，一个分散式交易所的流动性供应商正在使用钻石标准。
+​		[VolleyFire](http://joeyzacherl.com/2018/10/volleyfire-liquidity-provider-for-decentralized-exchanges/)，一个分散式交易所的流动性供应商正在使用钻石标准。
 
 排球火的开发人员乔伊·扎克尔发布了一个名为[Diamond Setter](https://github.com/lampshade9909/DiamondSetter)的Python工具，它是钻石的合约经理。以下是他的博客文章:[Diamond Setter,以太坊智能合约管理器](http://joeyzacherl.com/2020/06/diamond-setter-ethereum-smart-contract-manager)
 
