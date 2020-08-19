@@ -8,7 +8,7 @@
 
 ### 怎么办呢?
 
-​		有人提议增加或取消合约的最大规模限制。但维塔利克.布特林(Vitalik Buterin)出于技术原因反对该协议，并捍卫使用“代理合同”和“委托合同”的做法。代理合约是指通过使用称为“delegatecall”的低层操作通过调用其他合约功能来保持较小规模的合约。
+​		有人提议增加或取消合约的最大规模限制。但维塔利克.布特林(Vitalik Buterin)出于技术原因反对该协议，并捍卫使用“代理合约”和“委托合约”的做法。代理合约是指通过使用称为“delegatecall”的低层操作通过调用其他合约功能来保持当前合约较小规模的合约。
 
 基于以上分歧，我认为这是一个好主意来标准化该如何操作。如何创建代理合约来模拟可能超过24kb大小限制的大型合约。
 
@@ -38,7 +38,7 @@ ERC-1155多令牌标准提到了升级合约的钻石标准(EIP-2535)。
 
 排球火的开发人员乔伊·扎克尔发布了一个名为[Diamond Setter](https://github.com/lampshade9909/DiamondSetter)的Python工具，它是钻石的合约经理。以下是他的博客文章:[Diamond Setter,以太坊智能合约管理器](http://joeyzacherl.com/2020/06/diamond-setter-ethereum-smart-contract-manager)
 
-​		Ronan Sandford ([wighawag](https://twitter.com/wighawag))是一位杰出的智能合同开发人员，也是ERC-1155标准的作者，他[宣布](https://twitter.com/wighawag/status/1280992800545349644)他正在致力于在[buidler-deploy](https://github.com/wighawag/buidler-deploy#readme)中增加对钻石的支持，从而使钻石的部署/切割变得非常容易。buidler-deploy是一种将合约部署到任何网络、跟踪它们并复制相同环境进行测试的机制。
+​		Ronan Sandford ([wighawag](https://twitter.com/wighawag))是一位杰出的智能合约开发人员，也是ERC-1155标准的作者，他[宣布](https://twitter.com/wighawag/status/1280992800545349644)他正在致力于在[buidler-deploy](https://github.com/wighawag/buidler-deploy#readme)中增加对钻石的支持，从而使钻石的部署/切割变得非常容易。buidler-deploy是一种将合约部署到任何网络、跟踪它们并复制相同环境进行测试的机制。
 
 ​		[Nayms](https://nayms.io/)在生产中使用钻石。[Ram](https://twitter.com/hiddentao)写了一篇关于其实现的博文:使用钻石标准的可升级智能合约
 
