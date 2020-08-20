@@ -1,26 +1,42 @@
-# Value Arrays in Solidity
+# 在 Solidity中使用值数组以降低 gas 消耗
 
-This article discusses using Value Arrays as a way to reduce gas consumption in Solidity, the defacto smart contract language for the Ethereum blockchain.
+本文讨论如何使用值数组（Value Array）方式来减少Solidity智能合约的gas 消耗。
 
 
 
-## Background
+## 背景
 
-During the development and testing of Datona Labs’ Solidity Smart-Data-Access-Contract (S-DAC) templates, we often need to use small arrays of small values. In the examples for this article, I investigate whether using Value Arrays will help me to do that more efficiently than Reference Arrays.
+我们Datona Labs在开发和测试Solidity数据访问合约（S-DAC：Smart-Data-Access-Contract）模板过程中，经常需要使用只有很小数值的小数组（数组元素个数少）。在本示例中，研究了使用值数组（Value Array）是否比引用数组（Reference Array）更高效。
 
-# Discussion
 
-Solidity supports arrays in *memory* which can be wasteful of space (see [here](https://solidity.readthedocs.io/en/latest/types.html#arrays)), and in *storage* which consume a lot of gas to allocate and access. But Solidity also runs on the Ethereum Virtual Machine (EVM) which has a very large [machine word](https://en.wikipedia.org/wiki/Word_(computer_architecture)) of 256bits (32bytes). It is this latter feature that enables us to consider using Value Arrays. In languages with smaller word types e.g. 32bits (4bytes), Value Arrays are unlikely to be practical.
 
-Can we reduce our storage space and gas consumption using Value Arrays?
 
-## Value Arrays compared to Reference Arrays
 
-### Reference Arrays
+# 讨论
 
-In Solidity, arrays are normally *reference types*. That means that a *pointer to the array* is used whenever the variable symbol is encountered in the program text, although there are several exceptions where a copy is made instead (see [here](https://solidity.readthedocs.io/en/latest/types.html#reference-types)). In the following code, a 10 element array of 8bit uints **users** is passed to the function *setUser*, which sets one of the elements in the users array:
 
-```
+
+Solidity支持内存（memory）中的分配数组，这些数组会很浪费空间（参考 [文档](https://learnblockchain.cn/docs/solidity/types.html#arrays)），而存储（*storage*）中的数组则会消耗大量的gas来分配和访问存储。但是Solidity所运行的[以太坊虚拟机（EVM）](https://learnblockchain.cn/2019/04/09/easy-evm)有一个256位（32字节）机器字长。正是后一个特性使我们能够考虑使用值数组（Value Array）。在机器字长的语言中，例如32位（4字节），值数组（Value Array）不太可能实用。
+
+
+
+我们可以使用值数组（Value Array）减少存储空间和gas消耗吗？
+
+
+
+> 译者注：机器字长 是指每一个指令处理的数据长度。
+
+
+
+## 比较值数组与引用数组
+
+### 引用数组（Reference Array）
+
+
+
+在 Solidity 中，数组通常是引用类型。这意味着每当在程序中遇到变量符号时，都会使用指向数组的指针，不过也有一些例外情况会生成一个拷贝（参考[文档-引用类型](https://learnblockchain.cn/docs/solidity/types.html#reference-types)）。在以下代码中，将10个元素的 8位uint  `users` 的数组传递给`setUser`函数，该函数设置users数组中的一个元素：
+
+```js
 contract TestReferenceArray {
     function test() public pure {
         uint8[10] memory users;
@@ -36,13 +52,19 @@ contract TestReferenceArray {
 }
 ```
 
-After the function returns, the array element in **users** will have been changed.
+函数返回后，`users`数组元素将被更改。
 
-### Value Arrays 
 
-A Value Array is an array held in a *value type*. That means that the *value* is used whenever the variable symbol is encountered in the program text.
 
-```
+### 值数组（Value Arrays）
+
+
+
+值数组是以[值类型](https://learnblockchain.cn/docs/solidity/types.html#value-types)保存的数组。这意味着在程序中遇到变量符号，就会使用其值。
+
+
+
+```javascript
 contract TestValueArray {
     function test() public pure {
         uint users;
@@ -58,11 +80,17 @@ contract TestValueArray {
 }
 ```
 
-Note that after the function returns, the **users** argument to the function will be *unchanged* since it was passed by value — it is necessary to assign the function return value to the **users** variable in order to obtain the changed value.
 
-## Solidity bytes32 Value Array
 
-Solidity provides a partial Value Array in the bytesX (X = 1..32) types. These hold bytes which may be read individually using array-style access, for instance:
+请注意，在函数返回之后，函数的users参数将保持不变，因为它是通过值传递的，为了获得更改后的值，需要将函数返回值赋值给users变量。
+
+
+
+## Solidity bytes32 值数组
+
+Solidity 在 bytesX（X=1..32）类型中提供了一个部分值数组。这些字节元素可以使用数组方式访问单独读取，例如：
+
+
 
 ```
     ...
@@ -72,18 +100,24 @@ Solidity provides a partial Value Array in the bytesX (X = 1..32) types. These h
     ...
 ```
 
-But unfortunately, in [Solidity v0.7.1](https://solidity.readthedocs.io/en/latest/types.html#fixed-size-byte-arrays) we can’t write to the individual bytes using array-style access:
+但不幸的是，在[Solidity 目前的版本](https://learnblockchain.cn/docs/solidity/types.html#index-7)中，我们无法使用数组访问方式写入某个字节：
+
+
 
 ```
     ...
     bytes32 bs = "hello";
-    bs[0] = 'c'; // unfortunately, this is NOT possible!
+    bs[0] = 'c'; // 不可以实现
     ...
 ```
 
-So firstly, let’s add that facility to the bytes32 type using Solidity’s helpful [*using library for type*](https://solidity.readthedocs.io/en/latest/contracts.html#using-for) in an import library file:
 
-```
+
+让我们使用Solidity的 [using for](https://learnblockchain.cn/docs/solidity/contracts.html#using-for) 导入库的方式为bytes32类型添加新能力：
+
+
+
+```js
 library bytes32lib {
     uint constant bits = 8;
     uint constant elements = 32;
@@ -98,95 +132,125 @@ library bytes32lib {
 }
 ```
 
-This library provides the function *set()* which enables the caller to set any byte in the bytes32 variable to any desired byte value. Depending upon your requirements, you may wish to generate similar libraries for the other bytesX types that you use.
+这个库提供了set()函数，它允许调用者将bytes32变量中的任何字节设置为想要的字节值。根据你的需求，你可能希望为你使用的其他bytesX类型生成类似的库。
 
-### Sunny Day Testing
 
-Let’s import that library and test it:
 
-```
-import "bytes32lib.sol";contract TestBytes32 {
+### 测试一把
+
+让我们导入该库并测试它：
+
+```javascript
+import "bytes32lib.sol";
+
+contract TestBytes32 {
     using bytes32lib for bytes32;
     
     function test1() public pure {
         bytes32 va = "hello";
         require(va[0] == 'h');
-        // the replacement for this: va[0] = 'c';
+        // 类似 va[0] = 'c'; 的功能
         va = va.set(0, 'c');
         require(va[0] == 'c');
     }
 }
 ```
 
-Here, you can clearly see that the return value from the *set()* function is **assigned** back to the argument variable. If the assignment is absent, the variable will remain unchanged, as tested by require().
 
-# Possible Fixed Value Arrays
 
-In the Solidity machine word type, 256bits (32bytes), we can consider the following possible Value Arrays.
+在这里，你可以清楚地看到set()函数的返回值被分配回参数变量。如果缺少赋值，则变量将保持不变，require()就是来验证它。
 
-## Fixed Value Arrays
 
-These are Fixed Value Arrays that match some of the Solidity available [types](https://solidity.readthedocs.io/en/latest/types.html#integers):
 
-```
-                         Fixed Value Arrays
-Type         Type Name   Description
-uint128[2]   uint128a2   two 128bit element values
-uint64[4]    uint64a4    four 64bit element values
-uint32[8]    uint32a8    eight 32bit element values
-uint16[16]   uint16a16   sixteen 16bit element values
-uint8[32]    uint8a32    thirty-two 8bit element values
-```
+# 可能的固定长度值数组
 
-I propose the Type Name as shown above, which is used throughout this article, but you may find a preferable naming convention.
+在Solidity机器字长为256位（32字节），我们可以考虑以下可能的值数组。
 
-## More Fixed Value Arrays
+## 固定长度值数组
 
-Actually, there are many more possible Value Arrays. We can also consider types that do not match Solidity’s available types, but may be useful for a particular solution. The number of bits in the X value multiplied by the number of Y elements must be less than or equal to 256:
+这些是以些Solidity[可用整型](https://learnblockchain.cn/docs/solidity/types.html#integers)匹配的固定长度的值数组：
+
+
 
 ```
-                    More Fixed Value Arrays
-Type         Type Name   Description
+                         固定长度值数组
+类型          类型名       描述
+uint128[2]   uint128a2   2个128位元素的值数组
+uint64[4]    uint64a4    4个64位元素的值数组
+uint32[8]    uint32a8    8个32位元素的值数组
+uint16[16]   uint16a16   16个16位元素的值数组
+uint8[32]    uint8a32    32个8位元素的值数组
+```
+
+> 128位元素: 意思是一个元素占用128位空间
+
+我建议使用如上所示的类型名，这在本文中都会用到，但是你可能会找到一个更好的命名约定。
+
+
+
+## 更多固定长度值数组
+
+
+
+实际上，还有更多可能的值数组。 我们还可以考虑与Solidity可用类型不匹配的类型，对于特定解决方案可能有用。 X（值的位数）乘以Y（元素个数）必须小于等于256：
+
+```
+                    更多固定长度值数组
+类型          类型名       描述
 uintX[Y]     uintXaY     X * Y <= 256
 
-uint10[25]   uint10a25   twenty-five 10bit element values
+uint10[25]   uint10a25   25个10位元素的值数组
 
-uint7[36]    uint7a36    thirty-six 7bit element values
-uint6[42]    uint6a42    forty-two 6bit element values
-uint5[51]    uint5a51    fifty-one 5bit element values
-uint4[64]    uint4a64    sixty-four 4bit element values
+uint7[36]    uint7a36    36个7位元素的值数组
+uint6[42]    uint6a42    42个6位元素的值数组
+uint5[51]    uint5a51    51个5位元素的值数组
+uint4[64]    uint4a64    64个4位元素的值数组
 
-uint1[256]   uint1a256   two-hundred & fifty-six 1bit element valuesetcetera
+uint1[256]   uint1a256   256个1位元素的值数组
+...
 ```
 
-Of particular interest is the uint1a256 Value Array. That allows us to efficiently encode up to two-hundred and fifty-six 1bit element values, which represent booleans, into 1 EVM word. Compare that with Solidity’s bool[256] which consumes 256 times as much space in memory, and even 8 times as much space in storage.
 
-## Even More Fixed Value Arrays
 
-There are even more possible Value Arrays. The above are the most efficient Value Array types because they map efficiently onto bits in the EVM word. In the Value Array types above, X is always a number of bits. An alternative to the bitwise shifting technique being used here is to use multiplication and division as in arithmetic coding (see [here](https://en.wikipedia.org/wiki/Arithmetic_coding)), but that is beyond the scope of this article.
+特别感兴趣的是uint1a256值数组。 这使我们可以将最多256个1位元素值（代表布尔值）有效地编码为1个EVM字长。 相比之下，Solidity的bool [256]会消耗256倍的内存空间，甚至是8倍的存储空间。
 
 
 
-## Fixed Value Array Implementation
+## 还有更多固定长度值数组
 
-Here is a useful import file providing get and set functions for the Value Array type uint8a32:
 
-```
-// uint8a32.sollibrary uint8a32 { // provides the equivalent of uint8[32]
+
+还有更多可能的值数组。以上是最有效的值数组类型，因为它们有效地映射到EVM字长中的位。在上面的值数组类型中，X表示元素所占用的位数。
+
+还有按位移位技术的在算术编码中使用乘法和除法，但这超出了本文的范围，可以参考[这里](https://en.wikipedia.org/wiki/Arithmetic_coding)
+
+
+
+## 固定长度值数组实现
+
+下面是一个有用的可导入库文件，为值数组类型uint8a32提供get和set函数：
+
+
+
+```js
+// uint8a32.sol
+
+library uint8a32 { // 等效于 uint8[32]
     uint constant bits = 8;
     uint constant elements = 32;
     
-    // must ensure that bits * elements <= 256
+    // 确保 bits * elements <= 256
    
     uint constant range = 1 << bits;
-    uint constant max = range - 1;    
-    // get function
+    uint constant max = range - 1;  
+
+    // get 函数
     function get(uint va, uint index) internal pure returns (uint) {
         require(index < elements);
         return (va >> (bits * index)) & max;
     }
     
-    // set function
+    // set 函数
     
     function set(uint va, uint index, uint ev) internal pure 
     returns (uint) {
@@ -198,17 +262,27 @@ Here is a useful import file providing get and set functions for the Value Array
 }
 ```
 
-The *get()* function simply returns the appropriate value from the value array according to the index parameter. The *set()* function will remove the existing value and then set the given value into the returned value according to the index parameter.
 
-As you can deduce, the other uintXaY Value Array types are available simply by copying the uint8a32 library code given above and then changing the **bits** and **elements** constants.
 
-Storage space variables are [not permitted](https://solidity.readthedocs.io/en/latest/contracts.html#libraries) in Solidity library contracts.
+get()函数只是根据index参数从值数组中返回适当的值。set()函数将删除现有值，然后根据index参数将给定值设置到返回值里。
 
-### Sunny Day Testing
 
-Let’s see a few simple, sunny day tests for the example library code above:
 
-```
+可以推断出，只需复制上面给出的uint8a32库代码，然后更改bits和elements常量，即可用于其他uintXaY值数组类型。
+
+
+
+Solidity库合约中[无法存储变量](https://solidity.readthedocs.io/en/latest/contracts.html#libraries)。
+
+
+
+## 测试一把
+
+让我们测试一下上面的示例库代码：
+
+
+
+```js
 import "uint8a32.sol";
 
 contract TestUint8a32 {
@@ -228,23 +302,30 @@ contract TestUint8a32 {
 }
 ```
 
-The syntax for using the set() function is able to use variable dot notation due to the use of the compiler’s *using library for type* directive. However, where your smart contract requires multiple different Value Array types, that is not possible due to a namespace clash (only 1 function of a particular name may be used for each type), so the explicit library name dot notation must be used to access the functions instead:
 
-```
+
+
+
+通过编译器的using for 指令，因此可以在变量上直接使用`.` 语法来调用set()函数。但是在你的智能合约需要多种不同的值数组类型的情况下，由于名称空间冲突（或者需要每种类型使用各自特定名称的函数），这需要使用显式库名点表示法来访问函数：
+
+
+
+```js
 import "uint8a32.sol";
 import "uint16a16.sol";
-contract MyContract {    uint users; // uint8a32
+contract MyContract {
+    uint users; // uint8a32
     uint roles; // uint16a16
     
     ...
     
     function setUser(uint n, uint user) private {
-        // wanted to do this: users = users.set(n, user);
+        // 想实现的是: users = users.set(n, user);
         users = uint8a32.set(users, n, user);
     }
     
     function setRole(uint n, uint role) private {
-        // wanted to do this: roles = roles.set(n, role);
+        //  想实现的是: roles = roles.set(n, role);
         roles = uint16a16.set(roles, n, role);
     }
     
@@ -252,13 +333,17 @@ contract MyContract {    uint users; // uint8a32
 }
 ```
 
-It is also necessary to be vigilant about using the correct Value Array type on the correct variable.
+还需要小心在正确的变量上使用正确的值数组类型。
 
-Here is the same code, but with the data type incorporated into the variable name, in an attempt to address that issue:
 
-```
+
+这是相同的代码，但为了阐述该问题，变量名称包含了数据类型：
+
+```js
 import "uint8a32.sol";
-import "uint16a16.sol";contract MyContract {    uint users_u8a32;
+import "uint16a16.sol";
+contract MyContract {
+    uint users_u8a32;
     uint roles_u16a16;
     
     ...
@@ -273,103 +358,137 @@ import "uint16a16.sol";contract MyContract {    uint users_u8a32;
 }
 ```
 
-## Avoiding Assignment
+## 避免赋值
 
-It is actually possible to avoid using assignment of the return value from the set() function if we provide a function that takes a 1 element array. However, since this technique uses more memory, code and complexity, it negates the possible advantages of using Value Arrays.
-
-**Here’s a final enigmatic picture before discussing gas consumption**.
+如果我们提供一个使用1个元素的数组的函数，则实际上有可能避免使用set()函数的返回值赋值。 但是，由于此技术使用更多的内存，代码和复杂性，因此抵消了使用值数组的可能优势。
 
 
 
-# Gas Consumption
+# Gas 消耗对比
 
-Having written the libraries and contracts, we measured the gas consumption using a technique described in [this](https://medium.com/coinmonks/gas-cost-of-solidity-library-functions-dbe0cedd4678) article by the author. Here are the results:
-
-## bytes32 Value Array
+编写了库和合约后，我们使用在[此文](https://medium.com/coinmonks/gas-cost-of-solidity-library-functions-dbe0cedd4678)中介绍的技术测量了gas消耗。结果如下：
 
 
 
-![1_1rFIufB3Y9e6txiTnDpoKQ](https://img.learnblockchain.cn/pics/20200820105003.png)
-
-> Gas consumption of get and set on memory and storage bytes32 variables
-
-Not surprisingly, the memory gas consumption is negligible, whilst the storage gas consumption is huge — especially the first time the storage location is written with a non-zero value (large blue brick). Subsequent use of that storage location consumes far less gas.
-
-## uint8a32 Value Array
-
-Here, we compare using fixed uint8[] arrays with a uint8a32 Value Array in EVM memory space:
-
-![1_JfZiUjlfmgDn32mQ81PmgA](https://img.learnblockchain.cn/pics/20200820105037.png)
+## bytes32 值数组
 
 
 
-> Gas consumption of get and set on uint8/byte memory variables
+![1_1rFIufB3Y9e6txiTnDpoKQ](https://img.learnblockchain.cn/pics/20200820105003.png!wl)
 
-The surprising take away is that the uint8a32 Value Array consumes as litle as half the gas of the uint8[32] Solidity fixed array. In the case of uint8[16] and uint8[4], the associated gas consumption is correspondingly lower. This is because the Value Array code has to read and write the value in order to set an element value, whereas the uint8[] simply has to write the value.
+> 在内存和存储上，bytes32的get和set的Gas消耗32个变量
 
-This is how these compare in EVM storage space:
+不用奇怪，在内存中gas消耗可以忽略不计，而存储中，gas消耗是巨大的，尤其是第一次用非零值（大蓝色块）写入存储位置时。随后使用该存储位置消耗的gas要少得多。
 
+## uint8a32 值数组
 
-
-![1_TZiKYOx8k5fQKQIW943G7g](https://img.learnblockchain.cn/pics/20200820105111.png)
-
-
-
->  Gas consumption of get and set on uint8/byte storage variables
-
-Here, each uint8a32 set() function consumes a few hundred fewer gas cycles compared to using uint8[Y]. The gas consumption of uint8[32], uint8[16] and uint8[4] are all the same because they use the same amount of EVM storage space, one 32byte slot.
-
-## uint1a256 Value Array
-
-Comparison of fixed bool[] arrays with a uint1a256 Value Array in EVM memory space:
-
-![1_eypziNSbrSGT3xbCh0EYug](https://img.learnblockchain.cn/pics/20200820105136.png)
+在这里，我们比较了在EVM内存中使用固定长度的uint8 []数组与uint8a32值数组的情况：
 
 
 
-> Gas consumption of get and set on bool/1bit memory variables
+![uint8与byte内存上gas 消耗对比](https://img.learnblockchain.cn/pics/20200820105037.png!wl)
 
-It is clear that the gas consumption of allocating the bool arrays dominates.
 
-The same comparison in EVM storage space:
+
+> 在uint8/byte内存上，gas 消耗对比
+
+
+
+令人惊讶的是，uint8a32 值数组消耗的gas只有固定长度数组uint8[32] 的一半左右。而uint8[16]和uint8[4]相应的gas消耗更低。这是因为值数组代码必须读取和写入值才能设置元素值，而uint8[]只需写入值。
+
+
+
+以下是在EVM存储中比较gas 消耗：
+
+
+
+
+
+![gas 消耗对比](https://img.learnblockchain.cn/pics/20200820105111.png!wl)
+
+
+
+> 在存款上，gas 消耗的对比
+
+
+
+在这里，与使用uint8[Y]相比，每个uint8a32 set() 函数消耗的gas循环少几百个。uint8 [32]，uint8 [16]和uint8 [4]的gas 消耗量相同，因为它们使用相同数量的EVM存储空间（一个32字节的插槽）。
+
+
+
+## uint1a256 值数组
+
+
+
+在EVM内存中，固定长度的bool[]数组与uint1a256值数组的gas对比：
+
+
+
+![gas 对比](https://img.learnblockchain.cn/pics/20200820105136.png)
+
+
+
+>  bool与1bit 在内存的 gas消耗 对比
+
+显然，bool数组的gas消耗很显著
+
+
+
+相同的比较在EVM存储中：
+
+
 
 ![1_pqdUNkuGjqJd7UyejQxoIg](https://img.learnblockchain.cn/pics/20200820105204.png)
 
 
 
-> Gas consumption of get and set on bool/1bit storage variables
-
-The simplistic test touches 2 storage slots for bool[256] and bool[64], hence the similar gas consumption. Bool[32] and uint1a256 touch just one storage slot.
-
-## Parameters to sub-contracts and libraries
-
-![1_CClRdKPbYQUCcfuxBdULUw](https://img.learnblockchain.cn/pics/20200820105235.png)
-
-> Gas consumption of passing a bool/1bit parameter to a sub-contract or library
+> bool与1bit 在存储中的 gas消耗 对比
 
 
 
-Not surprisingly, the biggest gas consumption is providing an array parameter to a sub-contract or library function.
+bool [256]和bool [64] 使用2个存储插槽，因此gas 消耗相似。bool [32]和uint1a256仅使用一个存储插槽。
 
-Using a single value instead of copying the array clearly consumes far less gas.
 
-# Other Possibilities
 
-If you find Fixed Value Arrays useful, you may also like to consider Fixed Multi Value-Arrays, Dynamic Value-Arrays, Value Queues, Value Stacks etcetera.
+## 作为子合约和库的参数
 
-# Conclusions
+![参数的gas消耗](https://img.learnblockchain.cn/pics/20200820105235.png!wl)
 
-I have provided and measured code for writing to Solidity bytes32 variables, and generic library code for uintX[Y] Value Arrays.
+> 将bool/1bit参数传递给子合约或库的gas消耗
 
-I have revealed other possibilities such as Fixed Multi-Value Arrays, Dynamic Value Arrays, Value Queues, Value Stacks etcetera.
 
-Yes, we can reduce our storage space and gas consumption using Value Arrays.
 
-Where your Solidity smart contracts use small arrays of small values (for user IDs, roles etcetera), then the use of Value Arrays is likely to consume less gas.
+不用奇怪，最大的gas消耗是为子合约或库函数提供数组参数。
 
-Where arrays are copied e.g. for sub-contracts or libraries, Value Arrays will always consume vastly less gas.
+使用单个值而不是复制数组显然会消耗更少的gas。
 
-In other circumstances, continue to use reference arrays.
+
+
+# 其他可能性
+
+如果你发现固定长度的值数组很有用，那么你还可以考虑固定长度的多值数组、动态值数组、值队列、值堆栈等。
+
+
+
+# 结论
+
+我已经提供用于写入Solidity bytes32变量的代码，以及用于uintX [Y]值数组的通用库代码。
+
+也提出了如固定长度的多值数组，动态值数组，值队列，值堆栈等其他可能性。
+
+
+
+是的，我们可以使用值数组减少存储空间和gas消耗。
+
+
+
+如果你的Solidity智能合约使用较小值的小数组（例如用户ID，角色等），则使用值数组可能会消耗更少的gas。
+
+
+
+当数组被复制时，例如智能合约或库参数，值数组将始终消耗少得多的gas。
+
+
 
 
 
