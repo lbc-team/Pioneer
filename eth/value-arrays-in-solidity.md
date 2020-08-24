@@ -12,7 +12,7 @@
 
 
 
-# 讨论
+## 讨论
 
 
 
@@ -86,7 +86,7 @@ contract TestValueArray {
 
 
 
-## Solidity bytes32 值数组
+### Solidity bytes32 值数组
 
 Solidity 在 bytesX（X=1..32）类型中提供了一个部分值数组。这些字节元素可以使用数组方式访问单独读取，例如：
 
@@ -162,11 +162,11 @@ contract TestBytes32 {
 
 
 
-# 可能的固定长度值数组
+## 可能的固定长度值数组
 
 在Solidity机器字长为256位（32字节），我们可以考虑以下可能的值数组。
 
-## 固定长度值数组
+### 固定长度值数组
 
 这些是以些Solidity[可用整型](https://learnblockchain.cn/docs/solidity/types.html#integers)匹配的固定长度的值数组：
 
@@ -188,7 +188,7 @@ uint8[32]    uint8a32    32个8位元素的值数组
 
 
 
-## 更多固定长度值数组
+### 更多固定长度值数组
 
 
 
@@ -216,7 +216,7 @@ uint1[256]   uint1a256   256个1位元素的值数组
 
 
 
-## 还有更多固定长度值数组
+### 还有更多固定长度值数组
 
 
 
@@ -226,7 +226,7 @@ uint1[256]   uint1a256   256个1位元素的值数组
 
 
 
-## 固定长度值数组实现
+### 固定长度值数组实现
 
 下面是一个有用的可导入库文件，为值数组类型uint8a32提供get和set函数：
 
@@ -276,7 +276,7 @@ Solidity库合约中[无法存储变量](https://solidity.readthedocs.io/en/late
 
 
 
-## 测试一把
+### 测试一把
 
 让我们测试一下上面的示例库代码：
 
@@ -358,19 +358,19 @@ contract MyContract {
 }
 ```
 
-## 避免赋值
+### 避免赋值
 
 如果我们提供一个使用1个元素的数组的函数，则实际上有可能避免使用set()函数的返回值赋值。 但是，由于此技术使用更多的内存，代码和复杂性，因此抵消了使用值数组的可能优势。
 
 
 
-# Gas 消耗对比
+## Gas 消耗对比
 
 编写了库和合约后，我们使用在[此文](https://medium.com/coinmonks/gas-cost-of-solidity-library-functions-dbe0cedd4678)中介绍的技术测量了gas消耗。结果如下：
 
 
 
-## bytes32 值数组
+### bytes32 值数组
 
 
 
@@ -380,7 +380,7 @@ contract MyContract {
 
 不用奇怪，在内存中gas消耗可以忽略不计，而存储中，gas消耗是巨大的，尤其是第一次用非零值（大蓝色块）写入存储位置时。随后使用该存储位置消耗的gas要少得多。
 
-## uint8a32 值数组
+### uint8a32 值数组
 
 在这里，我们比较了在EVM内存中使用固定长度的uint8 []数组与uint8a32值数组的情况：
 
@@ -416,7 +416,7 @@ contract MyContract {
 
 
 
-## uint1a256 值数组
+### uint1a256 值数组
 
 
 
@@ -424,7 +424,7 @@ contract MyContract {
 
 
 
-![gas 对比](https://img.learnblockchain.cn/pics/20200820105136.png)
+![gas 对比](https://img.learnblockchain.cn/pics/20200820105136.png!wl)
 
 
 
@@ -438,7 +438,7 @@ contract MyContract {
 
 
 
-![1_pqdUNkuGjqJd7UyejQxoIg](https://img.learnblockchain.cn/pics/20200820105204.png)
+![1_pqdUNkuGjqJd7UyejQxoIg](https://img.learnblockchain.cn/pics/20200820105204.png!wl)
 
 
 
@@ -450,15 +450,15 @@ bool [256]和bool [64] 使用2个存储插槽，因此gas 消耗相似。bool [3
 
 
 
-## 作为子合约和库的参数
+### 作为合约和库的参数
 
 ![参数的gas消耗](https://img.learnblockchain.cn/pics/20200820105235.png!wl)
 
-> 将bool/1bit参数传递给子合约或库的gas消耗
+> 将bool/1bit参数传递给合约或库的gas消耗
 
 
 
-不用奇怪，最大的gas消耗是为子合约或库函数提供数组参数。
+不用奇怪，最大的gas消耗是为合约或库函数提供数组参数。
 
 使用单个值而不是复制数组显然会消耗更少的gas。
 
