@@ -1,34 +1,57 @@
 
 # Designing an Unbounded List in Solidity
+# 在Solidity中创建无界列表
 
 **In most applications, working with lists is fairly trivial. Most languages provide libraries for list handling, and we hardly need to worry about the details. However smart contracts are unlike "most applications", and we need to pay special attention to design restrictions imposed by the blockchain.**
 
+**在大多数应用中，使用列表相当简单。大多数语言都提供用于处理列表的库，我们不必担心使用细节。但是，智能合约不同于“大多数应用程序”，我们需要特别注意区块链施加的设计限制。**
+
 **[The full article source code is available on GitHub](https://github.com/kaxxa123/BlockchainThings/tree/master/UnboundedList)**
 
+**在github中可以找到文中涉及的[完整代码](https://github.com/kaxxa123/BlockchainThings/tree/master/UnboundedList)**
+
 ## List Requirements
+## 列表的特性
 
 Consider a smart contract that encapsulates a list. Let say this list is storing addresses, but it could really be storing anything. We can summarize our basic requirements as follows:
 
+假设一个智能合约中封装一个列表。我们说这个列表是用来存储地址的，但实际上这个列表可以存储任何内容。我们可以将基本要求总结如下：
+
 1. Support for all CRUD operations: Create, Read, Update, Delete
+1. 支持CRUD运算：创建、读取、更新、删除
 2. Unbounded, callers can add as many items as they want.
+2. 无界限，可以容纳任意数量的元素
 
 ## Adding/Removing List Elements
+## 添加/删除列表元素
 
 A smart contract platform like Ethereum adds some important considerations. Code that could run for years, gives the term unbounded a whole new meaning.
 
+以太坊等智能合约平台增加了一些重要的考虑因素。可以运行多年的代码赋予术语“无界”一个全新的含义。
+
 We need a system where the gas consumption of adding and removing items is relatively constant and independent of the number of items added. It is not acceptable to have any sort of degradation (increase in gas cost) over time.
 
+我们需要一个添加和删除元素消耗的gas是相对恒定的系统，并且与列表中已有数量无关。随着时间的推移所需的gas增加是不可接受的。
+
 For this reason, storing the list in a simple array is not an option. The main problem with a simple array is the management of gaps as items start being deleted. The more items are added/deleted, the more fragmented a simple array becomes, requiring some sort of compaction. With compaction, we easily end up with a function whose gas consumption is dependent on the number of listed elements. For example, a shift operation depends on the number of elements following the deleted element:
+
+因为这个原因，将列表存储在简单数组中不是个好的选择。 简单数组的主要问题是随着开始删除元素，需要管理好元素之间的”间隙“。 添加/删除的元素越多，简单数组的会变得更碎片化，需要进行某种压缩。 我们很容易可以使用一个函数进行压缩，该函数gas消耗取决于所列元素的数量。 例如，移位操作取决于已删除元素后面的元素数量：
 
 ![](https://img.learnblockchain.cn/2020/08/12/15972164289107.jpg)
 
 An alternative to compaction through shifting, is the filling of gaps as new items are created. However, this raise challenges related to gap tracking. Otherwise we could fill gaps by moving the last item to the deleted position. But moving items around is problematic when long lists are read in batches.
+除了通过移动进行压缩，另一种方式是在创建新元素时填补空白。 但是，这对如何记录间隙提出了挑战。 或者，我们可以通过将最后一个元素移到已删除的位置来填补空白。 但是，当批量读取长列表时，移动元素会出现问题。
 
 To avoid such problems we implement a 2-way linked list. With this solution adding/removing entries gives us constant gas consumption independently of the list size. Adding an item involves attaching a new entry to the tail of the list. Removing an item involves updating the pointers of the elements immediately preceding and following the deleted element. Most importantly, removing items does not create gaps.
 
+为了避免此类问题，我们实现了双向链接列表。 使用此解决方案，添加/删除条目使我们恒定的气体消耗量与列表大小无关。 添加项目涉及将新条目附加到列表的末尾。 删除项目涉及更新紧接在已删除元素之前和之后的元素的指针。 最重要的是，删除项目不会造成差距。
+
 ## List State Storage
+## 列表State储存
 
 Let's take a look at the [smart contract code](https://github.com/kaxxa123/BlockchainThings/blob/master/UnboundedList/contracts/ListContract.sol), specifically at the state variables for storing the list. Each list element is made up of 3 pieces of information. Two pointers for linking the previous and next element, plus the element data itself.
+
+我们来看看[这个](https://github.com/kaxxa123/BlockchainThings/blob/master/UnboundedList/contracts/ListContract.sol)智能合约代码,尤其是用于储存state varibale。每一个列表元素由3部分信息，一个指向前一个元素，一个指向后一个元素，再加上元素本身。
 
 ```
 struct ListElement {
