@@ -1,48 +1,64 @@
-# Better Solidity debugging: console.log is finally here
+# 更好Solidity合约调试  : console.log 
 
-## A local Ethereum network designed for development: stack traces and console.log
+Builder EVM 是一个用于本地开发的以太坊网络，提供了更好的堆栈跟踪功能和console.log() 输出日志。
+
+
+
+## Build EVM 及 console.log
 
 ![1_WGi-zdr3SVFdcV45k_0X7w](https://img.learnblockchain.cn/pics/20200817101938.png)
 
 
 
-It’s happening. Building smart contracts on Ethereum is slowly distancing itself from being a task better suited for Elon Musk’s friends on Mars, and looking more and more like something maybe doable by human beings.
+ 在以太坊上建立智能合约看起来越来越像人类可以做的事情，这一切正在发生。
 
-Back in October, [we launched Buidler EVM](https://medium.com/nomic-labs-blog/better-solidity-debugging-stack-traces-are-finally-here-dd80a56f92bb): a `ganache-cli` alternative that includes a fully featured Solidity-aware stack traces implementation. This was a big step towards a better developer experience, and now we’re releasing another highly anticipated Buidler EVM feature: `console.log` for Solidity.
+在 19 年 10 月, [我们推出了Buidler EVM](https://medium.com/nomic-labs-blog/better-solidity-debugging-stack-traces-are-finally-here-dd80a56f92bb)：一种ganache-cli替代方案，其实现了Solidity的堆栈跟踪功能。 这是迈向更好的开发人员体验的重要一步，现在我们发布了另一个备受期待的Buidler EVM功能：用于Solidity的 ` console.log()`。
 
-![1_WP9NTQMV4dswT7bSI7WkcA](https://img.learnblockchain.cn/pics/20200817101956.png)
-
-
-
-> Solidity debugging after Buidler EVM
-
-Buidler EVM is a local Ethereum network designed for development. It allows you to deploy your contracts, run your tests and debug your code — and it was architectured as a platform to enable advanced tooling.
-
-The main technique currently in use for logging data from Solidity is emitting events, but this approach is significantly limited: it only works on successful transactions. This is because the EVM doesn’t emit events when a transaction fails and given that when a transaction is going south is when developers need to understand what’s going on the most, this is tragic.
-
-Buidler EVM carries a robust infrastructure for execution inspection that allowed us to implement a reliable `console.log` that’s always available, **even when a transaction fails** — and in true Buidler-fashion, it works with the testing tools of your choosing.
-
-Using it is straightforward. Just import the `console.sol` file that contains the `console.log` function, and use it as you would in JavaScript.
-
-![1_fpoWhfReJS_StkpzI5HojA](https://img.learnblockchain.cn/pics/20200817102046.png)
-
->  contract/Greeter.sol in Buidler’s sample project
-
-Then run your tests using Buidler and Buidler EVM as the development network.
+> 译者注： 是时候用Buidler EVM 替换ganache了， 安装完成后，用 `npx buidler node`启动 Builder EVM后，其他就和使用 Ganache 完全一样。
 
 
+
+![Solidity debugging after Buidler EVM](https://img.learnblockchain.cn/pics/20200817101956.png)
+
+
+
+> 从此 Debug 有了双眼
+
+
+
+Buidler EVM是为开发而设计的本地以太坊网络。 它允许您部署合约，运行测试和调试代码， 并且Buidler EVM是被设计为可启用高级工具的平台。
+
+
+
+当前从Solidity记录数据的主要方法是触发事件（emitting events），但是这种方法有很大限制：它仅适用于成功的交易。 这是因为EVM不会在交易失败时触发事件。而往往是交易失败时，开发人员需要了解发生了什么情况，因此这对开发来说是很悲惨的。
+
+
+
+Buidler EVM拥有强大的执行检查架构，使我们能够实现可靠`console.log` ，它将始终可用，**即使在交易失败的时候**，它还可以与您选择的测试工具一起使用 。
+
+### 使用 console.sol
+
+
+
+使用它很简单。 只需导入`@nomiclabs/buidler/console.sol` ，然后在函数中加入`console.sol`，就像在JavaScript中一样使用它即可，例如：
+
+![Buidler’s 示例代码](https://img.learnblockchain.cn/pics/20200817102046.png)
+
+然后使用Builder EVM作为开发网络使用Builder运行测试。
 
 ![1_WRz_O76rpVRTadX34f4_cQ](https://img.learnblockchain.cn/pics/20200817102119.png)
 
+可以使用任何工具（不仅是Buidler）编译合约，因此需要，可以放心的保留着log的调用。 诸如[Tenderly](https://tenderly.dev/)之类的工具将集成日志的抓取功能，因此，您甚至可以根据需要将日志记录代码部署到测试网和主网。 在其他网络中运行时，调用`console.log`不会执行任何操作，但会产生gas费用。
 
 
-The contracts will compile with any tool, not just Buidler, so it’s safe to leave the logging calls in if that’s useful. Tools like [Tenderly](https://tenderly.dev/) will integrate the scrapping of logs, so you can even deploy the logging code to testnets and mainnet if you wish. The calls into `console.log` don’t do anything when running in other networks, but they do incur a gas cost.
 
-This latest release of Buidler EVM also adds support for Solidity 6 and the `evm_snapshot` and `evm_revert` JSON-RPC methods, allowing projects using snapshots to migrate to Buidler and keep their testing optimizations.
+Buidler EVM的最新版本还增加了对`Solidity 0.6`支持以及新的JSON-RPC方法`evm_snapshot`和`evm_revert` ，从而允许项目使用快照迁移到Buidler并继续其测试优化。
 
-In combination with the stack traces feature, this release marks a new chapter in smart contract development productivity 🥳.
 
-Take Buidler EVM’s `console.log` out for a spin!
+
+结合堆栈跟踪功能，标志着智能合约开发生产力的新篇章。
+
+带着 Builder EVM的`console.log`去兜兜风！
 
 ```
 mkdir console/
@@ -53,12 +69,51 @@ npx buidler # and create a sample project
 npx buidler test
 ```
 
-[Check Buidler out](https://buidler.dev/) and forget your Solidity debugging frustrations today! 👷‍♀️👷‍♂️
+使用Builder，你很快会忘记Solidity调试给你的挫败感 👷‍♀️👷‍♂️
 
-------
 
-- Follow Nomic Labs on [Twitter](https://twitter.com/nomiclabs) and [Medium](http://medium.com/nomic-labs-blog).
-- For any help or feedback you may have, you can find us in the [Buidler Support Telegram group](http://t.me/BuidlerSupport).
+
+## 在Truffle项目中使用console.log
+
+
+
+在现有的 truffle 项目中也可以非常容易的使用`console.log`，先在项目下安装 buidler ：
+
+```
+npm install --save-dev @nomiclabs/buidler
+// 或
+yarn add @nomiclabs/buidler
+```
+
+
+
+然后在合约文件中引入 `import "@nomiclabs/buidler/console.sol";`，然后在需要的地方加入`console.log() `打印即可
+
+
+
+接着就是部署和测试，在 truffle 项目，一般使用的是 Ganache 网络，现在我们使用Builder EVM替代Ganache，修改truffle-config.js 配置：
+
+```
+  networks: {
+    development: {
+       host: "127.0.0.1",     
+       port: 8545,   
+       network_id: "*"
+    }
+  }
+```
+
+
+
+Ganache的默认 RPC 端口通常是 7545， Builder EVM 默认 RPC 端口是8545，因此我们修改development网络的端口为8545。
+
+启动Builder EVM后，就可以进行部署了，使用命令`npx buidler node`启动Builder EVM ，Builder EVM 会为我们分配 20 个账号、每个账号有 10000 个以太币。
+
+> 如果是第一次启动，会提示我们创建一个项目，可以选择"Create an empty buidler.config.js"，即创建一个空的`buidler.config.js` 。
+
+
+
+之前就可以和之前开发 Truffle 项目完全一致了，开启另一个命令终端，使用`truffle migrate`命令进行部署，如果我们在构造函数中加入了`console.log() `，那么在Builder EVM终端里，就可以参看到日志了。
 
 
 
