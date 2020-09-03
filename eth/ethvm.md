@@ -1,10 +1,11 @@
 # 以太坊浏览器的新选择:EthVM
 
-* https://medium.com/myetherwallet/introducing-mews-ethereum-blockchain-explorer-ethvm-beta-78e5b849e2fc 作者 [MyEtherWallet](https://medium.com/@myetherwallet?source=post_page-----78e5b849e2fc----------------------)
+> * 原文链接：https://medium.com/myetherwallet/introducing-mews-ethereum-blockchain-explorer-ethvm-beta-78e5b849e2fc 作者 [MyEtherWallet](https://medium.com/@myetherwallet?source=post_page-----78e5b849e2fc----------------------)
+> * 译文出自：[登链翻译计划](https://github.com/lbc-team/Pioneer)
+> * 译者：[Tiny熊](https://learnblockchain.cn/people/15)
+> * 本文永久链接：[learnblockchain.cn/article…](https://learnblockchain.cn/article/1417)
 
-
-
-> EthVM是一款来自MyEtherWallet开发的[开源](https://github.com/EthVM/EthVM)浏览器（基于 Kafka，使用 JavaScript 及 Vue.js 开发)，包含前端和数据后台处理。
+EthVM是一款来自MyEtherWallet开发的[开源](https://github.com/EthVM/EthVM)浏览器（基于 Kafka，使用 JavaScript 及 Vue.js 开发)，包含前端和数据后台处理。
 
 
 
@@ -12,7 +13,7 @@
 
 
 
-MyEtherWallet（以下简称MEW)自创建以来的五年中，已从简单的以太坊钱包成长为一个平台，可支持用户在以太坊上做的几乎所有事情-各种各样的钱包访问方法，所有ERC20代币，合同交互，兑换 ，DApps和DeFi。
+MyEtherWallet（以下简称MEW)自创建以来的五年中，已从简单的[以太坊钱包](https://learnblockchain.cn/course/10)成长为一个平台，可支持用户在以太坊上做的几乎所有事情-各种各样的钱包访问方法，所有[ERC20代币](https://learnblockchain.cn/article/977)，合同交互，兑换 ，DApps和DeFi。
 
 加密货币最好的事情之一就是交易的透明度：任何人，任何地方，任何时间都可以验证其资金的状况。 对于以太坊而言，凭借其智能合约功能，此类信息的可用性尤为重要，我们认为是时候建立一个探索此数据的绝佳工具了。 我们很高兴推出[EthVM](https://www.ethvm.com/)Beta 浏览器，这是MEW的开源以太坊数据处理器和浏览器。
 
@@ -88,5 +89,5 @@ EthVM处于Beta测试阶段，这意味着它仍然有些粗糙，但现在正�
 
 我们正在为你创建工具，因此请帮助我们实现你所需的功能！ 浏览下[EthVM](https://www.ethvm.com/)，看看你喜欢什么以及可以使用哪些改进； 写入[support@ethvm.com]（mailto：support@ethvm.com)以获得错误报告和功能请求，在[Twitter](https://twitter.com/Eth_VM)上标记EthVM，加入EthVM [subreddit] (https://www.reddit.com/r/ethvm/)，或在[Github](https://github.com/EthVM/EthVM)提交更新并做出贡献。
 
-
+*本翻译由 [Cell Network](https://www.cellnetwork.io/?utm_souce=learnblockchain) 赞助支持。*
 
