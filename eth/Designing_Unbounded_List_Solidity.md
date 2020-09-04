@@ -15,12 +15,12 @@
 
 Consider a smart contract that encapsulates a list. Let say this list is storing addresses, but it could really be storing anything. We can summarize our basic requirements as follows:
 
-假设一个智能合约中封装一个列表。我们说这个列表是用来存储地址的，但实际上这个列表可以存储任何内容。我们可以将基本要求总结如下：
+我们先假定这个列表是用来存储地址类型的，但实际上这个列表可以存储任何内容。我们可以将基本要求总结如下：
 
 1. Support for all CRUD operations: Create, Read, Update, Delete
 1. 支持CRUD运算：创建、读取、更新、删除
 2. Unbounded, callers can add as many items as they want.
-2. 无限制限，可以容纳任意数量的元素
+2. 无限制，可以容纳任意数量的元素
 
 ## Adding/Removing List Elements
 ## 添加/删除列表元素
@@ -124,11 +124,11 @@ But for simplicity I won't do that here. Just keep in mind that using mappings c
 
 Another little detail to be aware of is that the mapping item for id zero is reserved. Thus it can never be created/deleted through the contract interface.
 
-要注意的另一个小细节是保留ID为零的映射项。 因此，永远不能通过合同接口创建/删除它。
+要注意的另一个小细节是保留ID为零的映射项。 因此，永远不能通过合约接口创建/删除它。
 
 The item for id zero stores the pointers of the first and last list items. The first list item is:
 
-编号为零的元素储存者第一次和最后一个列表元素的指针。第一个元素为：
+编号为零的元素储存着第一次和最后一个列表元素的指针。第一个元素为：
 `items[0].next`
 
 The last list item is:
@@ -137,14 +137,14 @@ The last list item is:
 
 Having anchors to these items is important for us to read and append to the list.
 
-对于这两个值有直接引用可以帮我我们读取和添加元素。
+通过这两个值的直接引用可以帮我们读取和添加元素。
 
 ## Function Signatures
 ## 函数签名
 
 So far we covered all relevant details for adding, removing and updating items. Reading an unbounded list is also very interesting. But before looking into that, here are the function signatures defining the contract interface:
 
-到目前为止，我们已经涵盖了有关添加，删除和更新元素的所有相关详细信息。 读取无边界列表也非常有趣。但是在研究之前，这里是定义合同接口的函数签名：
+到目前为止，我们已经涵盖了有关添加，删除和更新元素的所有相关详细信息。 读取无限制列表也非常有趣。但是在研究之前，先定义一下合约接口：
 
 ```
 function add(address addr) external
@@ -160,14 +160,14 @@ function read(uint256 start, uint256 toRead) external view
 
 Except for read, all function signatures should be fairly intuitive. Otherwise take a look at the inline comments preceding every function.
 
-除了read之外，其他所有函数签名都应该非常直观。 否则，请查看每个函数之前的内联注释。
+除了读取元素之外，其他所有函数签名都应该非常直观。 否则，请查看每个函数之前的内联注释。
 
 ## List Reading
 ## 列表读取
 
 With a list that could potentially include many elements, reading also presents its own challenges. Our `read` function is of type view, hence it does not consume gas. However, this doesn't mean that the function is unbound in what it can do. Memory consumption is the most obvious limitation. We avoid this problem by allowing the caller to read items in batches.
 
-列表可能包含许多元素，因此read也提出了自己的挑战。 我们的“读取”功能是视图类型，因此它不消耗气体。 但是，这并不意味着该函数在其功能上没有约束。 内存消耗是最明显的限制。 通过允许调用者分批读取项目，我们避免了此问题。
+列表可能包含许多元素，因此read也提出了自己的挑战。 我们的“读取”功能是视图类型，因此它不消耗气体。 但是，这并不意味着该函数在其功能上没有约束。 内存消耗是最明显的限制。 我们通过允许调用者分批读取项目避免了此问题。
 
 
 Let's take a close look at the function signature:
@@ -209,7 +209,7 @@ Return Values:
 
 Whereas this solution allows us to safely read very long lists, breaking down the process into multiple calls introduces another challenge. What happens if someone deletes an item while we are reading the list in batches? The problem is demonstrated below.
 
-尽管此解决方案使我们能够安全地读取很长的列表，但将流程分为多个调用却带来了另一个挑战。 如果在我们批量阅读列表时有人删除了元素，会发生什么？ 该问题如下所示。
+尽管此解决方案使我们能够安全地读取很长的列表，但将流程分为多个调用却带来了另一个挑战。 如果在我们批量读取列表时有人删除了元素，会发生什么？ 该问题如下所示。
 
 Consider a case where the caller is reading batches of 3 items at a time. Here is the initial list:
 
@@ -333,4 +333,4 @@ Check the [function pagedRead in 02_read_stack.js](https://github.com/kaxxa123/B
 
 [Source code and truffle project for this article](https://github.com/kaxxa123/BlockchainThings/tree/master/UnboundedList)
 
-本文中涉及[truffle 项目源码](https://github.com/kaxxa123/BlockchainThings/tree/master/UnboundedList)
+本文中涉及[truffle 工程源码](https://github.com/kaxxa123/BlockchainThings/tree/master/UnboundedList)
