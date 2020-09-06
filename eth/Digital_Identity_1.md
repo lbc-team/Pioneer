@@ -13,6 +13,7 @@ This two-part series helps break down identity for your digital application, ser
 -The key standards that it should be built upon
 -5 characteristics and capabilities it must support
 -A flexible model that fits your stack
+
 - Steps to future-proof your architecture in less than 1 day
 
 Digital identity is a fast evolving space with a deep history of academic and practical contributions (some of which I’ve tried to reference), and so is not always approachable. My view is informed by helping build uPort and 3Box, participating in community standards, and co-authoring a book on the sociology of identity. This series is by no means a complete history or a full view of identity, but I hope it is helpful in making a critical piece of infrastructure easier to understand and build upon.
