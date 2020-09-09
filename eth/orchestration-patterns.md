@@ -43,7 +43,7 @@ Uniswap团队通过一个简单的检查就解决了他们的问题，但是只�
 
 
 
-在理解此问题并开发协作模式的过程中，我们更好地了解了如何从多个智能合约中构建应用程序，这也使[Yield协议]（http://yield.is/）更加健壮和安全。
+在理解此问题并开发协作模式的过程中，我们更好地了解了如何从多个智能合约中构建应用程序，这也使[Yield协议](http://yield.is/)更加健壮和安全。
 
 
 
@@ -65,7 +65,7 @@ Uniswap团队通过一个简单的检查就解决了他们的问题，但是只�
 
 
 
-技术限制是在2016年11月实施的[Spurious Dragon](https://blog.ethereum.org/2016/11/18/hard-fork-no-4-spurious-dragon/)硬分叉，  硬分叉包括[EIP-170](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-170.md)。此更改将部署的智能合约的大小限制为最大24576字节。
+技术限制是在2016年11月实施的[Spurious Dragon](https://blog.ethereum.org/2016/11/18/hard-fork-no-4-spurious-dragon/)硬分叉，  硬分叉包括[EIP-170](https://learnblockchain.cn/docs/eips/eip-170.html)。此更改将部署的智能合约的大小限制为最大24576字节。
 
 
 
@@ -107,7 +107,7 @@ Uniswap团队通过一个简单的检查就解决了他们的问题，但是只�
 
 
 
-Solidity使用面向对象编程，但在智能合约级别。你可以将智能合约视为具有变量和功能的对象。复杂的区块链应用程序将更容易在你的脑海中映射为一组智能合约，每个智能合约代表一个实体。
+[Solidity](https://learnblockchain.cn/docs/solidity/)使用面向对象编程，但在智能合约级别。你可以将智能合约视为具有变量和功能的对象。复杂的区块链应用程序将更容易在你的脑海中映射为一组智能合约，每个智能合约代表一个实体。
 
 
 
@@ -123,7 +123,7 @@ Solidity使用面向对象编程，但在智能合约级别。你可以将智能
 
 
 
-在接下来，我们将研究Uniswap，MakerDAO和Yield的业务流程实现。这会很有趣的。
+在接下来，我们将研究[Uniswap](https://learnblockchain.cn/tags/Uniswap)，MakerDAO和Yield的业务流程实现。这会很有趣的。
 
 
 
@@ -135,7 +135,7 @@ Solidity使用面向对象编程，但在智能合约级别。你可以将智能
 
 
 
-由于他们工厂合约的设计方式，新的交易对合约的部署需要两个步骤。首先部署智能合约，然后使用将要交易的两个代币（Token）对其进行初始化（参考第一部分出现的代码）。
+由于他们工厂合约的设计方式，新的交易对合约的部署需要两个步骤。首先部署智能合约，然后使用将要交易的两个代币（[Token](https://learnblockchain.cn/tags/ERC20)）对其进行初始化（参考第一部分出现的代码）。
 
 
 
@@ -155,7 +155,7 @@ constructor() public {
 
 如果你的案例和他们的一样简单，你也会成功的。如果你知道你的智能合约只需要授予对另一个智能合约的特权访问权，那么你可以使用`Ownable.sol`. 
 
-你甚至不需要使用像Uniswap这样的factory。你可以部署两个智能合约（`Boss`和`Minion`，`Minion`继承自`Ownable.sol`），然后执行`minion.transferOwnership(address(boss))` 。
+你甚至不需要使用像Uniswap这样的工厂。你可以部署两个智能合约（`Boss`和`Minion`，`Minion`继承自`Ownable.sol`），然后执行`minion.transferOwnership(address(boss))` 。
 
 
 
