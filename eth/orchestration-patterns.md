@@ -1,9 +1,8 @@
-# Identifying Smart Contract Orchestration Patterns in Solidity
+# [译]智能合约间权限控制的协作模式
 
 
 
-> * from: https://hackernoon.com/identifying-smart-contract-orchestration-patterns-in-solidity-pd223x20
-> * author: [@albertocuestacanada](https://hackernoon.com/u/albertocuestacanada)
+> * 原文链接: https://hackernoon.com/identifying-smart-contract-orchestration-patterns-in-solidity-pd223x20 作者: [@albertocuestacanada](https://hackernoon.com/u/albertocuestacanada)
 
 
 
@@ -13,19 +12,21 @@
 
 
 
-All but the simplest of Ethereum applications are composed of several smart contracts. This is because of a hard limit of [24KB](https://blog.ethereum.org/2016/11/18/hard-fork-no-4-spurious-dragon/) in any deployed contract, and because your sanity will slip away as the complexity of a smart contract grows.
+除那些最简单的以太坊应用，大部分应用程序都由几个智能合约组成。这是因为在任何已部署的智能合约都受到[24KB](https://blog.ethereum.org/2016/11/18/hard-fork-no-4-spurious-dragon/)的硬限制，并且随着智能合约的复杂性增加，烦恼也会随之增加。
 
 
 
-**How to make your smart contracts cooperate safely**
-
-Once you break down your code into manageable contracts you will certainly find that one contract has a function that should only be called by another contract.
+## 合约之前如何安全的协作
 
 
 
-For example, in [Uniswap v2](https://github.com/Uniswap/uniswap-v2-core/tree/master/contracts), only the contract factory is supposed to initialize a Uniswap Pair.
+一旦将代码分解为可管理的智能合约，你就会发现一个智能合约具有仅由另一个智能合约调用的函数。
 
 
+
+举个例子，在[Uniswap v2](https://github.com/Uniswap/uniswap-v2-core/tree/master/contracts)中，只有合约工厂应该初始化Uniswap 交易对（pair）。
+
+> 译者注： 工厂是指用来创建其他对象的对象，这在面向对象中称为工厂模式，在本文中的对象指的是合约。
 
 ```js
 // called once by the factory at time of deployment
@@ -38,117 +39,107 @@ function initialize(address _token0, address _token1) external {
 
 
 
-The Uniswap team solved their problem with a simple check, but wherever I look I find more examples of orchestration solutions being coded from scratch for each project.
+Uniswap团队通过一个简单的检查就解决了他们的问题，但是只要随便找找，都能找到更多个项目从头开始编写合约协作方案的例子。
 
 
 
-In the process of understanding this problem and developing a pattern, we understood better how to build applications out of several smart contracts, which made [Yield](http://yield.is/) more robust and secure.
+在理解此问题并开发协作模式的过程中，我们更好地了解了如何从多个智能合约中构建应用程序，这也使[Yield协议]（http://yield.is/）更加健壮和安全。
 
 
 
-In this article, I’m going to look in depth at smart contract orchestration with examples from well-known projects. By the time you are done reading it, you will be able to look at the orchestration requirements of your own project, and decide which one of the existing approaches suits you.
 
 
+在本文中，我将通过著名项目中的示例深入研究智能合约协作模式。当你读完它时，将能够查看你自己项目的协作需求，并决定适合你的方法。
 
-I made this [example repository](https://github.com/albertocuestacanada/Orchestrated) to get you going, when you are ready.
 
 
+我创建了这个[示例代码库](https://github.com/albertocuestacanada/Orchestrated)帮助你继续前行。
 
-Let’s dive in.
 
 
+## 背景
 
-**Background**
 
 
+因为有两个限制（一个是技术上的限制，一个是设计上的考量）。 需要将你的项目分解为一系列智能合约，我之前也有提到。
 
-I advanced already that you will need to break down your project into a collection of smart contracts because two limits, one technical, one mental.
 
 
+技术限制是在2016年11月实施的[Spurious Dragon](https://blog.ethereum.org/2016/11/18/hard-fork-no-4-spurious-dragon/)硬分叉，  硬分叉包括[EIP-170](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-170.md)。此更改将部署的智能合约的大小限制为最大24576字节。
 
-The technical limit was imposed in November 2016. At that time the [Spurious Dragon hard fork](https://blog.ethereum.org/2016/11/18/hard-fork-no-4-spurious-dragon/) was implemented in the Ethereum mainnet, including [EIP-170](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-170.md). This changelimited the size of deployed smart contracts to a maximum of 24576 bytes.
 
 
+如果没有此限制，攻击者便可以部署进行无限量的计算（部署期间）智能合约，它不会影响存储在区块链中的任何数据，但可以当作为对以太坊节点的拒绝服务攻击（Denial-Of-Service attack）。
 
-**Bitten by the Dragon**
 
 
+当时 gas limit 也不允许使用这种规模的智能合约，因此这种变化被认为是[非破坏性](https://github.com/ethereum/EIPs/issues/170)的：
 
 
 
-Without this limit, an attacker could deploy smart contracts taking infinite amounts of computation during deployment. It wouldn’t impact any of the data stored in the blockchain, but could be used as a kind of Denial-Of-Service attack on Ethereum nodes.
+> 解决方案是对可以保存到区块链中的对象的大小设置硬上限，并通过将上限设置为略高于当前gas limit 的可行值来进行无中断操作， 最欢的情况是使用470万gas 创建 〜23200字节的智能合约，通常创建的智能合约大概是〜18 kb
 
 
 
-At the time the block gas limits didn’t allow for smart contracts of that size anyway, so the change [was considered non-breaking](https://github.com/ethereum/EIPs/issues/170):
 
 
+那是在DeFi爆炸之前。对于Yield协议，我们编码了2000行智能合约代码，部署后的总和将接近100 KB。我们的审计人员甚至不认为我们的项目非常复杂。
 
 
 
-> “The solution is to put a hard cap on the size of an object that can be saved to the blockchain, and do so non-disruptively by setting the cap at a value slightly higher than what is feasible with current gas limits (an pathological worst-case contract can be created with ~23200 bytes using 4.7 million gas, and a normally created contract can go up to ~18 kb).”
+但是，我们仍然必须将项目分解为多个智能合约。
 
 
 
-That was well before the DeFi explosion. For [Yield](http://yield.is/) we coded 2000 lines of smart contract code, which deployed would add up to close to 100 KB. Our auditors didn’t even consider our project to be very complex.
+### 复杂性与面向对象程序设计
 
 
 
-Yet we still had to break down our solution into multiple contracts.
+将区块链应用分解为多个智能合约的第二个原因与技术限制无关，而与人的（认知）限制有关。
 
 
 
-**Complexity and Object-Oriented Programming**
+我们在一个特定的时间只能在大脑中保存那么多信息。如果我们更擅长处理以有限方式相互作用的小问题，而不是处理一个单一的大问题（所有事物都能相互作用的问题）。
 
 
 
-The second reason to break down a blockchain application into several smart contracts has nothing to do with technology limits, but with human limits.
+可以说，面向对象编程使软件可以达到更高的复杂度。通过定义代表某种概念的“对象”，并将变量和函数定义为对象的属性，开发人员可以更好地从心理上解决他们要解决的问题。
 
 
 
-We can only keep that much information in our brains at a given time. We perform better if we can work in smaller problems that interact in limited ways, than in one single large problem where everything can interact with everything.
+Solidity使用面向对象编程，但在智能合约级别。你可以将智能合约视为具有变量和功能的对象。复杂的区块链应用程序将更容易在你的脑海中映射为一组智能合约，每个智能合约代表一个实体。
 
 
 
+例如在MakerDAO中，每种加密货币都有单独的智能合约，记录债务的另一个智能合约，代表债务库和外部世界之间的网关也是单独智能合约等。试图在单个智能合约中编写所有代码可能是不可能的。即便可以也是很难的。
 
 
-It is probably fair to say that Object-Oriented Programming allowed software to reach a higher level of complexity. By defining “objects” that represented some concept, and defining variables and functions as properties of an object, developers could make better mental images of the problem they were solving.
 
+将大问题分解为以有限方式交互的小问题确实有帮助。
 
 
-Solidity uses Object-Oriented Programming, but at the contract level. You can think of a contract as an object, with its variables and functions. A complex blockchain application will be easier to picture in your mind as a collection of contracts, each representing one single entity.
 
+## 实现
 
 
-For example, in MakerDAO you have separate contracts for each one of the cryptocurrencies, another contract for recording debt, separate contracts to represent gateways between the debt vault and the external world, among many others. Trying to code all this in a single contract might be impossible. If possible at all, it would be really hard.
 
+在接下来，我们将研究Uniswap，MakerDAO和Yield的业务流程实现。这会很有趣的。
 
 
-Breaking big problems into smaller ones that interact in limited ways really helps.
 
+### 简单的协作  Uniswap 和 Ownable.sol
 
 
-**Implementation**
 
+我喜欢Uniswap v2，因为它太简单了。他们成功的在410行智能合约代码中建立了非常成功的去中心化交易所。它们只有两种部署的智能合约：一个工厂合约和不限数量的交易对合约。
 
 
-In the next section, we will look at the orchestration implementations of Uniswap, MakerDAO and [Yield](http://yield.is/). It will be fun.
 
+由于他们工厂合约的设计方式，新的交易对合约的部署需要两个步骤。首先部署智能合约，然后使用将要交易的两个代币（Token）对其进行初始化（参考第一部分出现的代码）。
 
 
-**The simple one — Uniswap and Ownable.sol**
 
-
-
-I like Uniswap v2 because it is so simple. They managed to build a hugely successful decentralized exchange in 410 lines of smart contract code. They only have two types of deployed contracts: One factory, and an unlimited number of pair exchange contracts.
-
-
-
-Because of the way their factory contract is designed, the deployment of a new pair-trading contract is a two step process. First the contract is deployed, and then it is initialized with the two tokens it will trade.
-
-
-
-I don’t know the vulnerability they were protecting themselves against, but they needed to ensure that only the factory that created the pair-trading contract would initialize that contract. To solve this problem they reimplemented the `Ownable` pattern.
+我不知道他们是如何保护自己不受攻击的，但他们需要确保只有创建配对交易工厂合约的才能初始化该合约。为了解决这个问题，他们重新实现了`Ownable`模式。
 
 
 
@@ -162,21 +153,23 @@ constructor() public {
 
 
 
+如果你的案例和他们的一样简单，你也会成功的。如果你知道你的智能合约只需要授予对另一个智能合约的特权访问权，那么你可以使用`Ownable.sol`. 
 
-
-It worked out for them, and it will work out for you if your case is as simple as theirs. If you know that your contract only needs to give privileged access to only one other contract, then you can use  `Ownable.sol`
-
-. You don’t even need to use a factory like Uniswap. You can have one user deploy two contracts (`Boss`  and  `Minion` , with `Minion`  inheriting from `Ownable.sol`), and then execute `minion.transferOwnership(address(boss))`.
-
-
-**The complete one — Yield**
-
-
-For [Yield](http://yield.is/) we didn’t manage to code a solution as simple as Uniswap v2. Our core is five contracts, and privileged access relationships are not one-to-one. Some contracts have restricted functionality that we need to make available to several contracts in the core group.
+你甚至不需要使用像Uniswap这样的factory。你可以部署两个智能合约（`Boss`和`Minion`，`Minion`继承自`Ownable.sol`），然后执行`minion.transferOwnership(address(boss))` 。
 
 
 
-So we just extended `Ownable.sol` to have two access tiers, one of them with multiple members:
+### 复杂的协作 — Yield协议
+
+
+
+对于Yield协议，我们没有设法编写像Uniswap v2一样简单的解决方案。我们的核心合约有五个，特权访问关系不是一对一的。一些智能合约具有受限制的函数，我们需要将这些函数提供给核心合约中的多个智能合约。
+
+
+
+因此，我们将`Ownable.sol`扩展为具有两个访问层，其中之一具有多个成员：
+
+
 
 ```js
 contract Orchestrated is Ownable {
@@ -203,37 +196,46 @@ contract Orchestrated is Ownable {
 ```
 
 
-The contract owner can add any addresses to a privileged list (`authorized`). Inheriting contracts can include the `onlyOrchestrated` modifier which will restrict access to authorized addresses.
 
-As an additional security check, each address is registered along with a [function signature](https://www.4byte.directory/), narrowing down the access to a single function in the Orchestrated contract. Check the [example repository](https://github.com/albertocuestacanada/Orchestrated) for details on this.
-
+智能合约所有者可以将任何地址添加到特权列表（`authorized`）。继承合约可以包括`onlyOrchestrated`修饰器，该修饰器将限制对注册地址的访问。
 
 
-There isn’t a function to revoke access because we would `orchestrate`  the contracts during deployment, and then `owner`  would renounce to its own privileged access by calling 
-`transferOwnership(address(0))`  on all contracts.
 
-Our own platform token, `yDai`, would inherit from `Orchestrated` and limit `mint`  to specific contracts set up before `owner` renounces to its privileges:
+作为附加的安全检查，每个地址都与[函数签名选择器](https://learnblockchain.cn/docs/solidity/abi-spec.html#function-selector)一起注册，从而缩小了在[Orchestrated合约](https://github.com/albertocuestacanada/Orchestrated)中对单个函数的访问范围。检查[代码库](https://github.com/albertocuestacanada/Orchestrated)以获取有关此内容的详细信息。
 
-```
+
+
+没有函数用来撤消访问权，因为我们在部署过程中对智能合约进行的`orchestrate`，然而 `owner` 可以通过对所有智能合约调用`transferOwnership(address(0))` 放弃自己的访问特权。
+
+
+
+我们自己的平台代币 `yDai` 将从`Orchestrated`继承，并将`mint`限制为在部署期间设置的特定智能合约（在`owner` 放弃自己的访问特权之前设置的）。
+
+
+
+```js
 /// @dev Mint yDai, Only callable by Controller contracts.
 function mint(address to, uint256 yDaiAmount) public override onlyOrchestrated("YDai: Not Authorized") {
     _mint(to, yDaiAmount);
 }
 ```
 
-This pattern is relatively easy to implement and debug, and allows us to implement functions that should be used only by contracts we control.
+
+
+这种模式相对易于实现和调试，并允许我们实现仅应由我们控制的合约使用的函数。
+
+
+
+### 复杂的协作— MakerDAO
+
+
+
+MakerDAO因使用荒谬的术语而臭名昭著，这使其非常难以理解。直到我分解Yield问题之后，我才意识到他们使用的实现几乎完全相同。
 
 
 
 
-**The obfuscated — MakerDAO**
-
-
-
-MakerDAO is infamous for using nonsensical terminology, which makes it extremely hard to understand. It was only well after I solved orchestration for [Yield](http://yield.is/) that I realized they use almost exactly the same implementation.
-
-
-```
+```js
 // -- Auth -- 
 mapping(address => uint) public wards;
 
@@ -247,10 +249,10 @@ function deny(address usr) external note auth {
   wards[usr] = 0;
 }
 
-modifier auth (string memory err) {
-        require(wards[msg.sender] == 1, "Vat/not-authorized");
-        _;
-    }
+modifier auth {
+  require(wards[msg.sender] == 1, "Vat/not-authorized");
+  _;
+}
 
 ```
 
@@ -263,15 +265,17 @@ constructor() public {
 ```
 
 
-1. The contract deployer is the original member of the `wards`   .
+1.  智能合约部署者是wards的最初授权成员。
 
-2. `wards`   can `rely`   on other people ( `usr` ) so that they also become `wards`  .
+2. `wards`   可以通过  `rely`   添加其他的 ( `usr` ) 成为 `wards`  成员.
 
-3. Functions can be restricted (`auth` ) so that only `wards` can execute them.
+3. 函数访问通过 (`auth` ) 来限制，以便 `wards` 成员能执行。
 
-As an example, the `fold` function in MakerDAO’s `Vat.sol`
 
- contract is used to update an interest rate accumulator, and should only be called by another of the contracts in their collection (`Jug.sol` contract,`drip` function). If you look at the function you will see the `auth` modifier, which is what they use for orchestration:
+
+例如，MakerDAO的`Vat.sol`合约中的`fold`函数用于更新利率累加器，并且只能由其集合中的另一个合约调用（`Jug.sol`合约，`drip`函数）。如果你查看该函数，将看到`auth`修饰符，以下是他们的代码：
+
+
 
 
 ```js
@@ -286,55 +290,48 @@ function fold(bytes32 i, address u, int rate) external note auth {
 }
 ```
 
-In a way, `auth` and the other orchestration implementations are an extension of the 
-`private` and `internal` functions concept, only for access control between contracts.
 
 
-The MakerDAO implementation is very similar to the one we came up with ourselves. 
-
-1. The contract deployer is the original member of the `wards`   . In   Yield    it would be
-`owner`  .
-
-2. `wards`   can `rely`   on other people (`usr` ) so that they also become wards. In Yield
-, only the `owner`  can `orchestrate`   other addresses as `authorized`    .
-
-3. Functions can be restricted (`auth`  ) so that only wards can execute them. In  Yield   we say that `onlyOrchestrated`  addresses can call the marked functions. We further restrict access to a single function.
-
-Except that in [Yield](http://yield.is/) we used two access tiers (`owner` and `authorized`) and individual function restrictions, the implementation is the same. Contract orchestration is a common pattern that could be implemented once and reused often.
+在某种程度上，`auth`和其他协作实现是`private`和`internal`函数概念的扩展，他们是仅用于智能合约之间的访问控制。
 
 
 
-To make auditors and users even happier, we also developed a script that [trawls the blockchain events](https://medium.com/coinmonks/smart-contracts-are-not-databases-5bb5926223be) and paints a picture of ownership and orchestration for our contracts. This script will be available from our website at go-live and proves that no one has or ever will have privileged access to them, except the contracts set up at deployment.
+MakerDAO的实现与我们自己想到的实现非常相似。
 
 
 
+1. 智能合约部署者是 wards的最初授权成员。在Yield协议中它是`owner`。
+2. `wards`   可以通过  `rely`   添加其他的 ( `usr` ) 成为 `wards`  成员，在Yield中，只有`owner`可以通过`orchestrate`把其他地址指定为`authorized`。
+3. 函数可以被限制（`auth`），这样只有`wards`才能执行它们。在Yield中，我们说只有经过`onlyOrchestrated`的地址才能调用被标记的函数。我们进一步限制对单个函数的访问权限。
 
 
-After all, that’s the whole point of contract orchestration.
+
+除了在Yield中我们使用了两个访问层（`owner`和`authorized`）和单个函数限制，实现是相同的。智能合约协作是一种通用模式，可以实现一次并经常重用。
 
 
 
-**Conclusion**
+为了使审计员和用户更加满意，我们还开发了一个脚本，该脚本[可追踪区块链事件](https://medium.com/coinmonks/smart-contracts-are-not-databases-5bb5926223be)并描绘我们智能合约的所有权和合约授权。该脚本可从我们的网站上线获取，并证明除部署时设置的智能合约外，没有人拥有过特权访问它们。
+
+
+
+毕竟，这就是智能合约协作的重点。
 
 
 
 
 
-Orchestration of smart contracts is a problem that repeats itself in most projects, and which most projects implement from scratch. Often the solutions implemented are nearly identical to each other.
+## 结论
 
 
 
-While a canon emerges that we all can use to implement orchestration safely and efficiently, please use the examples in this article to understand and implement a solution for your requirements. Use the code in the [example repository](https://github.com/albertocuestacanada/Orchestrated) if it suits you.
+智能合约的协作权限控制是一个在大多数项目中都会重复出现的问题，并且大多数项目都是从头开始实施的。通常所实现的解决方案彼此几乎相同。
 
 
 
-
-
-Finally, thanks for reading this, and if you have any questions or feedback, please don’t hesitate to contact me.
-
-
+当一个实现协作权限控制的典型标准出现时，我们就会更安全和高效，请使用本文中的示例去理解和实先满足你要求的解决方案。 如果适合，可以使用[示例代码库]（https://github.com/albertocuestacanada/Orchestrated）中的代码。
 
 
 
 
-Thanks to [Allan Niemerg](https://twitter.com/niemerg), [Dan Robinson](https://twitter.com/danrobinson) and [Georgios Konstantopoulos](https://twitter.com/gakonst) for their excellent feedback while coding the [Yield](http://yield.is/) smart contracts.
+感谢 [Allan Niemerg](https://twitter.com/niemerg), [Dan Robinson](https://twitter.com/danrobinson) 和 [Georgios Konstantopoulos](https://twitter.com/gakonst) 给我在编写Yield合约时的杰出的反馈。
+
