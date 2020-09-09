@@ -1,154 +1,167 @@
-# Demystifying Digital Identity (1/2)
+**揭开数码身份的神秘面纱(1/2)**
 
-Identity has been a long-standing challenge not just in decentralized technology but in online applications generally. Part of the challenge comes from a lack of clarity about what is meant by ‘identity’ and the many forms it can take in digital products, services and networks. This is a frequent source of confusion and frustration to builders, leading many to avoid tackling identity altogether or implementing short-term workarounds. Each can have massive consequences, as identity’s importance and complexity grow with both product usage and maturity.
+ ![img](Digital_Identity_1.assets/wps1-1599665226395.png) 
+ 身份一直以来都是一个挑战，不仅在去中心化技术中，在一般的在线应用中也是如此。挑战的部分原因在于，人们不清楚“身份”的含义，以及它在数字产品、服务和网络中的多种形式。这是构建者经常感到困惑和沮丧的原因，导致许多人避免处理标识或实现短期的变通方法。随着产品的使用和成熟，身份的重要性和复杂性都在增长，每种身份都会产生巨大的后果。 
+ 这个由两部分组成的系列文字帮助您分解数字应用程序、服务或产品的身份，特别是对于去中心化架构和交互性的web。其目的是将一个模糊的主题具体化，将一个大问题具体化，将一个困难而空洞的领域简单化分析。 
 
-This two-part series helps break down identity for your digital application, service or product, especially for decentralized architectures and an interoperable web. The aim is to make a nebulous topic concrete, a big problem approachable, and a difficult and frothy space easy to analyze.
+**第一部分分析了身份在数字产品中的作用** 
 
-**Part 1 breaks down the role of identity in digital products.** This includes:
--A clear definition and scope for digital identity
--The value it should bring to your product or service
--What to know about common identity workarounds (including key pairs, on-chain IDs, 0auth logins, and custom solutions)
+这包括:
 
-**Part 2 shares what to demand from your identity infra**. This includes:
--The key standards that it should be built upon
--5 characteristics and capabilities it must support
--A flexible model that fits your stack
+- 数字身份的明确定义和范围-
 
-- Steps to future-proof your architecture in less than 1 day
+- 它为你的产品或服务带来的价值-
 
-Digital identity is a fast evolving space with a deep history of academic and practical contributions (some of which I’ve tried to reference), and so is not always approachable. My view is informed by helping build uPort and 3Box, participating in community standards, and co-authoring a book on the sociology of identity. This series is by no means a complete history or a full view of identity, but I hope it is helpful in making a critical piece of infrastructure easier to understand and build upon.
+- 关于常见的身份解决方案(包括密钥对、链上id、0auth登录和自定义解决方案)了解些什么
 
-* * *
+  
 
-# What is Identity?
+**第二部分分享了从你的身份基础上需要什么**
 
-In the fields of sociology, psychology, and biology there is no accepted definition of *identity.* Academics in each range from strict category sets to fuzzy conceptions. Said famed psychologist Erik Erikson:
+  这包括:
 
-> The more one writes about [identity], the more the word becomes a term for something that is as unfathomable as it is all-pervasive.
+-   它应该建立的关键标准-
 
-Erikson would later coin the term “identity crisis.”
 
-The nebulous nature of the definition of identity carries into the digital world. When technologists speak about identity, they may be referring to a wide range of challenges, or a spontaneous subset of challenges that matter to their use case.
+-   5它必须支持的特性和能力-一个灵活的模型，
 
-![](https://img.learnblockchain.cn/2020/08/13/15972866368750.jpg)
-<center>A partial set of discrete problems “identity solutions” may be targeting</center>
 
-The facets of identity outlined in this diagram are not the same and the solutions to each vary greatly, however they are highly related. Understanding how these elements tie together under a common framework is critical to achieving success and can turn identity from a series of isolated pain points into one of the biggest simplifications and value-adds in your product architecture.
+-   适合您的堆栈
 
-Whatever your goals and technical needs for identity, understanding should start at the human level — which is also where we often first go astray. For all of their imperfect definitions and disagreements, scholars nearly universally agree that, contrary to our instincts and vocabulary, ***identity is* *not* static, singular, or individual. Identity *is* dynamic, plural, and social.**
 
-If we wish to build a truly connected, trusted, and usable Web3 that can scale to global usage, we should build on infrastructure that reflects this starting point. As we’ll see, a strong identity is not rigid, constant, and siloed but rather flexible, dynamic, and interoperable.
+   在不到一天的时间内实现架构的未来保护 
+   数字身份是一个快速发展的领域，有着悠久的学术和实践贡献历史(我曾试图引用其中一些)，因此并不总是容易接近。我的观点是通过帮助建立uPort和3Box，参与社区标准，和合著一本关于身份的社会学的书来实现的。本系列决不是身份的完整历史或完整视图，但我希望它有助于使基础设施的关键部分更容易理解和构建。 
+   ![img](Digital_Identity_1.assets/wps2-1599665226395.png) \**
+  **是什么身份?**
+   ![img](Digital_Identity_1.assets/wps3-1599665226396.png) 
+   在社会学、心理学和生物学的领域里，没有一个公认的身份定义。学术界的研究范围从严格的类别集合到模糊的概念。著名心理学家埃里克·埃里克森说过:一个人写的[身份]越多，这个词就越成为一个术语，它是深不可测的，因为它无处不在。 
+   埃里克森后来创造了“身份危机”这个术语。 
+   身份定义的模糊性被带入了数字世界。当技术人员谈到身份时，他们可能指的是范围广泛的挑战，或者是与他们的用例相关的自发的挑战子集。 
+   ![img](Digital_Identity_1.assets/wps4-1599665226396.png) 
+   “身份解决方案”可能针对的是部分离散问题集 
+   这张图中描述的身份的各个方面是不一样的，并且每个方面的解决方案都有很大的不同，但是它们是高度相关的。理解这些元素如何在一个共同的框架下结合在一起是获得成功的关键，并且可以将身份从一系列孤立的痛点转化为产品架构中最大的简化和增值之一。 
+   无论你对身份的目标和技术需求是什么，理解应该从人的层面开始——这也是我们经常误入歧途的地方。尽管有不完善的定义和分歧，学者们几乎一致同意，与我们的本能和词汇相反，**身份不是静态的、单一的或个人的。身份是动态的、多元的和社会性的。**
 
-# The role of identity in your product
+如果我们希望构建一个真正连接的、可信的、可用的、可以扩展到全球使用的Web3，我们应该在反映这一出发点的基础设施上构建。正如我们将看到的，强标识不是僵化的、固定的和孤立的，而是灵活的、动态的和可互操作的。 
 
-If you are building an app (or wallet, service, platform, network), you probably want users. Those users may be mainstream consumers, developers, organizations, and/or DAOs. Whatever user type you are serving, the goal is the same: to have others interact with your product and realize value from it. This means you want to:
 
-* Eliminate friction in signups, authentication, and engagement
-* Deliver the richest possible experience, with little extra work
-* Focus on your core value-add, without building new or redundant infrastructure in-house
-* Build with a simple, elegant user model that can grow with your needs over time
 
-The solution to each of these goals hinges on how you manage users. How do they authenticate (login)? Can they engage with each other (chat/comment)? Can you deliver persistent and personalized experiences across time, devices, logins? Can you easily integrate with the many other products and platforms that users are on?
+**身份在产品中的作用**
 
-In traditional web applications this is often broken into Identification (related to account creation, KYC, etc.), Authentication (login, anti-fraud), and Authorization (permissions, sharing). This sequential approach will change with more flexible decentralized models. Identity touches everything that has to do with how you manage, secure, serve and interact with your userbase.
 
-# Identity needs evolve with growth
+如果你正在构建一个应用程序(或者钱包、服务、平台、网络)，你可能需要用户。这些用户可能是主流消费者、开发人员、组织和/或去中心化组织。无论你服务的用户类型是什么，目标都是一样的:让其他人与你的产品互动，并从中实现价值。这意味着你想: 
 
-> *The demands of managing a user base change quickly as your product grows.*
+- 消除注册、认证和参与方面的摩擦
 
-Your biggest “identity” pain point today may be populating your app with basic public **profile** information so users can recognize each other. Next month it may be **storing** **data** for user history and application state, such past or in-process transactions (like a shopping cart). Next quarter it could be basic **KYC**, and next year it could be **anti-sybil** protection. Each of these product requirements addresses a different “identity” problem with differing potential solutions.
+- 以最小的代价，提供尽可能丰富的经验
 
-* **Profiles:** Should I implement 0auth or an IPFS hash mapped to a key? But what if the user rotates keys or uses more than one key?
-* **Data storage:** Should I store data in a Textile ThreadsDB? But how do I allow users to manage access control without adding more key types and friction?
-* **KYC/Proof of human:** Should I use a service like Passbase or tech from Democracy Earth? How do I map this proof to existing users?
-* **Anti-Sybil**: Should I use a service like BrightID or Idena? Then how do I map their graphs to my user base?
+- 专注于您的核心增值点，无需闭门造车创建新的冗余的基础应用
 
-Implementing any of these solutions independently clearly has its own challenges, but your biggest pain point will arise from not using the correct identity infrastructure from the beginning to tie them all together in a future-proof way. A strong and flexible identity infrastructure can make each of these new needs natural extensions of previous ones, rather than new siloed challenges that need to be tackled independently and then later frankensteined together.
+- 该用户模型可以随您的需求随时间增长 
 
-# Identity is the infrastructure that lets you effectively tie together any capabilities that relate to your users
+这些目标的解决方案取决于您如何管理用户。他们如何认证(登录)?他们能互相交流(聊天/评论)吗?你能跨越时间、设备和登录提供持久和个性化的体验吗?您可以轻松地与用户所使用的许多其他产品和平台集成吗? 
+在传统的web应用程序中，这通常分为身份验证(与帐户创建、KYC等相关)、身份验证(登录、防欺诈)和授权(权限、共享)。这种顺序的方法将随着更灵活的分散模型而改变。身份涉及到与如何管理、安全、服务和与用户群交互有关的所有内容。
 
-Good identity infrastructure should make meeting your evolving user-related needs easy and painless. If you’ve ever used Okta or Rippling, you understand that this is what they try to do for enterprises. They aim to provide a single system of record for users and accounts, however they do this in a defined, limited, and controllable enterprise environment. In a more open and undefined environment — like Web3 — a good identity infrastructure needs to work in a permissionless and limitless context, in a predictable way.
+**身份需求随着成长而演变**
 
-This means your identity infrastructure must be both customizable enough to suit your own needs but flexible enough to work well with many other existing solutions. It should be extensible and interoperable across many different networks, accounts/keys, and use cases. It should work not just with the other tools and services you are using, but the others your users are using and others that you may need in the future. Not only will this make identity management easier, but it will allow each solution to build upon the others creating compounding value. For example, the KYC verification could leverage existing user profile information, and the anti-sybil tool could leverage the existing KYC (and any other) verifications.
+```
+随着产品的增长，管理用户群的需求也会迅速变化。
+```
 
-Perhaps most importantly, the identity system should operate without reliance on a single organization, platform, or model. The identity infrastructure should be an open and shared protocol, and the identities themselves should be user-managed and self-sovereign.
 
-# The problems of building without proper identity infrastructure
 
-## 🔑 Single key pair identities
+ 今天，你最大的“身份”痛点可能是在你的应用程序中填充基本的公共档案信息，以便用户能够识别彼此。下个月，它可能存储用户历史记录和应用程序状态的数据，比如过去的或进程中的事务(比如购物车)。下个季度可能是基本的KYC，明年可能是反西比尔保护。这些产品需求中的每一个都用不同的潜在解决方案解决了不同的“身份”问题。 、
 
-In the crypto world today, the default user “identity” tends to be a public blockchain account key. It’s logical why this might be the case: blockchain keys are already needed to manage assets so they’re widely possessed by users, and there are now many great wallets & SDKs for managing them. In reality, keys and the KMS solutions (wallets) to manage these keys are a fantastic way to *authenticate* into an application and execute on-chain transactions, however *single* *key pairs cannot be the user identity infrastructure for any product that wishes to scale to meaningful and persistent usage.*
+**档案文件:**
 
-Problems with using individual key pairs as identity:
+我应该实现0auth还是一个映射到键的IPFS哈希?但是如果用户旋转秘钥或使用多个秘钥呢?
 
-* **Compromises privacy**: There is no chance of segregated or private activity, since all transactions by the same ‘identity’ must happen with the same public key.
-* **Creates fragility**: When keys are used for signing and/or encrypting data, then all user data and history related to your product is lost when their key is lost or changed/rotated.
-* **Creates silos**: Information can be accessed by that specific key only, with no chance of interoperability and composability across wallets and networks. This is counter to the vision of Web3.
-* **Adds complexity**: Adding distributed databases and other user technology to your stack is difficult since they operate with different cryptographic identity and access control systems.
-* **Foregoes network effects**: You have to bootstrap your own user network, profiles, and data from scratch rather than draw on existing data to easily onboard users and jump past a cold start.
+**数据存储**:我应该存储数据在纺织ThreadsDB?但是我如何允许用户管理访问控制而不添加更多的键类型和摩擦呢?
 
-Key pairs and wallets are a core part of the Web3 experience, but they should complement (and integrate tightly with) great identity infrastructure.
+**KYC/人类证明**:我应该使用像Passbase这样的服务还是Democracy Earth的技术?如何将此档案文件映射到现有用户?
 
-## 🔗 On-chain, network-specific identities
+**Anti-Sybil**:我应该使用BrightID或Idena这样的服务吗?那么我如何将它们的图表映射到我的用户基础上呢? 
+ 独立地实现这些解决方案显然有其自身的挑战，但是您最大的痛点将来自于没有从一开始就使用正确的身份基础设施以一种经得起未来考验的方式将它们联系在一起。一个强大而灵活的身份基础设施可以使每一个新的需求自然地扩展到以前的需求，而不是新的孤立的挑战，这些挑战需要单独解决，然后再一起解决。
 
-The limitations of relying on single key pairs for identities has been well understood in the blockchain ecosystem for years, leading to attempts at both smart contract based identities and network-specific identity standards. uPort pioneered approaches like Ethereum smart-contract based identity in 2016, [social recovery in 2017](/uport/making-uport-smart-contracts-smarter-part-2-introducing-identitymanager-af656ba7441b), and [EIP 1056](https://github.com/ethereum/EIPs/issues/1056) in 2018 (Joel Thorstensson, Pelle Braendgaard). Fabian Vogelsteller authored multiple versions of ERC-725, and many others have attempted to build multi-key identity models for Ethereum or other blockchain networks.
+**身份是一种基础设施,它可以让您有效地将任何信息与用户相关的功能绑定在一起** 
 
-Problems with using on-chain, network-specific identifiers as identity:
+ 良好的身份识别基础设施应该使满足您不断发展的与用户相关的需求变得简单和轻松。如果你曾经使用过Okta或Rippling，你就会明白这是他们试图为企业做的事情。他们的目标是为用户和账户提供一个单一的记录系统，但是他们是在一个明确的、有限的、可控的企业环境中做到这一点的。在一个更加开放和未定义的环境中(比如Web3)，一个好的身份基础设施需要以一种可预测的方式在无许可和无限的上下文中工作。 
+ 这意味着您的身份基础设施必须具有足够的自定义能力，以满足您自己的需要，同时也必须具有足够的灵活性，以便能够很好地与许多其他现有解决方案一起工作。它应该是可扩展的，并且可以跨许多不同的网络、帐户/密钥和用例进行互操作。它不仅可以用于您正在使用的其他工具和服务，还可以用于您的用户正在使用的其他工具和服务以及您将来可能需要的其他工具和服务。这不仅将使身份管理变得更容易，而且将允许每个解决方案在其他解决方案的基础上创建复合价值。例如，KYC验证可以利用现有的用户配置文件信息，而anti-sybil工具可以利用现有的KYC(和任何其他)验证。 
+ 也许最重要的是，身份识别系统应该在不依赖于单个组织、平台或模型的情况下运行。身份基础设施应该是一个开放和共享的协议，身份本身应该是用户管理和自主权的。
 
-* **Compromised privacy**: Using on-chain registries or smart contracts for storing identity information (such as ERC-725 or ERC-1056) is highly likely to compromise user privacy or control. PII should never go onto an immutable network or datastore.
-* **Network lock-in**: Requiring creation of different identities for each network you or your users leverage leads to a terrible developer and user UX in a cross-chain world.
-* **Technology lock-in**: More time, cost, and complexity to manage as new blockchains, technologies, and user patterns emerge.
-* **Limited interoperability:** Inability to easily draw on data or identities from other networks.
+**建设无适合适身份的基础设施的问题**
+ ![img](Digital_Identity_1.assets/wps9-1599665226396.png) 
 
-While an improvement over using keys, identity standards built for a single network — and reliant on a single blockchain like Ethereum — lock us into new silos and a worse-than-web2 user experience. We are moving to a multi-chain future, with networks like Filecoin, Arweave, Flow, Near, Celo and Solana all coming online and adding value that complements what is being built on Ethereum. A better system needs to separate the identifier (or identity) from any specific network so it can be used with keys from across networks.
+🔑单一密钥对身份 
 
-## 📩 0auth logins
+ 在当今的加密世界中，默认用户“身份”往往是一个公开的区块链帐户密钥。这是合理的，为什么会这样:区块链密钥已经需要管理资产，所以它们被用户广泛拥有，现在有许多伟大的钱包和sdk来管理它们。实际上，密钥和管理这些密钥的KMS解决方案(钱包)是验证到应用程序和执行链上事务的一种极好的方式，不过是单个密钥对 不能成为任何希望扩展到有意义和持久使用的产品的用户标识基础设施。
 
-Some applications may be fine to use centralized services for authentication in the short term. This can ease onboarding UX (especially before improved wallet SDKs). But this approach will not scale for apps that wish to deliver great and full Web3 experiences. Web2 logins are a viable authentication method, but not an identity solution.
+*\**使用单个密钥对作为标识的问题: 
+**侵犯隐私** 不存在分离的或私有的活动，因为所有由相同“身份”的事务必须使用相同的公钥。
 
-Problems with using Oauth services as identity:
+**创建脆弱性**:当密钥用于签名和/或加密数据时，当密钥丢失或更改/旋转时，与您的产品相关的所有用户数据和历史都会丢失。
 
-* **Backend complexity:** The need to build and maintain user tables to keep track of internal mappings between 0auth tokens, your internal user identity, your users’ blockchain account, and other user information like assets, transactions, and data.
-* **Fragmented user data:** No association between the login method and other web3 experiences. This means that developers miss out on access to the open network effects and data history built around users’ keys as usage of other web3 products grows.
-* **Reliance on third-party auth:** The authentication capability relies on a middleman service that sits between you and your users, adding both risk and complexity.
-* **Expensive and bulky:** Web2 middleman services don’t scale for highly used, lightweight apps; cryptographic authentication is not just more secure, but far more efficient.
+**创建竖井**:信息只能通过特定的密钥访问，没有机会在钱包和网络之间实现互操作性和可组合性。这与Web3的愿景背道而驰。
 
-Web3 decentralized key management and authentication has come a long way since its early days and can now match 0auth in terms of user onboarding and UX. For great products in this space, c*heck out: Magic, Torus, Metamask, Portis/Shapeshift, Argent, Rainbow, and WalletConnect.*
+**增加复杂性**:向堆栈中添加分布式数据库和其他用户技术非常困难，因为它们使用不同的加密身份和访问控制系统操作。
 
-## ⚒ Custom identity solutions
+**放弃网络效应**:您必须从头启动您自己的用户网络、配置文件和数据，而不是利用现有的数据来轻松地板上用户和跳过冷启动。
+ 密钥对和钱包是Web3体验的核心部分，但它们应该补充(并与)优秀的身份基础设施紧密集成。 
 
-Recognizing the limitations of existing identity approaches, many applications or platforms have tried to create custom identity solutions that meet their needs. This is understandable and in some cases perceived to be more expedient. However most quickly find that there are reasons why identity has presented a difficult set of challenges not just in Web3, but since the dawn of the internet.
+🔗**链上,网络特殊身份 **
 
-Problems with using custom identity solutions:
+ 在区块链生态系统中，依赖单一密钥对进行身份验证的局限性已经被充分理解，这导致了对基于智能合约的身份验证和特定于网络的身份标准的尝试。uPort在2016年开创了基于以太中心智能合约的身份认证，[2017社会复苏](/uport/making-uport-smart-contracts-smarter-part-2-introducing-identitymanager-af656ba7441b)，在2018年开创了[EIP 1056](https://github.com/ethereum/EIPs/issues/1056)(Joel Thorstensson, Pelle Braendgaard)。Fabian Vogelsteller编写了多个版本的ERC-725，还有许多人试图为以太坊或其他区块链网络建立多密钥身份模型。 
+ 使用链上的、特定于网络的标识符作为标识的问题: 
 
-* **High risk:** Expensive and critical risks could easily arise by accidentally compromising user privacy, missing security vulnerabilities and fragility (e.g., key revocation), and meeting regulatory requirements (GDPR and right of users to delete data). Wading into this territory without a deep understanding of what has made identity challenging for decades is a big burden to take on. At best it adds massive complexity, and at worst it can permanently compromise the trust of your users and/or developers.
-* **Tech fragility:** Custom solutions usually only function for a bespoke, specific, predefined use case. They don’t scale well to other new circumstances within your application, or use cases (and interoperability) beyond your app.
-* **Ecosystem exclusion**: Custom solutions lock your users (and their identities) out of future identity-related advances developed by the broader community, such as better recovery options, new authentication providers, new databases, and services. To be easily usable, identity systems must “speak the same language’ in cryptography and schema, and custom solutions usually will not.
+**泄露隐私**:使用链上注册中心或智能合约存储身份信息(如ERC-725或ERC-1056)很可能会泄露用户隐私或控制权。PII不应该进入不可变网络或数据存储。
 
-A few custom implementations may have been necessary in the interim while good decentralized identity solutions developed, but it’s critical to at least build on the core, lightweight standards that will ensure future-proof, lower risk, and more scalable identity capabilities over time.
+**网络锁定**:要求为你或你的用户利用的每个网络创建不同的身份，这会在跨链的世界中导致糟糕的开发人员和用户体验。
 
-# Identity as a unifying advantage
+**技术锁定**:随着新的区块链、技术和用户模式的出现，需要管理更多的时间、成本和复杂性。
 
-Web3 is a collective movement being built globally, across many different blockchains, distributed databases, and ecosystems. Identity is the most essential piece for interoperability across these various technologies and communities. While smart contract and asset interoperability is convenient, user adoption of Web3 tech depends on a persistent, rich and manageable UX across applications.
+**互操作性有限**:无法轻易地从其他网络获取数据或身份。
+ 虽然是对使用密钥的改进，但为单一网络构建的身份标准——依赖于单一的区块链，如Ethereum——将我们锁在了新的竖井和比web2更糟糕的用户体验中。我们正在走向一个多链的未来，像Filecoin、Arweave、Flow、Near、Celo和Solana这样的网络都将上线，并为正在建立在以太坊上的东西增加价值。更好的系统需要将标识符(或标识)从任何特定网络中分离出来，这样就可以跨网络与密钥一起使用。 
 
-A world in which end-users need to juggle many keys and wallets (and keep track of which to use in every scenario) is a world in which users simply do not adopt Web3\. On the other hand, one of the biggest potential competitive advantages that the Web3 movement has over the Web2 status quo is *shared permissionless networks,* which allow developers to collectively build up and build upon existing network effects of users, data, and experiences faster than any siloed Web2 product.
+# 📩 0auth 登录
 
-> *Shared networks and network effects is the biggest GTM advantage that Web3 has over Web2\. Shared identity is the key to leveraging that.*
+ ![img](Digital_Identity_1.assets/wps12-1599665226396.png) 
+ 在短期内，某些应用程序可以很好地使用集中服务进行身份验证。这可以简化用户体验(特别是在改进的钱包sdk之前)。但是这种方法不适用于那些希望提供完美而完整的Web3体验的应用程序。Web2登录是一种可行的身份验证方法，但不是身份解决方案。 
+ 使用Oauth服务作为标识的问题: 
+**后端复杂性**:需要构建和维护用户表，以跟踪0auth令牌、内部用户标识、用户的区块链帐户和其他用户信息(如资产、交易和数据)之间的内部映射。
 
-If Web3 identity systems silo users and their data resources by each individual blockchain or application, we are crippling ourselves since the movement becomes a collection of parts not the sum of them. Each of our products becomes locked into a smaller, less powerful, less attractive market and capability set.
+**零散用户数据**:登录方法和其他web3体验之间没有关联。\*\*\*\*这意味着随着其他web3产品使用的增长，开发人员错过了开放网络效应和围绕用户密钥构建的数据历史。
 
-Interoperable identity will let users move seamlessly across networks with all of their information, reputation, claims, data, and identity, and will let developers build not just with composable assets but with composable networks, users, and data, and services.
+**依赖于第三方身份验证**:身份验证能力依赖于位于您和用户之间的中间人服务，这增加了风险和复杂性。**昂贵且庞大**:Web2的中间商服务无法为高使用率的轻量级应用程序扩展;加密身份验证不仅更安全，而且更有效。 
+ Web3分散的密钥管理和身份验证从早期开始已经有了很大的发展，现在在用户登录和用户体验方面可以与0auth匹敌。这一领域的优秀产品，请查看:Magic, Torus, Metamask, Portis/Shapeshift, Argent, Rainbow和WalletConnect。 
 
-The key to making this a reality is a basic, shared, flexible identity standard that works on any stack, gives it new capabilities, and connects it to a growing ecosystem of others doing the same.
+#  ⚒定制身份解决方案 
 
-* * *
+ ![img](Digital_Identity_1.assets/wps13-1599665226396.png) 
+ 认识到现有方法的局限性，许多应用程序或平台已经尝试创建满足其需求的自定义标识解决方案。这是可以理解的，在某些情况下被认为是更有利的。然而，大多数人很快就发现，身份识别之所以不仅在Web3中，而且在互联网出现之初就面临一系列困难的挑战，是有原因的。 
+ 使用自定义标识解决方案的问题: 
+**高风险**:意外泄露用户隐私、丢失安全漏洞和脆弱性(如密钥撤销)、满足监管要求(GDPR和用户删除数据的权利)，很容易产生昂贵的重大风险。在不深入了解几十年来身份挑战的原因的情况下，涉猎这一领域是一个沉重的负担。往好了说，它增加了大量的复杂性，往坏了说，它会永久地损害用户和/或开发人员的信任。
 
-**Part two of the Demystifying Digital Identity series outlines the requirements of a successful identity standard, explores existing work, and helps you get started building.**
+**技术脆弱性**:定制解决方案通常只针对定制的、特定的、预定义的用例。它们不能很好地扩展到应用程序中的其他新环境，或者应用程序之外的用例(和互操作性)。
 
-***CONTINUE READING:* **[*PART 2: ELEMENTS OF A GREAT IDENTITY SYSTEM*](/@dannyzuckerman/demystifying-digital-identity-2-75dd7dfee2f2)
+**生态系统排除**:自定义解决方案将您的用户(和他们的身份)与更广泛的社区开发的未来与身份相关的进步隔离开来，例如更好的恢复选项、新的身份验证提供商、新的数据库和服务。为了便于使用，标识系统必须在密码学和模式中“使用同一种语言”，而定制解决方案通常不会这样做。 
+ 在开发好的分散身份解决方案的过程中，可能需要一些定制实现，但关键是至少要构建在核心的轻量级标准之上，以确保未来可靠的、低风险的和更可伸缩的身份功能。 
 
-原文链接：https://medium.com/3box/demystifying-digital-id-6ec413b129ac  作者：[Danny Zuckerman](https://medium.com/@dannyzuckerman)
+# **身份作为一种统一优势**
 
+ ![img](Digital_Identity_1.assets/wps14-1599665226396.png) 
+ Web3是一个全球性的集体运动，跨越许多不同的区块链、分布式数据库和生态系统。身份是跨这些不同技术和社区的互操作性的最重要部分。虽然智能合约和资产互操作性很方便，但用户对Web3技术的采用依赖于跨应用程序持久、丰富和可管理的用户体验。 
+ 在一个终端用户需要同时处理许多钥匙和钱包(并跟踪在每个场景中使用哪个)的世界中，用户根本不采用Web3。另一方面，Web3移动相对于Web2现状最大的潜在竞争优势之一是共享的无许可网络，它允许开发人员在现有的用户、数据和体验的网络效应基础上共同构建和构建，速度比任何筒立的Web2产品都要快。
 
+```
+ 共享网络和网络效应是Web3相对于Web2最大的GTM优势。共享身份是利用这一点的关键。
+```
 
+ 
 
+ 如果Web3身份识别系统将用户和他们的数据资源隔离在每个区块链或应用程序中，我们就是在损害我们自己，因为移动变成了部分的集合而不是它们的总和。我们的每一种产品都被锁定在一个更小、更弱、更没有吸引力的市场和性能集合中。 
+ 可互操作的身份将使用户可以带着他们的所有信息、声誉、声明、数据和身份无缝地在网络上移动，并将使开发人员不仅可以使用可组合资产，还可以使用可组合网络、用户、数据和服务进行构建。实现这一点的关键是一种基本的、共享的、灵活的身份标准，该标准适用于任何技术栈，为其提供新功能，并将其连接到正在成长的由其他同行组成的生态系统中。 
+ ![img](Digital_Identity_1.assets/wps16-1599665226396.png) 
+**揭开数字身份神秘面纱系列的第二部分概述了成功的身份标准的要求，探索了现有的工作，并帮助您开始构建。**
+ ***待续:* **[*第二部分: 一个伟大的身份系统的元素*](/@dannyzuckerman/demystifying-digital-identity-2-75dd7dfee2f2)
+
+原文链接：https://medium.com/3box/demystifying-digital-id-6ec413b129ac  作者：[Danny Zuckerman]
