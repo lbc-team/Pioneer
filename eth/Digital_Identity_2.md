@@ -132,6 +132,6 @@ DID规范最初是由Respect Network(后来被Evernym收购)创建的，并在Re
 - **加入我们**[Ceramic discord](https://discord.gg/DM4BS98)，分享您的用例，提供帮助塑造网络和标准的输入，或者提出您的任何问题。或加入我们的邮寄名单。
 
 - **在 [twitter](https://twitter.com/dazuck/status/1274020250896355329)上与全球Web3 builder社区分享或讨论**。如果我们的Web3生态系统能够协同工作，那么它将发展得最好，而这一切都要从互操作性的坚实基础开始。 
-  原文链接:https://medium.com/3box/demystifying -数字身份- 2 - 75 - dd7dfee2f2
+  原文链接:https://medium.com/3box/demystifying-digital-identity-2-75dd7dfee2f2 
 
-  作者:https:// medium.com/@dannyzuckerman
+  作者:  https://medium.com/@dannyzuckerman
