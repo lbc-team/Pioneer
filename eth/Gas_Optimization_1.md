@@ -1,8 +1,11 @@
 
 # Gas Optimization in Solidity Part I: Variables
+# Solidity中Gas优化第一部分：变量
+
 ![](https://img.learnblockchain.cn/2020/09/03/15991036968686.jpg)
 
 *This article was written for Solidity 0.5.8*
+*本文基于Solidity 0.5.8版本*
 
 Gas optimization is a challenge that is unique to developing Ethereum smart contracts. To be successful, we need to learn how Solidity handles our variables and functions under the hood.
 
