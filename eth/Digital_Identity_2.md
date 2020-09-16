@@ -1,145 +1,140 @@
+> * 原文链接:https://medium.com/3box/demystifying-digital-identity-2-75dd7dfee2f2 作者:  https://medium.com/@dannyzuckerman
 
-# Demystifying Digital Identity (2/2)
+## 揭开数字身份的神秘面纱(2/2)
 
-*This is part two of a two-part series that helps break down identity for your digital application, service or product, especially for decentralized architectures and an interoperable web. The aim is to make a nebulous topic concrete, a big problem approachable, and a difficult and frothy space easy to analyze.*
+*本系列共分两部分，旨在帮助你分解数字应用程序、服务或产品的身份，特别是对去中心化架构和可互操作的web。其目的是将一个模糊的主题具体化，将一个大问题具体化，将一个困难而空洞的领域简单化分析。[第一部分](./Digital_Identity_1.md)分析了身份在数字产品中的作用。我们讨论了身份的社会和技术定义，它应该给你的产品带来的价值，以及不完整的身份解决方案的缺陷。*
 
-[*Part 1*](/@dannyzuckerman/demystifying-digital-id-6ec413b129ac) *broke down the role of identity in digital products. We covered a social and technological definition for identity, the value it should bring to your product, and the pitfalls of incomplete identity solutions.*
+***
+# 一个强大而灵活的身份标准
 
-* * *
-
-# A powerful and flexible identity standard
-
-Good identity infrastructure should make it easy for you to manage all of the user-related capabilities in your product, service, or ecosystem. Common workarounds (outlined in Part 1) usually fail at this. Frequently they don’t preserve privacy. Usually they are too fragile to accommodate additions or changes. And even the best implementations don’t have the proper underpinnings to support the interoperability needed to easily extend to new capabilities and use cases over time. A good identity infrastructure should work simply today and adapt easily to future product needs and opportunities.
+优秀的身份识别基础设施应该使你能够轻松地管理产品、服务或生态系统中所有与用户相关的功能。常见的解决方法(在第1部分中概述)通常在这一点上失败。他们通常不保护隐私。通常它们太脆弱，无法适应添加或更改。而且，即使是最好的实现也没有适当的基础来支持互操作性，以方便地随时间扩展到新功能和用例。一个好的身份识别基础设施应该在当下工作简单，并且很容易适应未来的产品需求和机会。 
 
 ![](https://img.learnblockchain.cn/2020/08/13/15972883181707.jpg)
 
-A common standard for digital identity can provide a simple and vetted solution for an extremely wide range of identity-related requirements, guarantee resilience and trust, and unlock powerful interoperability and opportunity. It can give any application the ability to manage users in the way they need, while ‘speaking the same language’ as other applications, services and networks that they may want to leverage or serve in the future.
+数字身份的通用标准可以为非常广泛的身份相关需求提供简单和经过审查的解决方案，保证弹性和信任，开启强大的互操作性和机会。它可以让任何应用程序能够按照用户需要的方式管理用户，同时与其他应用程序、服务和网络“使用同一种语言”，这些应用程序可能希望在未来利用或服务于其他应用程序、服务和网络。 
 
-**This post shares a positive and concrete outline of:**
-1\. The minimum requirement for interoperable identity: DIDs
-2\. The 5 capabilities needed for a powerful identity system
-3\. A flexible graph model for identity infrastructure
-4\. Practical implementations, including easy steps you can take now
+**这篇文章分享了一个积极而具体的概要:**
 
-# The starting standard for identity
+1. 互操作身份的最低要求:DID
+2. 一个强大的身份识别系统需要的5种能力
+3. 一个灵活的图形模型的身份基础设施
+4. 实际实现方式，包括你现在可以采取的简单步骤 
 
-An identity system ties many related capabilities together. These anchor around *identifiers* for users and other entities that interact with your application or network. A standard model for these identifiers ensures that users, data, capabilities, and applications can work together even if they have different starting conditions or implementations. This decentralized standard is the necessary precondition to a flexible identity system.
+# 身份的初始标准
 
-## DIDs: the minimum requirement for interoperability
+身份系统将许多相关功能联系在一起。它的作用是帮助用户通过*身份ID*跟应用程序或网络互动。标准身份模型可以确保即使用户、数据、功能和应用程序具有不同的启动条件或实现，它们也可以协同工作。这种去中心化的标准是实现灵活的身份识别系统的必要前提。
 
-The [DID spec](https://www.w3.org/TR/did-core/) from the W3C is the widely-accepted standard for decentralized identifiers. It ensures identity systems can interoperate across many different networks and contexts. DIDs provide a common format for a globally-unique identifier that is an abstraction from any single key pair.
+
+
+## DID: 互操作性的最低要求
+
+
+来自W3C的[DID](https://www.w3.org/TR/did-core/)是已被广泛接受的去中心化身份ID标准。它确保身份系统可以跨许多不同的网络和环境进行互操作。DID为全局唯一身份ID提供了一种通用格式，而该身份ID来自于任何单个密钥对的抽象。 
+
 
 ```
-// Example of a 3ID DID methoddid:3:bafyreib5c5gwpwzxl4pcrl7qw4j6lvgg7ug4zdflnhg2eqvuiw7kv7fng4
+// Example of a 3ID DID method
+did:3:bafyreib5c5gwpwzxl4pcrl7qw4j6lvgg7ug4zdflnhg2eqvuiw7kv7fng4
 ```
 
-Therefore unlike key pairs, DIDs can:
+ 因此，与密钥对不同，DID可以: 
 
-* Support multiple keys;
-* Maintain identity persistence as keys are added, removed, or rotated;
-* Resolve and communicate across various networks; and
-* Control a DID document that expresses metadata, service endpoints, or other related information about the DID.
+* 支持多个键;
+* 在添加、删除或更改密钥时保持身份ID;
+* 实现跨网络解决方案和通信；
+* 关联与DID相关的元数据、服务接口或其他相关信息的DID文档。 
 
-The DID spec was originally created by Respect Network (later acquired by Evernym) and presented at the Rebooting Web of Trust conference. It later moved to the [Decentralized Identity Foundation](https://identity.foundation/) (DIF), which was founded by uPort, Microsoft, Sovrin, Blockstack and many other companies with deep knowledge of identity and Web3\. These organizations had differing needs and approaches but were all committed to the vision of a shared and interoperable model for self-sovereign identity. The DID spec was created to ensure efforts complemented each other and any application using DIDs had access to the whole ecosystem of users and capabilities, and nobody was locked into a single siloed approach.
+DID规范最初是由Respect Network(后来被Evernym收购)创建的，并在Rebooting Web of Trust conference 会议上提出。后来被 [去中心化身份基金会](https://identity.foundation/) (DIF) 收纳。DIF是由uPort、Microsoft、Sovrin、Blockstack和许多其他对身份识别和Web3有深入了解的公司创立的。这些组织有不同的需求和方法，但都致力于实现一个共享和互操作的自我主权身份模型的愿景。创建DID规范是为了确保工作相互补充，使用DID的任何应用程序都可以访问用户和功能的整个生态系统，没有人被局限在单一的隔离方法中。
 
-Any product, service, or platform with ambitions to build a true user base and a desire to participate in and benefit from the global Web3 movement should be using DIDs. DIDs are the necessary minimum identity requirement for any application, service, or platform that wishes to serve users in any way beyond impersonal, on-chain buy/sell/transfer transactions. There are many implementations that are easy to implement.
+任何想要建立真正用户基础的产品、服务或平台，以及想要参与全球Web3运动并从中受益的人都应该使用DID。
 
-## DIDs alone are insufficient
+对于希望以非个人，链上购买/出售/转账交易以外的任何方式为用户提供服务的任何应用程序、服务或平台，DID是必需的最低身份要求。 有许多现成实现方式，因此很容易实现。
 
-Using a DID for identity means you can have interoperability in the future. It is the basic piece that should be built-in from the start. However, simply using DIDs does not give you cross-network interoperability or access to the full suite of user management and identity-related tools and patterns that are emerging and that will continue to emerge.
+## 只有DID是不够的
 
-DIDs serve as the unique identifier for users and come with a bare minimum of information and capabilities required to be resilient, persistent, and interoperable. But this is not enough as many other capabilities and features used in your application may have their own “identity” needs beyond a basic user ID. For example:
+使用DID意味着将来可以实现互用性。标准身份ID是从一开始就应该内置的基本部件。然而，简单的使用DID不会让你具备跨网络的互动性，也不能访问正在出现并将继续出现的一整套用户管理和与身份相关的工具和模式。
 
-* Databases with cryptographic access control need their own keys and key management
-* DAOs and organizations need permissions delegation and membership links in a different way than users
-* Different wallets, notification services, and verification services will have their own designs
-* Users will bring various linked accounts, asset types, and preferences
+DID作为用户的唯一身份ID，提供使其具备最低限度的可恢复、可持续和可互操作的信息和功能。但这还不够，因为在你的应用程序中使用的许多其他功能和特性可能有他们自己的“身份”需求，而不仅仅是一个基本的用户ID。 例如：	
 
-![](https://img.learnblockchain.cn/2020/08/13/15972884996164.jpg)
-<center>Conceptual representation of what a DID provides</center>
+* 具有加密访问控制的数据库需要它们自己的密钥和密钥管理
+* DAOs和一些组织需要以与用户不同的方式进行权限委托和成员关系链接
+* 不同的钱包、通知服务和验证服务将有自己的设计
+* 用户将带来不同的关联账户、资产类型和偏好 
 
-With a good decentralized identity system, all of these permutations should fit together seamlessly. Aggregating user management related features around the user’s identity turns an identity into the single API for the entire suite of user functionality. Each feature simply plugs in as a module that speaks to the others.
+![](https://img.learnblockchain.cn/2020/08/13/15972884996164.jpg!lbc2)
+<center>对DID所提供内容的概念表示 </center>
 
-For example, you don’t want to tie together user IDs, notification services, profile data, and cryptographic accounts one by one, the way that user tables and one-off integrations are managed today. With this approach, time and complexity grows rapidly — as new capabilities grow linearly, integrations and mappings to manage grows geometrically (Metcalfe’s Law). Instead, you want to have each new feature or capability tie to a user’s DID, making it easy to upgrade, replace or configure as you go.
+一个好的去中心化身份系统，所有这些排列应该无缝地结合在一起。围绕用户身份聚合用户管理相关特性，将身份转换为用于整个用户功能套件的单一API。每个功能都可以简单地作为一个模块插入，与其他功能模块通信。 
 
-# The blueprint for a complete identity standard
+例如，你不希望按照目前管理用户表和一次性集成的方式，将用户id、通知服务、配置文件数据和加密帐户一个一个地联系在一起。使用这种方法，时间和复杂性快速增长——当新能力呈线性增长时，用于管理的集成和映射呈几何增长(梅特卡夫定律)。相反，你希望将每个新特性或功能与用户的DID绑定在一起，从而方便你随时进行升级、替换或配置。 
 
-DIDs form the basis for globally usable and interoperable *identifiers* but a true identity system and infrastructure must do much more than that.
-
-> *A complete identity system builds upon the starting point of DIDs to make identity the easy, simple, and flexible integration point for all of an application’s user-related functionality.*
-
-A practical and seamless identity system should give any DID the power to manage, route to, and control a flexible and powerful graph of information and services about the user — regardless of where the information was initially generated and where it’s currently stored or hosted. And it should do this with basically no action required by the user and very little effort required by developers.
-
-## Five important properties of an interoperable identity standard
-
-To provide the true promise of decentralized identity infrastructure, and do it in a practical way that meets you as a developer where you are, 5 core elements beyond DIDs and proprietary identity systems are needed:
-
-***1\. Flexible, standard, DID-agnostic model (many networks → one identity)***
-
-Identity is much more than just DIDs. The promise of DIDs was to eliminate identity provider lock-in, however most DID-based identity systems are opinionated and require that users use their specific DID method. A strong identity infrastructure provides a complete identity-based capability model that is DID-agnostic, flexible, permissionless, and works across the worldwide web. This lets it support users, organizations, IoT devices, and almost any use case wherever they come from in the future.
-
-***2\. Chain-agnostic, multi-key authentication (many keys → one identity)***
-
-For DIDs and their associated information to be interoperable across networks, wallets, and applications, they need to support a flexible multi-key authentication system that supports any key pair. A keychain model provides cross-chain interoperability while also adding resilience to the DID since the only way a user could lose control of a DID is if they simultaneously lose control of all their wallet keys at the same time.
-
-***3\. Shared account metadata (e.g., portable profile and reputation)***
-
-For DIDs to be usable in the context of applications, they need to support the storage of various kinds of public account metadata such as profiles, social connections, or verifiable claims. Identity infrastructure should provide a standard framework for storing this kind of information, which can also be extended to support any other kind of account metadata.
-
-It encourages standardization where useful to all, but does not force it where diversity is needed; and it makes extensions, branches and versions easily discoverable and linkable.
-
-***4\. User-centric routing to external resources (e.g., rich data ecosystem)***
-
-A majority of data belonging to a DID is *not* account metadata, rather it’s the data generated as a user interacts with an application which may be stored anywhere on the internet, from servers to blockchains. This can be basic browsing data, user data, content, credentials about the user, reputation claims, or other game- or platform-specific data. This information is an important part of an identity, and in order for this data to be usable across applications, it needs to be associated to the DID to be discoverable by any application, regardless of where it exists and how it is stored.
-
-**5\. O*n-chain account mappings (e.g., NFT or contract ownership)***
-
-Since most decentralized applications built on blockchains currently require users to interact with their application using a key pair account that lives on that specific chain, applications need a way to lookup a user’s blockchain account and resolve it to a DID. This allows the application to query public metadata about the user’s account, which is actually associated with a DID. Account links should provide these on-chain to DID mappings that can work for accounts or contracts that live on *any* blockchain or network.
-
-## A dynamic and interoperable identity graph
-
-Together, these five capabilities call for infrastructure that lets applications, services, networks and users flexibly tie new identity-related information together. Rather than a single monolithic solution, what’s needed is reliable and distributed middleware for user-centric linking and routing of resources.
-
-This is best achieved through a set of linked documents that together represent a complete identity as a graph of information. A graph that is globally available, distributed, censorship-resistant, and permissionless for any app, service or user.
-
-![](https://img.learnblockchain.cn/2020/08/13/15972905943603.jpg)
-
-<center>Diagram of [Ceramic’s Identity Standard](https://github.com/ceramicnetwork/CIP/issues/3) that supports any DID, network, auth keys, claims, profile and account metadata, and off-chain sources.</center>
+# 一个完整的身份标准的蓝图
 
 
-This graph extends any DID with a standard yet flexible account model, portable metadata storage, multi-key and privacy preserving authentication, and links to external resources located anywhere on the internet. It gives DIDs the ability to link to external resources such as application data and trusted services such as notifications or backup, offering a simple user-centric routing system for all kinds of resources related to an identity. The same system can be used to manage access controls, privacy policies, or preferences related to these off-chain resources.
+DID是全局可用和互操作身份ID的基础，但真正的身份系统和基础设施必须做的远不止这些。
 
-> With a flexible identity graph, users have the power to manage their identity and data with control and privacy, and apps have the power to tap into a rich ecosystem of identity data and capabilities without compromising their needs or stack.
+>*一个实用的、无缝的身份系统应该给DID提供管理、路由和控制有关用户的灵活而强大的信息和服务图表的能力——而不管这些信息最初是在哪里生成的，以及当前存储或托管在哪里。它基本上不需要用户做任何操作，也不需要开发者做任何工作。* 
 
-This identity infrastructure paves the way to an ecosystem of linked and interoperable services and data. Identity infrastructure can make users, social graphs and services composable in the same way that blockchains make assets composable, and help Web3 products grow faster and easier together.
+##  互操作的身份标准的五个重要属性
 
-# Get started building with decentralized identity
+要提供去中心化身份认证基础设施的真正承诺，并以一种实际的方式来满足你作为开发者的需要，除了DID和专有身份认证系统之外，还需要5个核心元素: 
 
-## Implementations of interoperable identity
+**1. 灵活、标准、DID不可知模型(多网络→一个身份)**
 
-This identity model is being actively used by the Web3 community today. More and more projects are using DIDs (3ID, EthrDID, Ion), ensuring the most basic foundations of user-control and interoperability are met. A limited version of the linked graph model that extends DIDs with complete identity capabilities is in widespread use in the Ethereum ecosystem, via [3Box](http://3box.io). More than 700 apps and 22,000 users have decentralized identity, profiles and linked databases so far.
+身份不仅仅是DID（Decentralized Identifiers 去中心化身份标准）。DID的承诺是消除身份服务提供商的锁定（lock-in），然而大多数基于DID的身份系统固执己见，要求用户使用他们特定的DID方法。一个强大的身份基础设施提供了一个完整的基于身份的能力模型，该模型与身份无关、灵活、无许可，并且可以跨互联网工作。这使得它能够在未来支持用户、组织、物联网设备以及几乎所有来自任何地方的使用场景。 
 
-[Ceramic Network](https://github.com/ceramicnetwork/ceramic/blob/master/OVERVIEW.md) is being built to extend this DID-based identity graph capability to any network, key type, DID, resource type, or implementation. Ceramic is a permissionless network for storing verifiable, mutable, linked documents that is perfect for this graph of identity information. The [identity routing protocol (IRP)](https://github.com/ceramicnetwork/CIP/issues/3) is the first graph standard being built on Ceramic, with a testnet live now and a full implementation this fall.
+**2. 与链无关的多密钥身份验证(多个密钥→一个身份)**
 
-Along with 3Box, many of the best projects in Web3 are contributing to make sure the IRP standard scales to their use case, goals and requirements. This includes wallets like Metamask and Magic, blockchains like Arweave and Filecoin, databases like OrbitDB, Sia and Textile, and communities and applications from across the space.
+为了使DID及其关联信息能够跨网络、钱包和应用程序进行互操作，它们需要支持支持任何密钥对的灵活的多密钥身份验证系统。keychain模型提供了跨链的互操作性，同时也为DID增加了弹性，因为用户失去对DID的控制的唯一途径是他们同时失去对所有钱包钥匙的控制。
 
-We’re adding new projects and perspectives every week, and would love to include yours. Real world identity is not static or rigid; it is dynamic, rich and full of many perspectives. Digital identity should be too.
+**3. 共享帐户元数据(例如，可移植的配置文件和声誉)**
 
-![](https://img.learnblockchain.cn/2020/08/13/15972897669220.jpg)
+要让DID在应用程序上下文中可用，它们需要支持存储各种公共帐户元数据，如配置文件、社会连接或可验证的声明。身份基础设施应该为存储此类信息提供一个标准框架，该框架还可以扩展为支持任何其他类型的帐户元数据。
 
-## Get started today
+它鼓励对所有人都有用的标准化，但在需要多样化的地方不强制标准化;它使扩展、分支和版本易于发现和链接。
 
-You don’t have to make big changes all at once. There are simple steps you can take to ensure you are building on a strong identity foundation and are set to have identity be an advantage rather than pain-point as you grow.
+**4. 以用户为中心路由到外部资源(例如，丰富的数据生态系统)**
 
-* **Build DIDs into your application**, which takes at most ~1 day. You can use [3ID from 3Box](https://docs.3box.io/build/wallets), a lightweight IPFS-based DID that will be natively built into Ceramic.
-* **Join us in the** [**Ceramic discord**](https://discord.gg/DM4BS98) to share your use case, give input to help shape the network and standards, or ask any questions you have. Or [join our mailing list](http://eepurl.com/gUDk-X).
-* **Share or** [**discuss on twitter**](https://twitter.com/dazuck/status/1274020250896355329)with the global Web3 builder community. Our Web3 ecosystem will grow best if work together, and that starts with a solid foundation for interoperability.
+大多数属于DID的数据不是账户元数据，而是用户与应用程序交互时产生的数据，这些应用程序可能存储在互联网上的任何地方，从服务器到区块链。这些数据可以是基本的浏览数据、用户数据、内容、关于用户的凭证、声誉声明或其他特定于游戏或平台的数据。此信息是身份的重要部分，为了使此数据在应用程序之间可用，需要将其与DID关联，以便任何应用程序都能发现它，而不管它存在于何处以及如何存储。
+
+**5. 链上帐户映射(例如非可分割代币(NFT)或合约所有权)**
+
+由于目前大多数建立在区块链上的去中心化应用程序都要求用户使用位于该特定链上的密钥对帐户与应用程序交互，因此应用程序需要一种方法来查找用户的区块链帐户并将其解析为DID。这允许应用程序查询关于用户帐户的公共元数据，该帐户实际上与一个DID相关联。帐户链接应该提供这些链上到DID的映射，可以为帐户或合同工作，生活在任何区块链或网络上。 
+
+##   一个动态的、可互操作的身份图
+
+总之，这五种能力需要基础设施，让应用程序、服务、网络和用户灵活地将新的身份相关信息联系在一起。我们需要的不是单一的整体解决方案，而是可靠的分布式中间件，用于以用户为中心的链接和资源路由。 
+
+最好通过一组链接文档来实现这一点，这些文档一起将完整的身份表示为信息图。一个全球可用的、分布式的、不受审查的、不允许任何应用程序、服务或用户使用的图表。 
 
 
-原文链接：https://medium.com/3box/demystifying-digital-identity-2-75dd7dfee2f2  作者：https://medium.com/@dannyzuckerman
+![身份 id 图](https://img.learnblockchain.cn/pics/20200916150815.png!lbc)
 
+>  [Ceramic’s Identity Standard(陶瓷身份标准)](https://github.com/ceramicnetwork/CIP/issues/3)，支持任何DID、网络、认证密钥、声明、个人资料和帐户元数据和外链来源。
 
+这张图扩展了标准而灵活的帐户模型、便携式元数据存储、多密钥和隐私保护认证，以及与Internet上任何地方的外部资源的链接。它使DID能够链接到外部资源(如应用程序数据)和受信任的服务(如通知或备份)，为与身份相关的各种资源提供了一个简单的以用户为中心的路由系统。同样的系统可以用于管理访问控制、隐私策略或与这些链下资源相关的首选项。 
 
+> 有了灵活的身份图，用户就可以管理自己的身份、数据并且保护隐私，同时应用程序可以在不损害功能或堆栈的情况下，利用系统中丰富的身份数据。
 
+这种身份基础设施为连接和互操作的服务和数据的生态系统铺平了道路。身份识别基础设施可以让用户、社交图和服务进行组合，就像区块链可以让资产进行组合一样，还可以帮助Web3的产品更快更容易地组合在一起。 
 
+# 开始去中心化身份的建设
+
+## 互操作身份的实现
+
+目前，Web3社区正在积极使用这种身份模型。越来越多的项目正在使用DID (3ID, EthrDID, Ion)，以确保用户控制和互操作性的最基本基础得到满足。链接图模型的一个有限版本通过3Box在以太坊生态系统中广泛使用，它扩展了具有完整身份识别能力的DID。到目前为止，超过700个应用程序和22000名用户拥有去中心化的身份、个人资料和关联数据库。 
+
+正在构建的[Ceramic Network](https://github.com/ceramicnetwork/ceramic/blob/master/OVERVIEW.md)将这种基于DID的身份图功能扩展到任何网络、密钥类型、DID、资源类型或实现。Ceramic是一种无许可的网络，用于存储可验证的、可变的、链接的文档，非常适合此身份信息图。身份路由协议[(IRP)](https://github.com/ceramicnetwork/CIP/issues/3)是构建在Ceramic上的第一个图形标准，现在有一个测试网上线，今年秋天将有一个完整的实现。
+
+和3Box一样，Web3中许多最好的项目都在为确保IRP标准符合它们的用例、目标和需求做出贡献。这包括像Metamask和Magic这样的钱包，像Arweave和Filecoin这样的区块链，像OrbitDB, Sia和Textile这样的数据库，以及来自整个空间的社区和应用。 
+
+我们每周都在添加新的项目和观点，也很乐意包括你的。现实世界的身份不是一成不变的;它是动态的，丰富的，充满了许多观点。数字身份也应该如此。 
+
+##  今天开始
+
+你不必一次就做出大的改变。你可以采取一些简单的步骤来确保你建立在一个强大的身份基础上，并且在你成长的过程中让身份成为你的优势而不是痛点。 
+
+* **将DID构建到应用程序中**，最多需要1天的时间。你可以使用[3ID from 3Box](https://docs.3box.io/build/wallets),，这是一个基于ipfs的轻量级软件，它将被原生地内置到Ceramic中。
+* **加入我们**[**Ceramic discord**](https://discord.gg/DM4BS98)，分享你的用例，提供帮助塑造网络和标准的输入，或者提出你的任何问题。
+* **分享或** [**twitter**](https://twitter.com/dazuck/status/1274020250896355329)上与全球Web3 builder社区分享或讨论。如果我们的Web3生态系统能够协同工作，那么它将发展得最好，而这一切都要从互操作性的坚实基础开始。 
 
