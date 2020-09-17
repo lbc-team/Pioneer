@@ -1,8 +1,13 @@
+## [译]揭开数字身份的神秘面纱(2/2)
+
 > * 原文链接:https://medium.com/3box/demystifying-digital-identity-2-75dd7dfee2f2 作者:  https://medium.com/@dannyzuckerman
+> * 译文出自：[登链翻译计划](https://github.com/lbc-team/Pioneer)
+> * 译者：[will](https://learnblockchain.cn/people/617)
+> * 本文永久链接：[learnblockchain.cn/article…](https://learnblockchain.cn/article/1457)
+> * 校对: [Tiny熊](https://learnblockchain.cn/people/15)
 
-## 揭开数字身份的神秘面纱(2/2)
 
-*本系列共分两部分，旨在帮助你分解数字应用程序、服务或产品的身份，特别是对去中心化架构和可互操作的web。其目的是将一个模糊的主题具体化，将一个大问题具体化，将一个困难而空洞的领域简单化分析。[第一部分](./Digital_Identity_1.md)分析了身份在数字产品中的作用。我们讨论了身份的社会和技术定义，它应该给你的产品带来的价值，以及不完整的身份解决方案的缺陷。*
+*本系列共分两部分，旨在帮助你分解数字应用程序、服务或产品的身份，特别是对去中心化架构和可互操作的web。其目的是将一个模糊的主题具体化，将一个大问题具体化，将一个困难而空洞的领域简单化分析。[第一部分](https://learnblockchain.cn/article/1456)分析了身份在数字产品中的作用。我们讨论了身份的社会和技术定义，它应该给你的产品带来的价值，以及不完整的身份解决方案的缺陷。*
 
 ***
 # 一个强大而灵活的身份标准

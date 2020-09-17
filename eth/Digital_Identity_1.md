@@ -1,8 +1,12 @@
-## 揭开数字身份的神秘面纱(1/2)
+## [译]揭开数字身份的神秘面纱(1/2)
 
 
 
 > * 原文链接：https://medium.com/3box/demystifying-digital-id-6ec413b129ac  作者：Danny Zuckerman
+> * 译文出自：[登链翻译计划](https://github.com/lbc-team/Pioneer)
+> * 译者：[will](https://learnblockchain.cn/people/617)
+> * 本文永久链接：[learnblockchain.cn/article…](https://learnblockchain.cn/article/1456)
+> * 校对: [Tiny熊](https://learnblockchain.cn/people/15)
 
 
 
