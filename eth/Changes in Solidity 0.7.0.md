@@ -1,8 +1,8 @@
-# Solidity 0.7.0 新特性
+# Solidity 0.7.0 新变化
 
 
 
-##  Solidity 0.7.0新特性的补充概述
+##  Solidity 0.7.0新变化的补充概述
 
 在2020年7月28日，solidity编译器的版本小幅升级到0.7.0。它还附带了一个 [版本更新日志2](https://github.com/ethereum/solidity/releases/tag/v0.7.0) 上面有32个要点和一整页的 [专注于突破性变化2的文档](https://solidity.readthedocs.io/en/latest/070-breaking-changes.html). 我们有必要花点时间深入了解发生了什么变化，并简要考虑一下这些变化在实践中是如何影响可靠性智能合合约代码的。
 
@@ -34,18 +34,17 @@ uint value = gwei * 1 gwei; // value: 5000000000
 
 
 
-* 需要表达ASCII以外的字符串变量现在应该显式键入unicode字符串。它们用“unicode”前缀来标识(例如:unicode)。 (例如. `unicode"Text, including emoji! 🤓"`).
+* 需要表达ASCII以外的字符串变量现在应该显式键入unicode字符串。它们用“unicode”前缀来标识(例如:unicode)。 (例如. `unicode"Text, including emoji! 🤓"`)。
 
-* Derived contracts no longer inherit library `using` declarations for types (e.g. `using SafeMath for uint`). Instead, such declarations must be repeated in *every* derived contract that wishes to use the library for a type.
+* 派生合约不再使用“using”声明继承库(例如:' using SafeMath for uint ')。相反，这样的声明必须在希望使用类型库的每个派生合约中重复。
 
-* Events in the same inheritance hierarchy are no longer allowed to have the same name and parameter types.
+* 相同继承层次结构中的事件不再允许具有相同的名称和参数类型。
 
-### Still Perceptible Changes
+### 仍然可以察觉到变化
 
-* Declaring a variable with the `var` keyword so that its type is assigned implicitly has been deprecated for several releases in favor of explicitly typed variables. However, the compiler would still recognize the `var` syntax and complain about it with a type error. Now, the `var` keyword is simply not allowed and will result in a parser error.
+* 用' var '关键字声明一个变量，这样它的类型就会被隐式赋值已经被废弃了，已经有几个版本赞成使用显式类型的变量。但是，编译器仍然会识别出“var”语法，编译的时候抛出类型错误。现在，“var”关键字是不允许的，并且会导致解析器错误。
 
-* Function state mutability can now be made more restrictive during inheritance. So, `public` functions with default mutability can be overridden by `view` or `pure` functions. If an inherited function is marked `view`, then it can be overridden by a `pure` function.
-
+* 在继承期间，函数状态的可变性现在可以变得更加严格。因此，具有默认可变性的“public”函数可以被“view”或“pure”函数覆盖。如果一个继承的函数被标记为“view”，那么它可以被一个“pure”函数覆盖。
 ```
  // Behavior Now
 contract Parent {
@@ -61,7 +60,7 @@ contract Child is Parent {
 }
 ```
 
-* Prior to this release, shifts and exponentiation of literals by non-literals (e.g. `250 << x` or `250 ** x`) would be performed using the type of either the shift amount or the exponent (i.e. `x` in the examples). Now, either `uint256` (for non-negative literals) or `int256` (for negative literals) will be used to perform the operations.
+* 在此版本之前，对非文本进行移位和取幂(例如，'250 << x '' 或 '250x '')将使用移位量或指数的类型(即例如“x”)。现在，' uint256 '(用于非负数)或' int256 '(用于负数)将用于执行这些操作。
 
 ```
 // Behavior Before
@@ -79,63 +78,63 @@ uint shift = 250 << x; // shift: 1000
 uint exp = 250 ** x; // exp: 62500
 ```
 
-Notice how before, both results were implicitly cast to the type of `x` which is `uint8` and, as a consequence, overflowed accordingly.
+注意，以前，两个结果都隐式转换为' x '类型，即' uint8 '，结果就会相应地溢出。
 
-Now, more intuitively, both results are of type `uint256` and, so, avoid overflowing in this case.
+现在，更直观的是，这两个结果的类型都是' uint256 '，因此，在本例中要避免溢出。
 
-* Shifts (e.g. `shiftThis >> amount` `shiftThis << amount`) by signed types are no longer allowed. Previously, negative shifts were permitted, but would revert at runtime.
+* 有符号类型的移位(例如' shiftThis >> amount' ‘shiftThis << amount ')不再被允许。以前，允许负移位运算，但是会在运行时恢复。
 
-* The parser will no longer recommend stricter mutability for virtual functions, but **will** still make such recommendations for any overriding functions.
+* 解析器将不再为虚函数推荐更严格的可变性，但仍将为任何重写函数提供这样的建议。
 
-* Library functions can no longer be marked `virtual`. Which makes sense, given the fact that libraries cannot be inherited.
+* 库函数不再被标记为`virtual`。这是有道理的，因为库是不能继承的。
 
-### Less Noticeable Changes
+### 不太明显的变化
 
-#### Mappings Outside Storage
+#### 外部存储的映射
 
-* Mappings only exist in storage, and, previously, mappings in structs or arrays would be ignored/skipped. Such behavior was, we agree with the docs, “confusing and error-prone”. Similar “skipping” behavior was encountered when assigning to structs or arrays in storage if they contained mappings. These sorts of assignments are no longer allowed - making things much less confusing.
+* 映射只存在于存储中，以前，结构体或数组中的映射将被忽略/跳过。 我们同意文档中的说法，这种行为是“令人困惑和容易出错的”。如果存储中的struct或数组包含映射，则在给它们赋值时也会遇到类似的“跳过”行为。这种类型的作业不再被允许——这使得事情变得不那么混乱了。
 
-#### Inline Assembly
+#### 内联汇编
 
-* Inline assembly no longer supports user-defined identifiers with a `.` (*period*) - unless operating in Solidity Yul-only mode.
+* 内联汇编不再支持带有'.'的用户定义标识符。(*period*) -除非运行在Solidity Yul-only模式下。
 
-* Slot and offset of storage pointer variables are now accessed with dot notation `.` (e.g. `stor.slot` & `stor.offset`) rather than an underscore `_` (e.g. `stor_slot` & `stor_offset`).
+* 存储指针变量的槽和偏移量现在用点符号"."来访问'。 (例如 `stor.slot` & `stor.offset`) 而不是下划线 `_` (e.g. `stor_slot` & `stor_offset`).
 
 #### YUL
 
-> * Disallow consecutive and trailing dots in identifiers. Leading dots were already disallowed.
-> * Yul: Disallow EVM instruction pc().
+> * 不允许在标识符中使用连续的和尾随的点。引导点已经被禁止了。
+> * Yul: 不允许EVM指令pc()。
 
-What’s the `pc` instruction, you might wonder? As defined in the yellow paper, it should: “Get the value of the program counter prior to the increment corresponding to this instruction.”
+你可能会想，“pc”的指令是什么?正如黄纸中所定义的，它应该:“在与此指令对应的增量之前获取程序计数器的值。”
 
-### Mentioned for Completeness
+### 为了完整性起见
 
-#### Compiler Features
 
-> * SMTChecker: Report multi-transaction counterexamples including the function calls that initiate the transactions. This does not include concrete values for reference types and reentrant calls.
+#### 编译器特性
 
-#### JSON AST (Abstract Syntax Tree)
+> * SMTChecker: 报告多个事务反例，包括初始化事务的函数调用。这并不包括引用类型和重入调用的具体值。
 
-> * Hex string literals are now marked with kind: “hexString”.
-> * Members with null values are removed from the output.
+#### JSON AST (抽象语法树)
 
-#### Bugfixes
+> * 十六进制字符串现在被标记为“hexString”。
+> *  具有空值的成员将从输出中删除。
 
-> * Inheritance: Disallow public state variables overwriting pure functions.
-> * NatSpec: Constructors and functions have consistent userdoc output.
-> * SMTChecker: Fix internal error when assigning to a 1-tuple.
-> * SMTChecker: Fix internal error when tuples have extra effectless parenthesis.
-> * State Mutability: Constant public state variables are considered pure functions.
-> * Type Checker: Fixing deduction issues on function types when function call has named arguments.
-> * Immutables: Fix internal compiler error when immutables are not assigned.
+#### 修正
+
+> * 继承:不允许公共状态变量覆盖纯函数。
+> * NatSpec: 构造函数和函数具有一致的userdoc输出。
+> * SMTChecker: 修复分配到1元组时的内部错误。
+> * SMTChecker: 修复元组有额外有效括号时的内部错误。
+> * 状态可变性:常量公共状态变量被认为是纯函数。
+> * 类型检查器:修复了当函数调用已命名参数时函数类型的推断问题。
+> * 固定不变:修复内部编译错误时，不可改变的不被分配。
 
 * * *
 
-Good work making it to the bottom of the list! As you can see, the trend to make Solidity ever-more explicit is alive and well. This is a net positive for smart contract security - and staying up to date with the latest Solidity changes is an important part of being a proficient Soldity dev.
+排在名单的最后，做得很好!正如你所看到的，让Solidity变得更加明确的趋势依然存在，而且很好。这对智能合同安全来说是完全有利的——而要成为一名熟练的Soldity开发者，及时了解最新的可靠性变化是重要的一部分。
+如果你需要一些建议更新代码,不要忽视的技巧文档2,一定要检查出[5]solidity-upgrade工具(https://solidity.readthedocs.io/en/latest/using-the-compiler.html # solidity-upgrade)。
+如果有任何不清楚的地方，或者你想讨论任何变化，欢迎继续下面的对话!
 
-If you need some tips for updating your code, don’t overlook the tips in the [docs 2](https://solidity.readthedocs.io/en/latest/070-breaking-changes.html?highlight=shift#how-to-update-your-code) and be sure to check out the [solidity-upgrade tool 5](https://solidity.readthedocs.io/en/latest/using-the-compiler.html#solidity-upgrade).
-
-If anything is unclear or you’d like to discuss any of the changes, feel free to continue the conversation below!
 
 原文链接：https://forum.openzeppelin.com/t/changes-in-solidity-0-7-0/3758
 作者：[CallMeGwei](https://forum.openzeppelin.com/u/CallMeGwei)
