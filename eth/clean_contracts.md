@@ -1,81 +1,81 @@
 
-### Clean Contracts - a guide on smart contract patterns & practices
+### 合约整洁之道-智能合约模式和实践指南
 
 
-Blockchain and smart contract development are still relatively new and highly experimental. They require a different engineering mindset than traditional web, or app development where ‘move fast and break things’ has become the norm.
+区块链和智能合约的开发仍是相对较新的且高度试验性的。 他们需要与传统网络或应用开发不同的工程思维方式，传统网络或应用开发已成为“快速行动并打破常规”的准则。
 
-Blockchain development is much more like hardware, or financial service development. Smart contracts are complex instruments that offer the possibility to have self-enforcing contracts including transparent, tamper-proof, and immutable information. They have the authority to allocate high-value resources between complex systems. Often working autonomously. With huge financial loss at risk. This makes smart contracts critical components in these systems. Development of such components requires more investment, design, and effort upfront. Solid engineering practices, rigorous testing, and a strong security mindset.
+区块链开发更像是硬件或金融服务开发。 智能合约是复杂的工具，可以提供具有透明，防篡改和不可变信息的自我执行合约。 他们有权在复杂系统之间分配高价值资源。 合约往往自主工作，面临巨大的财务损失风险，使得智能合约成为这些系统中的关键组件。 开发此类组件需要更多的投入，设计和前期工作。 扎实的工程实践，严格的测试和强大的安全意识。
 
-In a series of blog posts, I’m planning to go through several patterns, practices, and principles that can be applied to blockchain and smart contract development to reduce the risks associated with it.
+在一系列博客文章中，我计划介绍几种可应用于区块链和智能合约开发的模式，实践和原则，以降低与之相关的风险。
 
-# Clean Code
+# 代码整洁之道
 
 ![](https://img.learnblockchain.cn/2020/09/04/15991844482808.jpg)
 
 
-In this first article, I’ll cover more general engineering practices based on the concepts of Clean Code. Clean code is a well-known concept within the software development industry. [Robert C Martin, also known as ‘Uncle Bob’ wrote the famous handbook](https://amzn.to/30RsoKk). Its principles go back to even the earlier concepts of the Agile manifesto and software craftsmanship. It’s a knowledge base for the way we think, write, and read code. Build on decades of wisdom in software development.
+在第一篇文章中，我将介绍更多基于Clean Code概念的通用工程实践。 整洁代码是软件开发行业中众所周知的概念。 [罗伯特·C·马丁（Robert C Martin），也称为“鲍勃叔叔”（Uncle Bob），写下了著名的手册](https://amzn.to/30RsoKk)。 它的原理甚至可以追溯到敏捷宣言和软件工艺的早期概念。 这是我们思考，编写和阅读代码的方式的知识库。 以数十年的软件开发智慧为基础。
 
-> *“Truth can only be found in one place: the code“* - Robert C. Martin
+> *“Truth can only be found in one place: the code”*（真理只能在代码中发现）- Robert C. Martin
 
-Clean code is code that is easy to read. Easy to understand. And easy to maintain. Clean code is an attempt to make sense of the complexity of systems that we’re dealing with. It’s a defense mechanism that can provide guidance when you’re not sure how a change would affect the codebase. While there’s valid criticism on the handbook and the examples are considered outdated, the principles are still very relevant. Especially for object-oriented languages, such as Solidity. They apply to designing and writing secure, open, and immutable code, such as smart contracts.
+整洁的代码是易于阅读的代码，容易理解，并且易于维护。简洁的代码是一种尝试，以了解我们正在处理的系统的复杂。 它是一种防御机制，当你不确定某个更改将如何影响代码库时，它可以提供指导。尽管手册存在有效的批评，并且示例被认为已过时，但这些原则仍然非常相关。 特别是对于面向对象的语言，例如Solidity。 它们适用于设计和编写安全，开源和不变的代码，如智能合约。
 
-# Practices
+# 实践
 
-## Naming
+## 命名
 
-The naming of contracts, functions, or variables should reveal the intention, why it exists, and how it is used. If a name requires comments to explain, then it doesn’t reveal its intent.
+合约、函数或变量的命名应该揭示其意图、存在原因以及如何使用。如果一个名字需要注释来解释，那么它不会透露它的意图。
 
-Be consistent in your naming throughout your code. Especially when you’re working with a large codebase. Use the same names for abstract concepts, throughout multiple contracts.
+代码的命名要一致。特别是当你使用一个大型的代码库时。在多个合约中，对抽象概念使用相同的名称。
 
-Use pronounceable names.
+使用可读得出的名字。
 
-Use searchable names.
+使用可搜索的名称。
 
-> *“There are only two hard things in Computer Science: cache invalidation and naming things.”* - Phil Karlton
+> *“There are only two hard things in Computer Science: cache invalidation and naming things.”*（计算科学中最难的两件事是缓存失效和命名） - Phil Karlton
 
 **References**
 
-* [Code example](https://github.com/wslyvh/clean-contracts/tree/master/1-naming)
-* [Solidity Style guide](https://solidity.readthedocs.io/en/latest/style-guide.html)
+* [代码示例](https://github.com/wslyvh/clean-contracts/tree/master/1-naming)
+* [Solidity 风格指南](https://solidity.readthedocs.io/en/latest/style-guide.html)
 
-## Structure & Ordering
+## 结构 & 顺序
 
-Ordering helps readers identify which functions they can call and to find the constructor and fallback definitions easier.
+顺序帮助读者确定可以调用哪些函数，更容易找到构造函数和回退定义。
 
-### Order of Layout
+### 结构顺序
 
-Layout contract elements in the following order:
+按以下顺序排列合约元素
 
-1. Pragma statements
-2. Import statements
+1. Pragma 语句
+2. Import 语句
 3. Interfaces
 4. Libraries
 5. Contracts
 
-Inside each contract, library or interface, use the following order:
+在每个合约、库或接口中，使用以下顺序
 
-1. Type declarations
-2. State variables
+1. 类型声明
+2. 状态变量
 3. Events
 4. Functions
 
-### Ordering of Functions
+### 函数排序
 
-Functions should be grouped according to their visibility and ordered:
+函数应该根据其可见性和顺序进行分组
 
 1. constructor
-2. receive function (if exists)
-3. fallback function (if exists)
+2. receive 函数 (如果存在)
+3. fallback 函数 (如果存在)
 4. external
 5. public
 6. internal
 7. private
 
-Explicitly label the visibility of functions and state variables. Functions can be specified as being `external`, `public`, `internal`, or `private`. Please understand the differences between them.
+明确标记函数和状态变量的可见性。可以将函数制定为 `external`, `public`, `internal`, 或 `private`. 请了解它们之间的区别。
 
-### Ordering of Modifiers
+### 修饰符的排序
 
-The modifier order for a function should be:
+函数的修饰符顺序应为：
 
 1. Visibility
 2. Mutability
@@ -85,182 +85,181 @@ The modifier order for a function should be:
 
 **References**
 
-* [Code example](https://github.com/wslyvh/clean-contracts/tree/master/2-structure)
-* [Solidity Style guide](https://solidity.readthedocs.io/en/latest/style-guide.html)
+* [代码示例](https://github.com/wslyvh/clean-contracts/tree/master/2-structure)
+* [Solidity 风格指南](https://solidity.readthedocs.io/en/latest/style-guide.html)
 
-## Documentation & Natspec
+## 文档 & Natspec
 
-Solidity contracts can have a form of comments that provide rich documentation to others reading the code as well as end-users. This is called the Ethereum Natural Language Specification Format, or [NatSpec](https://solidity.readthedocs.io/en/latest/natspec-format.html).
+Solidity合约可以采用注释的形式，为阅读代码的其他人以及最终用户提供丰富的文档。 这称为以太坊自然语言规范格式，或 [NatSpec](https://solidity.readthedocs.io/en/latest/natspec-format.html).
 
-This documentation is segmented into developer-focused messages and end-user-facing messages. These messages may be shown to the end-user (the human) at the time that they will interact with the contract (i.e. sign a transaction).
+本文档分为面向开发人员的消息和面向最终用户的消息。这些消息可以在与合约交互时显示给最终用户（人）（即签名一个交易）。
 
-It is recommended that Solidity contracts are fully annotated using NatSpec for all public interfaces (everything in the ABI).
+建议对所有公共接口（ABI中的所有内容）使用NatSpec对Solidty合约进行完全注释。
 
 **References**
 
-* [Code example](https://github.com/wslyvh/clean-contracts/tree/master/3-documentation)
+* [代码示例](https://github.com/wslyvh/clean-contracts/tree/master/3-documentation)
 * [NatSpec](https://solidity.readthedocs.io/en/latest/natspec-format.html)
 
-## Formatting
+## 格式
 
-Reading code should be like reading this blog, an article, or a book. It should be well formatted. The Solidity style guide provides guidance for writing Solidity code. The goal for it is not to be the right or only way, but to be consistent.
+阅读代码应该像阅读这个博客、一篇文章或一本书一样。它应该被很好地格式化。Solidity风格指南为编写Solidity代码提供了指导。它的目标不是正确的或唯一的方法，而是要保持一致。
 
-Consistency can be enforced by using a linter. This not only provides formatting and style guide validation but also includes security validation.
+可以通过使用lint来实现一致性。 这不仅提供格式和样式指南验证，还包括安全验证。
 
-Linters for Solidity
+Solidity可用的lint
 
-* [Ethlint](https://github.com/duaraghav8/Ethlint) (formerly Solium)
+* [Ethlint](https://github.com/duaraghav8/Ethlint) (原名 Solium)
 * [Solhint](https://github.com/protofire/solhint)
 * [VS Code Solidity](https://github.com/juanfranblanco/vscode-solidity/)
 
-Use a regular linter for your dapp development (e.g. eslint, depending on your language).
+为您的dapp开发使用常规的lint（例如eslint，具体取决于您的语言）。
 
 **References**
 
-* [Code example](https://github.com/wslyvh/clean-contracts/tree/master/4-formatting)
-* [Solidity Style guide](https://solidity.readthedocs.io/en/latest/style-guide.html)
+* [代码示例](https://github.com/wslyvh/clean-contracts/tree/master/4-formatting)
+* [Solidity 风格指南](https://solidity.readthedocs.io/en/latest/style-guide.html)
 
-## Contracts & Data structures
+## 合约 & 数据结构
 
-* Contracts expose behavior and hide data (in abstraction. Not actually hiding data from others. No data on the blockchain is actually hidden, see chapter Contracts). This makes it easy to add new kinds of objects without changing existing behaviors. It also makes it hard to add new behaviors to existing objects.
-* Data structures expose data and have no significant behavior. This makes it easy to add new behaviors to existing data structures but makes it hard to add new data structures to existing functions.
+* 合约公开了行为并隐藏了数据 (抽象地说。实际上并未向其他人隐藏数据。实际上，区块链上没有数据被隐藏，请参见章节-合约）。这使得在不更改现有行为的情况下添加新的对象变得容易。 这也使得很难向现有对象添加新行为。
+* 数据结构公开数据，没有显著的行为。这使得向现有数据结构添加新行为变得容易，但向现有函数添加新数据结构却变得困难。
 
-Clear separation of the two is important, due to the contract’s immutability. If you want to add logic or deploy new contracts, you want to be able to utilize the existing data structures. Separating the two can be done by storage contracts. We’ll cover these in more detail in another blog post.
+由于合约的不可变性，明确区分两者是很重要的。如果希望添加逻辑或部署新合约，则希望能够利用现有的数据结构。将两者分离可以通过存储合约实现。我们将在另一篇博客文章中更详细地介绍这些。
 
-## Systems
+## 系统
+保持简单直白（Keep it Simple Stupid ，KISS）。 复杂性增加了出现错误和意外行为的可能性。合约应该只有一个责任，只有一个变更的理由，支持单一责任原则（Single Responsibility Principle）。它是OO设计中最重要的概念之一。
 
-Keep it Simple Stupid (‘KISS’). Complexity increases the likelihood of errors and unexpected behavior. Contracts should have one responsibility, and only one reason to change, supporting the Single Responsibility Principle. It’s one of the most important concepts in OO design.
+保持你的合约规模小。智能合约中的每一行代码执行起来都要花钱，存储数据也很昂贵。最佳实践是在智能合约中存储数据指针，而不是存储数据本身。例如，可以使用去中心化的数据存储提供商（如IPFS）存储数据。
 
-Keep your contracts small. Every line of code in a smart contract costs money to execute and storing data is expensive. A best practice is to store a pointer to data in a smart contract, rather than storing the data itself. For example, data can be stored using decentralized data storage providers such as IPFS.
+将您的合约模块化，使其保持较小的规模，并利用现有的标准和库（参见章节“标准&库”）。
 
-Modularize your contracts to keep them small and utilize existing standards & libraries (see ‘Standards & Libraries’).
+功能同样如此。函数应该只做一件事。他们应该做好。他们只能这样做。
 
-The same applies to functions. Functions should do one thing. They should do it well. They should do it only.
+在区块链上，一切都是公开的。智能合约中的私有数据和变量实际上不是私有的。 “Private”是指在合约的执行范围内，但数据是公开的，任何人都可以读取。 设计程序时请记住这一点。
 
-On blockchain everything is public. Private data and variables within a smart contract are not actually private. “Private” means within the execution scope of the contract, but the data is public and can be read by anyone. Keep this in mind when designing your programs.
+仅将区块链和智能合约用于需要去中心化的部分。
 
-Only use blockchain and smart contracts for the parts that need to be decentralized.
+> *“The first rule of functions is that they should be small. The second rule of functions is that they should be smaller than that.”*（函数的第一个规则是它们应该很小。 函数的第二个规则是它们应该比小更小） - Robert C. Martin
 
-> *“The first rule of functions is that they should be small. The second rule of functions is that they should be smaller than that.”* - Robert C. Martin
+## 标准 & 库
 
-## Standards & Libraries
+智能合约的一个固有特征是它的可组合性。将每份合约变成其他人可以利用的组成部分和潜在的构建基块。 这些构件很多，已经存在，并且标准确保了易于使用和开发。最著名的标准是为新兴通证生态系统（token ecosystem）及其服务的交易所创建的：ERC20标准。
 
-An intrinsic feature of smart contracts is its composability. Turning every contract into a component and potential building block that others can leverage. A lot of these building blocks exist already and standards ensure the ease of use and development. The most well-known standard was created for the emerging token ecosystem and the exchanges serving it: the ERC20 standard.
+在开始编写自己的、自定义的智能合约之前，明智的做法是检查是否存在任何标准或开源组件。如果存在这样的标准合约，并且经过适当的测试和审计，它们可以将您的程序中的风险降到最低。
 
-Before you dive in and start writing your own, custom smart contracts, it’s wise to check if any standards or open-source components exist. If such standard contracts exist and are properly tested and audited, they can minimize the risk in your programs.
-
-* Ethereum Improvement Proposals (EIPs) describe standards for the Ethereum platform, including contract standards. [Finalized ERC’s](https://eips.ethereum.org/erc#final)
+* 以太坊改进建议（Ethereum Improvement Proposals，EIPs）描述了以太坊平台的标准，包括合约标准 describe standards for the Ethereum platform, including contract standards. [最终的ERC](https://eips.ethereum.org/erc#final)
 * [OpenZeppelin Contracts](https://openzeppelin.com/contracts/)
 
-## Error handling
+## 错误处理
 
-Exceptions are a crucial part of modern software engineering. They require special treatment and can be extremely powerful. Instead of fighting them, we should try to leverage them, as an unhandled exception may cause unexpected behavior.
+异常是现代软件工程的关键部分。它们需要特殊处理，并且功能非常强大。与其对抗，我们应该尝试利用它们，因为未处理的异常可能会导致意外行为。
 
-When an exception is thrown in Solidity code, all state changes are rolled back and further execution is halted. Luckily, exception handling is built into Solidity (since 0.6). This is only available for external calls.
+当在Solidity代码中引发异常时，所有状态更改都将回滚并停止进一步执行。幸运的是，Solidity内置了异常处理功能（自0.6版本开始）。这仅适用于外部调用（external calls）。
 
-Provide enough context with your exception to determine the source and cause of your error.
+为异常提供足够的上下文，以确定错误的来源和原因。尝试编写引发这些异常的测试。
 
-Try to write tests that throw these exceptions.
+尝试编写抛出这些异常的测试。
 
-Don’t return null. Don’t pass null to functions.
+不要返回null。不要将null传递给函数。
 
-Guard Checks can help that the behavior of a smart contract and its input parameters are as expected.
+保护检查（Guard Checks）可以帮助确保智能合约的行为及其输入参数符合预期。
 
-Use `assert()`, `require()`, `revert()` properly. **assert** should be used to test for internal errors, and check invariants. **require** should be used to test that inputs, contract state variables, or return values from external contracts are valid.
+正确使用 `assert()`, `require()`, `revert()` . **assert** 应该用于测试内部错误，并检查常量。**require**  应该用于测试输入，合约状态变量或来自外部合约的返回值是否有效。
 
-If a transaction doesn’t have enough gas to execute, the out of gas error is not caught.
+如果交易没有足够的gas来执行，则不会捕获gas溢出错误。
 
 ## Testing
 
 ![](https://img.learnblockchain.cn/2020/09/04/15991846572668.jpg)
 
 
-The same rules for clean code, apply to testing. Clean tests are tests that are easy to read. Easy to understand. And easy to maintain. Tests help you keep your code flexible, maintainable, and reusable. They validate the behaviors, reduce the risks of making unintended changes, and save time debugging and writing your code.
+整洁代码的相同规则也适用于测试。整洁的测试是易于阅读的测试，容易理解，并且易于维护，测试可以帮助您保持代码的灵活性，可维护性和可重用性。它们可以验证行为，降低进行意外更改的风险，并节省调试和编写代码的时间。
 
 ### F.I.R.S.T
 
-* **Fast** — Test should fast enough so that you want to run them frequently. It should help speed up your development process, not hinder it
-* **Independent** — Tests should be independent of each other and able to run in any order
-* **Repeatable** — Tests should be repeatable in any environment
-* ** Self-validating** — Tests should a clear (boolean) output if it passes.
-* **Timely** — Tests need to be written in a timely fashion. Just before the production code.
+* **Fast** — 测试速度应该足够快，以便经常运行它们。它应该有助于加速您的开发过程，而不是阻碍它
+* **Independent** — 测试应该相互独立并且可以按任何顺序运行
+* **Repeatable** — 测试应该在任何环境中都是可重复的
+* **Self-validating** — 如果测试通过，则应该有一个清晰的(布尔)输出
+* **Timely** — 测试需要及时编写。就在生产代码之前。
 
 ### AAA
 
-The AAA (Arrange-Act-Assert) pattern is one of the most common standards in software testing. It suggests dividing your tests into the corresponding sections: arrange, act, and assert. Each one of them is responsible for the part in which they are named after.
+AAA (Arrange-Act-Assert) 模式是软件测试中最常见的标准之一。它建议将测试划分为相应的部分：arrange、act和assert。它们中的每一个都负责它们被命名的部分。 
 
-* **Arrange** - The code required to set-up your test
-* **Act** - Invocation of the method being tested
-* **Assert** - Check whether the expectations are met
+* **Arrange** -设置测试所需的代码
+* **Act** - 被测试方法的调用
+* **Assert** - 检查是否达到预期
 
-Use only one assert per test.
+每个测试只使用一个断言。
 
-### Separation of tests
+### 测试分离
 
-* **Unit tests** determine whether an individual unit of source-code is fit for use. This is typically a single function, tested with different parameters to ensure it returns the expected values.
-* **Integration tests** determine if independently developed units of software work correctly when they are connected. For smart contracts, this means interactions between different components of a single contract, or across multiple contracts.
+* **单元测试** 确定一个源代码单元是否适合使用。这通常是一个单独的函数，使用不同的参数进行测试，以确保它返回预期值。
+* **集成测试** 确定独立开发的软件单元在连接时是否正常工作。对于智能合约，这意味着单个合约的不同组件之间或多个合约之间的交互。
 
-### Test coverage
+### 测试覆盖率
 
-Writing good tests to ensure your app is working as intended is not enough. If you’re not measuring anything, it’s hard to say exactly how much of your code is being tested. Test coverage (or code coverage) is a useful tool for finding untested parts of a codebase.
+编写好的测试来确保你的应用程序按预期工作是不够的。如果你没有测量任何东西，很难说到底有多少代码正在被测试。测试覆盖率（或代码覆盖率）是查找代码库中未测试部分的有用工具。
 
-There is much debate over how much should be covered. Just your best judgment, but aim for as high as possible. Untested code could do anything and result in unexpected behavior.
+关于覆盖多少有很多争论。就你最好的判断，但要尽可能高。未经测试的代码可能会执行任何操作并导致意外行为。
 
-### Testing Tools
+### 测试工具
 
-* [Buidler](https://buidler.dev/) - A task runner for Ethereum smart contract developers that allows you to deploy your contracts, run your tests and debug your code
-* [OpenZeppelin Test environment](https://docs.openzeppelin.com/test-environment/) - Test Environment is a smart contract testing library: it provides utilities that help you write tests, but it doesn’t run your tests for you. Works with Mocha
-* [Brownie](https://github.com/eth-brownie/brownie) - A Python-based development and testing framework for smart contracts targeting the Ethereum Virtual Machine
-* [Truffle](https://www.trufflesuite.com/truffle) - A development environment, testing framework and asset pipeline for blockchains using the Ethereum Virtual Machine (EVM)
-* [Ganache](https://www.trufflesuite.com/ganache) - A personal blockchain for Ethereum development you can use to deploy contracts, develop your applications, and run tests
-* [Solidity-coverage](https://github.com/sc-forks/solidity-coverage) (formerly Solcover) - Code coverage for Solidity smart-contracts
+* [Buidler](https://buidler.dev/) - 一个面向以太坊智能合约开发人员的任务运行器，允许您部署合约、运行测试和调试代码
+* [OpenZeppelin Test environment](https://docs.openzeppelin.com/test-environment/) - 是一个智能合约测试库：它提供帮助您编写测试的实用程序，但它不会为您运行测试。与Mocha一起工作
+* [Brownie](https://github.com/eth-brownie/brownie) - 针对以太坊虚拟机的智能合约基于Python的开发和测试框架
+* [Truffle](https://www.trufflesuite.com/truffle) - 使用以太坊虚拟机（EVM）的区块链开发环境、测试框架和资产管道
+* [Ganache](https://www.trufflesuite.com/ganache) - 用于以太坊开发的个人区块链，可用于部署合同、开发应用程序和运行测试
+* [Solidity-coverage](https://github.com/sc-forks/solidity-coverage) (原名 Solcover) - Solidity智能合约的代码覆盖率
 
-## Security & code analysis
+## 安全 & 代码分析
 
-Static code analysis is the analysis of software that is performed without actually executing the program. In most cases the analysis is performed on some version of the source code. Anlaysis is usually performed by an automated tool (e.g. Sonarqube).
+静态代码分析是对没有实际执行程序的软件进行的分析。在大多数情况下，分析是在源代码的某个版本上执行的。分析通常由自动化工具（如Sonarqube）执行。
 
-Analysis tools for smart contracts help identify smart contract vulnerabilities. These tools run a suite of vulnerability detectors and print out a summary of any issues found.
+智能合约分析工具有助于识别智能合约漏洞。这些工具运行一套漏洞检测器，打印出发现的任何问题汇总。
 
-### Analysis Tools
+### 分析工具
 
-* [Echidna](https://github.com/crytic/echidna) - Ethereum smart contract fuzzer
-* [Manticore](https://github.com/trailofbits/manticore) - Symbolic execution tool
-* [Mythril](https://github.com/ConsenSys/mythril) - Security analysis tool for EVM bytecode
-* [Oyente](https://github.com/melonproject/oyente) - An Analysis Tool for Smart Contracts
-* [Slither](https://github.com/crytic/slither) - Static Analyzer for Solidity
+* [Echidna](https://github.com/crytic/echidna) - 以太坊智能合约模糊器
+* [Manticore](https://github.com/trailofbits/manticore) - 符号执行工具
+* [Mythril](https://github.com/ConsenSys/mythril) - EVM字节码的安全性分析工具
+* [Oyente](https://github.com/melonproject/oyente) - 智能合约分析工具
+* [Slither](https://github.com/crytic/slither) - Solidity静态分析工具
 
-### Gas Optimization
+### Gas优化
 
-Optimizing gas costs can be a worthwhile endeavor, to reduce costs both for your own deployments, as well as for your end-users. Network usage is progressively increasing, with current gas costs at its peak. As the ecosystem continues to grow, so too will the value of gas optimization. We’ll cover these in more detail in another blog post.
+优化gas成本可能是一项值得努力的工作，以减少您自己的部署以及最终用户的成本。 随着当前gas成本达到顶峰，网络使用量正在逐步增加。随着生态系统的不断发展，gas优化的价值也将随之增长。我们将在另一篇博客文章中更详细地介绍这些内容。
 
-Analyzing your code can be done by using [eth-gas-reporter](https://github.com/cgewecke/eth-gas-reporter). It prints estimates of gas costs per function, or of each deployed contract.
+可以使用[eth-gas-reporter](https://github.com/cgewecke/eth-gas-reporter)分析代码。 它打印每个函数或每个已部署合约的gas成本估算。
 
-## Continuous Integration
+## 持续集成
 
-While not part of the clean code principles, continuous integration (‘CI’) has become a fundamental practice for any type software development. One of the key benefits of integrating regularly is that you can detect errors quickly and locate them more easily.
+虽然不是整洁代码原则的一部分，但持续集成（continuous integration，CI）已经成为任何类型软件开发的基本实践。持续集成的一个主要好处是，您可以快速检测错误并更容易地定位错误。
 
-It is based on a set of key principles.
+它基于一系列关键原则。
 
-* Keep a single repository where all the code lives and where anyone can obtain the current and previous versions (e.g. Git)
-* Automate the build process so that anyone can use it to build directly from the sources (e.g. Truffle teams, Travis CI)
-* Automate your tests so that anyone can run a full test suite at any time (see chapter Testing)
-* Make sure anyone can view the results and get the latest executable from the build process
+* 保持一个存储库，所有代码都存放在其中，任何人都可以获得当前和以前的版本（例如Git）
+* 自动化构建过程，以便任何人都可以使用它直接从源代码进行构建（例如Truffle团队、Travis CI）
+* 自动化您的测试，这样任何人都可以在任何时候运行完整的测试套件（参见章节 测试）
+* 确保任何人都可以查看结果并从构建过程中获取最新的可执行文件
 
-> *“Continuous Integration doesn’t get rid of bugs, but it does make them dramatically easier to find and remove.”* - Martin Fowler
+> *“Continuous Integration doesn’t get rid of bugs, but it does make them dramatically easier to find and remove.”（持续集成并不能消除bug，但它确实使它们更易于查找和删除）* - Martin Fowler
 
 ![](https://img.learnblockchain.cn/2020/09/04/15991847411724.jpg) 
 
-## Further Reading
+## 更多阅读
 
-Check out my [Clean Contracts](https://github.com/wslyvh/clean-contracts) repo for supporting code example from each chapter.
+查看我的 [Clean Contracts](https://github.com/wslyvh/clean-contracts) 每个章节中用于支持代码示例的仓库。
 
 * [Clean Code](https://amzn.to/30RsoKk), Robert C. Martin
 * [Solidity Patterns](https://fravoll.github.io/solidity-patterns/), Fravoll
 * [Ethereum Smart Contract Best Practices](https://consensys.github.io/smart-contract-best-practices), ConsenSys
 * [Best Practices for Smart Contract Development](https://yos.io/2019/11/10/smart-contract-development-best-practices/), Yos Riady
 
-
 原文链接：https://www.wslyvh.com/clean-contracts/
 作者：[Wesley van Heije](https://www.wslyvh.com/)
+翻译：[volunteer1024](https://github.com/volunteer1024)
 
 
