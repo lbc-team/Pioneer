@@ -1,5 +1,8 @@
 # The State of Smart Contract Upgrades
 
+> * 原文链接：https://blog.openzeppelin.com/the-state-of-smart-contract-upgrades/  作者：[Santiago Palladino](https://blog.openzeppelin.com/author/palla/)> 
+> * 译文出自：[登链翻译计划](https://github.com/lbc-team/Pioneer)
+> * 译者：[]()
 
 ![](https://img.learnblockchain.cn/2020/10/15/16027241822179.png)
 
@@ -636,5 +639,3 @@ Go to the [OpenZeppelin community forum](https://forum.openzeppelin.com/) to joi
 13. [https://blog.openzeppelin.com/deep-dive-into-the-minimal-proxy-contract/](https://blog.openzeppelin.com/deep-dive-into-the-minimal-proxy-contract/)
 
 
-原文链接：https://blog.openzeppelin.com/the-state-of-smart-contract-upgrades/
-作者：[Santiago Palladino](https://blog.openzeppelin.com/author/palla/)
