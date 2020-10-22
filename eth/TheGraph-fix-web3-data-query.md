@@ -1,18 +1,24 @@
+> * 原文链接：https://soliditydeveloper.com/thegraph  作者：[MarkusWaas](https://soliditydeveloper.com/markuswaas)
+> * 译文出自：[登链翻译计划](https://github.com/lbc-team/Pioneer)
+> * 译者：[Tiny 熊](https://learnblockchain.cn/people/15)
+> * 本文永久链接：[learnblockchain.cn/article…](https://learnblockchain.cn/article/1)
 
-# TheGraph: Fixing the Web3 data querying
-
-## Why we need TheGraph and how to use it
 
 
-Previously we looked at the [big picture of Solidity](/solidity-overview-2020) and the [create-eth-app](https://github.com/PaulRBerg/create-eth-app) which already mentioned [TheGraph](https://thegraph.com/) before. This time we will take a closer look at TheGraph which essentially became part of the standard stack for developing Dapps in the last year.
+# TheGraph：完善Web3数据查询
 
-But let's first see how we would do things the traditional way...
+## 为什么我们需要TheGraph以及如何使用它
 
-## Without TheGraph...
 
-So let's go with a simple example for illustration purposes. We all like games, so imagine a simple game with users placing bets:
+以前我们看过[Solidity的大图](https://soliditydeveloper.com/solidity-overview-2020/solidity-overview-2020)和[create-eth-app](https://github.com/PaulRBerg/create-eth-app)，它们之前已经提到过[TheGraph](https://thegraph.com/)。这次，我们将仔细研究TheGraph，它在去年已成为开发Dapps的标准堆栈的一部分。
 
-```
+但首先让我们看看传统方式下如何开发...
+
+## 没有TheGraph时...
+
+因此，让我们来看一个简单的示例，以进行说明。我们都喜欢游戏，所以想象一个简单的游戏，用户下注：
+
+```js
 pragma solidity 0.7.1;
 
 contract Game {
@@ -37,16 +43,16 @@ contract Game {
 ```
 
 
-Now let's say in our Dapp, we want to display total the total games lost/won and also update it whenever someone plays again. The approach would be:
+现在让我们在Dapp中说，我们要显示输/赢的游戏总数，并在有人再次玩时更新它。该方法将是：
 
 
-1. Fetch `totalGamesPlayerWon`.
-2. Fetch `totalGamesPlayerLost`.
-3. Subscribe to `BetPlaced` events.
+1. 获取`totalGamesPlayerWon`。
+2. 获取`totalGamesPlayerLost`。
+3. 订阅`BetPlaced`事件。
 
-We can listen to the [event in Web3](https://web3js.readthedocs.io/en/v1.2.11/web3-eth-contract.html#contract-events) as shown on the right, but it requires handling quite a few cases.
+如下代码所示，我们可以监听[Web3中的事件](https://learnblockchain.cn/docs/web3.js/web3-eth-contract.html#id58)，但这需要处理很多情况。
 
-```
+```js
 GameContract.events.BetPlaced({
     fromBlock: 0
 }, function(error, event) { console.log(event); })
@@ -61,74 +67,77 @@ GameContract.events.BetPlaced({
 });
 ```
 
-Now this is still somewhat fine for our simple example. But let's say we want to now display the amounts of bets lost/won only for the current player. Well we're out of luck, you better deploy a new contract that stores those values and fetch them. And now imagine a much more complicated smart contract and Dapp, things can get messy quickly.
+
+
+现在，对于我们的简单示例来说，这还是可以的。但是，假设我们现在只想显示当前玩家输/赢的赌注数量。好吧，我们不走运，你最好部署一个新合约来存储这些值并获取它们。现在想象一个更复杂的智能合约和Dapp，事情会很快变得混乱。
 
 ![](https://img.learnblockchain.cn/2020/09/27/16011712681617.jpg)
 
 
-You can see how this is not optimal:
+你可以看到以上方案不是最佳的选择：
 
-* Doesn't work for already deployed contracts.
-* Extra gas costs for storing those values.
-* Requires another call to fetch the data for an Ethereum node.
+* 不适用于已部署的合约。
+* 存储这些值需要额外的 gas 费用。
+* 需要额外的调用来获取以太坊节点的数据。
 
 ![](https://img.learnblockchain.cn/2020/09/27/16011712859043.jpg)
 
 
-Now let's look at a better solution.
+现在让我们看一个更好的解决方案。
 
 
-## Let me introduce you to GraphQL
+## 让我向你介绍GraphQL
 
-First let's talk about [GraphQL](https://graphql.org/), originally designed and implemented by Facebook. You might be familiar with the traditional [Rest API model](https://en.wikipedia.org/wiki/Representational_state_transfer). Now imagine instead you could write a query for exactly the data that you wanted:
+首先让我们谈谈最初由Facebook设计和实现的[GraphQL](https://graphql.org/),。你可能熟悉传统的[Rest API 模型](https://en.wikipedia.org/wiki/Representational_state_transfer).，现在想像一下，你可以为所需的数据编写查询：
 
 ![](https://img.learnblockchain.cn/2020/09/27/16011713158848.jpg)
 
 ![graphql-querygif](https://img.learnblockchain.cn/2020/09/27/graphql-querygif.gif)
 
 
-The two images pretty much capture the essence of GraphQL. With the query on the right we can define exactly what data we want, so there we get everything in one request and nothing more than exactly what we need. A GraphQL server handles the fetching of all data required, so it is incredibly easy for the frontend consumer side to use. [This is a nice explanation](https://www.apollographql.com/blog/graphql-explained-5844742f195e/) of how exactly the server handles a query if you're interested.
-
-Now with that knowledge, let's finally jump into blockchain space and TheGraph.
+这两个图像几乎包含了GraphQL的本质。通过第二个图的查询，我们可以准确定义所需的数据，因此可以在一个请求中获得所有内容，仅此而已。GraphQL服务器处理所有所需数据的提取，因此前端消费者使用起来非常容易。如果你有兴趣对服务器如何精确地处理查询，[这里有一个很好的解释](https://www.apollographql.com/blog/graphql-explained-5844742f195e/)。
 
 
-## What is TheGraph?
 
 
-A blockchain is a decentralized database, but in contrast to what's usually the case, we don't have a query language for this database. Solutions for retrieving data are painful or completely impossible. TheGraph is a decentralized protocol for indexing and querying blockchain data. And you might have guessed it, it's using GraphQL as query language.
+
+现在有了这些知识，让我们最终进入区块链部分和TheGraph。
+
+## 什么是TheGraph？
+
+
+区块链是一个去中心化的数据库，但是与通常的情况相反，我们没有该数据库的查询语言。检索数据的解决方案是痛苦或完全不可能的。TheGraph是用于索引和查询区块链数据的去中心化协议。你可能已经猜到了，它使用GraphQL作为查询语言。
 
 ![](https://img.learnblockchain.cn/2020/09/27/16011714281502.jpg)
 
-Examples are always the best to understand something, so let's use TheGraph for our GameContract example.
+示例始终是最好的理解方法，因此让我们在游戏合约示例中使用TheGraph。
+
+## 如何创建Subgraph
 
 
-## How to create a Subgraph
+定义如何为数据建立索引，称为Subgraph。它需要三个组件：
+
+1. Manifest 清单(*subgraph.yaml*)
+2. Schema 模式(*schema.graphql*)
+3. Mapping 映射(*mapping.ts*)
+
+### 清单(subgraph.yaml)
+
+清单是我们的配置文件，它定义：
+
+* 要索引哪些智能合约(地址，网络，ABI...)
+* 监听哪些事件
+* 其他要监听的内容，例如函数调用或块
+* 被调用的映射函数(请参见下面的*mapping.ts*)
+
+你可以在此处定义多个合约和处理程序。一个典型的设置是Truffle/Buidler项目代码库中有一个`subgraph`文件夹。然后，你可以轻松引用到ABI。
+
+为了方便起见，你可能还需要使用[mustache](https://www.npmjs.com/package/mustache)之类的模板工具，然后创建一个`subgraph.template.yaml`并根据​​最新部署插入地址。有关更高级的示例设置，请参见例如：[Aave sub graph repo](https://github.com/aave/aave-protocol/tree/master/thegraph).
+
+完整的文档可以在这里找到：[https://thegraph.com/docs/define-a-subgraph#the-subgraph-manifest](https://thegraph.com/docs/define-a-subgraph＃the-subgraph-manifest)。
 
 
-The definition for how to index data is called subgraph. It requires three components:
-
-1. Manifest (*subgraph.yaml*)
-2. Schema (*schema.graphql*)
-3. Mapping (*mapping.ts*)
-
-
-### Manifest (subgraph.yaml)
-
-The manifest is our configuration file and defines:
-
-* which smart contracts to index (address, network, ABI...)
-* which events to listen to
-* other things to listen to like function calls or blocks
-* the mapping functions being called (see *mapping.ts* below)
-
-You can define multiple contracts and handlers here. A typical setup would have a `subgraph` folder inside the Truffle/Buidler project with its own repository. Then you can easily reference the ABI.
-
-For convenience reasons you also might want to use a template tool like [mustache](https://www.npmjs.com/package/mustache). Then you create a `subgraph.template.yaml` and insert the addresses based on the latest deployments. For a more advanced example setup, see for example the [Aave subgraph repo](https://github.com/aave/aave-protocol/tree/master/thegraph).
-
-And the full documentation can be seen here: [https://thegraph.com/docs/define-a-subgraph#the-subgraph-manifest](https://thegraph.com/docs/define-a-subgraph#the-subgraph-manifest).
-
-
-```
+```yaml
 specVersion: 0.0.1
 description: Placing Bets on Ethereum
 repository: - Github link -
@@ -159,27 +168,27 @@ dataSources:
 
 
 
-### Schema (schema.graphql)
+### 模式(schema.graphql)
 
 
-The schema is the GraphQL data definition. It will allow you to define which entities exist and their types. Supported types from TheGraph are
+模式是GraphQL数据定义。它将允许你定义存在的实体及其类型。TheGraph支持的类型有
 
-* `Bytes`
+* `Bytes`(字节)
 
 * `ID`
 
-* `String`
+* `String`(`字符串`)
 
-* `Boolean`
+* `Boolean`(布尔值)
 
-* `Int`
+* `Int`(整型)
 
-* `BigInt`
+* `BigInt`(大整数)
 
-* `BigDecimal`
+* `BigDecimal`(大浮点数)
 
 
-You can also use entities as type to define relationships. In our example we define a 1-to-many relationship from player to bets. The `!` means the value can't be empty. The full documentation can be seen here: [https://thegraph.com/docs/define-a-subgraph#the-graphql-schema](https://thegraph.com/docs/define-a-subgraph#the-graphql-schema).
+还可以使用实体作为类型来定义关系。在我们的示例中，我们定义了从玩家到下注的一对多关系。`！`表示该值不能为空。完整的文档可以在这里找到：[https://thegraph.com/docs/define-a-subgraph#the-graphql-schema](https://thegraph.com/docs/define-a-subgraph＃the-graphql-schema)。
 
 
 ```
@@ -201,22 +210,22 @@ type Player @entity {
 
 
 
-### Mapping (mapping.ts)
+### 映射(mapping.ts)
 
 
-The mapping file in TheGraph defines our functions that transform incoming events into entities. It is written in [AssemblyScript](https://www.assemblyscript.org/), a subset of Typescript. This means it can be compiled into WASM ([WebAssembly](https://webassembly.org/)) for more efficient and portable execution of the mapping.
+TheGraph中的映射文件定义了将传入事件转换为实体的函数。它用TypeScript的子集[AssemblyScript](https://www.assemblyscript.org/)编写。这意味着可以将其编译为WASM([WebAssembly](https://webassembly.org/))，以更高效，更便携式地执行映射。
 
-You will need to define each function named in the *subgraph.yaml* file, so in our case we need only one: `handleNewBet`. We first try to load the `Player` entity from the sender address as id. If it doesn't exist, we create a new entity and fill it with starting values.
+你将需要定义*subgraph.yaml*文件中命名的每个函数，因此在我们的例子中，我们只需要一个函数：`handleNewBet`。我们首先尝试从发起人地址作为ID加载为为`Player`实体。如果不存在，我们将创建一个新实体，并用起始值填充它。
 
-Then we create a new `Bet` entity. The id for this will be `event.transaction.hash.toHex() + "-" + event.logIndex.toString()` ensuring always a unique value. Using only the hash isn't enough as someone might be calling the `placeBet` function several times in one transaction via a smart contract.
+然后，我们创建一个新的`Bet`实体。此ID为`event.transaction.hash.toHex()` + “-” + `event.logIndex.toString()`，确保始终为唯一值。仅使用哈希是不够的，因为有人可能在一次交易中会多次调用智能合约的`placeBet`函数。
 
-Lastly we can update the Player entity will all the data. Arrays cannot be pushed to directly, but need to be updated as shown here. We use the id to reference the bet. And `.save()` is required at the end to store an entity.
-
-
-The full documentation can be seen here: [https://thegraph.com/docs/define-a-subgraph#writing-mappings](https://thegraph.com/docs/define-a-subgraph#writing-mappings). You can also add logging output to the mapping file, see [here](https://thegraph.com/docs/assemblyscript-api#logging-and-debugging).
+最后我们可以更新Player实体的所有数据。不能将数组直接压入，而需要按如下所示进行更新。我们使用ID来代表下注。最后需要`.save()`来存储实体。
 
 
-```
+完整的文档可以在这里找到：[https://thegraph.com/docs/define-a-subgraph#writing-mappings](https://thegraph.com/docs/define-a-subgraph＃writing-mappings)。你还可以将日志输出添加到映射文件中，请参阅[这里](https://thegraph.com/docs/assemblyscript-api＃logging-and-debugging)。
+
+
+```js
 import { Bet, Player } from '../generated/schema';
 import { PlacedBet }
     from '../generated/GameContract/GameContract';
@@ -261,14 +270,13 @@ export function handleNewBet(event: PlacedBet): void {
 }
 ```
 
-
-## Using it in the Frontend
-
-
-Using something like [Apollo Boost](https://www.apollographql.com/docs/react/get-started/), you can easily integrate TheGraph in your React Dapp (or [Apollo-Vue](https://apollo.vuejs.org/)). Especially when using [React hooks and Apollo](https://www.apollographql.com/blog/apollo-client-now-with-react-hooks-676d116eeae2), fetching data is as simple as writing a single GraphQl query in your component. A typical setup might look like this:
+## 在前端使用
 
 
-```
+使用类似[ApolloBoost](https://www.apollographql.com/docs/react/get-started/)的东西，你可以轻松地将TheGraph集成到ReactDapp(或[Apollo-Vue](https://apollo.vuejs.org/))中，尤其是当使用[React hooks和Apollo](https://www.apollographql.com/blog/apollo-client-now-with-react-hooks-676d116eeae2)时，获取数据就像编写单个代码一样简单的在组件中进行GraphQl查询，典型的代码如下所示：
+
+
+```js
 // See all subgraphs: https://thegraph.com/explorer/
 const client = new ApolloClient({
   uri: "{{ subgraphUrl }}",
@@ -283,7 +291,7 @@ ReactDOM.render(
 ```
 
 
-```
+```js
 const { loading, error, data } = useQuery(myGraphQlQuery);
 
 React.useEffect(() => {
@@ -294,13 +302,13 @@ React.useEffect(() => {
 ```
 
 
-And now we can write for example a query like this. This will fetch us
+现在，我们可以编写例如这样的查询。这将带给我们
 
-* how many times current user has won
-* how many times current user has lost
-* a list of timestamps with all his previous bets
+* 当前用户赢得了多少次
+* 当前用户输了多少次
+* 他之前所有下注的时间戳列表
 
-    All in one single request to the GraphQL server.
+仅需要对GraphQL服务器进行一个请求。
 
 ```
 const myGraphQlQuery = gql`
@@ -318,42 +326,41 @@ const myGraphQlQuery = gql`
 ![](https://img.learnblockchain.cn/2020/09/27/16011716047509.jpg)
 
 
-But we're missing one last piece of the puzzle and that's the server. You can either run it yourself or use the hosted service.
+但是，我们错过了最后一个难题，那就是服务器。你可以自己运行它，也可以使用托管服务。
 
 
-## TheGraph server
+## Graph服务器
 
 
-### Graph Explorer: The hosted service
+### GraphExplorer：托管服务
 
 
-The easiest way is to use the hosted service. Follow the instructions [here](https://thegraph.com/docs/deploy-a-subgraph) to deploy a subgraph. For many projects you can actually find exisiting subgraphs in the explorer at [https://thegraph.com/explorer/](https://thegraph.com/explorer/).
+最简单的方法是使用托管服务。按照[此处](https://thegraph.com/docs/deploy-a-subgraph)的说明部署subgraph。对于许多项目，你实际上可以在资源管理器中找到现有的subgraph，网址为[https://thegraph.com/explorer/](https://thegraph.com/explorer/).
 
 ![](https://img.learnblockchain.cn/2020/09/27/16011716343048.jpg)
 
 
-### Running your own node
+### 运行自己的节点
 
 
-Alternatively you can run your own node: [https://github.com/graphprotocol/graph-node#quick-start](https://github.com/graphprotocol/graph-node#quick-start). One reason to do this might be using a network that's not supported by the hosted service. Currently supported are mainnet, Kovan, Rinkeby, Ropsten, Goerli, PoA-Core, xDAI and Sokol.
+或者，你可以运行自己的节点：[https://github.com/graphprotocol/graph-node#quick-start](https://github.com/graphprotocol/graph-node＃quick-start)。这样做的原因之一可能是使用托管服务不支持的网络。当前仅支持主网，Kovan，Rinkeby，Ropsten，Goerli，PoA-Core，xDAI和Sokol。
 
+## 去中心化的未来
 
-## The decentralized future
+GraphQL还为新进入的事件进行“流”支持。TheGraph尚未完全支持，但即将发布。
 
-GraphQL supports streams as well for newly incoming events. This is not yet fully supported by TheGraph, but it will be released soon.
-
-One missing aspect though is still decentralization. TheGraph has future plans for eventually becoming a fully decentralized protocol. Those are two great articles explaining the plan in more detail:
+缺少的一方面仍然是权力下放。TheGraph未来计划具有最终成为完全去中心化协议。这两篇很棒的文章更详细地说明了该计划：
 
 * [https://thegraph.com/blog/the-graph-network-in-depth-part-1](https://thegraph.com/blog/the-graph-network-in-depth-part-1)
 * [https://thegraph.com/blog/the-graph-network-in-depth-part-2](https://thegraph.com/blog/the-graph-network-in-depth-part-2)
 
-Two key aspects are:
+两个关键方面是：
 
-1. Users will be paying the indexers for queries.
-2. Indexers will be staking Graph Tokens (GRT).
+1. 用户将向索引器支付查询费用。
+2. 索引器将使用Graph通证(GRT)。
 
 ![](https://img.learnblockchain.cn/2020/09/27/16011716662550.jpg)
 
+------
 
-原文链接：https://soliditydeveloper.com/thegraph
-作者：[Markus Waas](https://soliditydeveloper.com/markuswaas)
+本翻译由 [Cell Network](https://www.cellnetwork.io/?utm_souce=learnblockchain) 赞助支持。
