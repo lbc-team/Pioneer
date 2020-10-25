@@ -1,8 +1,11 @@
 
 # Dynamic Value Arrays in Solidity
+# Solidity中的动态值数组
 
  
 Are dynamic value arrays more efficient than reference arrays in Solidity?
+在Solidity中，动态值数组会比引用数组更有效吗？
+
 ![](https://img.learnblockchain.cn/2020/09/16/16002175729055.jpg)
 <center>*Photo by *[*Nick Kwan*](https://unsplash.com/@snick_kwan?utm_source=medium&utm_medium=referral)* on *[*Unsplash*](https://unsplash.com/?utm_source=medium&utm_medium=referral)</center>
 
