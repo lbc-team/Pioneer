@@ -1,159 +1,175 @@
+> * 链接：https://medium.com/cardstack/scalable-payment-pools-in-solidity-d97e45fc7c5c 作者：[Hassan Abdel-Rahman](https://medium.com/@habdelra?source=post_page-----d97e45fc7c5c--------------------------------)
+> * 译文出自：[登链翻译计划](https://github.com/lbc-team/Pioneer)
+> * 译者：[影无双](https://learnblockchain.cn/people/58)
+> * 本文永久链接：[learnblockchain.cn/article…](https://learnblockchain.cn/article/1)
 
-# Scalable Payment Pools in Solidity
+# 利用Merkle树低成本实现可扩展支付池
 
-## Paying a lot of people without paying a lot of gas
 
-An interesting problem I’ve been working on lately: payment pools. For those new to my blog, I’m an Ethereum developer at [Cardstack](http://cardstack.com/), and I routinely post about fun challenges we are solving.
 
-At Cardstack we are building an application framework for decentralized applications (dApps) that puts user experience first. A key to that is building out our [Tally Protocol](/cardstack/the-tally-protocol-scaling-ethereum-with-untapped-gpu-power-d949a441c082), which we feel is going to revolutionize the scalability of the blockchain.
+我最近一直在研究一个有趣的问题：支付池（payment pool）。
 
-One of the aspects of Tally is building a mechanism to distribute token payments and royalties from application users to application owners and software developers, as well as to reward *analytic miners* that contribute GPU cycles to calculate the payments and royalties for each payment cycle.
 
-The means by which *analytic miners* determine the allocation of tokens, reach consensus of the solution, and write the solution on-chain will be described in another really fascinating up-coming post — stay tuned!
 
-For now, I’m going to focus more upon the disbursements of the payments from the payment pool.
+支付池是一种通用机制，可用于模拟“一对多”或“多对多”支付通道。这个想法是，可以从各种来源将通证存放到池中，然后根据“规则”(在链上或链外实施)将池中的通证分配给许多接收者。本质上，我们的方法有能力就按大量小额付款汇总到一个结算中，从而节省了大量的 gas 。
 
-Payment pools are a general mechanism that can be used to model a **one-to-many** or **many-to-many payment channel**. The idea is that tokens can be deposited into a pool from various sources, and then based on “rules”—implemented on-chain or off-chain—the tokens in the pool can be disbursed to many recipients. Essentially, our approach has the ability to aggregate large numbers of micro-payments into a single settlement, saving a lot of gas.
+考虑一个类似于Spotify的场景，在此案例中，每当有人听一首歌，就向音乐家支付版税。流媒体服务可以用大量通证为音乐家的支付池提供资金。然后，当人们播放音乐时，这些播放日志将在每个付款周期中汇总，汇总的付款金额将被反馈到支付池，从而以比在链上交易（每次听歌时都触发交易）少的 gas 消耗的方式来支付音乐家之间的版税。
 
-Consider a Spotify-like scenario, where royalties are paid to musicians each time someone listens to a song. A streaming service could fund a payment pool for their musicians with a large sum of tokens. Then as people stream music, those streaming usage logs are aggregated over each payment cycle, and the aggregated payment amounts are fed to the payment pool to disburse the royalties among the musicians in a way that uses less gas than if an on-chain transaction was issued for each time someone listened to a song.
 
-* * *
 
-# First Take: Array-Based Payment Pool
+## 先看看：基于数组的支付池
 
-Our initial conception of this on-chain payment pool smart contract was pretty straightforward.
+我们最初对这种链上支付池智能合约的构想非常简单。
 
-The idea was that the payment pool smart contract would receive ERC-20 tokens from various token collection smart contracts, and *analytic miners* would determine the allocation of tokens within the payment pool by analyzing signed application usage logs and other on-chain signals of application usage. The *analytic miners* would reach a consensus on payout amounts from the payment pool and submit the payout to the payment pool as an array of payees’ addresses and an array of their payment amounts which would be written into a ledger that the payment pool administers.
+在我们的Tally协议，协议通过“分析”矿工贡献的GPU周期来计算奖励，和流媒体场景很类似，开始的想法是支付池智能合约将从各种通证收集智能合约接收[ERC-20](https://learnblockchain.cn/tags/ERC20)通证，通过分析签名的应用程序使用日志和其他链上信号来确定支付池内的通证分配。 *分析矿工*将就支付池中的付款金额达成共识，并通过提交一系列收款人地址和付款金额的形式提交给支付池，这些地址和付款金额将写入支付池管理的帐本中。
 
-The most obvious drawback to this solution is the fact the payment pool is dealing with an unbounded array of payees and their payment amounts, meaning this kind of transaction could run into the block gas limit. That would require the payment pool function to monitor its gas budget while keeping track of its progress through the list of payees, so that it could pick up where it left off in a subsequent transaction if it exceeded its gas budget.
+此解决方案最明显的缺点是，支付池处理的是无限的收款人及其付款金额，这意味着这种交易可能会超出 gas 限值。这将需要支付池能监控 gas 预算，并跟踪收款人列表，以便如果超出 gas 预算时，以便可以在后续交易中继续执行。
 
-We did a little experimentation, and we were able to iterate though around 200 payees before we exceeded our gas budget when the transaction was using the block gas limit as the gas limit for the transaction. At today’s ETH exchange rate, with a gas prices of 30 *gwei* and a block gas limit of around 8,000,000, that means about ＄260 USD in gas fees in order to process a payee list of around 200 recipients. Basically we would be paying a little more than ＄1/payee in gas fees.
+我们进行了一些实验，在当前的区块 gas limit 下，可以支持 200多名收款人，再多就会超出 gas 限制，假设按 gas 价格为35 gwei ， gas 限额为10,000,000，需要耗费 0.35 个 ETH（当前大约 1000 块），相当于存储每个收款人支付的 gas 费是5 块。
 
-Clearly, this approach does not scale. Back to the drawing board…
+显然，这种方法无法扩展。
 
-* * *
 
-# Enter: Merkle Trees
 
-In our search for a better approach, we became inspired by [this Ethereum research post](https://ethresear.ch/t/pooled-payments-scaling-solution-for-one-to-many-transactions/590).
+## Merkle树
 
-The idea is that instead of having the payment pool administrate a ledger of the payees and their payment amounts, we could build a Merkle tree that holds the payees and their payment amounts, and have the payees withdraw their payment amounts by having them submit the Merkle proof for their particular payment. The Merkle proof then becomes a key that only works for the payee that unlocks the payee’s tokens within the payment pool.
+在寻找更好的方法时，我们受到[这篇以太坊研究文章](https://ethresear.ch/t/pooled-payments-scaling-solution-for-one-to-many-transactions/590)的启发
 
-The beauty of the Merkle tree approach is that we only need to write a 32 byte Merkle root to the payment pool, and that there is no upper boundary on the number of payees that can live in the Merkle tree. Regardless of how many payees are represented by the Merkle tree we only ever need to write a 32 byte Merkle root for the tree: the gas fees can be reasonably measured in pennies for an unbounded number of payees.
+这个想法是，与其让支付池管理收款人及其付款金额的帐本，不如建立一个保存收款人及其付款金额的[Merkle树]([https://learnblockchain.cn/tags/Merkle%E6%A0%91](https://learnblockchain.cn/tags/Merkle树))，然后收款人通过提交Merkle证明来提取相应的金额。然后，Merkle证明将成为仅适用于收款人的密钥，该密钥可在支付池中解锁收款人的通证。
 
-As many of us know: a [Merkle tree](https://blog.ethereum.org/2015/11/15/merkling-in-ethereum/) is a novel binary tree structure that allows us to easily and cheaply confirm if a node actually exists in the tree. Merkle trees form the substrate upon with Ethereum is built, and facilitate the ability for an Ethereum node to validate blocks without needing the full history of the blockchain.
+Merkle树方法的优点在于，我们只需要向支付池中写入32字节的Merkle根，并且可以存在Merkle树中的收款人数量没有上限。无论Merkle树代表多少收款人，我们都只需要为树写一个32字节的Merkle根：对于无数收款人， gas 费则可以分计。
 
-The most important aspects of Merkle trees are that:
+我们中许多人都知道：[Merkle 树](https://blog.ethereum.org/2015/11/15/merkling-in-ethereum/)是一种新颖的二叉树结构体，它使我们能够轻松，廉价地确认树中是否确实存在节点。 Merkle树构成了以太坊的基础，并有助于以太坊节点无需区块链的完整历史即可验证区块的能力。
 
-1. Each node is the hash of the sum of the node’s childrens’ hashes
-2. The root node contains a hash that is effected by every single node in the tree
-3. We can confirm if a node exists in the tree by adding together the hash of a node and its “great-aunts & uncles” to see if they match the root node.
+Merkle树最重要的方面是：
 
-![](https://img.learnblockchain.cn/2020/09/28/16012644579903.jpg)
-<center>By Azaghal (Own work) [CC0], via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File%3AHash_Tree.svg)</center>
+1. 每个节点是该节点的子级哈希值之和的哈希值
+2. 根节点的哈希受树中每个节点的影响
+3. 我们可以通过将节点的哈希值及其“叔叔”节点加在一起，以确定它们是否与根节点匹配，来确定树中是否存在节点。
 
+![Merkle根](https://img.learnblockchain.cn/pics/20201103113757.png)
 
-Effectively, we put the data that we care about in the leaf nodes of the Merkle tree. There are many code libraries available that can do this, where you supply the library with an array, and the library will sort the array, and build the Merkle tree structure with the supplied sorted array forming the leaf nodes of the Merkle tree. The library can provide the root of the Merkle tree as well as provide the *proof* for any node, where the *proof* is a list of the node’s hashed great-aunts & uncles that when added up with the hash of the node will equal the Merkle root.
 
-The way that we can verify a node actually exists in a Merkle tree is to add the node with its proof and see if that result is equal to the root node. It turns out there is actually a [Solidity library](https://github.com/OpenZeppelin/zeppelin-solidity/blob/master/contracts/MerkleProof.sol) to do exactly this (thanks to Open Zeppelin)!
+我们将关心的数据放在Merkle树的叶节点中。有许多可用的代码库可以执行此操作，给库中提供一个数组，库将对数组进行排序，并使用提供的已排序数组构成Merkle树的叶节点来构建Merkle树结构体。库会提供Merkle树的根，它也可以为任何节点提供证明，其中证明是该节点的哈希与叔叔们 hash列表，当与节点的哈希值加在一起时，就是默克尔根。
 
-![](https://img.learnblockchain.cn/2020/09/28/16012645229342.jpg)
-<center>In this example, we can confirm that L2 exists in the tree by adding **hash(L2)** to the hash **A** and the hash **B** and confirm that the hash of the sum is the **root node**’s hash.</center>
+我们可以验证节点是否确实存在于Merkle树中的方法是添加带有其证明的节点，然后查看该结果是否等于根节点。OpenZepplin 有一个[Solidity 库](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/cryptography/MerkleProof.sol) 用来验证。
 
+![1_3_TyiY19z9Gz0o5Qt3UEnw](https://img.learnblockchain.cn/pics/20201103115039.png)
+<center>在此示例中，检查树中是否存在L2，我们通过在hash(L2)上加入哈希A和哈希B，来确认总和的哈希是否“根节点”的哈希值。</center>
 
-* * *
+## Merkle树支付池
 
+我们如何在支付池中利用Merkle树？
 
-# Merkle Tree Payment Pool
+这种方法利用了需要链上和链下机制的方法。为了生成Merkle树，我们可以使用链下程序(例如NodeJS模块)从收款人及其付款金额列表中构建Merkle树。采用这种方法，每个节点都是收款人地址及其付款金额的字符串连接。
 
-Okay, so how can we leverage a Merkle tree in our payment pool?
+考虑以下收款人清单：
 
-This approach leverages an approach that requires both on-chain and off-chain mechanisms. In order to generate the Merkle tree, we can use an off-chain process (e.g. NodeJS module) to construct a Merkle tree from a list of payees and their payment amounts. In this approach, each node is a string concatenation of the payee’s address and their payment amount.
+![收款人清单](https://img.learnblockchain.cn/pics/20201103115624.png)
 
-Consider the following payee list:
+我们可以将此列表转换为如下所示的数组：
 
-![](https://img.learnblockchain.cn/2020/09/28/16012645735048.jpg)
+![列表](https://img.learnblockchain.cn/2020/09/28/16012645932286.jpg)
 
-We can convert this list to an array that looks like this:
+然后，我们可以从该列表构建Merkle树，合约所有者可以将Merkle根提交到支付池合约。而且，我们也可以在一些地方(例如IPFS)发布这些叶节点及其证明数据，以便收款人可以访问此数据。
 
-![](https://img.learnblockchain.cn/2020/09/28/16012645932286.jpg)
 
-Then we can build a Merkle tree from this list, and the contract owner can submit the Merkle root to the payment pool contract. As well as, we can publish the leaf nodes and their proofs in a place where payees can get access to this data (e.g. IPFS).
 
-So that a list that looks like this is made available:
+得到如下所示的列表：![1_-lXXOgHSfYj2cvNVxrkYcw](https://img.learnblockchain.cn/pics/20201103121009.png)
 
-![](https://img.learnblockchain.cn/2020/09/28/16012646094709.jpg)
-<center>(note that these are not the actual Merkle proofs for these nodes, but some random hex to convey the idea)</center>
+<center>(请注意，这些并不是这些节点的实际Merkle证明，而是一些随机的十六进制来传达想法)</center>
 
 
-A payee could then invoke a function on the payment pool contract with the amount and proof as the parameters of the function in order to withdraw their tokens.
 
-The idea is that the `paymentPool.withdraw()` function would reconstruct the leaf node from the `msg.sender` and the token amount. The withdraw function could then hash that leaf node and add the hashed leaf node to the proof (which is the hex representation of the hashes that make up the proof). If the hash of the sum of the hashed leaf node and the provided proof equal the Merkle root that was submitted by the contract owner, then the `paymentPool.withdraw()` function can permit the token transfer from the payment pool to the `msg.sender`.
+然后，收款人可以使用金额和证明作为函数的参数来调用支付池合约上的函数，以便提取其通证。
 
-Additionally, we’ll need to keep track of the withdrawals for each of the payees, so that the `msg.sender` cannot issue duplicate `paymentPool.withdraw()` function calls.
+思路是`paymentPool.withdraw()`函数将通过`msg.sender`及通证数量重建叶子节点。`withdraw`函数可以哈希该叶节点并将哈希的叶节点添加到证明(这是构成证明的哈希的十六进制表示)。如果哈希叶节点和提供的证明之和的哈希值等于合约所有者提交的Merkle根，那么`paymentPool.withdraw()`函数可以允许将通证从支付池转移到`msg.sender`。
 
-So—this approach is a good start. We have unlocked the ability to pay as many payees as we want from the payment pool without having to incur massive gas fees, and moreover, it means we can decouple our gas fee used to specify the payees from the amount of payees that can withdraw from the payment pool. The payee’s proof basically acts like a key that only works for transactions initiated from each payee’s address that can be used to unlock that payee’s tokens from the pool.
+此外，我们需要跟踪每个收款人的提款，以便` msg.sender`无法重复调用` paymentPool.withdraw()`函数。
 
-But we still have a few challenges.
 
-1. What if the payee wants to only withdraw a partial amount of the tokens that are due to them?
-2. How can we represent the amount of tokens that are available for the address/proof pair on-chain?
-3. What about multiple payment cycles? Can we use old proofs when the Merkle root is updated?
 
+因此，这种方法是一个好的开始。我们已经解锁了从支付池中支付收款人所需数量通证的功能，而不必产生大量的gas费，此外，这意味着我们支付池中收款人的数量和所需要的 gas 费解耦了。收款人的证明基本上就像钥匙一样，仅用于从收款人的地址发起的交易，可用于从池中解锁该收款人的通证。
 
-* * *
+但是我们仍然面临一些挑战。
 
+1. 如果收款人只想提取一部分通证怎么办？
+2. 如何表示链上某个地址可用的通证数量及证明？
+3. 多个付款周期呢？ Merkle根更新后，我们可以使用旧的证明吗？
 
-# Making It Even Better
 
-To address the challenges mentioned above, we added metadata into the proof for each payee, and we introduced the idea of “payment cycles” to the payment pool.
 
-## Payment Cycles
+## 改进
 
-Within the payment pool smart contract we keep track of the payment cycle delineated by the submission of each Merkle root. The submission of a Merkle root to the payment pool by the contract owner signifies the end of the current payment cycle, and a new payment cycle begins.
+为了解决上述挑战，我们在每个收款人的证明中添加了元数据，并在支付池中引入了“付款周期”的概念。
 
-Within the payment pool smart contract we maintain a mapping property that maps the payment cycle number to the Merkle root that governs that payment pool for that payment cycle. This way, when the `paymentPool.withdraw()` function is called with a proof, if we know the payment cycle the proof was generated against, we can validate the proof against the correct Merkle root.
+### 付款周期
 
-This allows payees to use old proofs to claim their payments. It does mean, however, that a proof is tied to a particular amount of tokens. You cannot claim more tokens than the amount of tokens used in the generation of the leaf node’s hash for the proof that is supplied.
+在支付池智能合约中，我们跟踪每个Merkle根提交所描绘的付款周期。合约所有者向支付池提交Merkle根表示当前付款周期已结束，新的付款周期开始。
 
-As long as the payment pool is keeping track of how many tokens have been withdrawn for each payee, we can make sure to deduct from the cumulative amount of tokens that are allocated to the payee, the amount of tokens that they have already withdrawn to arrive at the amount of tokens available for a given proof/address pair.
+在支付池智能合约中，我们维护一个映射属性，该属性将付款周期映射到管理该付款周期中在该支付池的Merkle根。这样，当用证明调用`paymentPool.withdraw()`函数时，如果我们知道生成证明所依据的付款周期，则可以使用正确的Merkle根来验证证明。
 
-## Proof Metadata
+这使收款人可以使用旧的证明来提取付款。同时，这确实意味着证明与特定数量的通证相关。你无法提取超过在叶子节点的哈希值对应的通证数量。
 
-Another challenge to overcome is how to withdraw a token amount that is less than the amount of tokens used to create the proof. Additionally, how can we make it easier for the user to associate the proof to a particular payment cycle, so that the correct Merkle root can be used to validate the withdrawal request?
+只要支付池跟踪每个收款人已提取多少通证，就可以确保从分配给该收款人的累计通证中减去已提取的通证数量。
 
-For these challenges we have introduced the idea of attaching metadata to the proof itself. What this means is that we can incorporate into the proof both the payment cycle number and the *cumulative* amount of tokens owed to the payee that was used to generate the payee’s payment leaf node in the Merkle tree. As a result, the payee invokes the `paymentPool.withdraw()` function with an amount up to, but not exceeding the amount of tokens available for the proof, as well as the proof itself.
+### 证明元数据
 
-Simple, right? The payee is calling `paymentPool.withdraw()` with the number of tokens they want and a special key that works just for them to unlock those tokens from the payment pool.
+要克服的另一个挑战是如何提取少于创建证明时的通证数量。此外，我们如何使用户更容易将证明与特定付款周期相关联，以便可以使用正确的Merkle根来验证提款请求？
 
-So here’s how that works: as I mentioned above, the proof is really just an array of the great-aunt & uncle hashes that has been serialized into a hexadecimal format. To include metadata in the proof, what we do is simply add a couple extra items to that proof array as part of the code library that we use to retrieve a proof for a node in the Merkle tree.
+针对这些挑战，我们引入了将元数据附加到证明本身的想法。我们可以将付款周期号和收款人可收到的累计通证数量(用于在Merkle树中生成收款人的付款叶子节点)合并到证明中。这样，收款人调用`paymentPool.withdraw()`函数指定提取最多金额，该金额不超过证明的通证数量。
 
-Specifically, we are adding the payment cycle number that corresponds to the Merkle root (we can get that by calling `paymentPool.numPaymentCycles()` on the paymentPool smart contract before the Merkle root is submitted to the contract) and we are adding the cumulative amount of tokens the payee is allowed to withdraw. Within the `paymentPool.withdraw()` function what we do is we strip the metadata off of the proof so that the `paymentPool.withdraw()` function knows the payment cycle the proof pertains to, as well as the amount of tokens that is part of the leaf node in the Merkle tree for this payee.
+简单吧？收款人正在调用` paymentPool.withdraw()`，其中包含所需的通证数量以及一个特殊的密钥，该密钥仅对他们有效，以从支付池中解锁这些通证。
 
-This allows the `paymentPool.withdraw()` function to look up the correct Merkle root for the proof, as well as to construct the leaf node hash for the payment correctly by using the `msg.sender` and the amount of tokens that appeared within the proof metadata. Now the amount that appears in the `paymentPool.withdraw(amount, proof)` is the amount of tokens that the payee wishes to withdraw from the overall amount of tokens that the proof entitles the payee to receive.
+这是它的工作方式：正如我在上面提到的，证明实际上只是一系列已被序列化为十六进制格式的姑妈及叔叔哈希的数组。为了将元数据包括在证明中，我们需要向该证明数组添加几个额外的项。
+
+
+
+具体来说，要添加与Merkle根相对应的付款周期号(我们可以在将Merkle根提交给合约之前，在PaymentPool智能合约上调用`paymentPool.numPaymentCycles()`来获得该值)以及收款人可提取的累计通证数量。在`paymentPool.withdraw()`函数中，需要从证明中剥离元数据，以便`paymentPool.withdraw()`函数知道证明所涉及的支付周期以及通证的数量是此收款人Merkle树中叶节点的一部分。
+
+
+
+这样`paymentPool.withdraw()`函数才能查找到正确的Merkle根用作证明，同样通过`msg.sender`及在出现在证明元数据中的通证数量来正确构造叶节点哈希。
+
+出现在`paymentPool.withdraw(amount，proof)`中的金额(amount)是收款人希望从所证明的通证总数中提取的通证数量。
 
 ![](https://img.learnblockchain.cn/2020/09/28/16012646815076.jpg)
-<center>Figure: Cardstack’s approach of payment pool via metadata-proof Merkle Trees</center>
+<center>图：Cardstack通过元数据验证的Merkle树实现的支付池</center>
 
-This approach also allows us to provide an on-chain function that anyone can use to see the amount of tokens that are available for any given proof provided that the requestor knows the address of the payee that goes along with the proof.
 
-## Important Considerations
+这种方法还需要提供一个链上函数，允许任何人通过证明的收款人来查看可用于特定证明的通证数量。
 
-I’ve mentioned a couple times in this solution that the Merkle tree needs to keep track of the cumulative amount of tokens, meaning that the list of payees and their amounts can only ever grow over time — we should not ever see that a payee’s cumulative amount be less in a subsequent payment cycle.
+## 重要注意事项
 
-Why is that? This is a nuance of this particular approach: the Merkle trees we build for each payment cycle need to reflect the cumulative payment amounts for the payees, and a mapping of payment withdrawals should be maintained in the payment pool, the difference of which is the amount that the payee can be allowed to withdraw for any valid proof that they provide (and obviously not permitting a withdrawal when the difference is negative).
+我曾在此解决方案中提到过几次，默克尔树需要跟踪通证的累计数量，这意味着收款人列表及其数量只能随时间增长-我们永远都不会看到收款人的累计数量在随后的付款周期中减少。
 
-If the cumulative payment amounts in subsequent payment cycles actually decreased, that means math to calculate the amount of tokens available for the proof, the difference between the amount already withdrawn and the cumulative total in the proof’s metadata will be incorrect, and negatively penalize available balance of subsequent proofs for the payee, such that they wont be able to withdraw all of their tokens.
 
-This solution is heavily reliant on off-chain techniques — specifically, posting the payee’s proofs in a place that they can be easily discovered (IPFS is probably the most obvious place). Likely you’ll want to also post the amount of tokens that the payee received for the payment cycle, and perhaps even provide links to a dApp that can display the balance available for the proof in the payment pool.
 
-Additionally it is worth noting that in this solution (and all the solutions mentioned in this post) do not address how to make sure that the payment pool is fully funded so that the withdrawals made by the payees can continue un-impeded. In the code samples we provide, we do ensure that the payment pool has enough funds before attempting to perform a transfer of tokens to the payee when they invoke the `paymentPool.withdraw()` function. One conceivable approach here would be to emit payment pool token balance warning events when the payment pool balance drops below a particular threshold.
+这是为什么呢？这是这种特定方法的细微差别：我们为每个付款周期构建的Merkle树需要反映收款人的累计付款金额，并且应在支付池中保留取款额的映射，其差额是可以允许收款人提供的任何有效证据提取的部分(当差额为负时，显然不允许提取)。
 
-# What’s Next
 
-Feel tree to play with this solution, improve it, and use it in your own contracts. You can find the code (both the contracts and the javascript library that we use to build the proof and the metadata) in our [GitHub repo](https://github.com/cardstack/merkle-tree-payment-pool). The README file and tests included in the repo demonstrate at a code level how to leverage this approach. We’d love to hear your thoughts on this approach.
 
-Moving forward, we at Cardstack plan to use this approach as a means to facilitate payments for our exciting new [Tally Protocol](/cardstack/the-tally-protocol-scaling-ethereum-with-untapped-gpu-power-d949a441c082). One of the main themes around the Tally Protocol is building an approach to scale the blockchain. Leveraging a Merkle tree based payment pool is a big part of that overall approach. Although, we have even bigger ideas around how we can scale the blockchain embedded at the heart of the Tally Protocol. Stay tuned for more!
+如果后续付款周期中的累计付款额减少了，则意味着计算可用提取的通证数量（已提取的金额与证明元数据中的累计总数之差）将是不正确的，并对可用余额产生影响导致他们无法提取所有通证。
 
-原文链接：https://medium.com/cardstack/scalable-payment-pools-in-solidity-d97e45fc7c5c
-作者：[Hassan Abdel-Rahman](https://medium.com/@habdelra?source=post_page-----d97e45fc7c5c--------------------------------)
+
+
+该解决方案也很依赖于链下技术，尤其是需要发布收款人的证明(IPFS可能是不错的地坊)。你可能还希望发布收款人在付款周期中可以收到的通证数量，甚至可能需要提供dApp的链接，该链接可以显示支付池中证明可用的余额。
+
+
+
+此外，值得注意的是，在本文中提到的所有解决方案，并未涉及如何确保支付池中的资金已全部到位，从而使收款人可以连续进行提款。在我们提供的代码示例中，我们确实确保支付池有足够的资金，然后再尝试将通证调用` payingPool.withdraw()`功能时将通证转移到收款人。这里可以想到的一种方法是当支付池余额下降到特定阈值以下时发出支付池通证余额警告事件。
+
+# What’s Next(下一步是什么)
+
+你可以在我们的[GitHub代码库](https://github.com/cardstack/merkle-tree-payment-pool)中找到代码(用于构建证明和元数据的合约和javascript库)，代码库中的README文件和测试在代码级别演示了如何利用这种方法。
+
+如果你觉得此解决方案对你有用，欢迎在你自己的合约中使用它，改进它。 
+
+
+
+------
+
+本翻译由 [Cell Network](https://www.cellnetwork.io/?utm_souce=learnblockchain) 赞助支持。
+
+
+
