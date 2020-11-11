@@ -1,5 +1,8 @@
 
-# Best Practices for Smart Contract Development
+
+> * Source：https://yos.io/2019/11/10/smart-contract-development-best-practices/  Author：[Yos Riady](https://yos.io/about/)
+
+## Best Practices for Smart Contract Development
 
 ![](https://img.learnblockchain.cn/2020/09/15/16001337715241.jpg)
 
@@ -14,7 +17,7 @@ You’re reading **the missing guide I wish existed**. It summarizes the lessons
 
 > 💡 This handbook is a living document. If you have any feedback or suggestions, feel free to comment or [email me directly](mailto:hello@yos.io).
 
-# Who this is for[](#who-this-is-for)
+## Who this is for
 
 This handbook is for:
 
@@ -25,33 +28,9 @@ If you’re a developer new to crypto, please let me know if you find this guide
 
 This is NOT meant to be an introduction to the [Solidity](https://learnblockchain.cn/docs/solidity/) language.
 
-# TL;DR[](#tldr)
 
-* [Use a development environment](#use-a-development-environment)
-* [Develop locally](#develop-locally)
-* [Use static analysis tools](#use-static-analysis-tools)
-* [Understand security vulnerabilities](#understand-security-vulnerabilities)
-* [Write unit tests, no exceptions](#write-unit-tests)
-* [Security audit your contracts](#security-audit-your-contracts)
-* [Use audited, open source contracts](#use-audited-open-source-contracts)
-* [Launch on a public testnet](#launch-on-a-public-testnet)
-* [Consider formal verification](#consider-formal-verification)
-* [Store keys in a secure manner](#store-keys-in-a-secure-manner)
-* [Make it open source](#make-it-open-source)
-* [Build CLI tools and runbooks](#build-cli-tools-and-runbooks)
-* [Prioritize developer experience](#prioritize-developer-experience)
-* [Provide contract SDKs](#provide-contract-sdks)
-* [Write good documentation](#write-good-documentation)
-* [Set up event monitoring](#set-up-event-monitoring)
-* [On building DApp backends](#on-building-dapp-backends)
-* [On building DApp frontends](#on-building-dapp-frontends)
-* [Strive for usability](#strive-for-usability)
-* [Build with other protocols in mind](#build-with-other-protocols-in-mind)
-* [Understand systemic risks](#understand-systemic-risks)
-* [Participate in dev communities](#participate-in-dev-communities)
-* [Subscribe to newsletters](#subscribe-to-newsletters)
 
-# Use a Development Environment[](#use-a-development-environment)
+## Use a Development Environment
 
 Use a development environment such as [Truffle](https://learnblockchain.cn/docs/truffle/) (alternatively, [Embark](https://learnblockchain.cn/article/566), [Buidler](https://buidler.dev/) [dapp.tools](http://dapp.tools/)) to get productive, fast.
 
@@ -81,7 +60,7 @@ Likewise, [Buidler](https://learnblockchain.cn/article/1371) supports a growing 
 
 Whichever development environment you use, picking a good set of tools is a must.
 
-# Develop Locally[](#develop-locally)
+## Develop Locally
 
 Run a local blockchain for development with [Ganache](https://www.trufflesuite.com/ganache) (or [Ganache CLI](https://github.com/trufflesuite/ganache-cli)) to **speed up your iteration cycle**.
 
@@ -95,17 +74,17 @@ Ganache comes with a built-in block explorer that shows your decoded transaction
 
 Setting up is easy and quick. [Download here](https://www.trufflesuite.com/ganache).
 
-# Use Static Analysis Tools[](#use-static-analysis-tools)
+## Use Static Analysis Tools
 
 Static analysis or ‘linting’ is the process of running a program that analyzes code for programming errors. In smart contract development, this is useful for catching **style inconsistencies** and **vulnerable code** that the compiler may have missed.
 
-## 1\. Linters[](#1-linters)
+### 1. Linters
 
 ![](https://img.learnblockchain.cn/2020/09/15/16001347755489.jpg)
 
 Lint Solidity code with [solhint](https://github.com/protofire/solhint) and [Ethlint](https://github.com/duaraghav8/Ethlint). Solidity linters are similar to linters for other languages (e.g. JSLint.) They provide both Security and Style Guide validations.
 
-## 2\. Security Analysis[](#2-security-analysis)
+### 2. Security Analysis
 
 ![](https://img.learnblockchain.cn/2020/09/15/16001352402449.jpg)
 
@@ -113,7 +92,7 @@ Security analysis tools identify [smart contract vulnerabilities](https://yos.io
 
 Options include: [Mythril](https://github.com/ConsenSys/mythril) · [Slither](https://github.com/crytic/slither) · [Manticore](https://github.com/trailofbits/manticore) · [MythX](https://mythx.io/) · [Echidna](https://github.com/crytic/echidna) · [Oyente](https://github.com/melonproject/oyente)
 
-## Extra: Use Pre-Commit Hooks[](#extra-use-pre-commit-hooks)
+### Extra: Use Pre-Commit Hooks
 
 Make your developer experience seamless by setting up [Git hooks](https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks) with [`husky`](https://github.com/typicode/husky). Pre-commit hooks let you run your linters before every commit. For example:
 
@@ -136,7 +115,7 @@ Make your developer experience seamless by setting up [Git hooks](https://git-sc
 
 The above snippet runs a predefined `lint` task before every commit, failing if there are outstanding style or security violations in your code. This setup enables developers in your team to work with the linter in an iterative approach.
 
-# Understand Security Vulnerabilities[](#understand-security-vulnerabilities)
+## Understand Security Vulnerabilities
 
 Write software without bugs is notoriously difficult. Defensive programming techniques can only go so far. Fortunately, you can fix bugs by deploying new code. Patches in traditional software development are frequent and straightforward.
 
@@ -161,7 +140,7 @@ The following sections will explain points (3) and (4) in detail.
 
 > 💡 **Tip for Beginners:** You can practice your Solidity security chops in an interactive way with [Ethernauts](https://ethernaut.openzeppelin.com/).
 
-# Write Unit Tests[](#write-unit-tests)
+## Write Unit Tests
 
 Uncover bugs and unexpected behaviour early with **a comprehensive test suite**. Testing different scenarios through your protocol helps you identify edge cases.
 
@@ -179,7 +158,7 @@ Truffle is missing several features which are essential for testing smart contra
 
 > Alternatively, [OpenZeppelin Test Environment](https://github.com/OpenZeppelin/openzeppelin-test-environment) offers a tooling-agnostic option if you prefer using other test runners.
 
-## Measure Test Coverage[](#measure-test-coverage)
+## Measure Test Coverage
 
 Writing tests is not enough; Your test suite must reliably catch regressions. **[Test Coverage](https://en.wikipedia.org/wiki/Code_coverage)** measures the effectiveness of your tests.
 
@@ -191,7 +170,7 @@ A program with high test coverage has more of its code executed during testing. 
 
 You can collect Solidity code coverage with [`solidity-coverage`](https://github.com/sc-forks/solidity-coverage).
 
-## Set up Continuous Integration[](#set-up-continuous-integration)
+### Set up Continuous Integration
 
 Once you have a test suite, run it **as frequently as possible**. There are a few ways to accomplish this:
 
@@ -205,7 +184,7 @@ If you’re looking for an out-of-the-box CI check out [Truffle Teams](https://w
 
 Hosted CIs run your unit tests regularly for maximum confidence. You can also monitor your deployed contracts’ transactions, state, and events.
 
-# Security Audit Your Contracts[](#security-audit-your-contracts)
+## Security Audit Your Contracts
 
 Security audits help you **uncover unknowns** in your system that defensive programming techniques (linting, unit tests, design patterns) miss.
 
@@ -218,7 +197,7 @@ Nothing can replace manual security audits, especially when the surface area of 
 
 > ⚠️ Before proceeding to the next phase, your code should already pass the [security tools](#use-static-analysis-tools) mentioned in an earlier section.
 
-## Bring in External Auditors[](#bring-in-external-auditors)
+## Bring in External Auditors
 
 Major protocols in the Ethereum space hire (expensive) security auditors who dive deep into their codebase to find potential security holes. These auditors use a combination of proprietary and open-source static analysis tools such as:
 
@@ -234,7 +213,7 @@ Auditors will help **identify any design and architecture-level risks** and educ
 
 At the end of the process, you get a report that summarizes the auditors’ findings and recommended mitigations. You can read audit reports by [ChainSecurity](https://github.com/ChainSecurity/audits), [OpenZeppelin](https://blog.openzeppelin.com/security-audits/), [Consensys Diligence](https://diligence.consensys.net/audits/), and [TrailOfBits](https://github.com/trailofbits/publications/tree/master/reviews) to learn what kind of issues are found during a security audit.
 
-# Use Audited, Open Source Contracts[](#use-audited-open-source-contracts)
+## Use Audited, Open Source Contracts
 
 Secure your code from Day 1 by using **battle-tested open-source code** that has already passed security audits. Using audited code **reduces the surface area you need to audit** later on.
 
@@ -251,7 +230,7 @@ You can deploy these contracts as-is or extend it to suit your needs as part of 
 
 > 💡 **Tip for Beginners:** Open source Solidity projects such as OpenZeppelin Contracts are excellent learning materials for new developers. They provide a readable introduction to what’s possible with smart contracts. Don’t hesitate to check it out! [Start here](https://docs.openzeppelin.com/contracts/3.x/).
 
-# Launch on a Public Testnet[](#launch-on-a-public-testnet)
+## Launch on a Public Testnet
 
 Before you launch your protocol on the Ethereum mainnet, consider **launching on a [testnet](https://medium.com/compound-finance/the-beginners-guide-to-using-an-ethereum-test-network-95bbbc85fc1d)**. Think of it as deploying to staging before production. [Rinkeby](https://www.rinkeby.io/#stats) and [Kovan](https://kovan-testnet.github.io/website/) testnets have faster block times than mainnet and test Ether can be [requested](https://faucet.rinkeby.io/) for free.
 
@@ -260,7 +239,7 @@ Before you launch your protocol on the Ethereum mainnet, consider **launching on
 
 During the testnet phase, organize a **bug bounty** program. Your users and the larger Ethereum security community can help identify any remaining critical flaws in the protocol (in return for a monetary reward.)
 
-# Consider Formal Verification[](#consider-formal-verification)
+## Consider Formal Verification
 
 [Formal verification](https://en.wikipedia.org/wiki/Formal_verification) is the act of proving or disproving the correctness of an algorithm against a formal specification, using formal methods of mathematics. The verification is done by providing a formal proof on a mathematical model of the system, such as finite state machines and labelled transitions.
 
@@ -288,7 +267,7 @@ Within the Ethereum ecosystem, available model checkers include:
 
 For reference, you can see example results of formal verification [here](https://github.com/runtimeverification/verified-smart-contracts).
 
-# Store Keys in a Secure Manner[](#store-keys-in-a-secure-manner)
+## Store Keys in a Secure Manner
 
 Store private keys of Ethereum accounts in a [secure manner](https://silentcicero.gitbooks.io/pro-tips-for-ethereum-wallet-management/). Here are a few suggestions:
 
@@ -302,7 +281,7 @@ Store private keys of Ethereum accounts in a [secure manner](https://silentcicer
 
 > 💡 With the rise of [smart contract wallets](https://medium.com/argenthq/recap-on-why-smart-contract-wallets-are-the-future-7d6725a38532), seed phrases may become less prevalent over time.
 
-# Make It Open Source[](#make-it-open-source)
+## Make It Open Source
 
 Smart contracts enable permissionless innovation that lets anyone build and innovate on them. That is what blockchains are really useful for: public, programmable and verifiable computation.
 
@@ -315,7 +294,7 @@ If you’re building a DeFi protocol, you want to attract third-party developers
 
 > 💡 Remember to [verify your contracts on Etherscan](https://yos.io/2019/08/10/verify-smart-contracts-on-etherscan/).
 
-# Prioritize Developer Experience[](#prioritize-developer-experience)
+## Prioritize Developer Experience
 
 For the longest time, integrating payments was really hard. Early payments companies lacked modern code bases, and things like APIs, client libraries and documentation were virtually non-existent. [Stripe](https://growthhackers.com/growth-studies/how-stripe-marketed-to-developers-so-effectively) made it easy for developers to add payments to their software. They are now incredibly successful.
 
@@ -330,7 +309,7 @@ The user experience of your developer portal, the completeness of the API docume
 
 Community engagement also plays an important part. How do developers find you? Where do you connect with developers? What makes your project attractive to build on? Building an active community around your project will help drive adoption in the long term. The crypto developer community is active on various Twitter, Telegram, and Discord channels.
 
-## Provide Contract SDKs[](#provide-contract-sdks)
+### Provide Contract SDKs
 
 Writing and maintaining robust, client libraries for many programming languages is non-trivial. Having SDKs available helps developers build on your protocol.
 
@@ -363,7 +342,7 @@ const result = await c.someFunction(5); // Calls a smart contract
 > 
 > Some projects go one step further and provide fully-functional codebases that you can run and deploy. For example, the [0x Launch Kit](https://0x.org/launch-kit) provides decentralized exchanges that works out-of-the-box.
 
-## Write Good Documentation[](#write-good-documentation)
+### Write Good Documentation
 
 Building on open source software reduces development time, but comes with a tradeoff: learning how to use it takes time. Good documentation reduces the time developers spend learning.
 
@@ -380,7 +359,7 @@ Tools like [`leafleth`](https://github.com/clemlak/leafleth) allows you to gener
 
 > 💡To document an HTTP API, check out [`redoc`](https://github.com/Redocly/redoc) or [`slate`](https://github.com/slatedocs/slate). You can check out other helpful resources for building HTTP APIs [here](https://github.com/yosriady/api-development-tools).
 
-# Build CLI Tools and Runbooks[](#build-cli-tools-and-runbooks)
+## Build CLI Tools and Runbooks
 
 Runbooks are codified procedures to achieve a specific outcome. Runbooks should contain the minimum information necessary to successfully perform the procedure.
 
@@ -390,7 +369,7 @@ Should things go wrong, runbooks provide developers who are unfamiliar with proc
 
 > 💡 To get started, pick an effective manual process, implement it in code, and trigger automated execution where appropriate.
 
-# Set up Event Monitoring[](#set-up-event-monitoring)
+## Set up Event Monitoring
 
 Efficient and effective management of contract events is necessary for [operational excellence](https://wa.aws.amazon.com/wat.pillar.operationalExcellence.en.html). An event monitoring system for your smart contracts keeps you notified of real-time changes in the system. If you’re building a DeFi protocol, price slippage alerts are particularly useful to prevent hacks.
 
@@ -399,7 +378,7 @@ Efficient and effective management of contract events is necessary for [operatio
 
 You can roll out your own monitoring backend with [`web3.js`](https://learnblockchain.cn/docs/web3.js/) or use a dedicated service such as [Dagger](https://matic.network/dagger/), [Blocknative Notify](https://www.blocknative.com/notify), [Tenderly](https://tenderly.co/), or [Alchemy Notify](https://notify.alchemyapi.io/).
 
-# On Building DApp Backends[](#on-building-dapp-backends)
+## On Building DApp Backends
 
 DApps need a way to read and transform data from smart contracts. However, on-chain data aren’t always stored in an easy-to-read format. Reading contract data directly from an Ethereum node is sometimes too slow for user-facing web and mobile apps. Instead, you need to index the data into a more accessible format.
 
@@ -412,7 +391,7 @@ Alternatively, you can build your own indexing service. This service would commu
 
 > 💡 The lack of regulatory clarity in jurisdictions across the world means that at the flip of a hat, [control can become liability](https://vitalik.ca/general/2019/05/09/control_as_liability.html). To address this, making parts of your system [decentralized](https://onezero.medium.com/why-decentralization-matters-5e3f79f7638e) and non-custodial can help reduce that liability.
 
-# On Building DApp Frontends[](#on-building-dapp-frontends)
+## On Building DApp Frontends
 
 A frontend application allows users to interact with smart contracts. Examples include the [Augur](https://www.augur.net/ipfs-redirect.html) and [Compound](https://app.compound.finance/) apps. DApp frontends are usually hosted in a centralized server, but can also be hosted on the decentralized [IPFS](https://ipfs.io/) network to further introduce decentralization and reduce liability.
 
@@ -426,7 +405,7 @@ There are several DApp boilerplates available, such as [create-eth-app](https://
 
 > 💡 Instead of reading contract data from Ethereum nodes, frontends can also call a backend which indexes smart contract events into a read-optimized format. See [the Building DApp Backends section](#on-building-dapp-backends) for more detail.
 
-# Strive for Usability[](#strive-for-usability)
+## Strive for Usability
 
 Crypto has a usability problem. **Gas fees** and **seed phrases** are intimidating for new users. Fortunately, the crypto user experience is improving at a rapid pace.
 
@@ -442,7 +421,7 @@ Hosted wallets and smart contract wallets remove the need for browser extensions
 
 > 💡 Consider using the [web3modal](https://github.com/Web3Modal/web3modal) library to add support for major wallets.
 
-# Build with Other Protocols in Mind[](#build-with-other-protocols-in-mind)
+## Build with Other Protocols in Mind
 
 Ethereum has created a [digital finance stack](https://medium.com/pov-crypto/ethereum-the-digital-finance-stack-4ba988c6c14b). Financial protocols are building on top of each other, powered by the permissionless and composable nature of smart contracts. These protocols include:
 
@@ -474,13 +453,13 @@ This philosophy extends to centralized services. There’s a growing ecosystem o
 
 There’s an ever growing set of building blocks for you to ship better DApps, faster.
 
-# Understand Systemic Risks[](#understand-systemic-risks)
+## Understand Systemic Risks
 
 ![](https://img.learnblockchain.cn/2020/09/15/16001359040167.jpg)
 
 When you’re building on DeFi, you must assess whether a protocol / currency adds more value than risk.
 
-## 1\. Smart Contract Risk[](#1-smart-contract-risk)
+### 1. Smart Contract Risk
 
 Smart contracts can have bugs. Always consider the possibility that a bug is found in the protocols you depend on.
 
@@ -488,7 +467,7 @@ The [DeFi Score](https://defiscore.io/) offers a way to quantify smart contract 
 
 Smart contract risk **compounds as more protocols are composed together**, similar to [how SLA scores are calculated](https://devops.stackexchange.com/questions/711/how-do-you-calculate-the-compound-service-level-agreement-sla-for-cloud-servic). Because of the permissionless composability of smart contracts, a single flaw cascades into all dependent systems.
 
-## 2\. Counterparty Risk[](#2-counterparty-risk)
+### 2. Counterparty Risk
 
 How is a protocol governed? Some governance models may give direct control over funds or attack vectors to the governance architecture which could expose control and funds.
 
@@ -496,7 +475,7 @@ You can gauge counterparty risk by the number of parties that control the protoc
 
 Different protocols have different degrees of decentralization and control. Be wary of protocols with a small community and limited track record.
 
-## 3\. Mitigating Risk[](#3-mitigating-risk)
+### 3. Mitigating Risk
 
 Mitigate your overall risk exposure by following these basic principles:
 
@@ -504,7 +483,7 @@ Mitigate your overall risk exposure by following these basic principles:
 * Interact only with liquid currencies that has a significant community and product.
 * Purchase [smart contract insurance](https://nexusmutual.io/).
 
-# Participate in dev communities[](#participate-in-dev-communities)
+## Participate in dev communities
 
 Smart contract development is evolving rapidly, with new tools and standards launching from talented teams all over the world.
 
@@ -513,17 +492,14 @@ Smart contract development is evolving rapidly, with new tools and standards lau
 
 Keep up with the latest developments in the space by visiting online Ethereum communities: [ETH Research](https://ethresear.ch/), [Ethereum Magicians](https://ethereum-magicians.org/), [r/ethdev](https://www.reddit.com/r/ethdev/), [OpenZeppelin Forum](https://forum.openzeppelin.com/), and the [EIPs Github repo](https://github.com/ethereum/EIPs).
 
-# Subscribe to newsletters[](#subscribe-to-newsletters)
+## Subscribe to newsletters
 
 Newsletters are a great way to stay up-to-date with the Ethereum ecosystem. I recommend subscribing to [Week in Ethereum](https://weekinethereumnews.com/) and [EthHub Weekly](https://ethhub.substack.com/).
 
-# In Closing[](#in-closing)
+## In Closing
 
 This handbook is a living document. As the Ethereum developer ecosystem grows and evolves, new tools will emerge and old techniques may become obsolete.
 
 If you have any feedback or suggestions, feel free to comment or [email me directly](mailto:hello@yos.io).
 
 If you’re a developer new to crypto, please let me know if you find this guide helpful!
-
-原文链接：https://yos.io/2019/11/10/smart-contract-development-best-practices/
-作者：[Yos Riady](https://yos.io/about/)
