@@ -1,178 +1,161 @@
-> * 来源：https://bitquery.io/blog/thegraph-and-bitquery 
+> * 来源：https://bitquery.io/blog/thegraph-and-bitquery 作者： BitQuery
+> * 译文出自：[登链翻译计划](https://github.com/lbc-team/Pioneer)
+> * 译者：[翻译小组](https://learnblockchain.cn/people/412)
+> * 本文永久链接：[learnblockchain.cn/article…](https://learnblockchain.cn/article/1)
 
 
 
+# The Graph 与 Bitquery 对比 – 解决区块链数据问题
 
-# The Graph vs Bitquery – Solving Blockchain Data Problems
+区块链是“ [Erised镜子](https://harrypotter.fandom.com/wiki/Mirror_of_Erised)”，你可以始终在其中发现自己的兴趣。
 
+> 译者注： Erised镜子：Erised 是 desire 的倒写，就像在镜子中一样，用来反映“人们内心最深切，最绝望的渴望” 
 
-Blockchains are “[Mirror of Erised](https://harrypotter.fandom.com/wiki/Mirror_of_Erised).” You will always find your interests in them.
+经济学家将区块链视为经济。技术专家将区块链视为构建去中心化应用程序的平台。企业家将其视为一种通过其产品获利的新方法，执法机构正在寻找区块链中的犯罪活动。
 
-Economist sees blockchains as economies. Technologist sees blockchains as platforms to build Decentralized applications. Entrepreneurs see them as a new way to monetize their products, and law enforcement agencies are looking for criminal activities in the blockchain.
-
-Everyone is looking at blockchains in their way. However, without easy and reliable access to blockchain data, everyone is blind.
-
-
-## Table of Contents 
-
-* [Blockchain data problem](#Blockchain_data_problem "Blockchain data problem")
-* [The Graph Overview](#The_Graph_Overview "The Graph Overview")
-    * [Problem Addressed by The Graph](#Problem_Addressed_by_The_Graph "Problem Addressed by The Graph")
-* [Bitquery Overview](#Bitquery_Overview "Bitquery Overview")
-    * [Problem Addressed by Bitquery](#Problem_Addressed_by_Bitquery "Problem Addressed by Bitquery")
-* [Common Things](#Common_Things "Common Things")
-    * [GraphQL](#GraphQL "GraphQL")
-    * [Removing Infrastructure Cost](#Removing_Infrastructure_Cost "Removing Infrastructure Cost")
-* [The Graph Architecture](#The_Graph_Architecture "The Graph Architecture")
-* [Bitquery Architecture](#Bitquery_Architecture "Bitquery Architecture")
-* [Differences between The Graph and Bitquery](#Differences_between_The_Graph_and_Bitquery "Differences between The Graph and Bitquery")
-    * [Blockchain Support](#Blockchain_Support "Blockchain Support")
-    * [API Support](#API_Support "API Support")
-    * [Ease of Use](#Ease_of_Use "Ease of Use")
-    * [Decentralization](#Decentralization "Decentralization")
-    * [Performace](#Performace "Performace")
-    * [Open Source](#Open_Source "Open Source")
-    * [Data Verifiability](#Data_Verifiability "Data Verifiability")
-    * [Pricing](#Pricing "Pricing")
-* [Conclusion](#Conclusion "Conclusion")
+每个人都在以自己的方式看待区块链。但是，如果无法轻松，可靠地访问区块链数据，那么每个人都是盲目的。
 
 
-## Blockchain data problem
 
-Blockchains emit millions of transactions and events every day. Therefore, to analyze blockchains for useful information, you need to extract, store, and index data and then provide an efficient way to access it. This creates two main problems:
+## 区块链数据问题
 
-* **Infrastructure cost **— Before developing an application, you need reliable access to blockchain data. For this, you need to invest in the infrastructure, which is costly and a barrier for developers and startups.
-* **Actionable insights **— To drive blockchain data’s value, we need to add context. For example — Is a blockchain transaction is a standard transaction or a DEX trade. Is it normal DEX trade or an arbitrage? Meaningful blockchain data is helpful for businesses in providing actionable insights to solve real-world problems.
+区块链每天都会产生数百万笔交易和事件。因此，要分析区块链以获取有用的信息，你需要提取，存储和索引数据，然后提供一种有效的数据访问方式。这就产生了两个主要问题：
 
-This article will look at similarities and differences between [The Graph](https://thegraph.com/) and [Bitquery](https://bitquery.io/).
+* **基础架构成本**：开发应用程序之前，你需要可靠地访问区块链数据。为此，你需要在基础架构上进行投资，这既昂贵又对开发人员和初创企业构成障碍。
+* **可行动的洞察力**：为了提高区块链数据的价值，我们需要添加上下文。例如—区块链交易是标准交易还是DEX交易，是正常的DEX交易还是套利？有意义的区块链数据有助于企业提供可行动的洞察力来解决现实问题。
 
-## The Graph Overview
+本文将研究[The Graph](https://thegraph.com/)和[Bitquery](https://bitquery.io/)之间的异同
 
-[The Graph](https://thegraph.com/) project is building a caching layer on top of [Ethereum](https://ethereum.org/) and [IPFS](https://ipfs.io/). Using The Graph project, anyone can create a GraphQL schema (Subgraph) and define blockchain data APIs according to their need. The Graph nodes use that schema to extract, and index that data and provide you simple GraphQL APIs to access it.
+## The Graph 概述
 
-### Problem Addressed by The Graph
+[The Graph](https://thegraph.com/)项目正在[Ethereum](https://ethereum.org/)和[IPFS](https://ipfs.io/)之上构建缓存层。使用The Graph项目，任何人都可以创建GraphQL schema(Subgraph)并根据他们的需要定义区块链数据API。 The Graph节点使用schema来提取数据并为其建立索引，并为你提供简单的GraphQL API进行访问。
 
-Developers building Decentralized applications (Dapps) have to depend on centralized servers to process and index their smart contract data for multiple reasons, such as creating APIs for third party services or providing more data to their Dapp users to enhance UX. However, this creates a risk of a single point of failure for Dapps. 
+> 关于 TheGraph 的使用，还可以阅读这篇文章：[使用 TheGraph 完善Web3 事件数据检索](https://learnblockchain.cn/article/1589)
 
-The Graph project address this problem by creating a decentralized network to access indexed smart contract data for Dapps and removing the need for centralized servers.
+### The Graph解决的问题
 
-## Bitquery Overview
+构建去中心化应用程序([Dapps](https://learnblockchain.cn/tags/DApp))的开发人员由于多种原因(例如为第三方服务创建API或向其Dapp用户提供更多数据以增强用户体验)，必须依赖中心化服务器来处理和索引其智能合约数据。但是，这会导致Dapps出现单点故障的风险。
 
-Bitquery is building a blockchain data engine, which provides simple access to data across multiple blockchains. Using [Bitquery’s GraphQL APIs](https://explorer.bitquery.io/graphql), you can access any type of blockchain data for more than 30 blockchains.
+The Graph项目通过创建一个去中心化的网络来为Dapps提供索引智能合约数据并消除了对中心化服务器的需求，从而解决了这个问题。
 
-### Problem Addressed by Bitquery
+## Bitquery概述
 
-Developers, analysts, businesses all need blockchain data for various reasons, such as analyzing the network, building applications, investigating crimes, etc. 
-Bitquery provides unified APIs for access data across multiple blockchains to fulfill any blockchain data needs for various sectors such as Compliance, Gaming, Analytics, DEX trading, etc.
+Bitquery正在构建一个区块链数据引擎，通过该引擎可轻松访问多个区块链中的数据。使用[Bitquery的GraphQL API](https://explorer.bitquery.io/graphql),，你可以访问30多个区块链的任何类型的区块链数据。
 
-Our Unified schema allows developers to quickly scale to multiple blockchains and pull data from multiple chains in a single API.
+### Bitquery解决的问题
 
-## Common Things
+开发人员、分析师、企业都出于各种原因需要区块链数据，例如分析网络、构建应用程序、调查犯罪等。
+Bitquery给多个区块链提供了统一的数据访问API，以满足法规遵从性，游戏，分析，DEX交易等各个部门的任何区块链数据需求。
+
+我们的统一schema允许开发人员快速扩展到多个区块链，并在单个API中从多个链中提取数据。
+
+##  相同点
 
 ### GraphQL
 
-Both, The Graph and Bitquery use [GraphQL](https://graphql.org/) extensively and enable GraphQL APIs to provide freedom to end-users to query blockchain data flexibly. When it comes to blockchain data, read here why [GraphQL is better than Rest APIs](https://bitquery.io/blog/blockchain-graphql).
+Graph和Bitquery都广泛使用[GraphQL](https://graphql.org/)，并且使GraphQL API能够为最终用户提供自由灵活地查询区块链数据。关于区块链数据，请在此处阅读为什么[GraphQL比Rest API更好](https://bitquery.io/blog/blockchain-graphql).
 
-### Removing Infrastructure Cost
+### 降低基础设施成本
 
-Both projects remove infrastructure costs for end-users and provide them with a model where they pay only for what they use.
+这两个项目都降低了最终用户的基础设施成本，并为他们提供了一个仅按使用量付费的模型。
 
-## The Graph Architecture
+## The Graph架构
 
-The Graph embraces decentralization through an army of [Indexers and curators](https://thegraph.com/docs/introduction#how-the-graph-works).
+The Graph包含通过[索引器（Indexers）和监护人（curator）](https://thegraph.com/docs/introduction#how-the-graph-works)进行去中心化。
 
-Indexers run Graph nodes and store and index Subgraph data. And Curators help verify data integrity and signaling new useful subgraphs.
+索引器运行The  Graph节点并存储和索引Subgraph数据。监护人可帮助验证数据完整性并发信号通知新的有用 Subgraph。
 
-The Graph aims to become a decentralized caching layer to enable fast, secure, and verifiable access to Ethereum and IPFS data.
+The Graph旨在成为去中心化缓存层，以实现对以太坊和IPFS数据的快速，安全和可验证的访问。
 
 ![](https://img.learnblockchain.cn/2020/11/12/16051649958441.jpg)
 
 
-## Bitquery Architecture
+## Bitquery架构
 
-Bitquery embraces performance and developer experience over decentralization. Our centralized servers process more than 200 terabytes of data from more than 30 blockchains.
+Bitquery在去中心化性方面追求性能和开发人员经验。Bitquery的中心化服务器处理来自30多个区块链的200 TB数据。
 
-We are focus on building tools to explore, analyze, and consume blockchain data easily for individuals and businesses.
+Bitquery专注于构建工具，以方便个人和企业探索、分析和使用区块链数据。
 
 ![](https://img.learnblockchain.cn/2020/11/12/16051650690990.jpg)
 
+## The Graph和Bitquery之间的区别
 
-## Differences between The Graph and Bitquery
+The Graph和Bitquery之间有相当大的差异。让我们来看看一些明显的不同。
 
-There are considerable differences between The Graph and Bitquery. Let’ see some of the significant differences.
+### 区块链支持
 
-### Blockchain Support
+The Graph仅支持以太坊和IPFS。而 Bitquery 支持20多个区块链，并允许你使用GraphQL API查询其中的任何一个。
 
-The Graph only supports Etheruem and IPFS. However, Bitquery supports more than 20 blockchains and allows you to query any of them using GraphQL APIs.
+### API支持
 
-### API Support
+The Graph允许你创建GraphQL schema(Subgraph)并将其部署在Graph节点上。通过创建schema 让开发人员可以将任何区块链数据作为API进行访问。
 
-The Graph allows you to create your GraphQL schema(Subgraph) and deploy it on Graph nodes. Creating your schema enables developers to access any blockchain data as APIs.
+Bitquery遵循统一模式（schema）模型，这意味着它对所有支持的区块链都有类似的GraphQL模式。当前，Bitquery扩展了schema以实现对[blockchain数据API](https://bitquery.io/)的更广泛支持。但是，我们（Bitquery）正在构建FlexiGraph，该工具将允许任何人扩展Bitquery的schema以启用更复杂的区块链数据查询。
 
-Bitquery follows the Unified schema model, meaning it has a similar GraphQL schema for all blockchains it support. Currently, Bitquery extends this schema to enable broader support of [blockchain data APIs](https://bitquery.io/). However, we are building FlexiGraph, a tool that will allow anyone to extend our schema to enable more complex blockchain data queries.
+### 使用简单
 
-### Ease of Use
+使用Bitquery，你只需要学习GraphQL并使用Bitquery的模式来查询区块链。但是，对于The Graph，你还需要了解编码，因为如果你要查找的数据无法通过社区schema获得，则需要部署schema。
 
-With Bitquery, you only need to learn GraphQL and use our schema to query the blockchain. However, with The Graph, you also need to understand coding because you need to deploy your schema if the data you are looking not available through community schema.
+### 去中心化
 
-### Decentralization
+The Graph是Graph节点的去中心化网络，Graph节点用于索引和管理以太坊数据。我们认为The Graph的去中心化区块链数据的使命目标新颖，我们对此表示赞赏。但是，Bitquery专注于构建API，以实现最快，可扩展的多区块链数据访问以及有用的查询工具。
 
-The Graph is a decentralized network of Graph nodes to index and curate Ethereum data. We think The Graph’s mission to decentralize blockchain data access a novel goal, and we appreciate it. However, Bitquery focuses on building APIs to enable the fastest, scalable multi-blockchain data access, coupled with useful query tooling.
+### 性能
 
-### Performace
+Bitquery的技术堆栈针对性能和可靠性进行了优化。此外，我们的中心化架构可帮助我们优化延迟和响应率以及其他性能指标。
 
-Bitquery’s technology stack is optimized for performance and reliability. Besides, our centralized architecture helps us optimizing latency and response rate and other performance metrics.
+The Graph去中心化方法使其成为用于数据访问的鲁棒网络。但是，The Graph仍在努力实现持续的性能交付。
 
-The Graph decentralization approach makes it a robust network for data access. However, The Graph is still working to achieve continuous performance delivery.
+### 开源的
 
-### Open Source
+The Graph是一个完全的[开源项目](https://github.com/graphprotocol)，开发人员可以根据需要验证代码库，对其进行分叉或集成。
 
-The Graph is a fully [open source project](https://github.com/graphprotocol). Developers can verify the codebase, fork it, or integrate it according to their needs.
+我们Bitquery同样拥抱开源，并尽可能使我们的工具开源。例如，我们的[Explorer的前端](https://github.com/bitquery)完全是开源的，而我们的后端是闭源的。
 
-We at Bitquery also embrace open source development and make our tools open source as much as we can. For example, our [Explorer’s front end](https://github.com/bitquery) is entirely open-source, but our backend is closed source.
+但是，我们一直在重新审视我们的技术，机会成熟会开源任何模块。
 
-However, we always revisit our technology on time and see if there is an opportunity to open source any module.
+### 数据可验证性
 
-### Data Verifiability
+区块链上几乎所有数据都是金融数据。因此，数据可验证性非常重要。 The Graph网络的监护人负责验证数据的准确性。
 
-Almost all the data on blockchains is financial data; therefore, data verifiability is very important. The Graph network has curators, who are responsible for verifying data accuracy.
+在Bitquery中，我们建立了自动化系统来检查API的数据准确性。
 
-At Bitquery, we have built automated systems to check data accuracy for our APIs.
+### 定价
 
-### Pricing
+The Graph项目创建了GRT通证，该通证将驱动其网络上的定价。但是，GRT通证暂时不向公众开放。
 
-The Graph project created the GRT token, which will drive the pricing on its network. However, The GRT token is not available to the public for now.
+Bitquery也处于公开测试阶段；因此，定价尚未向公众开放。但是，生产中的许多项目都使用Bitquery和The Graph。当前，这两个项目都提供免费的API。
 
-Bitquery is also at the open beta stage; therefore, pricing not yet open to the public. However, Bitquery and The Graph are used by many projects in production. Currently, both projects provide their APIs are free.
+##  结论
 
-## Conclusion
+区块链数据充满了丰富的信息，等待分析师找到它。The Graph项目目标是为应用程序构建者去中心化访问以太坊和IPFS数据。但是，Bitquery中选择了一条不同的路径，为个人和企业释放了高度可靠的多区块链数据的真正潜力。
 
-Blockchain data is filled with rich information, waiting for analysts to find it. We embrace TheGraph project’s aims to decentralize the Ethereum and IPFS data access for application builders. However, we at Bitquery choose a different path and unlock the true potential of highly reliable multi-blockchain data for individuals and businesses.
-
-We believe The Graph and Bitquery complement each other and address different needs in the blockchain data market with some apparent intersections. We aim to build a suite of products to easily explore, analyze, and consume blockchain data for individuals and businesses. And The Graph aims to build a decentralized network to enable reliable access to Ethereum and IPFS data.
-
-Let us know what similarities and differences you see between The Graph and Bitquery in the comment section.
-
-You might also be interested in:
-
-* [Ethereum DEX GraphQL APIs with Examples](https://bitquery.io/blog/ethereum-dex-graphql-api)
-* [How to get newly created Ethereum Tokens?](https://bitquery.io/blog/newly-created-etheruem-token)
-* [How to investigate an Ethereum address?](https://bitquery.io/blog/investigate-ethereum-address)
-* [API to get Ethereum Smart Contract Events](https://bitquery.io/blog/ethereum-events-api)
-* [Simple APIs to get Latest Uniswap Pair Listing](https://bitquery.io/blog/uniswap-pool-api)
-* [ETH2.0 Analytical Explorer, Widgets, and GraphQL APIs](https://bitquery.io/blog/eth2-explorer-api-widgets)
-* [Analyzing Decentralized Exchange using Bitquery Blockchain Explorer](https://bitquery.io/blog/dex-blockchain-explorer)
-
-#### About Bitquery
-
-[**Bitquery**](https://bitquery.io/?source=blog&utm_medium=about_coinpath) is a set of software tools that parse, index, access, search, and use information across blockchain networks in a unified way. Our products are:
-
-* **[Coinpath®](https://bitquery.io/products/coinpath?utm_source=blog) APIs** provide [blockchain money flow analysis](https://blog.bitquery.io/coinpath-blockchain-money-flow-apis) for more than 24 blockchains. With Coinpath’s APIs, you can monitor blockchain transactions, investigate crypto crimes such as bitcoin money laundering, and create crypto forensics tools. Read [this to get started with Coinpath®](https://blog.bitquery.io/coinpath-api-get-start).
-
-* **[Digital Assets API](https://bitquery.io/products/digital_assets?utm_source=blog&utm_medium=about)** provides index information related to all major cryptocurrencies, coins, and tokens.
-
-* **[DEX API](https://bitquery.io/products/dex?utm_source=blog&utm_medium=about)** provides real-time deposits and transactions, trades, and other related data on different DEX protocols like Uniswap, Kyber Network, Airswap, Matching Network, etc.
-
-If you have any questions about our products, ask them on our [Telegram channel](https://t.me/Bloxy_info) or email us at [hello@bitquery.io](mailto:hello@bitquery.io). Also, subscribe to our newsletter below, we will keep you updated with the latest in the cryptocurrency world.
+我们相信The Graph和Bitquery可以相互补充，并通过一些明显的交叉点来满足区块链数据市场的不同需求。我们旨在构建一套产品，以轻松探索，分析和使用个人和企业的区块链数据。 The Graph旨在建立一个去中心化的网络，以实现对以太坊和IPFS数据的可靠访问。
 
 
+
+你也可能对此有兴趣：
+
+* [以太坊DEX GraphQL API示例](https://bitquery.io/blog/ethereum-dex-graphql-api)
+* [如何获取新创建的以太坊通证？](https://bitquery.io/blog/newly-created-etheruem-token)
+* [如何研究以太坊地址？](https://bitquery.io/blog/investigate-ethereum-address)
+* [用户获取以太坊智能合约事件的API](https://bitquery.io/blog/ethereum-events-api)
+* [获取最新Uniswap交易对列表的API](https://bitquery.io/blog/uniswap-pool-api)
+* [ETH2.0 Analytical Explorer、小部件和GraphQL API](https://bitquery.io/blog/eth2-explorer-api-widgets)
+* [使用Bitquery Blockchain Explorer分析去中心化交易所](https://bitquery.io/blog/dex-blockchain-explorer)
+
+#### 关于Bitquery
+
+[**Bitquery**](https://bitquery.io/?source=blog&utm_medium=about_coinpath)是一组软件工具，它们以统一的方式跨区块链网络解析、索引、访问、搜索和使用信息。我们的产品有：
+
+* **[Coinpath®](https://bitquery.io/products/coinpath?utm_source=blog) API**为超过24个区块链提供[区块链资金流分析](https://blog.bitquery.io/coinpath-blockchain-money-flow-apis)。借助Coinpath的API，你可以监控区块链交易，调查比特币洗钱等加密犯罪，并创建加密取证工具。阅读[此入门Coinpath®](https://blog.bitquery.io/coinpath-api-get-start).
+
+* **[Digital Assets API](https://bitquery.io/products/digital_assets?utm_source=blog&utm_medium=about)**提供与所有主要加密货币，原生币（coin）和代币（token）有关的索引信息。
+
+* **[DEX API](https://bitquery.io/products/dex?utm_source=blog&utm_medium=about)**提供有关不同DEX协议(如Uniswap，Kyber Network，Airswap，Matching Network等)的实时存款和交易，交易以及其他相关数据。
+
+如果你对我们的产品有任何疑问，请在我们的[电讯频道](https://t.me/Bloxy_info)上提问，或通过[hello@bitquery.io](mailto：hello@bitquery.io)给我们发送电子邮件。另外，请订阅下面的新闻通讯，我们将为你提供最新的加密货币信息。
+
+
+------
+本翻译由 [Cell Network](https://www.cellnetwork.io/?utm_souce=learnblockchain) 赞助支持。
