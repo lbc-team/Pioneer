@@ -1,72 +1,70 @@
-> * 原文链接:https://soliditydeveloper.com/erc20-permit
+> * 原文链接：https://soliditydeveloper.com/erc20-permit
 > * 译文出自：[登链翻译计划](https://github.com/lbc-team/Pioneer)
-> * 译者：[]()
-> * 本文永久链接：[learnblockchain.cn/article…]()
+> * 译者：[翻译小组](https://learnblockchain.cn/people/412)
+> * 本文永久链接：[learnblockchain.cn/article…](https://learnblockchain.cn/article/1)
 
+# 无需gas代币和ERC20-Permit还任重而道远
 
-# A Long Way To Go: On Gasless Tokens and ERC20-Permit
-
-## And how to avoid the two step approve + transferFrom with ERC20-Permit (EIP-2612)!
+> RC20-Permit(EIP-2612)下，如何避免 使用进行两步交易：授权+ transferFrom！
 
 
 ![](https://img.learnblockchain.cn/2020/10/26/16036950187816.jpg)
 
+**今天是2019年4月在悉尼。**在这里我正在寻找悉尼大型大学大楼内的Edcon Hackathon。感觉就像一个城市中的一个小城市。当然，我在综合大楼的尽头，我意识到要前往举办Hackathon的场地，我需要步行30分钟到另一端。在正式开始前几分钟，我在会场报名！
 
-**It's April 2019 in Sydney.** Here I am looking for the Edcon Hackathon inside the massive Sydney university complex. It feels like a little city within a city. Of course, I am at the wrong end of the complex and I realize to get to the venue hosting the Hackathon I need to walk  30 minutes to the other side. At the venue I register just a few minutes before the official start!
+在所有参与者都生活和呼吸加密的情况下，建立了允许在一种自助餐厅中使用DAI进行付款的系统。这特别有用，因为[AlphaWallet](https://alphawallet.com/)开展一项促销活动：向Hackathon参与者赠送20个促销DAI(随后可购卖打折饮品)，我已经下载了钱包和获得了20个DAI，接下来找到自助餐厅就完美了...
 
-With all participants living and breathing crypto, a system was setup which allowed payments with DAI in one of the cafeterias. This is particularly useful, because there is also a promotion running by [AlphaWallet](https://alphawallet.com/) giving away 20 promotional DAI to Hackathon participants (and later on [discounted drinks](https://twitter.com/Victor928/status/1114650025240350720)). With my wallet already downloaded and 20 DAI, it's the perfect time to find the cafeteria...
+事实并非如此简单。首先，步行15分钟即可到达大学城的中心。我终于找到了。我选择了午餐，很高兴尝试这个新的付款系统。在2012年之前，我已经在餐厅使用比特币付款，但这是我第一次使用ERC-20 . 我扫描QR码，在DAI中输入要支付的金额，然后...
 
-Not so easy as it turns out. Firstly, it's a 15 minute walk back to the center of the university city. I finally find it. I choose my lunch and I'm happy to try this new payment system. I've paid with Bitcoin in restaurants before back in 2012, but this would be my first time using ERC-20\. I scan the QR-code, enter the amount in DAI to pay and...
+*'没有足够的 gas 来支付交易费用。'*
 
-*'Not enough gas available to cover the transaction fees.'*
-
-**Yikes**! All the excitement gone. Of course you need ETH to pay for the gas! And my new wallet had 0 ETH. I'm a Solidity developer, I know this. Yet it happened even to me.  My computer with ETH on it was all the way back at the venue, so there was no solution for me. Without lunch in my hands taking the long walk back to the venue, I thought to myself; we have a long way to go for this technology to become more mainstream.
-
-
-## Fast forward to EIP-2612
+**啊**！所有的激动都消失了。当然，你需要ETH来支付 gas 费！我的新钱包有0 ETH。我是一个Solidity开发人员，我知道这一点。然而，即使我也发生了。我的有ETH的计算机一直都在会场，所以对我来说没有解决方案。没有午餐，而是漫不经心地回到了会场，我对自己想。要使这项技术成为主流，我们还有很长的路要走。
 
 
-Since then, DAI and Uniswap have lead the way towards a new standard named [EIP-2612](https://eips.ethereum.org/EIPS/eip-2612) which can get rid of the approve + transferFrom, while also allowing gasless token transfers. DAI was the first to add a new `permit` function to its ERC-20 token. It allows a user to sign an approve transaction off-chain producing a signature that anyone could use and submit to the blockchain. It's a fundamental first step towards solving the gas payment issue and also removes the user-unfriendly 2-step process of sending `approve` and later `transferFrom`.
 
-Let's examine the EIP in detail.
+## 快进至EIP-2612
+
+
+从那时起，DAI和Uniswap一直在朝着名为[EIP-2612](https://eips.ethereum.org/EIPS/eip-2612)的新标准的方向发展，该标准可以取消 approve + transferFrom，同时还允许无 gas 通证转账。 DAI是第一个为其ERC-20通证添加新的`permit`功能的公司。它允许用户在链下签署授权的交易，生成任何人都可以使用并提交给区块链的签名。这是解决gas 支付问题的基本的第一步，并且消除了用户不友好的两步过程：发送`approve`和之后的` transferFrom`。
+
+让我们详细研究一下EIP。
 
 ![](https://img.learnblockchain.cn/2020/10/26/16036950485596.jpg)
 
-
-## Naive Incorrect Approach
-
-
- On a high level the procedure is very simple. Instead of a user signing an approve transaction, he signs the data "approve(spender, amount)". The result can be passed by anyone to the `permit` function where we simply retrieve the signer address using `ecrecover`, followed by `approve(signer, spender, amount)`.
-
-This construction can be used to allow someone else to pay for the gas costs and also to remove the common approve + transferFrom pattern:
-
-**Before**:
-
-1. User submits `token.approve(myContract.address, amount)` transaction.
-2. Wait for transaction confirmation.
-3. User submits second `myContract.doSomething()` transaction which internally uses `token.transferFrom`.
-
-**After**:
-
-1. User signs `signature = approve(myContract.address, amount)`.
-2. User submits signature to `myContract.doSomething(signature)`.
-3. `myContract` uses `token.permit` to increase allowance, followed by `token.transferFrom`.
-
-We go from two transaction submissions, to only one!
+## 原始的错误方法
 
 
-## Permit in Detail: Preventing Misuse and Replays
+总体而言，该过程非常简单。用户不在发起授权（approve）交易，而是对`approve(spender, amount)`签名。签名结果可以被任何人传递到` permit`函数，在` permit`函数我们只需使用` ecrecover`来检索签名者地址，接着用` approve(signer，spender，amount)`。
+
+这种方式可用于让其他人为交易支付 gas 费用，也可以删除掉常见的授权（approve）+ transferFrom模式：
+
+**之前方法**：
+
+1. 用户提交`token.approve(myContract.address, amount)`交易。
+2. 等待交易确认。
+3. 用户提交第二个` myContract.doSomething()`交易，该交易内部使用` token.transferFrom`。
+
+**现在**：
+
+1. 用户进行授权签名：签名信息`signature=(myContract.address，amount)`。
+2. 用户向` myContract.doSomething(signature)`提交签名。
+3. ` myContract`使用` token.permit`增加配额，并调用 ` token.transferFrom` 获取代币。
 
 
-The main issue we are facing is that a valid signature might be used several times or in other places where it's not intended to be used in. To prevent this we are adding several parameters. Under the hood we are using the already existing, widely used [EIP-712](https://eips.ethereum.org/EIPS/eip-712) standard.
+
+之前需要两笔交易，现在只需要一笔！
+
+## Permit 细节：防止滥用和重播
 
 
-### 1. EIP-712 Domain Hash
+我们面临的主要问题是签名可能会多次使用或在原本不打算使用的其他地方使用。为防止这种情况，我们添加了几个参数。在底层，我们使用的是已经存在的，广泛使用的[EIP-712](https://learnblockchain.cn/docs/eips/eip-712.html)标准。
+
+### 1. EIP-712 域哈希（Domain Hash）
 
 
-With EIP-712, we define a domain separator for our ERC-20:
+使用EIP-712，我们为ERC-20定义了一个域分隔符：
 
-```
+```js
 bytes32 eip712DomainHash = keccak256(
     abi.encode(
         keccak256(
@@ -80,12 +78,11 @@ bytes32 eip712DomainHash = keccak256(
 );
 ```
 
-This ensures a signature is only used for our given token contract address on the correct chain id. The chain id was introduced to exactly identify a network after the Ethereum Classic fork which continued to use a network id of 1.  A list of existing chain ids can be seen [here](https://medium.com/@piyopiyo/list-of-ethereums-major-network-and-chain-ids-2bc58e928508).
+这样可以确保仅在正确的链ID上将签名用于我们给定的通证合约地址。chainID是在以太坊经典分叉之后引入（以太坊经典network id 依旧为 1）， 用来精确识别在哪一个网络。 可以在此处查看现有[chain ID的列表](https://medium.com/@piyopiyo/list-of-ethereums-major-network-and-chain-ids-2bc58e928508)。
 
+### 2. Permit 哈希结构
 
-### 2. Permit Hash Struct
-
-Now we can create a Permit specific signature:
+现在我们可以创建一个Permit的签名：
 
 ```
 bytes32 hashStruct = keccak256(
@@ -100,32 +97,32 @@ bytes32 hashStruct = keccak256(
 );
 ```
 
-This hashStruct will ensure that the signature can only used for
+此hashStruct将确保签名只能用于
 
-* the `permit` function
-* to approve from `owner`
-* to approve for `spender`
-* to approve the given `value`
-* only valid before the given `deadline`
-* only valid for the given `nonce`
+* Permit 函数
+* 从`owner`授权
+* 授权`spender`
+* 授权给定的`value` （金额）
+* 仅在给定的`deadline`之前有效
+* 仅对给定的` nonce`有效
 
-The nonce ensures someone can not replay a signature, i.e., use it multiple times on the same contract.
+` nonce`可确保某人无法重播签名，即在同一合约上多次使用该签名。
 
-### 3. Final Hash
+### 3. 最终哈希
 
-Now we can build the final signature starting with 0x1901 for an [EIP-191](https://eips.ethereum.org/EIPS/eip-191)-compliant 712 hash:
+现在我们可以用兼容 [EIP-191](https://eips.ethereum.org/EIPS/eip-191)的712哈希构建（以0x1901开头）最终签名：
 
-```
+```js
 bytes32 hash = keccak256(
     abi.encodePacked(uint16(0x1901), eip712DomainHash, hashStruct)
 );
 ```
 
-### 4. Verifying the Signature
+### 4. 验证签名
 
 
 
-Using this hash we can use [ecrecover](https://solidity.readthedocs.io/en/latest/units-and-global-variables.html#mathematical-and-cryptographic-functions) to retrieve the signer of the function:
+在此哈希上，我们可以使用[ecrecover](https://solidity.readthedocs.io/en/latest/units-and-global-variables.html#mathematical-and-cryptographic-functions) 获得该函数的签名者：
 
 
 ```
@@ -134,62 +131,60 @@ require(signer == owner, "ERC20Permit: invalid signature");
 require(signer != address(0), "ECDSA: invalid signature");
 ```
 
-Invalid signatures will produce an empty address, that's what the last check is for.
+无效的签名将产生一个空地址，这就是最后一次检查的目的。
 
-### 5. Increasing Nonce and Approving
+### 5. 增加Nonce 和 授权
 
 
-Now lastly we only have to increase the nonce for the owner and call the approve function:
+现在，最后我们只需要增加所有者的Nonce并调用授权函数即可：
 
 ```
 nonces[owner]++;
 _approve(owner, spender, amount);
 ```
 
-You can see a full implementation example [here](https://github.com/soliditylabs/ERC20-Permit/blob/main/contracts/ERC20Permit.sol).
+你可以在[此处](https://github.com/soliditylabs/ERC20-Permit/blob/main/contracts/ERC20Permit.sol)看到完整的实现示例。
 
+## 已有的ERC20-Permit 实现
 
-## Existing ERC20-Permit Implementations
 
 
 ### DAI ERC20-Permit
 
 
-DAI was one of the first tokens to introduce `permit` as described [here](https://docs.makerdao.com/smart-contract-modules/dai-module/dai-detailed-documentation#3-key-mechanisms-and-concepts). The implementation differs from EIP-2612 slightly
+DAI是最早引入` permit`的通证之一，如[此处](https://docs.makerdao.com/smart-contract-modules/dai-module/dai-detailed-documentation#3-key-mechanisms-and-concepts)所述。实现与EIP-2612略有不同:
 
-1. instead of `value`, it only takes a bool `allowed` and sets the allowance either to `0` or `MAX_UINT256`
-2. the `deadline` parameter is called `expiry`
-
+1. 没有使用 `value`，而只使用一个`bool allowed`，并将allowance 设置为`0`或`MAX_UINT256`
+2. `deadline`参数称为`expiry`
 
 ### Uniswap ERC20-Permit
 
 
-The Uniswap implementation aligns with the current EIP-2612, see [here](https://github.com/Uniswap/uniswap-v2-core/blob/master/contracts/UniswapV2ERC20.sol). It allows you to call [removeLiquidityWithPermit](https://uniswap.org/docs/v2/smart-contracts/router02/#removeliquiditywithpermit), removing the additional `approve` step.
+Uniswap实现与当前的EIP-2612保持一致，请参见[这里](https://github.com/Uniswap/uniswap-v2-core/blob/master/contracts/UniswapV2ERC20.sol)。它允许你调用[removeLiquidityWithPermit](https://uniswap.org/docs/v2/smart-contracts/router02/#removeliquiditywithpermit)，从而省去了额外的`授权`步骤。
 
-If you want to get a feel for the process, go to [https://app.uniswap.org/#/pool](https://app.uniswap.org/#/pool) and change to the Kovan network. Not add liquidity to a pool. Now try to remove it. After clicking on 'Approve', you will notice this MetaMask popup as show on the right.
+如果你想体验一下该过程，请转到[https://app.uniswap.org/#/pool](https://app.uniswap.org/#/pool)并切换到Kovan网络。不用增加资金的流动性。现在尝试将其删除。单击“Approve”后，你会注意到此MetaMask弹出窗口如下图所示。
 
-This will not submit a transaction, but only creates a signature with the given parameters. You can sign it and in a second step call removeLiquidityWithPermit with the previously generated signature. All in all: just one transaction submission.
+这不会提交交易，而只会创建具有给定参数的签名。你可以对其进行签名，并在第二步中使用生成的签名调用`removeLiquidityWithPermit`。总而言之：只需提交一份交易。
 
 ![](https://img.learnblockchain.cn/2020/10/26/16036951814486.jpg)
 
+## ERC20-Permit 代码库
 
-## ERC20-Permit Library
+我已经创建了可以导入的ERC-20-Permit代码库。你可以在[https://github.com/soliditylabs/ERC20-Permit](https://github.com/soliditylabs/ERC20-Permit)中找到它
 
-I have created an ERC-20 Permit library that you can import. You can find it at [https://github.com/soliditylabs/ERC20-Permit](https://github.com/soliditylabs/ERC20-Permit).
+其使用：
 
-Built using
+* [OpenZeppelin ERC20 Permit](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/2237)
+* [0x-inspired](https://github.com/0xProject/0x-monorepo/blob/development/contracts/utils/contracts/src/LibEIP712.sol)节省gas的 汇编代码。
+* [eth-permit](https://github.com/dmihal/eth-permit) 前端库，用于测试
 
-* [OpenZeppelin ERC20-Permit](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/2237)
-* [0x-inspired](https://github.com/0xProject/0x-monorepo/blob/development/contracts/utils/contracts/src/LibEIP712.sol) gas saving hashes with assembly
-* [eth-permit](https://github.com/dmihal/eth-permit) frontend library for testing
-
-You can simply use it by installing via npm:
+你可以通过npm安装来简单地使用它：
 
 ```
 $ npm install @soliditylabs/erc20-permit --save-dev
 ```
 
-Import it into your ERC-20 contract like this:
+像这样将其导入到你的ERC-20合约中：
 
 ```
 // SPDX-License-Identifier: MIT
@@ -204,29 +199,32 @@ contract ERC20PermitToken is ERC20Permit {
 }
 ```
 
-### Frontend Usage
+### 前端使用
 
-You can see [here](https://github.com/soliditylabs/ERC20-Permit/blob/6a07a436bc39d7be53e8d9c160d6c87e0305980c/test/ERC20Permit.test.js#L43-L49) in my tests how I use the `eth-permit` library to create valid signatures. It automatically fetches the correct nonce and sets the parameters according to the current standard. It also supports the DAI-style permit signature creation. Full documentation available at [https://github.com/dmihal/eth-permit](https://github.com/dmihal/eth-permit).
+你可以在我的测试中[代码在这里](https://github.com/soliditylabs/ERC20-Permit/blob/6a07a436bc39d7be53e8d9c160d6c87e0305980c/test/ERC20Permit.test.js#L43-L49)看到如何使用eth-permit库创建有效的签名。它会自动获取正确的随机数，并根据当前标准设置参数。它还支持DAI样式的许可证签名创建。完整文档可在[https://github.com/dmihal/eth-permit](https://github.com/dmihal/eth-permit)获得
 
-A word on debugging: It can be painful. Any single parameter off will result in a `revert: Invalid signature`. Good luck finding out the reason why.
+关于调试的一句话：这可能很痛苦。关闭任何单个参数都将导致`revert: Invalid signature`。祝你好运找出原因。
 
-At the time of this writing, there still seems to be an [open issue](https://github.com/dmihal/eth-permit/issues/2) with it which may or may not affect you depending on your Web3 provider. If it does affect you, just use my patch [here](https://github.com/soliditylabs/ERC20-Permit/blob/main/patches/eth-permit%2B0.1.7.patch) installed via [patch-package](https://www.npmjs.com/package/patch-package).
-
-
-## Solution for Gasless Tokens
-
-Now recall my Sydney experience. This standard alone wouldn't solve the problem, but it's first basic module towards it. Now you can create a Gas Station Network such as [Open GSN](https://www.opengsn.org/). Deploying contracts for it that simply transfer the tokens via permit + transferFrom. And nodes running inside the GSN will take the permit signatures and submit them.
-
-Who pays the gas fees? That will depend on the specific use case. Maybe the Dapp company pays the fees as part of their customer acquisition cost (CAC). Maybe the GSN nodes are paid by the transferred tokens. We still have a long way to go to figure out all the details.
+在撰写本文时，似乎仍然有一个[已知 issue](https://github.com/dmihal/eth-permit/issues/2)，它可能会或也可能不会影响你，具体取决于你的Web3提供程序。如果确实对你有影响，请使用通过[patch-package](https://www.npmjs.com/package/patch-package)安装[这里](https://github.com/soliditylabs/ERC20-Permit/blob/main/patches/eth-permit%2B0.1.7.patch)的补丁
 
 
-## As always use with care
+
+## 无需gas代币解决方案
 
 
-Be aware that the standard is not yet final. It's currently identical to the Uniswap implementation, but it may or may not change in the future. I will keep the library updated in case the standard changes again. My library code was also not audited, use at your own risk.
 
-**You have reached the end of the article. I hereby permit you to comment and ask questions.**
+现在回想起我在悉尼的经历，单靠这个标准并不能解决问题，但这是解决该问题的第一个基本模块。现在，你可以为其创建加油站网络，例如[Open GSN](https://www.opengsn.org/)。部署合约，该网络只需通过permit + transferFrom即可进行通证转账。 GSN内部运行的节点将获取许可签名并提交。
+
+谁支付 gas 费？这将取决于特定的场景。也许Dapp公司支付这些费用作为其客户获取成本(CAC)的一部分。也许用转移的通证支付了GSN节点费用。要弄清所有细节，我们还有很长的路要走。
+
+## 一如既往的小心使用
+
+请注意，该标准尚未最终确定。当前与Uniswap实现相同，但将来可能会有所变化。如果标准再次更改，我将保持库的更新。我的图书馆代码也未经审核，使用后果自负。
+
+
 
 
 ------
+
+
 本翻译由 [Cell Network](https://www.cellnetwork.io/?utm_souce=learnblockchain) 赞助支持。
