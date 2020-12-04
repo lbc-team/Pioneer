@@ -1,51 +1,59 @@
-# Changes in Solidity 0.7.0
+> * 原文链接：https://forum.openzeppelin.com/t/changes-in-solidity-0-7-0/3758 作者：[CallMeGwei](https://forum.openzeppelin.com/u/CallMeGwei)
+> * 译文出自：[登链翻译计划](https://github.com/lbc-team/Pioneer)
+> * 译者：[Tiny 熊](https://learnblockchain.cn/people/15)
+> * 本文永久链接：[learnblockchain.cn/article…](https://learnblockchain.cn/article/1)
+
+#  Solidity 0.7.0 更新点
 
 
+> Solidity 0.7.0 所涉及的更新的概述
 
-## A Supplemental Overview of The Changes in Solidity 0.7.0
+2020年7月28日，Solidity编译器的次要版本升至0.7.0. [变更日志](https://github.com/ethereum/solidity/releases/tag/v0.7.0)上包含32个修改要点。
+在 Solidity 文档上也用了一整页[介绍0.7.0的突破性更新](https://learnblockchain.cn/docs/solidity/070-breaking-changes.html)。
 
-On July 28th, 2020, the solidity compiler got a minor version bump to 0.7.0\. It was accompanied by a [release changelog 2](https://github.com/ethereum/solidity/releases/tag/v0.7.0) sporting 32 bullet-points and an entire page of [documentation devoted to breaking changes 2](https://solidity.readthedocs.io/en/latest/070-breaking-changes.html). It’s worth spending a little time diving into what’s changed and briefly considering how those changes impact Solidity smart contract code in practice.
+因此值得花一些时间深入研究以下其中的变更内容，并思考这些更改在实践中如何影响Solidity智能合约代码。
 
-Below, I’ll synthesize the changelog and breaking changes doc mentioned above, restating what’s been written there while attempting to clarify and supplement wherever it seems beneficial to do so. I’ve attempt to present the changes in groups ordered by their likelihood of being encountered in practice. At the end, I list any changes that I felt didn’t require much supplemental explanation.
+下面，我将综合上面提到的变更日志和文档中的重大更新，重新陈述相关类型，尽量尝试澄清和做有益的补充，同时，我会尝试按变化程度进行分组排序。
 
-### Most Pronounced Changes
 
-* There’s a new syntax for external function and contract creation calls that will probably look familiar to Soldity developers who have also used Web3.js. Rather than `contract.function.gas(1000).value(2 ether)(arg1, arg2)` the new syntax is `contract.function{gas: 1000, value: 2 ether}(arg1, arg2)`. Using the old syntax is no longer allowed.
+## 最明显的变化
 
-* Constructor visibility (`public` / `external`) is now ignored and, as such, no longer needs to be specified. The parser will now warn about this. To prevent a contract from being deployable, the contract itself can be marked with the keyword `abstract` (e.g. `abstract Contract {}`).
+* 外部函数调用和合约创建使用新语法。不再使用 `contract.function.gas(1000).value(2 ether)(arg1，arg2)`，新语法是`contract.function{gas：1000, value：2 ether}(arg1，arg2)`。对于使用过Web3.js的Soldity开发人员来说，应该不会感到陌生。
 
-* The global variable `now` is no longer allowed. It has been deprecated in favor of `block.timestamp`. This has already been a best practice for a while and should help avoid the misleading mental model that the term “now” tends to lend itself to.
+* 构造函数的可见性(`public`/`external`)现在被省略，因此不再需要指定。解析器现在将对此发出警告。为了防止合约部署，可以在合约上标记关键字`abstract`(例如，`abstract Contract {}`)。
 
-* NatSpec comments are now disallowed for non-public state variables. Practically, this means converting existing implicit or explicit `@notice` NatSpec comments (e.g. `/// comment` or `/// @notice comment`) to either explicit `@dev` comments (e.g. `/// @dev comment`) or simple inline comments (e.g. `// comment`). Such comments are not uncommon in libraries, so one may find themselves having to fix dependencies until the ecosystem gets caught up.
+* 不再允许使用全局变量`now`，而推荐使用`block.timestamp`。这已经是一段时间以来推荐的使用方法，因为它有助于避免`now`一词产生的误导性（指的是区块时间而不是当前时间）。
 
-* The token `gwei` is now a keyword and, so, cannot be used as a variable or function name. In `^0.6.0` the token `gwei` served as a denomination *and* could also,confusingly, be used as an identifier simultaneously - as in the example below:
+* 现在禁止对非公共状态变量使用NatSpec注释。实际上，这意味着现有的隐式或显式`@notice` NatSpec注释(例如`/// 注释`或`/// @notice 注释`)会转换为显式`@dev`注释(例如`/// @dev 注释` )或简单的行内注释(例如`// 注释`)。
+
+*  现在可以使用 `gwei` 关键字，因此`gwei`不能再作为变量或函数名称。在`0.6.x`版本中，gwei 即可用作面额*，还可以用作标识符，这会让人产生困惑，如下面不好的示例：
 
 ```
-// Behavior Before
+// 以前的行为
 uint gwei = 5;
 uint value = gwei * 1 gwei; // value: 5000000000
 ``` 
 
-  Trying to create such confusion with `gwei` will now just throw a well-deserved parsing error.
+现在这样与`gwei`造成的混淆，会触发编译器的解析错误提示。
 
-* On a related note, the keywords `finney` and `szabo` have been retired and, as a result, may now be used as identifiers. (Though using them immediately may not be advisable to avoid potential confusion.)
+* 与此相关的是，关键字`finney`和`szabo`已停用，因此，现在可以将其用作标识符。 (尽管建议不要立即使用它们，以免造成潜在的混乱。)
 
-* String literals containing anything other than [ASCII characters and a variety of escape sequences 2](https://solidity.readthedocs.io/en/latest/types.html?highlight=ascii#string-literals-and-types) will now throw a parser error.
+* 字符串常量包含非[ASCII字符和各种转义序列](https://solidity.readthedocs.io/en/latest/types.html?highlight=ascii#string-literals-and-types)内容时，会触发解析器错误。
 
-* String literals that need to express more than ASCII should now be explicitly typed as *unicode* string literals. They are identified with the `unicode` prefix (e.g. `unicode"Text, including emoji! 🤓"`).
+* 现在，如果需要表达比ASCII更多的字符串文字应该显式以`unicode`前缀标识(例如，`unicode"Text, including emoji! 🤓"`)。
 
-* Derived contracts no longer inherit library `using` declarations for types (e.g. `using SafeMath for uint`). Instead, such declarations must be repeated in *every* derived contract that wishes to use the library for a type.
+* 派生合约不再继承通过 using 声明的类型的库方法，(例如，using SafeMath for uint)。如果需要使用相应的库方法，需要在每个希望使用该类型的库的派生合约中重复进行声明。
 
-* Events in the same inheritance hierarchy are no longer allowed to have the same name and parameter types.
+* 相同继承层次结构中的事件不再允许使用相同的名称和参数类型。
 
-### Still Perceptible Changes
+## 仍可感知的变化
 
-* Declaring a variable with the `var` keyword so that its type is assigned implicitly has been deprecated for several releases in favor of explicitly typed variables. However, the compiler would still recognize the `var` syntax and complain about it with a type error. Now, the `var` keyword is simply not allowed and will result in a parser error.
+* 使用`var`关键字声明变量，用来隐式分配类型，已在多个版本中弃用了，现在完全禁止使用，只能使用显式声明类型的变量。
 
-* Function state mutability can now be made more restrictive during inheritance. So, `public` functions with default mutability can be overridden by `view` or `pure` functions. If an inherited function is marked `view`, then it can be overridden by a `pure` function.
+* 函数状态的可变性现在可以在继承后更加严格。因此，具有默认可变性的public函数可以被view函数或pure函数重写。如果被继承的函数被标记为`view`，那么它可以被`pure`函数重写。
 
-```
- // Behavior Now
+```js
+ // 现在的写法
 contract Parent {
   function show() public virtual returns(uint){
       return 100;
@@ -53,88 +61,70 @@ contract Parent {
 }
 
 contract Child is Parent {
-    function show() public pure override returns(uint){ // overriding with pure is allowed
+    function show() public pure override returns(uint){ // 可以用 pure 重写 
         return 25;
     }
 }
 ```
 
-* Prior to this release, shifts and exponentiation of literals by non-literals (e.g. `250 << x` or `250 ** x`) would be performed using the type of either the shift amount or the exponent (i.e. `x` in the examples). Now, either `uint256` (for non-negative literals) or `int256` (for negative literals) will be used to perform the operations.
+* 在此版本之前，将对常量使用移位或指数运算，会使用非常量的类型(例如，`250 << x`或` 250 ** x` 中，使用 x 的类型)。现在，将使用`uint256`(用于非负常量)或`int256`(用于负常量)来执行操作。
 
-```
-// Behavior Before
+```js
+// 之前
 uint8 x = 2;
 
 uint shift = 250 << x; // shift: 232
 uint exp = 250 ** x; // exp: 36
 ```
 
-```
-// Behavior Now
+```js
+// 现在
 uint8 x = 2;
 
 uint shift = 250 << x; // shift: 1000
 uint exp = 250 ** x; // exp: 62500
 ```
 
-Notice how before, both results were implicitly cast to the type of `x` which is `uint8` and, as a consequence, overflowed accordingly.
-
-Now, more intuitively, both results are of type `uint256` and, so, avoid overflowing in this case.
-
-* Shifts (e.g. `shiftThis >> amount` `shiftThis << amount`) by signed types are no longer allowed. Previously, negative shifts were permitted, but would revert at runtime.
-
-* The parser will no longer recommend stricter mutability for virtual functions, but **will** still make such recommendations for any overriding functions.
-
-* Library functions can no longer be marked `virtual`. Which makes sense, given the fact that libraries cannot be inherited.
-
-### Less Noticeable Changes
-
-#### Mappings Outside Storage
-
-* Mappings only exist in storage, and, previously, mappings in structs or arrays would be ignored/skipped. Such behavior was, we agree with the docs, “confusing and error-prone”. Similar “skipping” behavior was encountered when assigning to structs or arrays in storage if they contained mappings. These sorts of assignments are no longer allowed - making things much less confusing.
-
-#### Inline Assembly
-
-* Inline assembly no longer supports user-defined identifiers with a `.` (*period*) - unless operating in Solidity Yul-only mode.
-
-* Slot and offset of storage pointer variables are now accessed with dot notation `.` (e.g. `stor.slot` & `stor.offset`) rather than an underscore `_` (e.g. `stor_slot` & `stor_offset`).
-
-#### YUL
-
-> * Disallow consecutive and trailing dots in identifiers. Leading dots were already disallowed.
-> * Yul: Disallow EVM instruction pc().
-
-What’s the `pc` instruction, you might wonder? As defined in the yellow paper, it should: “Get the value of the program counter prior to the increment corresponding to this instruction.”
-
-### Mentioned for Completeness
-
-#### Compiler Features
-
-> * SMTChecker: Report multi-transaction counterexamples including the function calls that initiate the transactions. This does not include concrete values for reference types and reentrant calls.
-
-#### JSON AST (Abstract Syntax Tree)
-
-> * Hex string literals are now marked with kind: “hexString”.
-> * Members with null values are removed from the output.
-
-#### Bugfixes
-
-> * Inheritance: Disallow public state variables overwriting pure functions.
-> * NatSpec: Constructors and functions have consistent userdoc output.
-> * SMTChecker: Fix internal error when assigning to a 1-tuple.
-> * SMTChecker: Fix internal error when tuples have extra effectless parenthesis.
-> * State Mutability: Constant public state variables are considered pure functions.
-> * Type Checker: Fixing deduction issues on function types when function call has named arguments.
-> * Immutables: Fix internal compiler error when immutables are not assigned.
-
-* * *
-
-Good work making it to the bottom of the list! As you can see, the trend to make Solidity ever-more explicit is alive and well. This is a net positive for smart contract security - and staying up to date with the latest Solidity changes is an important part of being a proficient Soldity dev.
-
-If you need some tips for updating your code, don’t overlook the tips in the [docs 2](https://solidity.readthedocs.io/en/latest/070-breaking-changes.html?highlight=shift#how-to-update-your-code) and be sure to check out the [solidity-upgrade tool 5](https://solidity.readthedocs.io/en/latest/using-the-compiler.html#solidity-upgrade).
-
-If anything is unclear or you’d like to discuss any of the changes, feel free to continue the conversation below!
+注意之前如何将两个结果隐式转换为`x`类型，即 uint8，因此会发生溢出。
 
 
-原文链接：https://forum.openzeppelin.com/t/changes-in-solidity-0-7-0/3758
-作者：[CallMeGwei](https://forum.openzeppelin.com/u/CallMeGwei)
+现在，两个结果均为`uint256`类型，因此在此案例中避免溢出。
+
+* 不再允许有符号类型移位(例如，amount 为有符号类型，` shiftThis >> amount` 和 `shiftThis << amount`)。以前，允许负移，但会在运行时回退。
+
+* 解析器将不再建议对虚拟函数进行严格的可变性声明，但是推荐重载的函数使用。
+
+* 库函数不能再标记为`virtual`。因为库事实上是无法继承的，这实际上说的通。
+
+## 不太明显的变化
+
+### 外部存储映射
+
+* 以前映射仅存在于存储中，并且，结构体或数组中的映射在赋值（或初始化）中被忽略，这种行为“令人困惑且容易出错”。现在这种形式的赋值不再允许，以减少困惑。
+
+### 内联汇编
+
+* 内联汇编不再支持用`.`(* period *)的用户定义标识符，除非在 Solidity Yul-only 模式下运行。
+
+* 存储指针变量的插槽和偏移量现在可以使用点符号`.`访问(例如`stor.slot`和`stor.offset`)，而不再使用下划线_(例如stor_slot和stor_offset)。
+
+### YUL
+
+> * 禁止在标识符中使用`.`。
+> * Yul：禁止EVM指令pc。
+
+你可能想知道什么是`pc`指令？如黄皮书中所定义，它应该：`在与该指令相对应的增量之前获取程序计数器的值。`
+
+## 结束语
+
+Solidity 0.7 还有一些不影响编码的修改和 Bug 的修复。
+
+
+如你所见，Solidity 在往更加明确的语义前进。这对于智能合约的安全性是绝对有利，保持升级Solidity也是成为熟练的Soldity开发人员的重要组成部分。
+
+如果你需要更新代码，可以看看[突破性更新](https://learnblockchain.cn/docs/solidity/070-breaking-changes.html)中提到的技巧，并推荐你使用[solidity-upgrade工具](https://solidity.readthedocs.io/en/latest/using-the-compiler.html#solidity-upgrade)。
+
+
+------
+
+本翻译由 [Cell Network](https://www.cellnetwork.io/?utm_souce=learnblockchain) 赞助支持。
