@@ -1,177 +1,203 @@
-> * 来源：https://samczsun.com/so-you-want-to-use-a-price-oracle/   作者：[SAMCZSUN](https://samczsun.com/author/samczsun/)
+> * 来源：https://samczsun.com/so-you-want-to-use-a-price-oracle/ 作者：[SAMCZSUN](https://samczsun.com)
+> * 译文出自：[登链翻译计划](https://github.com/lbc-team/Pioneer)
+> * 翻译：[Tiny 熊](https://learnblockchain.cn/people/15)
+> * 本文永久链接：[learnblockchain.cn/article…](https://learnblockchain.cn/article/1)
+>
 
 
 
-# So you want to use a price oracle
+# 价格预言机不总是可靠
 
-Everything you need to know about price oracles and how to use them safely
+
+
+> 译者注： 越来越多的项目要依赖价格预言机，而少有项目去认真的思考价格预言机的可靠性，本文用分析多个预言机失败的案例，帮助我们**意识到价格预言机不总是可靠的**，并提出了一些在其他项目已经实践过用来防止预言机操控的技术。
+
+
+
+
 
 ![](https://img.learnblockchain.cn/2020/11/19/16057686373251.jpg)
 
+在2019年末，我发表了一篇题为“ [为了好玩和牟利去获得抵押不足的贷款](https://samczsun.com/taking-undercollateralized-loans-for-fun-and-for-profit/) ”。在这篇文章中，我描述了一个对以太坊dApp的经济攻击，该dApp需要依靠一个或多个代币准确的价格数据。当前是2020年末，不幸的是，来那边文章之后依旧还有很多项目在犯了非常相似的错误，最近的例子是Harvest Finance 被黑客攻击，给协议用户造成了超3380万美元的损失。
 
-In late 2019, I published a post titled “[Taking undercollateralized loans for fun and for profit](https://samczsun.com/taking-undercollateralized-loans-for-fun-and-for-profit/)”. In it, I described an economic attack on Ethereum dApps that rely on accurate price data for one or more tokens. It's currently late 2020 and unfortunately numerous projects have since made very similar mistakes, with the most recent example being the Harvest Finance hack which resulted in a collective loss of 33MM USD for protocol users.
 
-While developers are familiar with vulnerabilities like reentrancy, price oracle manipulation is clearly not something that is often considered. Conversely, exploits based on reentrancy have fallen over the years while exploits based on price oracle manipulation are now on the rise. As such, I decided it was time that someone published a definitive resource on price oracle manipulation.
 
-This post is broken down into three sections. For those who are unfamiliar with the subject, there is an introduction to oracles and oracle manipulation. Those who want to test their knowledge may skip ahead to the case studies, where we review past oracle-related vulnerabilities and exploits. Finally, we wrap up with some techniques developers can apply to protect their projects from price oracle manipulation.
+随着开发人员逐渐熟悉像可重入性攻击之类的漏洞，基于可重入的漏洞数量有所下降，但是开发者还没有仔细思考关于价格预言机操控的问题。最近基于价格预言操纵的问题数量正在上升。因此，是时候发布有关价格预言操纵的权威性资料了。
 
-## Oracle manipulation in real life
 
-Wednesday, December 1st, 2015\. Your name is David Spargo and you’re at the Peking Duk concert in Melbourne, Australia. You’d like to meet the band in person but between you and backstage access stand two security guards, and there’s no way they would let some average Joe walk right in.
 
-How would the security guards react, you wonder, if you simply acted like you belonged. Family members would surely be allowed to visit the band backstage, so all you had to do was convince the security guards that you were a relative. You think about it for a bit and come up with a plan that can only be described as genius or absolutely bonkers.
+这篇文章分为三个部分。第一部分，针对那些不熟悉价格预言机的人，介绍有关价格预言机和价格预言机操控。第二部分是回顾了过去与价格预言机相关的漏洞和和攻击事件。最后，我们总结了开发人员可以用来保护其项目免受价格语言操控的一些技术。
 
-After quickly setting everything up, you confidently walk up to the security guards. You introduce yourself as David Spargo, family of Peking Duk. When the guard asks for proof, you show them the irrefutable evidence - [Wikipedia](https://en.wikipedia.org/w/index.php?title=Peking_Duk&oldid=693419023).
+## 现实生活中的预言机操控
+
+一个故事：2015年12月1日，星期三，假设你是David Spargo，你正在澳大利亚墨尔本举行的Peking Duk 音乐会上。你想与乐队见见面，但是在你和后台通道之间隔着两个保安人员，他们是不会让一些普通的观众走进去的。
+
+你想保安肯定会允许其家庭成员在后台探访乐队，因此你要说服保安你是乐队的家属。你在思考之后，先出了一个惊为天人的计划。
+
+安排好一切后，你自信地走向保安人员。你介绍自己为David Duk家族的David Spargo。当保安要求提供证据时，你向他们显示了来自[Wikipedia](https://en.wikipedia.org/w/index.php?title=Peking_Duk&oldid=693419023)不可辩驳的证据.
 
 
 ![](https://img.learnblockchain.cn/2020/11/19/16057687407885.jpg)
 
 
-The guard waves you through and asks you to wait. A minute passes, then two. After five minutes, you wonder if you should make a run for it before law enforcement makes an appearance. As you’re about to bail, Reuben Styles walks up and introduces himself. You walk with him to the green room where the band was so impressed with your ingenuity that you end up sharing a few beers together. Later, they share what happened on their Facebook page.
+保安，请你等待一下。一分钟过去，然后两分钟。五分钟后，你真要考虑要不要逃跑时，Rouben Styles （乐队成员）走上前来介绍自己。你和他一起走到房间，你的机智给乐队留下了深刻的印象，还和你共饮了一些啤酒。后来，他们在Facebook页面上分享了所发生的事情。
 
 
 ![](https://img.learnblockchain.cn/2020/11/19/16057689288308.jpg)
 
+## 什么是价格预言机？
 
-## What is a price oracle?
+宽泛地说，价格预言机就是你咨询价格的对象。当Pam向Dwight 询问Schrute 元的现金时，Dwight充当了价格预言机。
 
-A price oracle, generously speaking, is anything that you consult for price information. When Pam asks Dwight for the cash value of a Schrute Buck, Dwight is acting as a price oracle.
+> 译者注： 来源于美剧《Office》，Dwight 是一个剧中的角色，扮演着一个推销员。
 
 ![](https://img.learnblockchain.cn/2020/11/19/16057689638236.jpg)
 
 
-On Ethereum, where everything is a smart contract, so too are price oracles. As such, it’s more useful to distinguish between how the price oracle gets its price information. In one approach, you can simply take the existing off-chain price data from price APIs or exchanges and bring it on-chain. In the other, you can calculate the instantaneous price by consulting on-chain decentralized exchanges.
+在以太坊上，一切都是智能合约，价格预言机同样也是合约。因此，区分价格预言机如何获取价格更为有用。一种方法是，简单地从在链下从价格API或交易所获取价格数据，并将其上链。另一方法是，通过查询链上去中心化交易所（DEX）来计算出当前价格。
 
 ![](https://img.learnblockchain.cn/2020/11/19/16057689749950.jpg)
 
 
-Both options have their respective advantages and disadvantages. Off-chain data is generally slower to react to volatility, which may be good or bad depending on what you’re trying to use it for. It typically requires a handful of privileged users to push the data on-chain though, so you have to trust that they won’t turn evil and can’t be coerced into pushing bad updates. On-chain data doesn’t require any privileged access and is always up-to-date, but this means that it’s easily manipulated by attackers which can lead to catastrophic failures.
+两种方法都有其各自的优点和缺点。链下数据对波动的反应通常较慢，这可能是好事也可能是坏事，具体取决于你要怎么使用它。链下的价格通常是通过少数特权用户把数据推到链上，因此你必须相信这些特权用户不会变坏，也不会被强迫推送错误的更新。链上数据则是公开的(没有特权用户访问限制），并且始终拿到最新的价格，但这意味着攻击者很容易操纵它，这可能会导致灾难性的事故。
 
-## What could possibly go wrong?
+## 预言机事故分析
 
-Let’s take a look at a few cases where a poorly integrated price oracle resulted in significant financial damage to a DeFi project.
+让我们看几个案例，糟糕集成预言机导致DeFi项目遭受重大资金损失。
 
-### Synthetix sKRW Oracle Malfunction
+### Synthetix sKRW（合成韩元） 预言机故障
 
-Synthetix is a derivatives platform which allows users to be exposed to assets such as other currencies. To facilitate this, Synthetix (at the time) relied on a custom off-chain price feed implementation wherein an aggregate price calculated from a secret set of price feeds was posted on-chain at a fixed interval. These prices then allowed users to take long or short positions against supported assets.
+[Synthetix](https://learnblockchain.cn/tags/Synthetix)是一个资产衍生品平台，使用户可以使用多种货币资产。为了帮助理解，简化了过程，Synthetix(当时)依赖定制的链下价格源实现，它会从一组秘密价格源来合成最终价格并以固定的频率发布在链上。然后，允许用户根据这些价格对支持的资产进行做多或做空。
 
-On June 25, 2019, one of the price feeds that Synthetix relied on mis-reported the price of the Korean Won to be 1000x higher than the true rate. Due to [additional errors](https://blog.synthetix.io/response-to-oracle-incident/) elsewhere in the price oracle system, this price was accepted by the system and posted on-chain, where a trading bot quickly traded in and out of the sKRW market.
+在2019年6月25日，Synthetix依赖的价格源之一误报了韩元的价格，比实际汇率高出1000倍。加上价格预言系统的[还有其他错误](https://blog.synthetix.io/response-to-oracle-incident/)，该价格被系统接受并发布在链上，随后一个交易机器人迅速进出这个sKRW市场。
 
 ![](https://img.learnblockchain.cn/2020/11/19/16057689905444.jpg)
 
 
-In total, the bot was able to earn a profit of over 1B USD, although the Synthetix team was able to negotiate with the trader to return the funds in exchange for a bug bounty.
+尽管Synthetix团队与交易者协商返还资金以换取漏洞赏金，但该机器人有能力赚取超过10 亿美元的利润。
 
-Synthetix correctly implemented the oracle contract and pulled prices from multiple sources in order to prevent traders from predicting price changes before they were published on-chain. However, an isolated case of one upstream price feed malfunctioning resulted in a devastating attack. This illustrates the risk of using a price oracle which uses off-chain data: you don't know how the price is calculated, so your system must be carefully designed such that all potential failure modes are handled properly.
+Synthetix正确执行了价格预言机合约，并从多个价格源获取价格，以防止交易这在链上发布价格之前就预测到价格变化。但是，一个孤立的上游喂价故障导致了毁灭性的攻击。这说明了使用链下数据的价格预言机的风险：**你不知道价格的计算方式，因此必须精心设计系统，以便能正确处理所有潜在的故障**。
 
-### Undercollateralized Loans
+### 抵押不足的贷款
 
-As mentioned earlier, I published a post in September 2019 outlining the risks associated with using price oracles that relied on on-chain data. While I highly recommend reading the [original post](https://samczsun.com/taking-undercollateralized-loans-for-fun-and-for-profit/), it is quite long and heavy in technical details which may make it hard to digest. Therefore, I’ll be providing a simplified explanation here.
+如前所述，我于2019年9月发布了一篇文章，概述了使用依赖链上数据的价格预言机带来的风险。虽然我强烈建议你阅读[原文](https://samczsun.com/taking-undercollateralized-loans-for-fun-and-for-profit/), 这边文章技术细节较为繁重，可能难以消化。因此，我将在此处提供**简化的解释** 。
 
-Imagine you wanted to bring decentralized lending to the blockchain. Users are allowed to deposit assets as collateral and borrow other assets up to a certain amount determined by the value of the assets they’ve deposited. Let’s assume that a user wants to borrow USD using ETH as collateral, that the current price of ETH is 400 USD, and that the collateralization ratio is 150%.
+假设你想将去中心化贷款引入区块链。允许用户存入资产作为抵押，并借入其他资产，最高借款额度取决于所存资产的价值。假设用户想使用以太坊作为抵押品借入美元，以太坊当前价格为400美元，抵押比率为150％。
 
-If the user deposits 375 ETH, they’ll have deposited 150,000 USD of collateral. They can borrow 1 USD for every 1.5 USD of collateral, so they’ll be able to borrow a maximum 100,000 USD from the system.
+如果用户存入375 ETH，相当于存入了15万美元的抵押品。他们按每1.5美元抵押借入1美元，因此最多可以从系统中借入10 万美元。
 
 ![](https://img.learnblockchain.cn/2020/11/19/16057690080472.jpg)
 
 
-But of course, on the blockchain it’s not as simple as simply declaring that 1 ETH is worth 400 USD because a malicious user could simply declare that 1 ETH is worth 1,000 USD and then take all the money from the system. As such, it’s tempting for developers to reach for the nearest price oracle shaped interface, such as the current spot price on Uniswap, Kyber, or another decentralized exchange.
+但是当然，在区块链上不能简单地声明 1 ETH价值400美元，因为恶意用户同样可以声明1 ETH价值1000 美元，然后从系统中偷走所有的资产（译者注：可以通过抵押虚高的 ETH，借走其他的资产）。。因此，对于开发者来说，寻找最适合的喂价预言机是很重要的，比如当前 Uniswap、Kyber 或的其他去中心化交易所的现货价格。
 
 ![](https://img.learnblockchain.cn/2020/11/19/16057690391110.jpg)
 
 
-At first glance, this appears to be the correct thing to do. After all, Uniswap prices are always roughly correct whenever you want to buy or sell ETH as any deviations are quickly correct by arbitrageurs. However, as it turns out, the spot price on a decentralized exchange may be wildly incorrect during a transaction as shown in the example below.
+乍一看，这似乎是正确的做法。毕竟，无论何时你想要买卖ETH，Uniswap的价格始终大致正确，因为价格偏差会套利者会迅速纠正。但是，事实证明，去中心化交易所的现货价格在交易过程中可能会非常不正确，如下例所示。
 
-Consider how a Uniswap reserve functions. The price is calculated based on the amount of assets held by the reserve, but the assets held by the reserve changes as users trade between ETH and USD. What if a malicious user performs a trade before and after taking a loan from your platform?
 
-Before the user takes out a loan, they buy 5,000 ETH for 2,000,000 USD. The Uniswap exchange now calculates the price to be 1 ETH = 1,733.33 USD. Now, their 375 ETH can act as collateral for up to 433,333.33 USD worth of assets, which they borrow. Finally, they trade back the 5,000 ETH for their original 2,000,000 USD, which resets the price. The net result is that your loan platform just allowed the user to borrow an additional 333,333.33 USD without putting up any collateral.
+
+想一下 Uniswap 储备金是如何运作的，价格是根据协议持有储备金的资产数量计算的，但是持有的储备金会随着用户在ETH和USD之间交易而发生变化。如果恶意用户在从你的平台获得贷款之前和之后进行交易怎么办？
+
+在用户贷款之前，他们以 200 万美元的价格购买了5,000 ETH。 Uniswap交易所现在计算价格为1 ETH = 1,733.33美元。现在，他以375 ETH 抵押作为借入高达433,333.33美元的资产。最后，他们用5,000 ETH换回原来的200 万美元，这将重置价格。最终结果是贷款平台让用户多借走了额外的333,333.33 美元，而没有提供其他额外的担保。
 
 ![](https://img.learnblockchain.cn/2020/11/19/16057691483260.jpg)
 
+通过研究本案例，说明了使用去中心化交易所作为价格预言系统时最常见的错误，攻击者几乎可以完全控制交易期间的价格，而想要准确读取价格就像在物品稳定之前读取重量计的读数一样，你可能会得到错误的号码，依赖这个数据可能会损失你很多钱。
 
-This case study illustrates the most common mistake when using a decentralized exchange as a price oracle - an attacker has almost full control over the price during a transaction and trying to read that price accurately is like reading the weight on a scale before it’s finished settling. You’ll probably get the wrong number and depending on the situation it might cost you a lot of money.
 
-### Synthetix MKR Manipulation
 
-In December 2019, Synthetix suffered another attack as a result of price oracle manipulation. What’s notable about this one is that it crossed the barrier between on-chain price data and off-chain price data.
+### Synthetix MKR 被操控
 
-Reddit user u/MusaTheRedGuard [observed](https://www.reddit.com/r/ethfinance/comments/eexbfa/daily_general_discussion_december_24_2019/fby3i6n/) that an attacker was making some very suspicious trades against sMKR and iMKR (inverse MKR). The attacker first purchased a long position on MKR by buying sMKR, then purchased large quantities of MKR from the Uniswap ETH/MKR pair. After waiting a while, the attacker sold their sMKR for iMKR and sold their MKR back to Uniswap. They then repeated this process.
+2019年12月，Synthetix 因为预言机价格操纵而再次遭受攻击。值得注意的是，它跨越了链上价格数据和链下价格数据之间的障碍。
 
-Behind the scenes, the attacker’s trades through Uniswap allowed them to move the price of MKR on Synthetix at will. This was likely because the off-chain price feed that Synthetix relied on was in fact relying on the on-chain price of MKR, and there wasn’t enough liquidity for arbitrageurs to reset the market back to optimal conditions.
+Reddit用户u/MusaTheRedGuard [观察到](https://www.reddit.com/r/ethfinance/comments/eexbfa/daily_general_discussion_december_24_2019/fby3i6n/)攻击者正在对sMKR和iMKR(反向MKR)进行一些非常可疑的交易。攻击者首先通过购买sMKR来做多MKR，然后从Uniswap ETH/MKR资产交易对中购买大量MKR。在等待一段时间后，攻击者将他们的sMKR换成了iMKR空头仓位，并将他们的MKR卖回Uniswap。并重复这个过程。
+
+
+
+在幕后，攻击者通过Uniswap进行的交易使他们可以随意移动Synthetix上的MKR价格。这可能是因为Synthetix所依赖的链下价格源实际上依赖于MKR的链上价格，而且，套利者没有足够的流动性将市场回归到最佳的价格状态。
 
 ![](https://img.learnblockchain.cn/2020/11/19/16057691621301.jpg)
 
 
-This incident illustrates the fact that even if you think you’re using off-chain price data, you may still actually be using on-chain price data and you may still be exposed to the intricacies involved with using that data.
+通过此事件说明了一个事实，即使你认为自己正在使用链下价格数据，但实际上可能仍在使用链上价格数据，仍会面临使用使用这些数据涉及的复杂情况。
 
-### The bZx Hack
+### bZx 黑客攻击
 
-In February 2020, bZx was hacked twice over the span of several days for approximately 1MM USD. You can find an excellent technical analysis of both hacks written by palkeo [here](https://www.palkeo.com/en/projets/ethereum/bzx.html), but we will only be looking at the second hack.
+2020年2月，bZx在几天的时间内被黑客入侵两次，金额约为100 万美元。在[这里](https://www.palkeo.com/en/projets/ethereum/bzx.html)你可以读到palkeo写的关于两次攻击的出色技术分析文章，但本文只会讨论第二次黑客攻击。
 
-In the second hack, the attacker first purchased nearly all of the sUSD on Kyber using ETH. Then, the attacker purchased a second batch of sUSD from Synthetix itself and deposited it on bZx. Using the sUSD as collateral, the attacker borrowed the maximum amount of ETH they were allowed to. They then sold back the sUSD to Kyber.
+在第二次黑客攻击中，攻击者首先使用ETH购买了在Kyber上几乎所有sUSD。然后，攻击者从Synthetix本身购买了第二批sUSD，并将其存入bZx。攻击者使用sUSD作为抵押品，借入了他们被允许的最大数量的ETH。然后，他们又把sUSD卖回给Kyber。
 
-If you’ve been paying attention, you’ll recognize this as essentially the same undercollateralized loan attack, but using a different collateral and a different decentralized exchange.
+如果你一直在关注，你会认识到这同样是抵押不足借贷攻击，但是使用了不同的抵押品和不同的去中心化交易平台。
 
-### yVault Bug
+### yVault 漏洞
 
-On July 25, 2020, I reported a bug to yEarn regarding the launch of their new yVault contracts. You can read the official writeup about this bug [here](https://blog.trailofbits.com/2020/08/05/accidentally-stepping-on-a-defi-lego/), but I will briefly summarize it below.
+2020年7月25日，我向[yEarn](https://yearn.finance/)报告了他们新发布的yVault合约的漏洞。你可以在[此处](https://blog.trailofbits.com/2020/08/05/accidentally-stepping-on-a-defi-lego/)阅读有关此漏洞的官方文章。但我在这里简要总结一下。
 
-The yVault system allows users to deposit a token and earn yield on it without needing to manage it themselves. Internally, the vault tracks the total amount of yVault tokens minted as well as the total amount of underlying tokens deposited. The worth of a single yVault token is given by the ratio of tokens minted to tokens deposited. Any yield the vault earns is spread across all minted yVault tokens (and therefore, across all yVault token holders).
+yVault系统允许用户存入代币并从中获得收益，而无需自己管理。在yVault内部，这个存款金库会跟踪铸造的yVault代币的总数以及所存入的基础代币的总数。单个yVault代币的价值，由铸造的代币与存入的代币的比率来确定。金库赚取的所有收益都会分摊到所有铸造的yVault代币中(即分摊到所有的yVault代币持有者)。
 
-The first yVault allowed users to earn yield on USDC by supplying liquidity to the Balancer MUSD/USDC pool. When a user supplies liquidity to Balancer pools, they receive BPT in return which can be redeemed for a proportion of the pool. As such, the yVault calculated the value of its holdings based on the amount of MUSD/USDC which could be redeemed with its BPT.
+第一个yVault允许用户通过向Balancer 协议的MUSD/USDC储备池提供流动性来赚取USDC收益。当用户向Balancer池提供流动资金时，他们会收到BPT作为凭证（BPT可以用来赎回资产）。因此，yVault根据其BPT可赎回的MUSD/USDC金额计算其持有的价值。
 
-This seems like the correct implementation, but unfortunately the same principle as given before applies - the state of the Balancer pool during a transaction is not stable and cannot be trusted. In this case, because of the bonding curve that Balancer chose, a user who swaps between from USDC to MUSD will not receive a 1:1 exchange rate, but will in fact leave behind some MUSD in the pool. This means that the value of BPT can be temporarily inflated, which allows an attacker to manipulate the price at will and subsequently drain the vault.
+这似乎是正确的实现，但不幸的是，与以前给出的原理相同，在交易期间Balancer池的状态是不稳定的，因此不能被信任。在此案例中，由于Balancer选择的联合曲线，从USDC到MUSD的兑换用户不会获得1：1的汇率，但实际上会在储备池中余留下一些MUSD。这意味着BPT的价值可以暂时膨胀，这使攻击者可以随意操纵价格并随后耗尽金库。
 
 ![](https://img.learnblockchain.cn/2020/11/19/16057691725333.jpg)
 
 
-This incident shows that price oracles are not always conveniently labelled as such, and that developers need to be vigilant about what sort of data they’re ingesting and consider whether that data can be easily manipulated by an unprivileged user.
+该事件表明，价格预言机并非总是可靠的，并且开发人员需要警惕他们正在使用的数据，并考虑该数据是否可以由非特权用户轻松操纵。
 
-### Harvest Finance Hack
+### Harvest Finance 黑客事件
 
-On October 26, 2020, an unknown user hacked the Harvest Finance pools using a technique that you can probably guess by now. You can read the official post-mortem [here](https://medium.com/harvest-finance/harvest-flashloan-economic-attack-post-mortem-3cf900d65217), but once again I’ll summarize it for you: the attacker deflated the price of USDC in the Curve pool by performing a trade, entered the Harvest pool at the reduced price, restored the price by reversing the earlier trade, and exited the Harvest pool at a higher price. This resulted in over 33MM USD of losses.
+2020年10月26日，一个匿名用户使用（你现在可能已经猜到的）技术入侵了Harvest Finance储备池。你可以阅读官方的[分析报告](https://medium.com/harvest-finance/harvest-flashloan-economic-attack-post-mortem-3cf900d65217),但是，我再次为你总结一下：攻击者通过执行交易来降低曲线库中USDC的价格，以降低后的价格进入Harvest池，并再次逆向操作之前的交易来恢复价格，然后以更高的价格退出Harvest池。这导致了超过3300万美元的损失。
 
-## How do I protect myself?
-
-By now, I hope that you’ve learned to recognize the common thread - it's not always obvious that you're using a price oracle and if you don't follow the proper precautions, an attacker could trick your protocol into sending them all of your money. While there’s no one-size-fits-all fix that can be prescribed, here are a few solutions that have worked for other projects in the past. Maybe one of them will apply to you too.
-
-### Shallow Markets, No Diving
-
-Like diving into the shallow end of a pool, diving into a shallow market is painful and might result in significant expenses which will change your life forever. Before you even consider the intricacies of the specific price oracle you’re planning to use, consider whether the token is liquid enough to warrant integration with your platform.
-
-### A Bird in the Hand is Worth Two in the Bush
-
-It may be mesmerizing to see the potential exchange rate on Uniswap, but nothing’s final until you actually click trade and the tokens are sitting in your wallet. Similarly, the best way to know for sure the exchange rate between two assets is to simply swap the assets directly. This approach is great because there’s no take-backs and no what-ifs. However, it may not work for protocols such as lending platforms which are required to hold on to the original asset.
-
-### Almost Decentralized Oracles
-
-One way to summarize the problem with oracles that rely on on-chain data is that they’re a little too up-to-date. If that’s the case, why not introduce a bit of artificial delay? Write a contract which updates itself with the latest price from a decentralized exchange like Uniswap, but only when requested by a small group of privileged users. Now even if an attacker can manipulate the price, they can’t get your protocol to actually use it.
-
-This approach is really simple to implement and is a quick win, but there are a few drawbacks - in times of chain congestion you might not be able to update the price as quickly as you’d like, and you’re still vulnerable to sandwich attacks. Also, now your users need to trust that you’ll actually keep the price updated.
-
-### Speed Bumps
-
-Manipulating price oracles is a time-sensitive operation because arbitrageurs are always watching and would love the opportunity to optimize any suboptimal markets. If an attacker wants to minimize risk, they’ll want to do the two trades required to manipulate a price oracle in a single transaction so there’s no chance that an arbitrageur can jump in the middle. As a protocol developer, if your system supports it, it may be enough to simply implement a delay of as short as 1 block between a user entering and exiting your system.
-
-Of course, this might impact composability and miner collaboration with traders is on the rise. In the future, it may be possible for bad actors to perform price oracle manipulation across multiple transactions knowing that the miner they’ve partnered with will guarantee that no one can jump in the middle and take a bite out of their earnings.
-
-### Time-Weighted Average Price (TWAP)
-
-Uniswap V2 introduced a TWAP oracle for on-chain developers to use. The [documentation](https://uniswap.org/docs/v2/core-concepts/oracles/) goes into more detail on the exact security guarantees that the oracle provides, but in general for large pools over a long period of time with no chain congestion, the TWAP oracle is highly resistant to oracle manipulation attacks. However, due to the nature of its implementation, it may not respond quickly enough to moments of high market volatility and only works for assets for which there is already a liquid token on-chain.
-
-### M-of-N Reporters
-
-Sometimes they say that if you want something done right, you do it yourself. What if you gather up N trusted friends and ask them to submit what they think is the right price on-chain, and the best M answers becomes the current price?
-
-This approach is used by many large projects today: Maker runs a set of [price feeds](https://developer.makerdao.com/feeds/) operated by trusted entities, Compound created the [Open Oracle](https://medium.com/compound-finance/announcing-compound-open-oracle-development-cff36f06aad3) and features reporters such as [Coinbase](https://blog.coinbase.com/introducing-the-coinbase-price-oracle-6d1ee22c7068), and Chainlink aggregates price data from Chainlink operators and exposes it on-chain. Just keep in mind that if you choose to use one of these solutions, you’ve now delegated trust to a third party and your users will have to do the same. Requiring reporters to manually post updates on-chain also means that during times of high market volatility and chain congestion, price updates may not arrive on time.
-
-## Conclusion
-
-Price oracles are a critical, but often overlooked, component of DeFi security. Safely using price oracles is hard and there’s plenty of ways to shoot both yourself and your users in the foot. In this post, we covered past examples of price oracle manipulation and established that reading price information during the middle of a transaction may be unsafe and could result in catastrophic financial damage. We also discussed a few techniques other projects have used to combat price oracle manipulation in the past. In the end though, every situation is unique and you might find yourself unsure whether you’re using a price oracle correctly. If this is the case, feel free to [reach out](https://samczsun.com/contact/) for advice!
-
-*Special thanks to Dan Robinson and Georgios Konstantopoulos for reviewing this post, and to @zdhu_ and mongolsteppe for pointing out an error.*
+## 如何避免预言机攻击
 
 
 
+现在，我希望你意识到价格预言机不总是可靠，如果你没有采取适当的预防措施，则攻击者可能会欺骗你的协议，卷走你的资金。虽然没有能“一劳永逸”的解决方案，但以下是一些过去在其他项目的行之有效的方案。也许其中也会有适用于你的：
+
+### 1. 不在浅水区潜水
+
+就像跳入浅水游泳池一样，跳入浅水市场也是痛苦的，并且可能会导致大量损失，这可能从此改变你的生活。在考虑复杂的价格预言机之前，先想想代币的流动性是否足有保证，才与你的平台集成。
 
 
+
+### 2. 一鸟在手胜过两鸟在林（比喻在手里的才是真实的）
+
+看到Uniswap上的潜在汇率可能会令人着迷，但是直到你单击"trade(交易)"并且代币交易打入了钱包之前，一切都没有定论。同样，确定两个资产的汇率的最佳方法是直接兑换资产。这种方法很棒，因为即不会撤销，也不依靠假设。但是，它可能不适用于要求保留原始资产的协议(例如贷款平台)。
+
+### 3. （接近）去中心化的预言机
+
+总结依赖链上数据的预言机的问题，会发现，他们的（价格）更新太快，为什么不引入一些人为的延迟呢？编写一份合约，该合约采用Uniswap之类的去中心化交易所的最新价格进行更新，但仅在少数特权用户的请求下进行。现在，即使攻击者可以操纵价格，他们也无法使你的协议采用被操控的价格。
+
+这种方法实现起来很容易，并且很容易见效，但是有一些缺点：在链上拥堵的时候，可能无法像期望的那样快速地更新价格，并且你仍然容易受到三明治攻击（sandwich attacks）。另外，现在需要你的用户相信你实际上会保持价格更新。
+
+###  4. 加入最短延迟
+
+操纵价格预言机是一个对时间极为敏感的操作，因为套利者时刻在观察，并希望有机会优化任何次优市场。 如果攻击者想最大程度地降低风险，他们希望在一次交易中完成操纵价格预言机所需的两笔交易（或多笔），因此套利者没有机会跳进中间状态。作为协议开发者，如果你的系统能支持，那么只需要在用户进入和退出系统之间留出短至1个区块的延迟即可。
+
+当然，这可能会影响可组合性，并且矿工与交易者的合作（合谋）正在增加。将来，黑客交易者可能会在多个交易中执行价格预言操作，因为他们知道与他们合作的矿工将确保没有人能跳入中间并从中获利。
+
+### 5. 加权平均价格(TWAP)
+
+Uniswap V2 引入了时间加权平均价格（TWAP） ，供链上开发人员使用。 [这个文档](https://uniswap.org/docs/v2/core-concepts/oracles/)进一步详细介绍了价格预言机提供的确切安全性保证，对于长时间没有链上拥堵的大型资金池，这种TWAP预言机对预言机操纵攻击具有很强的抵御能力。但是，由于其实现的原理，它可能无法对市场剧烈波动时刻做出足够迅速的响应，并且仅适用于链上具有流动性的代币资产。
+
+### 6. M-of-N 报价
+
+有时他们会说，如果你想做把事情做好，那你自己做。那如果你集合了N个值得信赖的朋友，让他们提交各自认为正确的链上价格，然后取M个最好的答案聚合成当前价格，那会怎么样呢？
+
+如今，许多大型项目都使用这种方法：Maker运行了一组由受信任的实体运营[价格源](https://developer.makerdao.com/feeds/)，Compound创建了[Open Oracle](https://medium.com/compound-finance/announcing-compound-open-oracle-development-cff36f06aad3)并有，例如[Coinbase](https://blog.coinbase.com/introducing-the-coinbase-price-oracle-6d1ee22c7068)这样的报价者, Chainlink 聚合来自Chainlink运营商的价格数据，并在链上公开了这些数据。请记住，如果你选择使用其中的解决方案，那么你就将信任委托给了第三方，你的用户也同样如此。要求报价者手动更新在链上价格还意味着，在市场高度波动及区块链拥堵的时期，价格更新可能无法按时完成。
+
+## 结论
+
+价格预言机是DeFi安全性的重要组成部分，但经常被忽略。安全地使用价格预言机非常困难，并且有很多方法可以使你和你的用户双双陷入困境。在这篇文章中，我们介绍了过去价格预言机操纵的示例，并确定在交易期间读取价格信息可能是不安全的，并可能导致灾难性的财务损失。我们还讨论了其他项目过去用于防止价格预言操纵的一些技术。最后，每种情况都有独特性，你可能不确定自己是否正确使用了价格预言。如果是这种情况，请随时[与我联系](https://samczsun.com/contact/)寻求咨询！
+
+*特别感谢Dan Robinson和Georgios Konstantopoulos对本文的审阅，以及@zdhu_和mongolsteppe指出的错误。*
+
+
+
+
+
+
+------
+本翻译由 [Cell Network](https://www.cellnetwork.io/?utm_souce=learnblockchain) 赞助支持。
