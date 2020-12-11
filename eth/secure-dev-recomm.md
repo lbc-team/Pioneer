@@ -358,6 +358,7 @@ Note that the assertion is *not* a strict equality of the balance because the co
 Following this paradigm allows formal analysis tools to verify that the invalid opcode can never be reached: meaning no invariants in the code are violated and that the code is formally verified.
 遵循此范例，形式分析工具可以验证永远不会到达的无效的操作码：这意味着不会违反代码中的不变式且代码将被形式化验证。
 
+
 ```
 pragma solidity ^0.5.0;
 
@@ -496,6 +497,7 @@ function() payable { require(msg.data.length == 0); emit LogDepositReceived(msg.
 Since the [fallback functions](http://solidity.readthedocs.io/en/latest/contracts.html#fallback-function) is not only called for plain ether transfers (without data) but also when no other function matches, you should check that the data is empty if the fallback function is intended to be used only for the purpose of logging received Ether. Otherwise, callers will not notice if your contract is used incorrectly and functions that do not exist are called.
 由于[fallback 函数](http://solidity.readthedocs.io/en/latest/contracts.html#fallback-function) 可以在无消息数据或未匹配到合约方法时被触发，因此，如果仅仅是使用fallback函数接收以太币，建议检查消息是否为空。否则，调用者可能因使用不正确调用了不存在的函数而得不到通知。
 
+
 ```
 // bad
 function() payable { emit LogDepositReceived(msg.sender); }
@@ -601,6 +603,7 @@ See [SWC-103](https://swcregistry.io/docs/SWC-103)
 It can be useful to have a way to monitor the contract's activity after it was deployed. One way to accomplish this is to look at all transactions of the contract, however that may be insufficient, as message calls between contracts are not recorded in the blockchain. Moreover, it shows only the input parameters, not the actual changes being made to the state. Also events could be used to trigger functions in the user interface.
 合约部署后，在很多情况下都需要对其进行监控，其中一种方法是查看合约的所有交易，因为合约之间的消息调用没有记录在区块里，通过交易查到的数据可能不满足需求。另外，区块中的数据只能查到输入参数，而不会记录状态实际发生的变化，以及事件可以在用户界面中用来触发函数。
 
+
 ```
 contract Charity {
     mapping(address => uint) balances;
@@ -625,6 +628,7 @@ Here, `Game` contract will make an internal call to `Charity.donate()`. This tra
 
 An event is a convenient way to log something that happened in the contract. Events that were emitted stay in the blockchain along with the other contract data and they are available for future audit. Here is an improvement to the example above, using events to provide a history of the Charity's donations.
 event是记录合约变化的一种便捷的方式。事件产生的日志会与其他合约数据一起存在区块链中，可供审核使用。下方代码是对上方示例的改进，使用event事件记录了捐赠记录。
+
 
 ```
 contract Charity {
@@ -853,6 +857,7 @@ contract A is B, C {
 
 When a contract is deployed, the compiler will *linearize* the inheritance from right to left (after the keyword *is* the parents are listed from the most base-like to the most derived). Here is contract A's linearization:
 合约被部署时，按照从右到左的顺序线性继承(在关键字 *is*之后，按从最基层父类到最派生的子类的顺序列出)。合约A的继承顺序：
+
 
 **Final <- B <- C <- A**
 **Final <- B <- C <- A**
