@@ -12,7 +12,7 @@
 
 对于本教程，将了解如何使用[1inch DEX 聚合器](https://1inch.exchange/)执行交易使用web3.js库的Javascript中的。通过本教程，你将了解如何在以太坊区块链上直接交换ERC20代币和以太币。
 
-本文是第2部分([点击这里前往第1部分](https://ethereumdev.io/trading-and-arbitrage-on-ethereum-dex-get-the-rates-part-1/))，在上一篇向你介绍了如何获得交易报价：获取你要出售的代币所获得的代币数量。本文，我们来看一看如何用Javascript执行交易。
+本文是第2部分([点击这里前往第1部分](https://learnblockchain.cn/article/1855))，在上一篇向你介绍了如何获得交易报价：获取你要出售的代币所获得的代币数量。本文，我们来看一看如何用Javascript执行交易。
 
 ![img](https://img.learnblockchain.cn/pics/20201208112015.png)
 
@@ -84,7 +84,7 @@ async function waitTransaction(txHash) {
 
 现在我们已经准备好一切，先使用本系列教程第一部分中的代码来获得交易的预期汇率。我们只是将代码转换为便于阅读的函数。
 
-函数*getQuote*返回一个包含所有参数的对象，以使用[第一部分中详细介绍的兑换函数](https://ethereumdev.io/trading-and-arbitrage-on-ethereum-dex-get-the-rates-part-1/)。
+函数*getQuote*返回一个包含所有参数的对象，以使用[第一部分中详细介绍的兑换函数](https://learnblockchain.cn/article/1855)。
 
 ```javascript
 async function getQuote(fromToken, toToken, amount, callback) {
@@ -108,7 +108,7 @@ async function getQuote(fromToken, toToken, amount, callback) {
 
 ## 授权花费代币
 
-一旦获得了第1部分中所述的代币兑换汇率，我们首先需要授权1inch dex聚合器智能合约来花费我们的代币。如你所知，[ERC20代币标准](https://ethereumdev.io/understand-the-erc20-token-smart-contract/)不允许将代币发送到智能合约并在一次交易中触发合约函数， 我们编写了一个简单的函数，该函数调用ERC20合约实例*approve*函数，并等待使用之前的*waitTransaction*函数等待交易完成：
+一旦获得了第1部分中所述的代币兑换汇率，我们首先需要授权1inch dex聚合器智能合约来花费我们的代币。如你所知，[ERC20代币标准](https://learnblockchain.cn/2018/01/12/create_token/)不允许将代币发送到智能合约并在一次交易中触发合约函数， 我们编写了一个简单的函数，该函数调用ERC20合约实例*approve*函数，并等待使用之前的*waitTransaction*函数等待交易完成：
 
 ```javascript
 function approveToken(tokenInstance, receiver, amount, callback) {
