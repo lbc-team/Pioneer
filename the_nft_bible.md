@@ -1,3 +1,4 @@
+> * 原文：[The Non-Fungible Token Bible: Everything you need to know about NFTs - OpenSea blog](https://blog.opensea.io/guides/non-fungible-tokens/) 作者：OpenSea
 > * 译文出自：[登链翻译计划](https://github.com/lbc-team/Pioneer)
 > * 译者：[翻译小组](https://learnblockchain.cn/people/412)
 > * 校对：[Tiny 熊](https://learnblockchain.cn/people/15)
@@ -23,11 +24,9 @@
 
 
 
-## 什么是NFT？
+## 什么是非同质化代币（non-fungible token）？
 
->  不可变质的资产只是普通的东西。可变现的资产是奇货可居的。
-
-> 非同质化资产实际只是普通资产，可替换的资产才是奇怪的。
+> 非同质化（不可替换）资产实际只是普通资产，可替换资产才应该是那个奇怪的。
 
 
 大多数关于非同质化代币的讨论都是从引入*可替换性*的概念开始的，它被定义为“可替换或者可以被其他同类物品替代”。我们认为这使问题变得更复杂了。想要更好的理解到底是什么构成了非同质化资产，只需要想想你所拥有的大多数东西，你所坐的椅子，你的手机，你的笔记本电脑，任何你可以在eBay上出售的东西，所有这些都属于非同质化资产的范畴。
@@ -90,7 +89,6 @@ NFT标准可以让非同质化代币在多个生态系统间轻松的转移。�
 
 NFTs的即时交易性将导致更高的流动性。NFT市场可以迎合各种受众——从资深操盘手到新手玩家，将资产曝光给更广大的买家群。就像2017年的ICO热潮催生的由具有即时流动性的代币驱动的新型资产一样，NFTs扩大了这个独特的数字资产市场。
 
-
 #### 不可更改性和可证明的稀缺性
 
 
@@ -105,7 +103,6 @@ NFTs的即时交易性将导致更高的流动性。NFT市场可以迎合各种�
 
 
 标准是NFTs强大的一部分原因。因为标准规范了资产的交易方式，也精确描述了与资产的基本功能交互的方式，这让开发者有了*保障*。
-
 
 ### ERC721
 
@@ -144,7 +141,6 @@ interface ERC1155 {
 
 对比ERC20、ERC721和ERC1155标准。ERC20将地址映射到金额，ERC721将资产的唯一ID映射到所有者，而ERC1155有一个从ID到所有者到金额的嵌套映射。
 
-
 #### 可组合性
 
 
@@ -157,7 +153,6 @@ interface ERC1155 {
 
 
 目前大部分NFT标准都是以太坊上的，但也有几个NFT标准出现在了其他链上。[DGoods](https://dgoods.org/)，由[Mythical Games](https://mythical.games/)团队推出，专注于从EOS开始提供一个功能丰富的跨链标准。Cosmos项目也在[开发一个NFT模块](https://github.com/cosmos/cosmos-sdk/issues/4046)，以作为[Cosmos SDK](https://github.com/cosmos/cosmos-sdk)的一部分加以利用。
-
 
 ## NFT元数据
 
@@ -194,7 +189,6 @@ interface ERC1155 {
 
 此外，链上逻辑可能需要*与元数据交互*。比如CryptoKitties，“繁殖代数”影响着猫咪的繁殖速度，而所有的繁殖都是在链上进行的（繁殖代数高的猫繁殖得更慢）。所以智能合约的逻辑需要可以从内部状态读取元数据。
 
-
 #### 链下元数据
 
 
@@ -204,7 +198,7 @@ interface ERC1155 {
 function tokenURI(uint256 _tokenId) public view returns (string)
 ```
 
-`tokenURI`方法会返回一个公共URL，通过这个URL可以得到一个Json串，像CryptoKitty中的基因组元数据的Json一样，这个元数据应该符合官方的[ERC721元数据标准](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-721.md)，这样才能被像OpenSea这样的应用程序所接收。在OpenSea，我们希望开发者可以建立能在我们的市场中显示的丰富的元数据，所以我们已经添加了[ERC721元数据标准的扩展](https://docs.opensea.io/docs/metadata-standards)，允许开发者包括诸如特征、动画和背景颜色等内容。
+`tokenURI`方法会返回一个公共URL，通过这个URL可以得到一个Json，像CryptoKitty中的基因组元数据的Json一样，这个元数据应该符合官方的[ERC721元数据标准](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-721.md)，这样才能被像OpenSea这样的应用程序所接收。在OpenSea，我们希望开发者可以建立能在我们的市场中显示的丰富的元数据，所以我们已经添加了[ERC721元数据标准的扩展](https://docs.opensea.io/docs/metadata-standards)，允许开发者包括诸如特征、动画和背景颜色等内容。
 
 ![](https://img.learnblockchain.cn/2021/05/11/16206965515942.jpg)
 
@@ -223,10 +217,9 @@ function tokenURI(uint256 _tokenId) public view returns (string)
 
 越来越多的开发者，特别是在数字艺术领域，正在使用[InterPlanetary File System](https://ipfs.io/)（IPFS）来存储链下元数据。IPFS是一个点对点的文件存储系统，它允许内容跨计算机托管，这样文件就会在许多不同的地方被复制。这确保了：A）元数据是不可改变的，因为它是由文件的哈希值唯一寻址的；B）只要有节点愿意托管数据，数据就会长期存在。现在有像[Pinata](https://pinata.cloud/)这样的服务，通过处理部署和管理IPFS节点的基础设施，使这个过程对开发者来说更简单，而[备受期待的Filecoin网络](https://docs.filecoin.io/go-filecoin-tutorial/Storing-on-Filecoin.html#table-of-contents)将（在理论上）在IPFS之上增加一个层，以激励节点托管文件。
 
-## NFTs的历史（2017 - 2020）。
+## NFTs的历史（2017 - 2020）
 
 现在我们了解了什么是NFTs以及如何构建它们，接下来我们再深入去了解它们是如何产生的。
-
 
 ### - 0 BC: 在CryptoKitties之前
 
@@ -465,7 +458,7 @@ NFT的市场仍然相当小，而且由于资产的现货价格偏低，比加�
 |---   |----   |
 | 每周购买者的数量（估计） | 1,500人|
 | 每周购买人数(估计) | 18,000人|
-| 每个用户的平均购买次数 (估计) | 12 | 
+| 每个用户的平均购买次数 (估计) | 12 |
 
 
 ### 销售机制
