@@ -60,7 +60,6 @@ Solidity这样的智能合约语言无法直接被EVM所执行，他们需先被
 
 ![](https://miro.medium.com/max/1250/1*I4v8ArsePBK_iFSxgljxTg.png)
 
-Complete list of opcodes as of the Byzantium fork, including everything planned for Constantinople
 <center style="font-size:14px;color:#C0C0C0;text-decoration:underline">Byzantium分支中的全部操作码，包括Constantinople版本所计划的</center>
 
 ## 字节码
@@ -73,9 +72,8 @@ Complete list of opcodes as of the Byzantium fork, including everything planned 
 
 
 在执行时，字节码会被拆分为多个字节（一个字节由两个16进制字符表示）。位于0x60-0x7f（PUSH1-PUSH32）范围内的字节，会以其他方式处理，因为它们包含压栈的数据，这些数据会被添在操作码后面，而不会被当作单独的操作码。
+
 第一个指令是0x60，它的含义是PUSH1。因此，我们知道要压入的数据是1字节长，故我们将下一个字节压入到栈上。现在，栈上已包含了一个数据项，我们来执行下一条指令。由于我们知道0x01属于PUSH指令的一部分，下一条我们要执行的指令是另一个0x60（PUSH1），外加同样的数据。此时栈上包含了两个相同的数据项。最后一个指令是0x01，它对应ADD操作码。这一条指令会从栈上取2个数据项，然后将它们之和压入到栈上，使栈上目前只包含一个数据项：0x02.
-
-
 
 
 ## 合约状态
@@ -83,6 +81,7 @@ Complete list of opcodes as of the Byzantium fork, including everything planned 
 许多著名的高层编程语言允许用户直接给函数传参（function(argument1,argument)），与此不同的是，底层的编程语言则常用栈来给函数传递参数。EVM使用基于256位的寄存器栈，这个栈最近的16个数据项可以被直接访问和操作。整个栈最多保存1024个数据项。
 
 由于这些限制，复杂的操作码会转而使用合约内存来读写数据。然而，内存并非持久化的。当合约执行完成后，内存的内容并不会被保存。因此，栈可以看作函数参数，而内存则可看作声明的变量。
+
 为了能够长久保存数据，并使其可为将来的合约执行所用，我们可以使用存储。合约存储本质上就像是公共数据库，数据可以被外部读取，且无需发送任何交易（没有手续费！）。但是，比之于写内存，对存储的写入操作则昂贵的多（可达6000倍）。
 
 ## 合约交互的开销
@@ -100,6 +99,7 @@ Complete list of opcodes as of the Byzantium fork, including everything planned 
 在部署智能合约的时候，一个常规的交易会被创建，但不会设置地址。此外，一些字节码会被添加到输入数据上，这个字节码充当了构造函数（译者注：被称为creation字节码），它会在runtime字节码被拷贝到合约代码前，初始化存储变量。在部署期间，creation字节码仅会运行一次，而runtime字节码会在每一次合约调用时运行。
 
 ![](https://miro.medium.com/max/1050/1*XUA0cflNiSm4kmRyPAGcrg.png)
+
 <center style="font-size:14px;color:#C0C0C0;text-decoration:underline">另一个Solidity合约示例，及部署它所需要的字节码</center>
 
 我们可以把上述字节码拆分成三部分：
@@ -110,6 +110,7 @@ Complete list of opcodes as of the Byzantium fork, including everything planned 
 ```
 
 ![](https://miro.medium.com/max/2000/1*tpR_uuHdpPy4HPXzJRqv4g.png)
+
 <center style="font-size:14px;color:#C0C0C0;text-decoration:underline">构造函数将初始值写入存储中，并将runtime字节码拷贝到合约内存中</center>
 
 ### 运行时
@@ -158,7 +159,7 @@ Solidity会创建一份[元数据文件](https://solidity.readthedocs.io/en/v0.5
 ## 总结
 
 以太坊为那些使用Solidity和EVM的应用开发者提供了一套去中心化的生态系统。比之于在传统服务器上运行程序，使用智能合约来和EVM交互会昂贵一些，但仍存在许多视去中心化程度重于开销成本的场景存在。
-如果这篇文章使你对学习开发智能合约产生兴趣，可以阅读[《智能合约介绍》](https://solidity.readthedocs.io/en/latest/introduction-to-smart-contracts.html)，深入学习Solidity运行原理。感谢阅读！
+如果这篇文章使你对学习开发智能合约产生兴趣，可以阅读[智能合约入门](https://solidity.readthedocs.io/en/latest/introduction-to-smart-contracts.html)，深入学习Solidity运行原理。感谢阅读！
 
 
 ## 参考
