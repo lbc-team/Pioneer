@@ -158,8 +158,8 @@ Solidity会创建一份[元数据文件](https://solidity.readthedocs.io/en/v0.5
 
 ## 总结
 
-以太坊为那些使用Solidity和EVM的应用开发者提供了一套去中心化的生态系统。比之于在传统服务器上运行程序，使用智能合约来和EVM交互会昂贵一些，但仍存在许多视去中心化程度重于开销成本的场景存在。
-如果这篇文章使你对学习开发智能合约产生兴趣，可以阅读[智能合约入门](https://solidity.readthedocs.io/en/latest/introduction-to-smart-contracts.html)，深入学习Solidity运行原理。感谢阅读！
+以太坊为那些使用Solidity和EVM的应用开发者提供了一套去中心化的生态系统。比之于在传统服务器上运行程序，使用智能合约来和EVM交互会昂贵一些，但仍然有很多场景，这些场景中，去中心化要比开销更为重要。
+如果这篇文章使你对学习开发智能合约产生兴趣，可以看下这篇优秀文章：[智能合约入门](https://solidity.readthedocs.io/en/latest/introduction-to-smart-contracts.html)，深入学习Solidity运行原理。感谢阅读！
 
 
 ## 参考
