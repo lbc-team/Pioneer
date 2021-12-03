@@ -1,40 +1,46 @@
 
-# Dynamic Value Arrays in Solidity
+> * 原文：[dynamic-value-arrays-solidity...](https://www.linkedin.com/pulse/dynamic-value-arrays-solidity-julian-goddard/)  作者：[Julian Goddard](https://uk.linkedin.com/in/julian-goddard-66312049?trk=author_mini-profile_title)
+> * 译文出自：[登链翻译计划](https://github.com/lbc-team/Pioneer)
+> * 译者：[aisiji](https://learnblockchain.cn/people/3291)
+> * 校对：[Tiny 熊](https://learnblockchain.cn/people/15)
+> * 本文永久链接：[learnblockchain.cn/article…](https://learnblockchain.cn/article/1)
 
- 
-Are dynamic value arrays more efficient than reference arrays in Solidity?
+# Solidity 中的动态值数组
+
+在 Solidity 中，动态值数组是否比引用数组效率更高？
+
 ![](https://img.learnblockchain.cn/2020/09/16/16002175729055.jpg)
 <center>*Photo by *[*Nick Kwan*](https://unsplash.com/@snick_kwan?utm_source=medium&utm_medium=referral)* on *[*Unsplash*](https://unsplash.com/?utm_source=medium&utm_medium=referral)</center>
 
-### Background
+### 背景
 
-During the development and testing of Datona Labs’ Solidity Smart-Data-Access-Contract (S-DAC) templates, we often need to handle data such as a small but unknown number of items such as user IDs. Ideally, these are stored in a small dynamic arrays of small values.
+在 Datona 实验室的 Solidity 智能数据访问合约（S-DAC）模板的开发和测试过程中，我们经常需要处理一些像用户ID这样小但未知的数据。理想情况下，这些数据存储在一个小数值的动态值数组中。
 
-In the examples for this article, we investigate whether using Dynamic Value Arrays help us to do that more efficiently than Reference Arrays or similar solutions in Solidity.
+在这篇文章的例子中，我们研究了在 Solidity 中使用动态值数组是否比引用数组或类似解决方案在处理这些小数值时更高效。
 
-### Discussion
+### 论述
 
-Where we have a data comprising a known small number of small numbers, we can employ a Value Array in Solidity, as per [this](https://medium.com/@plaxion/value-arrays-in-solidity-32ca65135d5b) article by the author, in which we provide and measure Solidity Value Arrays. We concluded, amongst other things, that we can reduce my storage space and gas consumption using Value Arrays in many circumstances.
+当我们有一个由已知的少量小数值组成的数据时，我们可以在 Solidity 中使用一个数值数组(Value Arrays)，在[这篇文章](https://medium.com/@plaxion/value-arrays-in-solidity-32ca65135d5b)中，我们提供并测量了 Solidity 数值数组。得出的结论是，在多数情况下使用数值数组都可以减少存储空间和gas消耗。
 
-This conclusion was reached because Solidity runs on the Ethereum Virtual Machine (EVM) which has a very large [machine word](https://en.wikipedia.org/wiki/Word_%28computer_architecture%29) of 256bits (32bytes). This feature, combined with high gas consumption for reference array handling, encourages us to consider using Value Arrays.
+得出这个结论是因为Solidity在以太坊虚拟机(EVM)上运行时有256位（32字节）—— 非常大的[机器语言](https://en.wikipedia.org/wiki/Word_%28computer_architecture%29)。基于这个特点，再加上处理引用数组时的高gas消耗，让我们开始考虑使用数值数组。
 
-However, if we are providing our own libraries for Fixed Value Array manipulation, let us determine whether it is feasible to provide Dynamic Value Arrays as well.
+我们可以为操作固定值数组提供自己的库，同样是否也可以为动态值数组提供呢。
 
-Let us compare Dynamic Value Arrays with Fixed Value Arrays and Solidity’s own fixed and dynamic arrays.
+让我们比较一下动态值数组与固定值数组以及 Solidity 自己的固定和动态数组。
 
-We shall also compare a struct containing a length and a fixed array, as well as a struct containing a Value Array.
+我们也将比较两个结构体，一个结构体包含一个数组长度和一个固定数组，另一个结构体包含一个数值数组。
 
-### Possible Dynamic Value Arrays
+### 可能的动态值数组
 
-In Solidity, it is only possible to have dynamic *storage* arrays. *Memory* arrays have fixed size, and are not permitted to use *push()* in order to append additional elements.
+在 Solidity 中，只有 *storage* 类型可能有动态数组。*memory* 类型的数组有固定大小，并且不允许使用`push()`来附加元素。
 
-Since we are providing our own code for Dynamic Value Arrays in Solidity libraries, we can also provide *push() *(and *pop()*) to be used on both *storage* and *memory* arrays.
+既然我们在 Solidity 库中为动态值数组提供了自己的代码，我们也能提供`push()`(和`pop()`)同时用于 *storage* 和 *memory* 数组。
 
-Dynamic Value Arrays will need to record and manipulate the current length of the array. In the following code, we have chosen to store the length in the top bits of the 256bit, 32byte machine word value.
+动态值数组需要记录并操作数组的当前长度。在下面的代码中，我们将数组长度在存储在256位(32字节)机器语言值的最高位。
 
-### Dynamic Value Arrays
+### 动态值数组
 
-These are Dynamic Value Arrays that match some of the Solidity available types:
+下面是一些与 Solidity 可用类型匹配的动态值数组:
 
 ```
 Dynamic Value Arrays
@@ -48,13 +54,13 @@ uint16[](15)   uint16d15   fifteen 16bit element values
 uint8[](31)    uint8d31    thirty-one 8bit element values
 ```
 
-We propose the Type Name as shown above, which is used throughout this article, but you may find a preferable naming convention.
+我们提出了如上所示的类型名称，它们在会本文中使用，但你可能会有一个更好的命名方式。
 
-We will be looking at **uint8d31** in more detail, below.
+下面我们将详细地研究`uint8d31`。
 
-### More Dynamic Value Arrays
+### 更多动态值数组
 
-Obviously, there more possible Value Arrays. Assuming that we are reserving the top bits of the 256bit value to hold the maximum dynamic array length, the number of bits in the X value multiplied by the number of Y elements must be less than or equal to 256 minus enough bits to hold the array length, L:
+很明显，有更多可能的数值数组。假设我们保留最高位的256位值来容纳最大的动态数组长度，X值的位数的值乘以Y元素的位数必须小于或者等于256减去足够位来容纳数组长度：
 
 ```
 More Dynamic Value Arrays
@@ -95,13 +101,14 @@ uint1[](248)   uint1d248   8   two-hundred & forty-eight 1bit EVs
 
 ```
 
-The array type needed is project specific. Additionally, multiple array types may be needed. For instance, **uint8d31** for user IDs and uint5d50 for roles.
+不同的项目需要特定的数组类型，并且同一个项目可能需要多种数组类型。例如，`uint8d31`用于用户ID，`uint5d50`用于用户角色。
 
-Note the uint1d248 Value Array. That allows us to efficiently encode up to two-hundred and forty-eight 1bit element values, which represent booleans, into 1 EVM word. Compare that with Solidity’s bool[248] which consumes 248 times as much space in memory, and even 8 times as much space in storage.
+注意`uint1d248`数值数组。它让我们可以有效地将多达2048个1位的元素值（代表布尔）编码到1个 EVM 字中。与 Solidity 的 bool[248] 相比，它在内存中消耗的空间是 248 倍，在存储中是8倍。
 
-### Dynamic Value Array Implementation
+### 动态值数组实现
 
-Here is a useful import file providing get and set functions for the Dynamic Value Array type uint8d31:
+下面是一个有用的导入文件，为动态值数组类型`uint8d31`提供了`get`和`set`函数:
+
 
 ```
 // uint8d31.sol
@@ -146,14 +153,14 @@ library uint8d31 { // provides the equivalent of uint8[](31)
     }
 }
 ```
+`length()`函数返回动态值数组的当前大小。你可以使用`setLength()`或`push()`改变数组中的元素数量。
 
-The *length() *function returns the current size of the Dynamic Value Array. You can alter the number of elements in the array using *setLength()* or *push().*
+`get()`和`set()`函数会获取和设置一个特定的元素，就像固定值数组一样，不过只有在数组当前大小范围内的元素可以被访问。
 
-The *get()* and *set() *functions get and set a specific element, as per Fixed Value Arrays, except that only elements that are within the current size of the array may be accessed.
+`push()`函数会把值追加到动态值数组最大长度的位置。同样简单地定义了`pop()`，为了提供一个有效的小数值堆栈。
 
-The *push()* function appends values up to the maximum size of the Dynamic Value Array. Simply define *pop() *as well, to provide an efficient small value stack.
+让我们看看`uint8d31`示例库代码的几个简单的晴天测试：
 
-Let’s see a few simple, sunny day tests for the uint8d31 example library code:
 
 ```
 import "uint8d31.sol";
@@ -189,12 +196,11 @@ contract TestUint8d31 {
 ```
 
 
+### 结构体动态数组
 
-### Struct Dynamic Arrays
+使用结构体的好处是，它们通过引用传递给内部（而不是外部）库函数，忽视了指派函数从`setLength()`、`set()`和`push()`返回值的需求。
 
-The advantage of using structs is that they are passed by reference to internal (not external) library functions, negating the requirement to assign the function return value from *setLength(), set()* and *push()*.
-
-Here is a struct containing 31 bytes of data in a fixed array and a length, and the associated library functions:
+下面是一个结构体，包含在一个固定数组中的31字节的数据和数组长度，以及相关的库函数：
 
 ```
 struct Suint8u31 { // struct representing uint8[](31)
@@ -218,13 +224,13 @@ library Suint8u31lib {
 
 ```
 
-This code is similar to uint8d31, simply substituting *s.length *and* s.data[index] *where required, and not returning a value from* setLength(), set()* or *push()*.
+这段代码与`uint8d31`相似，只是在需要的地方替换了`s.length`和`s.data[index]`，并且不会从`setLength()`、`set()`或`push()`返回值。
 
-The Suint8u31 struct defined above appears to consume 256bits of address space. But in Solidity, each array comprises an additional 256bit value for the length of the array, even if it’s a fixed array, so we are expecting that the gas consumption of this solution is going to be higher than anticipated.
+上面定义的`Suint8u31`结构体似乎消耗了256位的地址空间。但是在Solidity中，每个数组都包含一个额外的256位的当前数组长度值，即使固定数组也是这样，所以这个解决方案的 gas 消耗会比预期的要高。
 
-### Struct Dynamic Value Arrays
+### 结构体动态值数组
 
-Here is a struct containing a Dynamic Value Array, and the associated library functions:
+下面是一个包含动态值数组的结构体和相关的库函数：
 
 ```
 struct Suint8d31 { // struct representing uint8[](31)
@@ -246,18 +252,18 @@ library Suint8d31lib {
 }
 ```
 
-This code is very similar to uint8d31, simply substituting *s.va* for each occurrence of *va*, and not returning a value from *setLength(), set()* or *push()*.
+这段代码与`uint8d31`非常相似，只是在每次出现`va`时替换为`s.va`，并且不会从`setLength()`、`set()`或`push()`返回值。
 
-Let’s measure the gas consumption, right after this enigmatic comfort break.
+在这样谜之舒适之后，我们来测量一下gas消耗。
 
 ![](https://img.learnblockchain.cn/2020/09/16/16002178523957.jpg)
 <center>*Photo by the author*</center>
 
-### Gas Consumption
+### gas消耗
 
-Having written the libraries and contracts, we measured the gas consumption using a technique described in [this](http:///coinmonks/gas-cost-of-solidity-library-functions-dbe0cedd4678) article by the author.
+在写完库和合约后，我们用[这篇文章](http:///coinmonks/gas-cost-of-solidity-library-functions-dbe0cedd4678)中讨论的技术来测量一下 gas 消耗。
 
-Here are the legends for the charts given below:
+下表是我们接下来要测量和对比的 uint8 数组：
 
 ```
 Legend         Meaning
@@ -270,73 +276,69 @@ suint8d31      Struct containing Dynamic Value Array of <= 31 uint8
 suint8u31      Struct containing Solidity fixed array of <= 31 uint8
 ```
 
-### uint8 arrays in EVM memory space
+### EVM 内存空间里的 uint8 数组
 
-Here, we compare using dynamic uint8 arrays in EVM memory space:
+在这里，我们比较了在 EVM 内存空间中使用动态`uint8`数组的 gas 消耗:
 
 ![](https://img.learnblockchain.cn/2020/09/16/16002179136735.jpg)
-<center>*Gas consumption of get and set on uint8 memory variables*</center>
+<center>*对 uint8 内存变量的 get 和 set 操作的 gas 消耗*</center>
 
-This chart shows that gas consumption for a handful of common operations on a Dynamic Value Array (uint8d31) only consumes a little more gas than a Fixed Value Array (uint8a32).
+这个图表显示，只做少量常规操作的gas消耗，动态值数组(`uint8d31`) 只比固定值数组(`uint8a32`)多一点点，差别不明显。
 
-All other options consume significantly more gas, especially the struct containing a Solidity fixed array (last column).
+其他选项的 gas 消耗明显更多，特别是包含 Solidity 固定数组的结构体（最后一栏）。
 
-This is how the gas consumption of individual operations compare:
+下面是每种操作分开测量的 gas 消耗：
 
 ![](https://img.learnblockchain.cn/2020/09/16/16002179498329.jpg)
-<center>*Gas consumption of push, get and set on uint8 memory variables*</center>
+<center>*对 uint8 内存变量分别做 push，get 和 set 操作的 gas 消耗*</center>
 
-Note that *push()* is not permitted on Solidity memory arrays, even dynamic ones (the gold column for each type), but we did implement it for the dynamic data structures measured in this article.
+请注意，在 Solidity 内存数组上`push()`是不允许的，即使动态数组也不可以，但在本文中为了测量动态数据结构的 gas 消耗，我们实现了它。
 
-The take away from this is that, yet again, the Dynamic Value Array (uint8d31) only consumes a little more gas than a Fixed Value Array (uint8a32), and all other options consume (sometimes a lot) more gas.
+我们可以看到，跟上次一样，动态值数组（`uint8d31`）的 gas 消耗只比固定值数组（`uint8a32`）多一点，而其他项的消耗都更大（有时是很多）。
 
-### uint8 arrays in EVM storage space
+### EVM 存储空间里的 uint8 数组
 
-Here, we compare using dynamic uint8 arrays in EVM storage space:
+下面，我们比较了在 EVM 存储空间中使用动态`uint8`数组的 gas 消耗:
 
 ![](https://img.learnblockchain.cn/2020/09/16/16002179799918.jpg)
-<center>*Gas consumption of push/set and get uint8 storage variables*</center>
+<center>*对 uint8 存储变量做 push/set 和 get 操作的 gas 消耗*</center>
 
-Here, apart from the high gas consumption of the first and last columns, the picture is clear, and the selection less definitive.
+上图中除了第一列和最后一列的可以看到明显的高 gas 消耗外，其他列都没有明显差别。
 
-This is how the gas consumption of individual operations compare:
+下面是比较每种单独操作的 gas 消耗：
 
 ![](https://img.learnblockchain.cn/2020/09/16/16002180267480.jpg)
-<center>*Gas consumption of push, get and set on uint8 storage variables*</center>
+<center>*对 uint8 存储变量分别做 push，get和 set 操作的 gas 消耗*</center>
 
-The column to focus on is probably the rust column (right-most for each type), which tends to show typical usage after the storage space has been allocated, whereas the first *push() *or *set()* causes storage space to be allocated which consumes a lot of gas on the EVM.
+需要特别注意的是每个 uint8 数组的锈红色的柱状图(每个栏目的最右侧一栏)，它显示了存储空间被分配后的典型用法，而黄色或蓝色(每个栏目最左边的一栏)则显示了`push()`或`set()`分配存储空间的操作，这在 EVM 上消耗了大量 gas。
 
-Above, the Dynamic Value Array (uint8d31) consumes a little more gas than a Fixed Value Array (uint8a32), and all other options consume a little more gas.
+以上，动态值数组（`uint8d31`）比固定值数组（`uint8a32`）消耗的 gas 多一点，其他项消耗的 gas 都多一点。
 
-### Parameters to sub-contracts and libraries
+### 向子合约和库传参数
 
 ![](https://img.learnblockchain.cn/2020/09/16/16002180511266.jpg)
-<center>*Gas consumption of passing a uint8 parameter to a sub-contract or library*</center>
+<center>*向子合约或库传递一个uint8参数的gas消耗*</center>
 
-Not surprisingly, the biggest gas consumption is providing an array parameter to a sub-contract or library function, and then getting the value back again.
+很明显，最大的 gas 消耗是向子合约或库函数提供一个数组参数，并把值拿回来。
 
-Using a value instead clearly consumes far less gas.
+用一个值来代替，显然消耗的 gas 要少得多。
 
-### Other Possibilities
+### 其他可行性
 
-If you find Dynamic Value Arrays useful, you may also like to consider Fixed Value Arrays, Fixed Multi Value-Arrays, Value Queues, Value Stacks etcetera. And how would your algorithms (such as *Sort*) perform if they used Value Arrays instead of reference arrays?
+如果你觉得动态值数组很有用，你也可以考虑固定值数组、固定多值数组、值队列、值栈等等。如果你的算法（如*Sort*）使用值数组而不是引用数组，会有怎样的表现？
 
-### Conclusions
+### 结论
 
-We have provided and measured code for generic library code for uintX[](Y) small Dynamic Value Arrays.
+我们已提供并测量了`uintX[](Y)`小动态值数组的通用库代码。
 
-We *can* reduce our storage space and gas consumption using Dynamic Value Arrays compared with Solidity’s dynamic arrays.
+与 Solidity 的动态数组相比，我们可以通过使用动态值数组来减少存储空间和 gas 消耗。
 
-Where your Solidity smart contracts use small dynamic arrays of small values (for user IDs, roles etcetera), then the use of Dynamic Value Arrays is likely to consume less gas.
+如果你的 Solidity 智能合约用小数值的动态数组（用于用户ID、角色等），那么用动态值数组可能会消耗较少的 gas。
 
-Where arrays are copied e.g. for sub-contracts or libraries, Dynamic Value Arrays will always consume vastly less gas.
+当数组被复制时，例如用于子合约或库，动态值数组将消耗大量的 gas。
 
-In other circumstances, continue to use dynamic reference arrays.
+其他情况下，继续使用动态引用数组。
 
-### Bio
+### 个人简介
+Jules Goddard 是 Datona 实验室的共建者，他提供了保护你的数字信息不被滥用的智能合约。
 
-Jules Goddard is Co-founder of Datona Labs, who provide smart contracts to protect your digital information from abuse.
-
-
-原文链接：https://www.linkedin.com/pulse/dynamic-value-arrays-solidity-julian-goddard/
-作者：[Julian Goddard](https://uk.linkedin.com/in/julian-goddard-66312049?trk=author_mini-profile_title)

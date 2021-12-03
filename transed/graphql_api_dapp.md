@@ -4,7 +4,7 @@
 > * 校对：[Tiny 熊](https://learnblockchain.cn/people/15)
 > * 本文永久链接：[learnblockchain.cn/article…](https://learnblockchain.cn/article/1)
 
-
+* 接上篇[以太坊全栈开发完全指南](https://learnblockchain.cn/article/2383)*
 
 ## 在以太坊上构建 GraphQL API
 
@@ -37,7 +37,7 @@
 以确保网络本身的安全性和完整性，还需要制定规则[激励](https://www.youtube.com/watch?v=Nurp3Foqf2w)网络参与者为任何消费它们的人提供最高质量的服务。这通常是通过智能合约中编写的共识机制来实现的，合约实现了各种类型的博弈论和[加密经济设计](https://thegraph.com/blog/modeling-cryptoeconomic-protocols-as-complex-systems-part-1)。
 
 #### 什么是真正的去中心化的服务？
-什么使服务去中心化？
+
 
 ![image-20210516134346397](https://img.learnblockchain.cn/pics/20210516134354.png)
 
@@ -492,7 +492,7 @@ $ yarn deploy
 
 The Graph on Twitter - [@graphprotocol] (https://twitter.com/graphprotocol)
 
-[全栈式以太坊开发完整指南](https://dev.to/dabit3/the-complete-guide-to-full-stack-ethereum-development-3j13)
+[全栈式以太坊开发完整指南](https://learnblockchain.cn/article/2383)
 
 [The Graph Discord](https://thegraph.com/discord)
 
