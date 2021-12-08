@@ -7,34 +7,34 @@
 
 # Solidity 中的动态值数组
 
-在 Solidity 中，动态值数组是否比引用数组效率更高？
+在 Solidity 中，动态值数组是否比引用数组效率更高吗？
 
 ![](https://img.learnblockchain.cn/2020/09/16/16002175729055.jpg)
-<center>*Photo by *[*Nick Kwan*](https://unsplash.com/@snick_kwan?utm_source=medium&utm_medium=referral)* on *[*Unsplash*](https://unsplash.com/?utm_source=medium&utm_medium=referral)</center>
+<center>Photo by [Nick Kwan](https://unsplash.com/@snick_kwan?utm_source=medium&utm_medium=referral) on [Unsplash](https://unsplash.com/?utm_source=medium&utm_medium=referral)</center>
 
 ### 背景
 
-在 Datona 实验室的 Solidity 智能数据访问合约（S-DAC）模板的开发和测试过程中，我们经常需要处理一些像用户ID这样小但未知的数据。理想情况下，这些数据存储在一个小数值的动态值数组中。
+在 Datona 实验室的 Solidity 智能数据访问合约（S-DAC）模板的开发和测试过程中，我们经常需要处理一些像用户ID这样数据小但未知长度的数据。理想情况下，这些数据存储在一个小数值的动态值数组中。
 
 在这篇文章的例子中，我们研究了在 Solidity 中使用动态值数组是否比引用数组或类似解决方案在处理这些小数值时更高效。
 
-### 论述
+### 讨论
 
-当我们有一个由已知的少量小数值组成的数据时，我们可以在 Solidity 中使用一个数值数组(Value Arrays)，在[这篇文章](https://medium.com/@plaxion/value-arrays-in-solidity-32ca65135d5b)中，我们提供并测量了 Solidity 数值数组。得出的结论是，在多数情况下使用数值数组都可以减少存储空间和gas消耗。
+当我们有一个由已知的小数值的小数组（长度小）组成的数据时，我们可以在 Solidity 中使用一个数值数组(Value Arrays)，在[这篇文章](https://learnblockchain.cn/article/1381)中，我们提供并测量了 Solidity 数值数组。得出的结论是，在多数情况下使用数值数组都可以减少存储空间和gas消耗。
 
-得出这个结论是因为Solidity在以太坊虚拟机(EVM)上运行时有256位（32字节）—— 非常大的[机器码](https://en.wikipedia.org/wiki/Word_%28computer_architecture%29)。基于这个特点，再加上处理引用数组时的高gas消耗，让我们开始考虑使用数值数组。
+得出这个结论是因为Solidity在以太坊虚拟机(EVM)上运行时有 非常大的256位（32字节）[机器字长](https://en.wikipedia.org/wiki/Word_%28computer_architecture%29)。基于这个特点，再加上处理引用数组时的高gas消耗，让我们考虑使用数值数组。
 
-我们可以为操作固定值数组提供自己的库，同样是否也可以为动态值数组提供呢。
+既然我们可以为固定值数组操作提供自己的库，同样是否也适用于动态值数组呢？
 
-让我们比较一下动态值数组与固定值数组以及 Solidity 自己的固定和动态数组。
+让我们比较一下动态值数组与固定长度值数组以及 Solidity 自己的固定长度数组和动态数组。
 
 我们也将比较两个结构体，一个结构体包含一个数组长度和一个固定数组，另一个结构体包含一个数值数组。
 
 ### 可能的动态值数组
 
-在 Solidity 中，只有 *storage* 类型可能有动态数组。*memory* 类型的数组有固定大小，并且不允许使用`push()`来附加元素。
+在 Solidity 中，只有 *storage* 类型有动态数组。*memory* 类型的数组必须有固定长度，并且不允许使用`push()`来附加元素。
 
-既然我们在 Solidity 库中为动态值数组提供了自己的代码，我们也能提供`push()`(和`pop()`)同时用于 *storage* 和 *memory* 数组。
+我们以 Solidity 库形式为动态值数组提供代码，我们能提供`push()`(和`pop()`)同时用于 *storage* 和 *memory* 数组。
 
 动态值数组需要记录并操作数组的当前长度。在下面的代码中，我们将数组长度在存储在256位(32字节)机器码值的最高位。
 
@@ -43,7 +43,7 @@
 下面是一些与 Solidity 可用类型匹配的动态值数组:
 
 ```
-Dynamic Value Arrays
+Dynamic Value Arrays（动态值数组）
 
 Type           Type Name   Description
 
@@ -54,13 +54,13 @@ uint16[](15)   uint16d15   fifteen 16bit element values
 uint8[](31)    uint8d31    thirty-one 8bit element values
 ```
 
-我们提出了如上所示的类型名称，它们在会本文中使用，但你可能会有一个更好的命名方式。
+上述我提出的类型名称，它们在会本文中使用，但你可能会有一个更好的命名方式。
 
 下面我们将详细地研究`uint8d31`。
 
 ### 更多动态值数组
 
-很明显，有更多可能的数值数组。假设我们保留最高位的256位值来容纳最大的动态数组长度，X值的位数的值乘以Y元素的位数必须小于或者等于256减去足够位来容纳数组长度：
+很明显，有更多可能的数值数组。假设我们保留最高位的256位来存最大的动态数组长度，X（位数的值）乘以Y（元素个数）必须小于或者等于256减去容纳数组长度的位数（L）：
 
 ```
 More Dynamic Value Arrays
@@ -103,14 +103,14 @@ uint1[](248)   uint1d248   8   two-hundred & forty-eight 1bit EVs
 
 不同的项目需要特定的数组类型，并且同一个项目可能需要多种数组类型。例如，`uint8d31`用于用户ID，`uint5d50`用于用户角色。
 
-注意`uint1d248`数值数组。它让我们可以有效地将多达2048个1位的元素值（代表布尔）编码到1个 EVM 字中。与 Solidity 的 bool[248] 相比，它在内存中消耗的空间是 248 倍，在存储中是8倍。
+注意`uint1d248`数值数组。它让我们可以有效地将多达248个1位的元素（代表布尔值）编码到1个 EVM 字中。而Solidity相同作用的 bool[248] ，在内存中消耗多 248 倍的空间，在存储（storage）中则多8倍。
 
 ### 动态值数组实现
 
-下面是一个有用的导入文件，为动态值数组类型`uint8d31`提供了`get`和`set`函数:
+下面是一个可导入库文件，为动态值数组类型`uint8d31`提供了`get`和`set`函数:
 
 
-```
+```javascript
 // uint8d31.sol
 library uint8d31 { // provides the equivalent of uint8[](31)
     uint constant bits = 8;
@@ -153,16 +153,20 @@ library uint8d31 { // provides the equivalent of uint8[](31)
     }
 }
 ```
+
+
 `length()`函数返回动态值数组的当前大小。你可以使用`setLength()`或`push()`改变数组中的元素数量。
 
 `get()`和`set()`函数会获取和设置一个特定的元素，就像固定值数组一样，不过只有在数组当前大小范围内的元素可以被访问。
 
 `push()`函数会把值追加到动态值数组最大长度的位置。同样简单地定义了`pop()`，为了提供一个有效的小数值堆栈。
 
-让我们看看`uint8d31`示例库代码的几个简单的晴天测试：
 
 
-```
+让我们看看`uint8d31`库代码的几个简单测试用例：
+
+
+```js
 import "uint8d31.sol";
 
 contract TestUint8d31 {
@@ -195,15 +199,17 @@ contract TestUint8d31 {
 
 ```
 
-
 ### 结构体动态数组
 
-使用结构体的好处是，它们通过引用传递给内部（而不是外部）库函数，忽视了指派函数从`setLength()`、`set()`和`push()`返回值的需求。
+使用结构体的好处是，它们通过引用传递给internal库函数（external 的库函数则不行），忽视了赋值函数`setLength()`、`set()`和`push()`返回值的要求。
+
+
 
 下面是一个结构体，包含在一个固定数组中的31字节的数据和数组长度，以及相关的库函数：
 
-```
-struct Suint8u31 { // struct representing uint8[](31)
+```js
+ // struct representing uint8[](31)
+struct Suint8u31 {
     uint8[31] data;
     uint8 length;
 }
@@ -224,7 +230,9 @@ library Suint8u31lib {
 
 ```
 
-这段代码与`uint8d31`相似，只是在需要的地方替换了`s.length`和`s.data[index]`，并且不会从`setLength()`、`set()`或`push()`返回值。
+
+
+这段代码与`uint8d31`相似，只是在需要的地方替换了`s.length`和`s.data[index]`，并且`setLength()`、`set()`或`push()`没有返回值。
 
 上面定义的`Suint8u31`结构体似乎消耗了256位的地址空间。但是在Solidity中，每个数组都包含一个额外的256位的当前数组长度值，即使固定数组也是这样，所以这个解决方案的 gas 消耗会比预期的要高。
 
@@ -232,7 +240,7 @@ library Suint8u31lib {
 
 下面是一个包含动态值数组的结构体和相关的库函数：
 
-```
+```js
 struct Suint8d31 { // struct representing uint8[](31)
     uint va; // uint8d31 value array
 }
@@ -252,16 +260,18 @@ library Suint8d31lib {
 }
 ```
 
-这段代码与`uint8d31`非常相似，只是在每次出现`va`时替换为`s.va`，并且不会从`setLength()`、`set()`或`push()`返回值。
 
-在这样谜之舒适之后，我们来测量一下gas消耗。
+
+这段代码与`uint8d31`非常相似，只是在每次出现`va`时替换为`s.va`，并且`setLength()`、`set()`或`push()`没有返回值。
+
+在这样谜之操作之后，我们来测量一下gas消耗。
 
 ![](https://img.learnblockchain.cn/2020/09/16/16002178523957.jpg)
 <center>*Photo by the author*</center>
 
 ### gas消耗
 
-在写完库和合约后，我们用[这篇文章](http:///coinmonks/gas-cost-of-solidity-library-functions-dbe0cedd4678)中讨论的技术来测量一下 gas 消耗。
+在写完库和合约后，我们用[计算 Gas 消耗](https://learnblockchain.cn/article/2716)中讨论的技术来测量一下 gas 消耗。
 
 下表是我们接下来要测量和对比的 uint8 数组：
 
@@ -281,7 +291,7 @@ suint8u31      Struct containing Solidity fixed array of <= 31 uint8
 在这里，我们比较了在 EVM 内存空间中使用动态`uint8`数组的 gas 消耗:
 
 ![](https://img.learnblockchain.cn/2020/09/16/16002179136735.jpg)
-<center>*对 uint8 内存变量的 get 和 set 操作的 gas 消耗*</center>
+<center>对 uint8 内存变量的 get 和 set 操作的 gas 消耗</center>
 
 这个图表显示，只做少量常规操作的gas消耗，动态值数组(`uint8d31`) 只比固定值数组(`uint8a32`)多一点点，差别不明显。
 
@@ -290,25 +300,25 @@ suint8u31      Struct containing Solidity fixed array of <= 31 uint8
 下面是每种操作分开测量的 gas 消耗：
 
 ![](https://img.learnblockchain.cn/2020/09/16/16002179498329.jpg)
-<center>*对 uint8 内存变量分别做 push，get 和 set 操作的 gas 消耗*</center>
+<center><i>对 uint8 内存变量分别做 push，get 和 set 操作的 gas 消耗<i></center>
 
 请注意，在 Solidity 内存数组上`push()`是不允许的，即使动态数组也不可以，但在本文中为了测量动态数据结构的 gas 消耗，我们实现了它。
 
 我们可以看到，跟上次一样，动态值数组（`uint8d31`）的 gas 消耗只比固定值数组（`uint8a32`）多一点，而其他项的消耗都更大（有时是很多）。
 
-### EVM 存储空间里的 uint8 数组
+### EVM 存储空间的 uint8 数组
 
 下面，我们比较了在 EVM 存储空间中使用动态`uint8`数组的 gas 消耗:
 
 ![](https://img.learnblockchain.cn/2020/09/16/16002179799918.jpg)
-<center>*对 uint8 存储变量做 push/set 和 get 操作的 gas 消耗*</center>
+<center><i>对 uint8 存储变量做 push/set 和 get 操作的 gas 消耗</i></center>
 
 上图中除了第一列和最后一列的可以看到明显的高 gas 消耗外，其他列都没有明显差别。
 
 下面是比较每种单独操作的 gas 消耗：
 
 ![](https://img.learnblockchain.cn/2020/09/16/16002180267480.jpg)
-<center>*对 uint8 存储变量分别做 push，get和 set 操作的 gas 消耗*</center>
+<center><i>对 uint8 存储变量分别做 push，get和 set 操作的 gas 消耗</i></center>
 
 需要特别注意的是每个 uint8 数组的锈红色的柱状图(每个栏目的最右侧一栏)，它显示了存储空间被分配后的典型用法，而黄色或蓝色(每个栏目最左边的一栏)则显示了`push()`或`set()`分配存储空间的操作，这在 EVM 上消耗了大量 gas。
 
@@ -317,7 +327,7 @@ suint8u31      Struct containing Solidity fixed array of <= 31 uint8
 ### 向子合约和库传参数
 
 ![](https://img.learnblockchain.cn/2020/09/16/16002180511266.jpg)
-<center>*向子合约或库传递一个uint8参数的gas消耗*</center>
+<center><i>向子合约或库传递一个uint8参数的gas消耗</i></center>
 
 很明显，最大的 gas 消耗是向子合约或库函数提供一个数组参数，并把值拿回来。
 
@@ -325,7 +335,7 @@ suint8u31      Struct containing Solidity fixed array of <= 31 uint8
 
 ### 其他可行性
 
-如果你觉得动态值数组很有用，你也可以考虑固定值数组、固定多值数组、值队列、值栈等等。如果你的算法（如*Sort*）使用值数组而不是引用数组，会有怎样的表现？
+如果你觉得动态值数组很有用，你也可以考虑固定值数组、固定多值数组、值队列、值栈等等。但是使用值数组而不是引用数组你的算法（如*Sort*）会有怎样的表现？
 
 ### 结论
 
@@ -339,6 +349,9 @@ suint8u31      Struct containing Solidity fixed array of <= 31 uint8
 
 其他情况下，继续使用动态引用数组。
 
-### 个人简介
-Jules Goddard 是 Datona 实验室的共建者，他提供了保护你的数字信息不被滥用的智能合约。
+
+
+> 作者  Jules Goddard   是 Datona 实验室的共建者，他提供了保护你的数字信息不被滥用的智能合约。
+
+
 
