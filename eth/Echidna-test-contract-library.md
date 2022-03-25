@@ -86,7 +86,7 @@ function argGet(address[] memory A, uint256[] memory indexArray)
 
 当然，这样做的一种方法是编写大量单元测试，但这是有问题的。如果我们想*彻底*测试这个库，这将是很多工作，而且坦率地说，我们可能会做得很糟糕。我们确定我们能想到每一处的用例吗？即使我们试图覆盖所有源代码，涉及*缺少源代码*的错误，如 `hasDuplicate` 错误，也很容易被遗漏。
 
-我们想使用*基于属性的测试*来指定*所有可能输入*的一般行为，然后生成大量输入。编写行为的一般描述比编写任何单独的具体“给定输入 X，函数应该执行/返回 Y”测试更难。但是编写*所有*所需的具体测试的工作将是费时费力的。最重要的是，即使是非常出色的手动单元测试也找不到那种[weird edge-case bugs attackers are looking for](https://blog.trailofbits.com/2019/08/08/246-findings-from-our-smart-contract-audits-an-executive-summary/).
+我们想使用*基于属性的测试*来指定*所有可能输入*的一般行为，然后生成大量输入。编写行为的一般描述比编写任何单独的具体“给定输入 X，函数应该执行/返回 Y”测试更难。但是编写*所有*所需的具体测试的工作将是费时费力的。最重要的是，即使是非常出色的手动单元测试也找不到那种[weird edge-case bugs attackers are looking for](https://blog.trailofbits.com/2019/08/08/246-findings-from-our-smart-contract-audits-an-executive-summary/)。
 
 ## Echidna 测试工具：hasDuplicate
 
@@ -150,17 +150,17 @@ crytic_hasDuplicate: failed!
 
 现在我们已经看到了一个测试示例，这里有一些构建其余测试的基本建议（正如我们已经为 addressarrayutils_demo 存储库所做的那样）
 
-* 尝试计算同一事物的不同方法。您拥有的功能的“差异”版本越多，您就越有可能找出其中一个是否错误。例如，查看 [我们交叉检查 `indexOf`、`contains` 和 `indexOfFromEnd` 的所有方式](https://github.com/crytic-test/addressarrayutils_demo/blob/dbdf301d88c51454106c28d5b50220fd63cf647e/contracts/crytic.sol #L37-L84)。
+* 尝试计算同一事物的不同方法。您拥有的功能的“差异”版本越多，您就越有可能找出其中一个是否错误。例如，查看 [我们交叉检查 `indexOf`、`contains` 和 `indexOfFromEnd` 的所有方式](https://github.com/crytic-test/addressarrayutils_demo/blob/dbdf301d88c51454106c28d5b50220fd63cf647e/contracts/crytic.sol#L37-L84)。
  
 
-* 测试 **revert。** 如果您像我们 [此处](https://github.com/crytic-test/addressarrayutils_demo/blob/dbdf301d88c51454106c28d5b50220fd63cf647e/contracts/crytic. sol#L450-L458)*,* 只有当所有调用都恢复时，该属性才会通过。这可以确保代码在应该失败时失败。
+* 测试 **revert。** 如果您像我们[此处](https://github.com/crytic-test/addressarrayutils_demo/blob/dbdf301d88c51454106c28d5b50220fd63cf647e/contracts/crytic.sol#L450-L458)*,* 只有当所有调用都恢复时，该属性才会通过。这可以确保代码在应该失败时失败。
 * 不要忘记检查明显的简单不变量，例如，数组与自身的差异始终为空（`ourEqual(AddressArrayUtils.difference(addrs1, addrs1), empty)`）。
 * 其他测试中的不变检查和前提条件也可以作为对被测函数的交叉检查。请注意，`hasDuplicate` 在许多根本不打算检查 `hasDuplicate` 的测试中被调用；只是知道数组是无重复的可以建立许多其他行为的附加不变量，例如，在删除任意位置的地址 X 后，数组将不再包含 X。
 
 
 ## 使用 Crytic 启动并运行
 
-您可以通过下载和安装该工具或使用我们的 docker build 自行运行 Echidna 测试——但使用 Crytic 平台集成了基于 Echidna 属性的测试、Slither 静态分析（包括 Slither 的公共版本中不可用的新分析器）、可升级性检查，并在与您的版本控制相关的无缝环境中进行您自己的单元测试。此外，addressarrayutils_demo 存储库显示了基于属性的测试所需的一切：它可以像创建最小的 Truffle 设置、添加具有 Echidna 属性的 crytic.sol 文件以及在 Crytic 中的存储库配置中打开基于属性的测试一样简单.
+您可以通过下载和安装该工具或使用我们的 docker build 自行运行 Echidna 测试——但使用 Crytic 平台集成了基于 Echidna 属性的测试、Slither 静态分析（包括 Slither 的公共版本中不可用的新分析器）、可升级性检查，并在与您的版本控制相关的无缝环境中进行您自己的单元测试。此外，addressarrayutils_demo 存储库显示了基于属性的测试所需的一切：它可以像创建最小的 Truffle 设置、添加具有 Echidna 属性的 crytic.sol 文件以及在 Crytic 中的存储库配置中打开基于属性的测试一样简单。
 
 
 [手把手教你用Echidna测试智能合约](https://learnblockchain.cn/article/3742)
