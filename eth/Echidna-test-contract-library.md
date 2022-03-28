@@ -1,23 +1,24 @@
 
 # 使用Echidna测试智能合约库
 
-我们已经展示给我如何通过Echidna工具测试智能合约,显而易见,你将了解:
+在本篇文章中，我们已经展示给我如何通过Echidna工具测试智能合约,显而易见,你将了解:
 * 使用不同的工具找到我们在  [Set Protocol audit](https://github.com/trailofbits/publications/blob/master/reviews/setprotocol.pdf)  审计期间发现的错误.
 * 为自己的智能合约库指定并检查有用的属性。
 * 我们将演示如何使用 [crytic.io](https://cryptic.io/),  来完成所有这些工作，它提供了 GitHub 集成和额外的安全检查。
 
 ## 库可能带来风险
 
-某些智能合约中的漏洞很致命的：无论是以代币还是以太币的形式，合约可以管理重要的财产资源，漏洞造成的损失将可能以数百万美元计。不过，以太坊区块链上的代码比任何单个合约都更重要：智能合约库代码。
+发现某个智能合约中漏洞很重要， 合约可以管理重要的财产资源， 无论是以代币还是以太币的形式，不过，有一写以太坊区块链上的代码比任何单个合约都更重要，它是智能合约库代码。
 
 
 库可能被 *许多* 热门的合约引用，因此，例如 `SafeMath` 中的一个微妙的未知错误可能让攻击者不仅可以利用一个漏洞，而且可以利用*许多*关键合约。这种基础设施代码的重要性在区块链环境之外得到了很好的理解——[TLS](https://heartbleed.com/) 或 [sqlite](https://www.zdnet.com/article/sqlite-bug-impacts-thousands-of-apps-including-all-chromium-based-browsers/) 等广泛使用的库中的错误具有传染性，可能感染所有依赖于库的代码。
 
 
-库测试通常侧重于检测内存安全漏洞。然而，在区块链的世界，我们并不那么担心避免堆栈异常或来自包含私钥的区域的`memcpy`；我们最担心库代码的语义正确性。智能合约在“代码就是法律”的金融世界中运行，如果库在某些情况下计算出不正确的结果，那么“代码漏洞”可能会传播到调用合约，并允许攻击者做一些坏事。
+库测试通常侧重于检测内存安全漏洞。然而，在区块链的世界，我们并不那么担心避免堆栈异常或来自包含私有密钥的区域的`memcpy`；我们最担心库代码的语义正确性。智能合约在“代码就是法律”的金融世界中运行，如果库在某些情况下计算出不正确的结果，那么“代码漏洞”可能会传播到调用合约，并允许攻击者做一些坏事。
 
 
-除了使库产生不正确的结果之外，此类漏洞可能会产生其他后果；如果攻击者可以强制库代码意外恢复，那么他们就有了潜在的拒绝服务攻击的机会。如果攻击者可以使库函数进入失控循环，他们可以将拒绝服务与昂贵的 gas 消耗结合起来。
+
+除了使库产生不正确的结果之外，此类漏洞可能会产生其他后果；如果攻击者可以强制库代码意外回退，那么他们就有了潜在的拒绝服务攻击的机会。如果攻击者可以使库函数进入失控循环，他们可以将拒绝服务与昂贵的 gas 消耗结合起来。
 
 
 
@@ -26,7 +27,7 @@
 
 ```
 /**
-* 检查是否有重复元素， 运行空间复杂度为O(n^2).
+* 检查是否有重复元素， 运行时间复杂度为O(n^2).
 * @param A Array to search
 * @return Returns true if duplicate, false otherwise
 */
@@ -44,7 +45,9 @@ function hasDuplicate(address[] memory A) returns (bool)
 
 ```
 
-问题在于，如果 `A.length` 为 `0`（`A` 为空），则 `A.length - 1` 下溢，并且外部 (`i`) 循环遍历整个 `uint256` 集合。在这种情况下，内部 (`j`) 循环不会执行，因此我们有一个循环（基本上）不起作用。当然，这个过程总是会耗尽gas，调用hasDuplicate的事务也会失败。如果攻击者可以在正确的位置产生一个空数组，那么（例如）使用“hasDuplicate”对地址数组强制执行某些不变量的合约可以被禁用——可能是永久的禁用。
+问题在于，如果 `A.length` 为 `0`（`A` 为空），则 `A.length - 1` 下溢，并且外部 (`i`) 循环遍历整个 `uint256` 集合。在这种情况下，内部 (`j`) 循环不会执行，因此我们有一个循环（基本上）不起作用。当然，这个过程总是会耗尽gas，调用hasDuplicate的交易也会失败。如果攻击者可以在正确的位置产生一个空数组，那么（例如）使用“hasDuplicate”对地址数组强制执行某些不变量的合约可以被禁用——可能是永久的禁用。
+
+## 代码库
 
 所以，看[the code for our example](https://github.com/crytic-test/addressarrayutils_demo), 并且用它检查 [this tutorial on using Echidna](https://github.com/crytic/building-secure-contracts).
 
@@ -134,7 +137,7 @@ crytic_hasDuplicate: failed!
     set_addr(0x0)
 ```
 
-触发事务序列非常简单：不要在 `addrs1` 中添加任何内容，然后在其上调用 `hasDuplicate`。就是这样——由此产生的失控循环将耗尽你的 gas 预算，Crytic/Echidna 会告诉你失败。当 Echidna 将故障最小化为可能的最简单序列时，会产生“0x0”地址。
+触发交易序列非常简单：不要在 `addrs1` 中添加任何内容，然后在其上调用 `hasDuplicate`。就是这样——由此产生的失控循环将耗尽你的 gas 预算，Crytic/Echidna 会告诉你失败。当 Echidna 将故障最小化为可能的最简单序列时，会产生“0x0”地址。
 
 我们的其他属性（`crytic_revert_remove` 和 `crytic_remove`）通过了，这很好。如果我们修复 [`hasDuplicate` 中的错误](https://github.com/crytic-test/addressarrayutils_demo/pull/1)，那么我们的测试将全部通过：
 
