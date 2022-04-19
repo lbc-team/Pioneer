@@ -186,7 +186,7 @@ snarkjs info -r circuit.r1cs
 可以再检查一遍，通过运行以下命令来打印电路的约束：
 
 ```
-snarkjs printconstraints -r circuit.r1cs -s circuit.sym
+snarkjs r1cs print circuit.r1cs circuit.sym
 ```
 
 输出如下:
@@ -222,12 +222,12 @@ snarkjs printconstraints -r circuit.r1cs -s circuit.sym
 现在为电路进行可信设置:
 
 ```
-snarkjs setup  -r circuit.r1cs
+snarkjs plonk setup circuit.r1cs pot12_final.ptau circuit_final.zkey
 ```
 
 默认 `snarkjs` 将寻找和使用 `circuit.r1cs`. 我们也可以用 `-r <circuit r1csFile>` 来指定一个电路文件。
 
-setup 命令会产生一个证明和一个验证 key，他们对应 2 个文件： `proving_key.json` and `verification_key.json`
+> 注意：snarkjs更新频繁，一些命令在未来可能会发生变化，如果出现变化请参考最新的[官方文档](https://github.com/iden3/snarkjs)
 
 ### 3.3. 计算见证（witness）
 
