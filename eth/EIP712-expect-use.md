@@ -1,43 +1,46 @@
 
 
-# EIP712 is here: What to expect and how to use it
+
+# 应用EIP712
+
+以太坊钱包如[MetaMask](https://metamask.io/)都支持[EIP712](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-712.md) —— 类型结构化消息签名标准，让钱包可以结构化和可读的格式在签名提示中显示数据。EIP712在安全性和可用性方面向前迈进了一大步，因为用户不再需要对难以理解的十六进制字符串签名（这是一种令人困惑、不安全的做法）。
 
 
-Ethereum wallets like [MetaMask](https://metamask.io/) will soon introduce the [EIP712](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-712.md) standard for typed message signing. This standard allows wallets to display data in signing prompts in a structured and readable format. EIP712 is a great step forward for security and usability because users will no longer need to sign off on inscrutable hexadecimal strings, which is a practice that can be confusing and insecure.
+EIP712已合并到[以太坊改进提案库](https://github.com/ethereum/EIPs)，主流钱包也已支持。本文旨在帮助开发者应用它，包括对其功能的描述、示例 JavaScript 和 Solidity 代码，以及演示。
 
-Smart contract and dApp developers should adopt this new standard as it has already been merged into the [Ethereum Improvement Proposal repository](https://github.com/ethereum/EIPs), and major wallet providers will soon support it. This blog post aims to help developers to do so. It includes a description of what it does, sample JavaScript and Solidity code, and a working demonstration.
 
-## Before EIP712
+## EIP712 之前
 
 ![](https://img.learnblockchain.cn/2020/10/14/16026478352494.jpg)
-<center>Figure 1: a signature request from a dApp that does not use EIP712</center>
+\- 图1: 不使用EIP712的dApp的签名请求 -
+
+加密货币领域的格言是:不信任;验证。然而，在 EIP712 之前，用户很难验证被要求签名的数据，在以签名信息作为后续交易基础的 DApp 中，很容易给予更多的信任。
+
+例如，图1是一个由去中心化交易触发的 MetaMask 弹窗，为了安全地将与钱包地址关联起来，要求用户对订单的哈希值进行签名。不幸的是，由于这个哈希值是一个十六进制字符串，没有专业技术知识的用户无法轻松地验证这个哈希值。对于普通用户来说，更容易盲目地相信 DApp 并点击“签名”，而不是通过麻烦的技术验证。这不利于安全。
+
+如果用户无意中登陆了一个恶意的网络钓鱼DApp，就可能会签下错误的订单信息。例如，可以欺骗用户，让他们为一笔本来成本较低的交易支付不合理的高额以太币。为了防止此类攻击，用户必须通过某种方式确切地知道所签名的内容，而不必自己费力地重新构哈希。
 
 
-
-An adage in the cryptocurrency space states: don’t trust; verify. Yet before EIP712, it was difficult for users to verify the data they were asked to sign, which made it all too easy for them to place more trust than they should in dApps that use signed messages as the basis for consequential value transfers.
-
-Figure 1, for example, shows a MetaMask pop-up triggered by a decentralised exchange that requires users to sign a the hash of an order to securely associate it to their wallet address. Unfortunately, as this hash is a hexadecimal string, users without significant technical expertise cannot easily verify that it is *truly* the hash of their intended order. To lay users, it is far easier to blindly trust the dApp and click “Sign”, instead of going through the technical hassle of verifying it. This is bad for security.
-
-If a user inadvertently lands on a malicious phishing dApp, it could make them sign off on incorrect order information. For instance, it could trick them into paying an unreasonably high amount of Ether for a trade which would otherwise cost less. To prevent such attacks, users must have some way of knowing exactly what they are signing, without having to go through the trouble of reconstructing a cryptographic hash all by themselves.
-
-## EIP712 in action
+## EIP712的改进
 
 ![](https://img.learnblockchain.cn/2020/10/14/16026480444699.jpg)
-<center>Figure 2: a signature request from a dApp that uses EIP712</center>
+\- 图2: 使用EIP712的DApp的签名请求 -
 
-EIP712 offers strong improvements in usability and security. In contrast to the above example, when an EIP712-enabled dApp requests a signature, the user’s wallet shows them the pre-hashed raw data which they may then choose to sign. This makes it much easier for a user to verify it.
+EIP712在可用性和安全性方面有很大的改进。与上面的例子相反，当启用EIP712的DApp请求签名时，用户的钱包会显示哈希之前的原始数据，这样用户更容易验证它。
 
-## How to implement EIP712
 
-This new standard introduces several concepts which developers must be familiar with, so this section will zoom in on what you need to know to implement it in dApps.
+## 如何实现 EIP712
 
-Take for instance that you are building a decentralised auction dApp in which bidders sign bids off-chain, and a smart contract verifies these signed bids on-chain.
+标准引入了几个开发人员必须熟悉的概念，本节将详细介绍如何在DApp中实现它。
 
-### 1\. Design your data structures
+举个例子，你正在构建一个去中心化的拍卖DApp，在这个DApp中，竞标者在链下签名竞价，一个智能合约会在链上验证这些已经签名的竞价。
 
-First of all, figure out the JSON structure of the data you intend users to sign. For the sake of this example, we use the following:
 
-```
+### 1、设计数据结构
+
+首先，设计你希望用户签名的数据的JSON结构。本例中我们如下设计:
+
+```js
 {
     amount: 100, 
     token: “0x….”,
@@ -49,11 +52,13 @@ First of all, figure out the JSON structure of the data you intend users to sign
 }
 ```
 
-We can then derive two data structures from the above snippet: `Bid`, which includes the bid `amount` denominated in an ERC20 `token` and the auction `id`, as well as `Identity`, which specifies a `userID` and `wallet` address.
+然后，我们可以从上面的代码片段中派生出两个数据结构:`Bid`，它包括以ERC20代币计价的出价`amount`和拍卖`id`，以及`Identity`，它指定了一个`userId`和`wallet`地址。
 
-Next, pen down `Bid` and `Identity` as [structs](https://solidity.readthedocs.io/en/v0.4.24/types.html#structs) you would employ in your Solidity code. Refer to the [EIP712 standard](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-712.md#definition-of-typed-structured-data-%F0%9D%95%8A) for a full list of native data types, such as `address`, `bytes32`, `uint256`, and so on.
 
-```
+接下来，写下`Bid`和`Identity`作为你会在你的solididity代码中使用结构体。参考[EIP712标准](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-712.md#definition-of-typed-structured-data-%F0%9D%95%8A)获取完整的本地数据类型列表，如`address`, `bytes32`, `uint256`等。
+
+
+```js
 Bid: {
     amount: uint256, 
     bidder: Identity
@@ -64,27 +69,31 @@ Identity: {
 }
 ```
 
-### 2\. Design your domain separator
 
-The next step is to create a *domain separator*. This mandatory field helps to prevent a signature meant for one dApp from working in another. As EIP712 [explains](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-712.md#rationale):
+### 2、设计域分隔符
 
-> It is possible that two DApps come up with an identical structure like `Transfer(address from,address to,uint256 amount)` that should not be compatible. By introducing a domain separator the dApp developers are guaranteed that there can be no signature collision.
+下一步是创建一个**域分隔符**。这个强制字段有助于防止一个DApp的签名被用在另一个DApp中。如EIP712的[说明](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-712.md#rationale):
 
-The domain separator requires careful thought and effort at the architectural and implementation level. Developers and designers must decide which of the following fields to include or exclude based on what makes sense for their use case.
+> 两个DApp可能会出现相同的结构，如`Transfer(address from,address to,uint256 amount)`，这应该是不兼容的。通过引入域分隔符，DApp开发人员可以保证不会出现签名冲突。
 
-**name**: the dApp or protocol name, e.g. “CryptoKitties”
+域分隔符需要在体系结构和实现级别上进行仔细的思考和努力。开发人员和设计人员必须根据对他们的用例有意义的内容来决定要包含或排除哪个字段。
 
-**version**: The current version of what the standard calls a “signing domain”. This can be the version number of your dApp or platform. It prevents signatures from one dApp version from working with those of others.
 
-**chainId**: The [EIP-155](https://eips.ethereum.org/EIPS/eip-155) chain id. Prevents a signature meant for one network, such as a testnet, from working on another, such as the mainnet.
+**name**: DApp 或协议的名称,如“CryptoKitties”
 
-**verifyingContract**: The Ethereum address of the contract that will verify the resulting signature. The `this`keyword in Solidity returns the contract’s own address, which it can use when verifying the signature.
+**version**: “签名域”的当前版本。可以是你的 DApp 或平台的版本号。它阻止一个DApp版本的签名与其他DApp版本的签名一起工作。
 
-**salt**: A unique 32-byte value hardcoded into both the contract and the dApp meant as a last-resort means to distinguish the dApp from others.
 
-In practice, a domain separator which uses all the above fields could look like this:
+**chainId**: [EIP-155](https://eips.ethereum.org/EIPS/eip-155)链id。防止一个网络(如测试网)的签名在另一个网络(如主网)上工作。
 
-```
+**verifyingContract**: 将要验证签名的合约的以太坊地址。Solidity中的`this`关键字返回合约自己的地址，可以在验证签名时使用。
+
+
+**salt**: 在合约和DApp中都硬编码的惟一的32字节值，这是将DApp与其他应用区分开来的最后手段。
+
+应用上面所有的域分隔符，如下：
+
+```js
 {
     name: "My amazing dApp",
     version: "2",
@@ -94,19 +103,25 @@ In practice, a domain separator which uses all the above fields could look like 
 }
 ```
 
-One thing to note about `chainId` is that wallet providers should prevent signing if it does not match the network it is currently connected to. As wallet providers may not necessarily enforce this, however, it is crucial that `chainId` is verified on-chain. The only caveat is that contracts have no way to find out which chain ID they are on, so developers must hardcode `chainId` into their contracts *and* take extra care to make sure that it corresponds to the network they deploy on.
+关于`chainId`需要注意的一点是，如果它与当前连接的网络不匹配，钱包应该阻止签名。然而，由于钱包不一定强制执行这一点，关键是要在链上验证`chainId`。唯一需要注意的是，合约没有办法找到它们所在的链ID，所以开发者必须将`chainId`硬编码到他们的合约中，并且要格外小心，确保它与部署的网络相对应。
 
-Edit (31 May 2019): If [EIP-1344](https://eips.ethereum.org/EIPS/eip-1344) gets included in a future Ethereum upgrade (possibly [Istanbul](http://eips.ethereum.org/EIPS/eip-1679)), there will be a way for contracts to programmatically find out the`chainId`.
+>写于(2019年5月31日):如果[EIP-1344](https://eips.ethereum.org/EIPS/eip-1344)被包含在未来的以太坊升级中(可能是[伊斯坦布尔](http://eips.ethereum.org/EIPS/eip-1679))，将会有一种方法让合约通过编程方式找到`chainId`。
 
-#### 2.1\. Install MetaMask version 4.14.0 or above
 
-Before the release of version 4.14.0 of MetaMask, its EIP712 support was slightly in flux due to a rollback over the ETHSanFrancisco weekend. Moving forward, version 4.14.0 and later version should properly support EIP712 signing.
 
-### 3\. Write signing code for your dApp
 
-Your JavaScript dApp now needs to be able to ask MetaMask to sign your data. First, define your data types:
 
-```
+#### 2.1、安装4.14.0或以上版本的MetaMask
+
+在4.14.0版本之前的MetaMask，由于 ETHSanFrancisco 的回滚，对EIP712的支持略有变化。4.14.0和更高版本可以正确支持EIP712签名。
+
+
+### 3、为DApp编写签名代码
+
+您的 JavaScript DApp 现在需要能够要求 MetaMask 为数据签名。首先，定义数据类型:
+
+
+```js
 const domain = [
     { name: "name", type: "string" },
     { name: "version", type: "string" },
@@ -124,9 +139,10 @@ const identity = [
 ];
 ```
 
-Next, define your domain separator and message data.
+接下来，定义域分隔符和消息数据。
 
-```
+
+```js
 const domainData = {
     name: "My amazing dApp",
     version: "2",
@@ -143,9 +159,9 @@ var message = {
 };
 ```
 
-Lay out your variables as such:
+变量:
 
-```
+```js
 const data = JSON.stringify({
     types: {
         EIP712Domain: domain,
@@ -157,9 +173,10 @@ const data = JSON.stringify({
     message: message
 });
 ```
-Next, make the `eth_signTypedData_v3` signing call to `web3`:
 
-```
+接下来，让`eth_signTypedData_v3`签名调用`web3`:
+
+```js
 web3.currentProvider.sendAsync(
 {
     method: "eth_signTypedData_v3",
@@ -179,15 +196,18 @@ function(err, result) {
 );
 ```
 
-Note that at the time of writing, MetaMask and Cipher Browser use `eth_signTypedData_v3` in the method field to allow backward compatibility while the dApp ecosystem adopts the standard. Future releases of these wallets are likely to rename it to just `eth_signTypedData`.
+请注意，在撰写本文时，MetaMask 和 Cipher Browser 在 method 字段中使用`eth_signTypedData_v3`，以便向后兼容，DApp生态系统就采用这个标准。这些钱包的未来版本可能会将其重命名为`eth_signTypedData`。
 
-### 4\. Write authentication code for the verifying contract
 
-Recall that before a wallet provider signs EIP712-typed data, it first formats and hashes it. As such, your contract needs to be able to do the same in order to use `ecrecover` to determine which address signed it, and you have to replicate this formatting/hash function in your Solidity contract code. This is perhaps the trickiest step in the process, so be precise and careful here.
 
-First, declare your data types in Solidity, which you should already have done above:
+### 4、为验证的合约编写身份验证代码
 
-```
+回想一下，在钱包签名 EIP712 类型数据之前，它会先对数据进行格式化和哈希处理。你的合约需要能够做同样的事情，以便用`ecrecover`来确定是哪个地址签名的，你需要在 Solidity 合约代码中复制这个格式化/哈希函数。这可能是最棘手的一步，所以要非常小心。
+
+首先，在 Solidity 中声明数据类型，你应该已经在前面做了:
+
+
+```js
 struct Identity {
     uint256 userId;
     address wallet;
@@ -198,16 +218,18 @@ struct Bid {
 }
 ```
 
-Next, define the type hashes to fit your data structures. Note that there are no spaces after commas and brackets, and the names and types should exactly match those specified in the JavaScript code above.
+接下来，定义适合你的数据结构的类型哈希。注意，逗号和方括号后面没有空格，并且名称和类型应该与上面 JavaScript 代码中指定的名称和类型完全匹配。
 
-```
+
+```js
 string private constant IDENTITY_TYPE = "Identity(uint256 userId,address wallet)";
 string private constant BID_TYPE = "Bid(uint256 amount,Identity bidder)Identity(uint256 userId,address wallet)";
 ```
 
-Also define the domain separator type hash. Note that the following code with a `chainId` of 1 is meant for a contract to be deployed on the mainnet, and that strings (such as “My amazing dApp”) must be hashed.
+还要定义域分隔符类型哈希。请注意，下面的`chainId`为1表示合约要部署到主网，并且字符串(如“My amazing dApp”)必须被哈希。
 
-```
+
+```js
 uint256 constant chainId = 1;
 address constant verifyingContract = 0x1C56346CD2A2Bf3202F771f50d3D14a367B48070;
 bytes32 constant salt = 0xf2d857f4a3edcb9b78b4d503bfe733db1e3f6cdc2b7971ee739626c97e86a558;
@@ -221,10 +243,10 @@ bytes32 private constant DOMAIN_SEPARATOR = keccak256(abi.encode(
     salt
 ));
 ```
+接下来，为每种数据类型写一个哈希函数:
 
-Next, write a hash function for each data type:
 
-```
+```js
 function hashIdentity(Identity identity) private pure returns (bytes32) {
     return keccak256(abi.encode(
         IDENTITY_TYPEHASH,
@@ -244,46 +266,49 @@ function hashBid(Bid memory bid) private pure returns (bytes32){
     ));
 ```
 
-Last but certainly not least, write your signature verification function:
+最后，同样重要的是，编写签名验证函数:
 
-```
+```js
 function verify(address signer, Bid memory bid, sigR, sigS, sigV) public pure returns (bool) {
     return signer == ecrecover(hashBid(bid), sigV, sigR, sigS);
 }
 ```
 
-## A working demonstration
 
-For a working demonstration of the above code, use [this tool](https://weijiekoh.github.io/eip712-signing-demo/index.html). After installing a EIP712-compatible version of MetaMask, click the button on the page to run the JavaScript code to trigger a signature request pop-up. Click on Sign, and Solidity code will appear in a text box.
+## 演示
 
-This code will contain all of the above hashing code, the signature generated by MetaMask, and your wallet address. If you copy and paste it into the [Remix IDE](https://remix.ethereum.org/#optimize=true&version=soljson-v0.4.24+commit.e67f0147.js), select the JavaScript VM environment, and then run the `verify` function, Remix will run `ecrecover` in the code to get the signer’s address, compare the result to your wallet address, and then return `true` if they match.
+要演示上述代码，请使用[此工具](https://weijiekoh.github.io/eip712-signing-demo/index.html)。安装与 EIP712 兼容的 MetaMask 版本后，单击页面上的按钮以运行 JavaScript 代码来触发一个签名请求。点击 Sign，solididity 代码将出现在一个文本框。
 
-Do take note that for the sake of simplicity, the `verify` function generated by this demonstration differs from the example given above, as the signature generated by MetaMask will be dynamically inserted into it.
+此代码包含上述所有哈希代码、MetaMask生成的签名、你的钱包地址。如果你将它复制粘贴到 [Remix IDE](https://remix.ethereum.org/#optimize=true&version=soljson-v0.4.24+commit.e67f0147.js)，选择 JavaScript VM 环境，然后运行`verify`功能，Remix 将在代码中运行`ecrecover`获取签名者的地址，将结果与钱包地址比较，如果匹配则返回`true`。
+
+
+请注意，为了简单起见，演示生成的`verify`函数与上面给出的示例不同，因为由 MetaMask 生成的签名会动态地插入其中。
+
+
 
 ![](https://img.learnblockchain.cn/2020/10/14/16026598346417.jpg)
-<center>Figure 3: What Remix shows when you run the verify function</center>
+\- 图3: 运行验证函数时Remix显示的内容 -
 
-In practical terms, this is what your smart contract code should do to verify signed data. Feel free to adapt the code for your own purposes. Hopefully, it will save you time when writing hash functions for your own data structures.
-
-## A note on “legacy” EIP712 support in MetaMask
-
-Another thing to note is that when MetaMask releases support for EIP712, it will no longer support an experimental “legacy” typed data signing feature as described in this [October 2017 blog post](/metamask/scaling-web3-with-signtypeddata-91d6efc8b290).
-
-**Edit (29 Sep)**: As I understand it, once MetaMask makes `eth_signTypedData` point to full EIP712 support, it will support legacy typed data sigining via the `eth_signTypedData_v1` call.
-
-# Final notes
-
-In sum, EIP712 support is coming and developers should take advantage of it. It significantly improves usability and helps to prevents phishing. While it is currently a little tricky to implement, we hope that this article and sample code will help developers to adopt it for their own dApps and contracts.
-
-# Acknowledgements
-
-This article was written by Koh Wei Jie, formerly a full-stack developer with ConsenSys Singapore. Many thanks to Paul Bouchon and Dan Finlay for their invaluable feedback and comments.
-
-原文链接：https://medium.com/metamask/eip712-is-coming-what-to-expect-and-how-to-use-it-bb92fd1a7a26
-作者：[Koh Wei Jie](https://medium.com/@weijiek?source=follow_footer--------------------------follow_footer-----------)
+实际上，这就是智能合约验证签名数据应该做的。您可以根据自己的需要调整代码。希望可以在给数据结构写哈希函数时节省时间。
 
 
+## MetaMask 支持 EIP712 后关于“legacy” 的说明
 
+另一件需要注意的事情是，当 MetaMask 发布对 EIP712 支持时，它将不再支持一个实验性的“legacy”类型化数据签名，正如这篇[2017年10月的博客文章](https://medium.com/metamask/scaling-web3-with-signtypeddata-91d6efc8b290)所描述的。
+
+> **写于(9月29日)**:据我理解，一旦 MetaMask 让`eth_signTypedData`指向完整的 EIP712 支持，它将通过`eth_signTypedData_v1`调用支持 legacy 类型化数据签名。
+
+
+## 最后
+
+总之，开发人员应该充分利用 EIP712。它显著提高了可用性，并有助于防止网络钓鱼，希望本文能够帮助开发人员在自己的DApp和合约中应用它。
+
+
+## 特别感谢
+本文作者Koh Wei Jie曾是ConsenSys Singapore的一名全栈开发人员。非常感谢Paul Bouchon和Dan Finlay的宝贵反馈和评论。
+
+
+>原文链接：https://medium.com/metamask/eip712-is-coming-what-to-expect-and-how-to-use-it-bb92fd1a7a26
 
 
 

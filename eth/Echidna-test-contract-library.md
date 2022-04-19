@@ -1,31 +1,40 @@
+> * 原文：https://blog.trailofbits.com/2020/08/17/using-echidna-to-test-a-smart-contract-library/
+> * 译文出自：[登链翻译计划](https://github.com/lbc-team/Pioneer)
+> * 译者：[darren94me](https://learnblockchain.cn/people/4859)
+> * 校对：[Tiny 熊](https://learnblockchain.cn/people/15)
+> * 本文永久链接：[learnblockchain.cn/article…](https://learnblockchain.cn/article/3763)
+
 
 # 使用Echidna测试智能合约库
 
-在本篇文章中，我们已经展示给我如何通过Echidna工具测试智能合约,显而易见,你将了解:
+本文将展示如何通过 Echidna 工具测试智能合约,你将了解:
 * 使用不同的工具找到我们在  [Set Protocol audit](https://github.com/trailofbits/publications/blob/master/reviews/setprotocol.pdf)  审计期间发现的错误.
 * 为自己的智能合约库指定并检查有用的属性。
-* 我们将演示如何使用 [crytic.io](https://cryptic.io/),  来完成所有这些工作，它提供了 GitHub 集成和额外的安全检查。
+
+我们将演示如何使用 [crytic.io](https://cryptic.io/)来完成这些工作，它提供了 GitHub 集成和额外的安全检查。
 
 ## 库可能带来风险
 
-发现某个智能合约中漏洞很重要， 合约可以管理重要的财产资源， 无论是以代币还是以太币的形式，不过，有一写以太坊区块链上的代码比任何单个合约都更重要，它是智能合约库代码。
+发现智能合约的漏洞非常重要：合约可以管理重要的经济资源（以代币或者以太币的形式），也可能因为一个漏洞损失上百万美元。不过，以太坊区块链上有比其他合约更重要的代码 —— 智能合约库代码。
 
 
-库可能被 *许多* 热门的合约引用，因此，例如 `SafeMath` 中的一个微妙的未知错误可能让攻击者不仅可以利用一个漏洞，而且可以利用*许多*关键合约。这种基础设施代码的重要性在区块链环境之外得到了很好的理解——[TLS](https://heartbleed.com/) 或 [sqlite](https://www.zdnet.com/article/sqlite-bug-impacts-thousands-of-apps-including-all-chromium-based-browsers/) 等广泛使用的库中的错误具有传染性，可能感染所有依赖于库的代码。
-
-
-库测试通常侧重于检测内存安全漏洞。然而，在区块链的世界，我们并不那么担心避免堆栈异常或来自包含私有密钥的区域的`memcpy`；我们最担心库代码的语义正确性。智能合约在“代码就是法律”的金融世界中运行，如果库在某些情况下计算出不正确的结果，那么“代码漏洞”可能会传播到调用合约，并允许攻击者做一些坏事。
+库可能被许多热门的合约引用，因此，假如`SafeMath`中有一个微妙的未知错误，许多关键合约可能被攻击者利用。跳出区块链环境，这种基础架构代码的重要性就很容易理解了 —— 被广泛应用的库中的bug如 [TLS](https://heartbleed.com/) 或 [sqlite](https://www.zdnet.com/article/sqlite-bug-impacts-thousands-of-apps-including-all-chromium-based-browsers/) 是有传染性的，可能传染所有依赖这个库的代码。
 
 
 
-除了使库产生不正确的结果之外，此类漏洞可能会产生其他后果；如果攻击者可以强制库代码意外回退，那么他们就有了潜在的拒绝服务攻击的机会。如果攻击者可以使库函数进入失控循环，他们可以将拒绝服务与昂贵的 gas 消耗结合起来。
+库的测试通常侧重于检测内存安全漏洞。然而，在区块链的世界，我们并不那么担心堆栈异常或来自包含私钥区域的`memcpy`；我们最关心的是库代码的语义正确性。智能合约在“代码就是法律”的金融世界中运行，如果库在某些情况下计算出不正确的结果，那么“代码漏洞”可能会传播到调用的合约，并允许攻击者做一些坏事。
 
 
 
-这就是在旧版本的用于管理地址数组的库中发现的 bug Trail of Bits 的漏洞，如 [this audit of the Set Protocol code](https://github.com/trailofbits/publications/blob/master/reviews/setprotocol.pdf). 中所述
-错误的代码看起来像这样:
+除了使库产生不正确的结果之外，此类漏洞可能会产生其他后果；如果攻击者可以强制库代码意外回退，那么就存在潜在的拒绝服务攻击的可能。如果攻击者可以使库函数进入失控循环，他们可以将拒绝服务与昂贵的 gas 消耗结合起来。
 
-```
+
+
+这就是在旧版本的用于管理地址数组的库中发现的漏洞 —— Trail of Bits ，如 [this audit of the Set Protocol code](https://github.com/trailofbits/publications/blob/master/reviews/setprotocol.pdf)中所述
+
+错误的代码是这样的:
+
+```js
 /**
 * 检查是否有重复元素， 运行时间复杂度为O(n^2).
 * @param A Array to search
@@ -54,7 +63,7 @@ function hasDuplicate(address[] memory A) returns (bool)
 在较高级别上，该库提供了用于管理地址数组的便捷。一个典型的例子涉及使用地址白名单的访问控制。 AddressArrayUtils.sol 有 19 个函数要测试：
 
 
-```
+```js
 function indexOf(address[] memory A, address a)
 function contains(address[] memory A, address a)
 function indexOfFromEnd(address[] A, address a)
@@ -80,20 +89,18 @@ function argGet(address[] memory A, uint256[] memory indexArray)
 
 ## 基于属性的模糊测试 101
 
-
-
-我们的工作是获取我们感兴趣的功能——在这里，所有这些功能——并且：
+我们的目的是把所有我们感兴趣的函数都放在这里，并且：
 
 * 弄清楚每个函数的作用
 * 然后编写一个测试，确保函数能做到！
 
-当然，这样做的一种方法是编写大量单元测试，但这是有问题的。如果我们想*彻底*测试这个库，这将是很多工作，而且坦率地说，我们可能会做得很糟糕。我们确定我们能想到每一处的用例吗？即使我们试图覆盖所有源代码，涉及*缺少源代码*的错误，如 `hasDuplicate` 错误，也很容易被遗漏。
+当然，这样做的一种方法是编写大量单元测试，但这是有问题的。如果我们想*彻底*测试这个库，这将是很大量的工作，而且坦率地说，我们可能会做得很糟糕。我们确定我们能想到每一处的用例吗？即使我们试图覆盖所有源代码，涉及*缺少源代码*的错误，如 `hasDuplicate` 错误，也很容易被遗漏。
 
 我们想使用*基于属性的测试*来指定*所有可能输入*的一般行为，然后生成大量输入。编写行为的一般描述比编写任何单独的具体“给定输入 X，函数应该执行/返回 Y”测试更难。但是编写*所有*所需的具体测试的工作将是费时费力的。最重要的是，即使是非常出色的手动单元测试也找不到那种[weird edge-case bugs attackers are looking for](https://blog.trailofbits.com/2019/08/08/246-findings-from-our-smart-contract-audits-an-executive-summary/)。
 
 ## Echidna 测试工具：hasDuplicate
 
-测试库的代码最明显的一点是它比库本身大！在这种情况下，这种情况并不少见。不要让你害怕；与库不同，测试工具作为正在进行中的工作，并慢慢改进和扩展，工作得很好。测试开发本质上是渐进式的，如果您拥有像 Echidna 这样的工具来扩大您的付出，那么即使是很小的努力也会带来可观的收益。
+测试库的代码最明显的一点是它比库本身大！在这种情况下，这种情况并不少见。不要被这个吓到；与库不同，测试工具作为正在进行中的工作，在慢慢改进和扩展，工作得很好。测试开发本质上是渐进式的，如果您拥有像 Echidna 这样的工具来扩大您的付出，那么即使是很小的努力也会带来可观的收益。
 
 举个具体的例子，让我们看看 `hasDuplicate` 错误。我们要检查：
 
@@ -105,7 +112,7 @@ function argGet(address[] memory A, uint256[] memory indexArray)
 
 我们这里的方法是通过在库中寻找另一个可以检测重复项而无需调用“hasDuplicate”的函数来应用较弱版本的差异测试。为此，我们将使用 `indexOf` 和 `indexOfFromEnd` 来检查项目的索引（从 0 开始）是否与从数组末尾执行搜索时的索引相同：
 
-```
+```js
   for (uint i = 0; i < addrs1.length; i++) {
     (i1, b) = AddressArrayUtils.indexOf(addrs1, addrs1[i]);
     (i2, b) = AddressArrayUtils.indexOfFromEnd(addrs1, addrs1[i]);
@@ -127,11 +134,11 @@ function argGet(address[] memory A, uint256[] memory indexArray)
 让我们在 Crytic 上运行这个属性：
 
 ![](https://img.learnblockchain.cn/2020/09/29/16013634289541.jpg)
-<center>测试失败</center>
+\- 测试失败 -
 
 First, `crytic_hasDuplicate` fails:
 
-```
+```js
 crytic_hasDuplicate: failed!
   Call sequence:
     set_addr(0x0)
@@ -143,7 +150,7 @@ crytic_hasDuplicate: failed!
 
 
 ![image](https://img.learnblockchain.cn/2020/09/29/16013635062863.jpg)
-<center>测试通过</center>
+\- 测试通过 -
 
 
 `crytic_hasDuplicate: fuzzing (2928/10000)` 告诉我们，由于昂贵的 `hasDuplicate` 属性不会很快失败，在我们达到 5 分钟超时之前，我们对每个属性进行的最多 10,000 次测试中只有 3,000 次被执行。
@@ -164,9 +171,3 @@ crytic_hasDuplicate: failed!
 ## 使用 Crytic 启动并运行
 
 您可以通过下载和安装该工具或使用我们的 docker build 自行运行 Echidna 测试——但使用 Crytic 平台集成了基于 Echidna 属性的测试、Slither 静态分析（包括 Slither 的公共版本中不可用的新分析器）、可升级性检查，并在与您的版本控制相关的无缝环境中进行您自己的单元测试。此外，addressarrayutils_demo 存储库显示了基于属性的测试所需的一切：它可以像创建最小的 Truffle 设置、添加具有 Echidna 属性的 crytic.sol 文件以及在 Crytic 中的存储库配置中打开基于属性的测试一样简单。
-
-
-[手把手教你用Echidna测试智能合约](https://learnblockchain.cn/article/3742)
-
-原文链接：https://blog.trailofbits.com/2020/08/17/using-echidna-to-test-a-smart-contract-library/
-作者：[Crytic CI](https://twitter.com/cryticci)
