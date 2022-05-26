@@ -1,82 +1,110 @@
 原文链接：https://www.quicknode.com/guides/defi/how-to-stream-pending-transactions-with-ethers-js
 
-# How to stream pending transactions with ethers.js
+# 如何使用 ethers.js 流式处理待处理的交易 ？
 
-#### Overview
 
-Here is a video representation of this guide if you prefer to watch instead of read
+#### 概述
+
+如果您喜欢观看而不是阅读，这里代表性的视频指南。
 
 https://www.youtube.com/embed/YjQj6uk9M98
 
-On ethereum, before being included in a block, transactions remain in what is called a pending transaction queue, tx pool, or mempool - they all mean the same thing. Miners then select a subset of all pending transactions from this queue to mine - there are a lot of benefits to being able to access and analyze this information for traders, people who want to save fees on gas, and more.
+在以太坊上，在形成一个区块中之前，交易会保留在所谓的待处理交易队列、交易池或内存池中——它们的意义相同。然后，矿工从这个队列中选择所有待处理交易的子集进行挖掘——对于交易者、想要节省 gas 费用的人等能够访问和分析这些信息将会得到很多好处。
 
-In this guide, we will learn how to stream pending transactions from Ethereum and similar chains with [ethers.js](https://docs.ethers.io/v5/).
 
-**Prerequisites**
+在这份指南中，我们将学会
+如何在以太坊和相似链使用 [ethers.js](https://docs.ethers.io/v5/). 流式处理待处理的交易 
 
-- NodeJS installed on your system.
-- A text editor
-- Terminal aka Command Line
-- An Ethereum node
 
-#### What is a Pending Transaction?
+**先决条件**
 
-To write or update any on the Ethereum network, someone needs to create, sign and send a transaction. Transactions are how the external world communicates with the Ethereum network. When sent to the Ethereum network, a transaction stays in a queue known as mempool where transactions wait to be processed by miners - the transactions in this waiting state are known as pending transactions. The small fee required to send a transaction is known as a gas; Transactions get included in a block by miners, and they are prioritized based on the amount of gas price they include which goes to the miner.
-
-You can get more information on mempool and pending transactions [here](https://www.quicknode.com/guides/defi/how-to-access-ethereum-mempool).
-
-**Why do we want to see pending transactions?**
-
-By examining pending transactions, one can do the following:
-
-- Estimate gas: We can theoretically look at pending transactions to predict the next block's optimal gas price.
-- For Trading analytics: We can analyze pending transactions on decentralized exchanges. To predict market trends using the analysis.
-- Front running: In DeFi, you can preview upcoming oracle related transactions related to price and potentially issue a liquidation for a vault on MKR, COMP, and other protocols.
-
-There can be many use cases for streaming pending transactions - we won't cover them all here.
-
-We’ll use [ethers.js](https://docs.ethers.io/v5/) to stream these pending transactions with WebSockets. Let’s see how to install ethers.js before writing our code.
+- 在你的电脑上下载Nodejs
+- 一个文本编辑器
+- 命令行终端
+- 一个以太坊节点
 
 
 
-#### Installing ethers.js
+#### 什么是待处理的交易
 
-Our first step here would be to check if node.js is installed on the system or not. To do so, copy-paste the following in your terminal/cmd:
+要在以太坊网络编写或者更新任何内容，需要有人创建，签署和发送交易。交易是外部世界与以太坊网络通信的方式。当发送到以太坊网络时，交易会停留在称为“mempool”的队列中，交易等待旷工被处理----- 处于这种等待交易称为待处理交易。发送交易所需要的少量费用称为gas;交易被旷工包含在一个区块中，并且根据它们包含的给旷工的gas价值量来确定优先级 。
+
+
+
+
+
+
+你将得到更多信息在内存池和待处理交易中。[这里](https://www.quicknode.com/guides/defi/how-to-access-ethereum-mempool).
+
+**我为什么想要看未处理的交易呢？**
+
+通过检查待处理的交易，可以执行以下操作：
+
+
+
+
+- 估计gas：理论上我们可以查看待处理的交易来预测下一个区块的最优gas价格。
+- 对于交易分析：我们可以分析去中心化交易所的待处理交易。使用分析预测市场趋势。
+
+- 前端运行：在 DeFi 中，您可以预览即将到来的与价格相关的预言机相关交易，并可能对 MKR、COMP 和其他协议的保险库发出清算。
+
+流式处理待处理交易可能有很多案例——我们不会在这里全部介绍。
+
+
+
+我们将使用 [ethers.js](https://docs.ethers.io/v5/) 通过 WebSockets 流式传输这些待处理的交易。在编写代码之前，让我们看看如何安装 ethers.js。
+
+ 
+ 
+
+#### 安装ethers.js
+
+我们的第一步是检查系统上是否安装了 node.js。为此，请将以下内容复制粘贴到您的终端
+
 
 ```
 1 $ node -v
 ```
 
-If not installed, you can download the LTS version of NodeJS from the [official website](https://nodejs.org/en/).
+如果没有安装，可以从【官网】（https://nodejs.org/en/）下载 LTS 版本的 NodeJS。
 
-Now that we have node.js installed let’s install the ethers.js library using npm (Node Package Manager), which comes with node.js.
+现在我们已经安装了 node.js，让我们使用 node.js 附带的 npm（节点包管理器）安装 ethers.js 库。
+
 
 ```
 1 $ npm i ethers
 ```
 
-The most common issue at this step is an internal failure with `node-gyp.` You can follow [node-gyp installation instructions here](https://github.com/nodejs/node-gyp#installation).
+此步骤中最常见的问题是 `node-gyp` 的内部故障。您可以按照 [node-gyp 安装说明在这里](https://github.com/nodejs/node-gyp#installation)。
 
-**Note**: You will need to have your python version match one of the compatible versions listed in the instructions above if you encounter the node-gyp issue. 
 
-Another common issue is a stale cache; clear your npm cache by simply typing the below into your terminal:
+
+**注意**：如果遇到 node-gyp 问题，您需要让您的 python 版本与上述说明中列出的兼容版本之一匹配。
+
+另一个常见问题是缓存过时。 只需在终端中键入以下内容即可清除 npm 缓存：
 
 ```
 1  $ npm cache clean
 ```
 
-If everything goes right, ethers.js will be installed on your system.
+如果一切是正常的，ethers.js将安装到了你的操作系统。
 
-#### Booting our Ethereum node
+#### 启动我们的以太坊节点
 
-We could use pretty much any Ethereum client, such as Geth or OpenEthereum (fka Parity), for our purposes today. Since to stream incoming new pending transactions, a node connection must be stable and reliable; it’s a challenging task to maintain a node, we'll just [grab a free endpoint from QuickNode](https://www.quicknode.com/?utm_source=internal&utm_campaign=guides) to make this easy. After you've created your free ethereum endpoint, copy your WSS (WebSocket) Provider endpoint:
+对于我们今天的目的，我们几乎可以使用任何以太坊客户端，例如 Geth 或 OpenEthereum (fka Parity)。 由于要流式传输传入的新待处理交易，节点连接必须稳定可靠； 维护一个节点是一项具有挑战性的任务，我们只需 [从 QuickNode 获取一个免费的端点](https://www.quicknode.com/?utm_source=internal&utm_campaign=guides) 来简化这项工作。 创建免费的以太坊端点后，复制您的 WSS (WebSocket) Provider 端点。
 
-![Screenshot of QuickNode Ethereum Endpoint](https://www.quicknode.com/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBaU1EIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--5ed295c0c3f3e1c404f1177ce75a6f1d676ea68b/neth%20copy.png)
-You'll need this later, so copy it and save it.
 
-#### Streaming pending transactions
 
-Create a short script file pending.js, which will have a transaction filter on incoming pending transactions. Copy-paste the following in the file:
+![QuickNode 以太坊端点截图](https://www.quicknode.com/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBaU1EIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--5ed295c0c3f3e1c404f1177ce75a6f1d676ea68b/neth%20copy.png)
+
+
+你以后会需要它的，因此这会复制并且保存它。
+
+#### 流式处理待处理交易
+
+创建一个简短的脚本文件pending.js，它将对传入的未决交易进行交易过滤。将以下内容复制粘贴到文件中：
+
+
 
 ```
 var ethers = require("ethers");
@@ -107,44 +135,46 @@ var init = function () {
 init();
 ```
 
-So go ahead and replace `**ADD_YOUR_ETHEREUM_NODE_WSS_URL**` with the WSS (WebSocket) provider from the section above. 
 
-Explanation of the code above.
+所以继续用上面部分中的 WSS (WebSocket) 提供程序替换 `**ADD_YOUR_ETHEREUM_NODE_WSS_URL**`。
 
-Line 1: Importing the ethers library.
+上面代码的解释。
 
-Line 2: Setting our Ethereum node URL.
+第 1 行：导入 ethers 库。
 
-Line 4: Creating the init function.
+第 2 行：设置我们的以太坊节点 URL。
 
-Line 5: Instantiating an ethers WebSocketProvider instance.
+第 4 行：创建 init 函数。
 
-Line 7: Creating an event listener for pending transactions that will run each time a new transaction hash is sent from the node.
+第 5 行：实例化一个 ethers WebSocketProvider 实例。
 
-Line 8-10: Getting the whole transaction using the transaction hash obtained from the previous step and printing the transaction in the console.
+第 7 行：为待处理的交易创建一个事件侦听器，每次从节点发送新的交易
+哈希时都会运行该事件侦听器。
 
-Line 13-16: A function to restart the WebSocket connection if the connection encounters an error.
+第 8-10 行：使用从上一步获得的交易哈希获取整个交易，并在控制台中打印交易。
 
-Line 17-21: A function to restart the WebSocket connection if the connection ever dies.
+第 13-16 行：如果连接遇到错误，则重新启动 WebSocket 连接的函数。
 
-Line 24: Calling the init function.
+第 17-21 行：如果连接终止，则重新启动 WebSocket 连接的函数。
 
-Now, let’s run our script.
+第 24 行：调用 init 函数。
+
+ 
+现在 ，让我一起运行这段脚本。
 
 ```
 1  $ node pending
 ```
 
-If everything goes right, you must see incoming pending transactions. Something like this
+如果一切执行得顺利，您必须看到传入的待处理交易。 像这样
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/3rjVuPRl628612d732a8b.png)
 
-Use **Ctrl+c** to stop the script.
+使用 **Ctrl+c** 来停止这段脚本的运行。
 
 
 
-#### Conclusion
+结论
 
-Here we saw how to get pending transactions from the Ethereum network using ethers,js. Learn more about Event filters and Transaction filters in ethers.js in their [documentation](https://docs.ethers.io/v5/single-page/#/v5/api/providers/provider/-%23-Provider--events).
-Subscribe to our [newsletter](https://www.getrevue.co/profile/quiknode) for more articles and guides on Ethereum. If you have any feedback, feel free to reach out to us via [Twitter](https://twitter.com/QuickNode). You can always chat with us on our [Discord](https://discord.gg/ahckhyA) community server, featuring some of the coolest developers you’ll ever meet :)
-
+在这里，我们看到了如何使用 ethers,js 从以太坊网络获取待处理的交易。 在他们的[文档](https://docs.ethers.io/v5/single-page/#/v5/api/providers/provider/-%23-Provider-中了解有关ethers.js中的事件过滤器和交易过滤器的更多信息 -事件）。
+订阅我们的 [newsletter](https://www.getrevue.co/profile/quiknode) 以获取有关以太坊的更多文章和指南。 如果您有任何反馈，请随时通过 [Twitter](https://twitter.com/QuickNode) 与我们联系。 您可以随时在我们的 [Discord](https://discord.gg/ahckhyA) 社区服务器上与我们聊天，其中包含您将遇到的一些最酷的开发人员 :)
