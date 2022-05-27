@@ -1,6 +1,6 @@
 原文链接：https://www.quicknode.com/guides/defi/how-to-stream-pending-transactions-with-ethers-js
 
-# 如何使用 ethers.js 流式处理待处理的交易 ？
+# 如何使用 ethers.js 处理待处理交易流 ？
 
 
 #### 概述
@@ -29,12 +29,8 @@ https://www.youtube.com/embed/YjQj6uk9M98
 
 要在以太坊网络编写或者更新任何内容，需要有人创建，签署和发送交易。交易是外部世界与以太坊网络通信的方式。当发送到以太坊网络时，交易会停留在称为“mempool”的队列中，交易等待旷工被处理----- 处于这种等待交易称为待处理交易。发送交易所需要的少量费用称为gas;交易被旷工包含在一个区块中，并且根据它们包含的给旷工的gas价值量来确定优先级 。
 
-
-
-
-
-
-你将得到更多信息在内存池和待处理交易中。[这里](https://www.quicknode.com/guides/defi/how-to-access-ethereum-mempool).
+查看[这里](https://www.quicknode.com/guides/defi/how-to-access-ethereum-mempool), 将得到关于内存池和待处理交易的更多信息。
+ 
 
 **我为什么想要看未处理的交易呢？**
 
@@ -44,9 +40,9 @@ https://www.youtube.com/embed/YjQj6uk9M98
 
 
 - 估计gas：理论上我们可以查看待处理的交易来预测下一个区块的最优gas价格。
-- 对于交易分析：我们可以分析去中心化交易所的待处理交易。使用分析预测市场趋势。
+- 用于交易分析：我们可以分析去中心化交易所的待处理交易，以便预测市场趋势。
 
-- 前端运行：在 DeFi 中，您可以预览即将到来的与价格相关的预言机相关交易，并可能对 MKR、COMP 和其他协议的保险库发出清算。
+- 交易抢跑：在 DeFi 中，您可以预览即将到来的与价格相关的预言机相关交易，并可能对 MKR、COMP 和其他协议的保险库发出清算。
 
 流式处理待处理交易可能有很多案例——我们不会在这里全部介绍。
 
@@ -66,7 +62,7 @@ https://www.youtube.com/embed/YjQj6uk9M98
 1 $ node -v
 ```
 
-如果没有安装，可以从【官网】（https://nodejs.org/en/）下载 LTS 版本的 NodeJS。
+如果没有安装，可以从 [官网]（https://nodejs.org/en/）下载 LTS 版本的 NodeJS。
 
 现在我们已经安装了 node.js，让我们使用 node.js 附带的 npm（节点包管理器）安装 ethers.js 库。
 
@@ -102,7 +98,7 @@ https://www.youtube.com/embed/YjQj6uk9M98
 
 #### 流式处理待处理交易
 
-创建一个简短的脚本文件pending.js，它将对传入的未决交易进行交易过滤。将以下内容复制粘贴到文件中：
+创建一个简短的脚本文件pending.js，它将对传入的待处理交易进行交易过滤。将以下内容复制粘贴到文件中：
 
 
 
@@ -136,7 +132,7 @@ init();
 ```
 
 
-所以继续用上面部分中的 WSS (WebSocket) 提供程序替换 `**ADD_YOUR_ETHEREUM_NODE_WSS_URL**`。
+所以继续用上面部分中的 WSS (WebSocket) Provider 替换 `**ADD_YOUR_ETHEREUM_NODE_WSS_URL**`。
 
 上面代码的解释。
 
@@ -166,15 +162,13 @@ init();
 1  $ node pending
 ```
 
-如果一切执行得顺利，您必须看到传入的待处理交易。 像这样
+如果一切执行得顺利， 你会看到传入的待处理交易。 像这样
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/3rjVuPRl628612d732a8b.png)
 
 使用 **Ctrl+c** 来停止这段脚本的运行。
 
-
-
-结论
+#### 结论
 
 在这里，我们看到了如何使用 ethers,js 从以太坊网络获取待处理的交易。 在他们的[文档](https://docs.ethers.io/v5/single-page/#/v5/api/providers/provider/-%23-Provider-中了解有关ethers.js中的事件过滤器和交易过滤器的更多信息 -事件）。
 订阅我们的 [newsletter](https://www.getrevue.co/profile/quiknode) 以获取有关以太坊的更多文章和指南。 如果您有任何反馈，请随时通过 [Twitter](https://twitter.com/QuickNode) 与我们联系。 您可以随时在我们的 [Discord](https://discord.gg/ahckhyA) 社区服务器上与我们聊天，其中包含您将遇到的一些最酷的开发人员 :)
