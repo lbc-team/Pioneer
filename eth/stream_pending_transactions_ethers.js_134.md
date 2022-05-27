@@ -13,7 +13,7 @@ https://www.youtube.com/embed/YjQj6uk9M98
 
 
 在这份指南中，我们将学会
-如何在以太坊和相似链使用 [ethers.js](https://docs.ethers.io/v5/). 流式处理待处理的交易 
+如何在以太坊和相似链使用 [ethers.js](https://docs.ethers.io/v5/). 处理待处理交易流 
 
 
 **先决条件**
@@ -44,11 +44,11 @@ https://www.youtube.com/embed/YjQj6uk9M98
 
 - 交易抢跑：在 DeFi 中，您可以预览即将到来的与价格相关的预言机相关交易，并可能对 MKR、COMP 和其他协议的保险库发出清算。
 
-流式处理待处理交易可能有很多案例——我们不会在这里全部介绍。
+处理待处理交易流可能有很多案例——我们不会在这里全部介绍。
 
 
 
-我们将使用 [ethers.js](https://docs.ethers.io/v5/) 通过 WebSockets 流式传输这些待处理的交易。在编写代码之前，让我们看看如何安装 ethers.js。
+我们将使用 [ethers.js](https://docs.ethers.io/v5/) 通过 WebSockets 处理这些待处理的交易流。在编写代码之前，让我们看看如何安装 ethers.js。
 
  
  
@@ -87,7 +87,7 @@ https://www.youtube.com/embed/YjQj6uk9M98
 
 #### 启动我们的以太坊节点
 
-对于我们今天的目的，我们几乎可以使用任何以太坊客户端，例如 Geth 或 OpenEthereum (fka Parity)。 由于要流式传输传入的新待处理交易，节点连接必须稳定可靠； 维护一个节点是一项具有挑战性的任务，我们只需 [从 QuickNode 获取一个免费的端点](https://www.quicknode.com/?utm_source=internal&utm_campaign=guides) 来简化这项工作。 创建免费的以太坊端点后，复制您的 WSS (WebSocket) Provider 端点。
+对于我们今天的目的，我们几乎可以使用任何以太坊客户端，例如 Geth 或 OpenEthereum (fka Parity)。 由于要处理传入的新待处理的交易流，节点连接必须稳定可靠； 维护一个节点是一项具有挑战性的任务，我们只需 [从 QuickNode 获取一个免费的端点](https://www.quicknode.com/?utm_source=internal&utm_campaign=guides) 来简化这项工作。 创建免费的以太坊端点后，复制您的 WSS (WebSocket) Provider 端点。
 
 
 
@@ -96,7 +96,7 @@ https://www.youtube.com/embed/YjQj6uk9M98
 
 你以后会需要它的，因此这会复制并且保存它。
 
-#### 流式处理待处理交易
+#### 处理待处理交易流
 
 创建一个简短的脚本文件pending.js，它将对传入的待处理交易进行交易过滤。将以下内容复制粘贴到文件中：
 
