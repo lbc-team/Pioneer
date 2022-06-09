@@ -115,17 +115,18 @@ function () payable public {
 function \_setImplementation(address \_newImp) internal {  
     implementation = \_newImp;  
 }  
-```
+
 
 }
-
+```
 To make the contract work, we need to first deploy the Proxy and ImplementationV1 and then call `upgradeTo(address)` function of the Proxy contract while passing the address of our ImplementationV1 contract. We can now forget about the ImplementationV1 contract’s address and treat the Proxy contract’s address as our main address.
 
 To upgrade the contract, we need to create a new implementation of the logic contract. It can be something along the lines of
 
+```
 contract ImplementationV2 is ImplementationV1 {
 
-```
+
 function addPlayer(address \_player, uint \_points)   
     public onlyOwner   
 {  
@@ -133,10 +134,10 @@ function addPlayer(address \_player, uint \_points)
     points\[\_player\] = \_points;  
     totalPlayers++;  
 }
-```
+
 
 }
-
+```
 > You should notice that this contract also inherits the StorageStructure contract, albeit, indirectly.
 
 All implementations must inherit the StorageStructure contract and it shall not be changed after the proxy is deployed to avoid unintended overwrite of proxy’s storage.
@@ -161,6 +162,7 @@ This eliminates the need for inheriting the StorageStructure contract in the pro
 
 > You can even use your existing contracts with this technique as it does not require any change in your implementation contract.
 
+```
 The proxy contract will look something like contract UnstructuredProxy {
 
 ```
