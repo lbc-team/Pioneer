@@ -1,30 +1,30 @@
 原文链接：https://hackernoon.com/how-to-make-smart-contracts-upgradable-2612e771d5a2
 
-# How to make smart contracts upgradable!
+# 写出可升级的智能合约！
 
 ![1_75FbnguPLUrHrruR8Ee3JQ.jpg](https://img.learnblockchain.cn/attachments/2022/05/ulFftgUr6294338248350.jpg)
 
-Smart contracts have evolved into being more than just basic contracts. Now we have whole ecosystems powered by Smart Contracts! No matter how careful we are or how well tested our code is, if we are creating a complex system, there is a good chance that we will need to update the logic to patch a bug, fix an exploit or add a necessary missing feature. Sometimes, we may even need to upgrade our smart contracts due to changes in EVM or newly found vulnerabilities.
+​		随着其自身发展，智能合约已经远非一个基础的“合约”而已了。 现在我们用智能合约创造了一整个生态！但是无论我们编码如何小心，测试如何细致，如果我们的系统变得复杂起来，就免不了更新逻辑去打补丁修bug，抵御恶意攻击或者增加必要的特性。有时，我们甚至需要升级合约去应对EVM的改变或者新发现的漏洞。
 
-Generally, developers can easily upgrade their software but blockchains are different as they are immutable. If we deploy a contract then it is out there with turning back no longer an option. However, if we use proper techniques, we can deploy a new contract at a different address and render the old contract useless. Following are some of the most common techniques for creating upgradable smart contracts.
+​		一般来说，开发者升级自己的软件很容易，但是区块链不一样，因为它们是不可变的。合约一旦部署，就不能反悔了。然而通过一些技术，我们可以在新地址部署一个新合约并使老合约无效化。下面所讲就是写可升级合约的几个最普遍的技术。
 
-### #Master-Slave contracts
+### 主从合约(Master-Slave contracts)
 
-Master-Slave technique is one of the most basic and easy to understand technique for making smart contracts upgradable. In this technique, we deploy a master contract along with all of the other contracts. The master contract stores the addresses of all other contracts and returns the required address whenever needed. The contracts act as slaves and fetch the latest address of other contracts from the master whenever they need to communicate with other contracts. To upgrade a smart contract, we just deploy it on the network and change the address in the master contract. Although this is far from the best way to develop upgradable contracts, It is the simplest. One of the many limitations of this method is that we can’t migrate the data or assets of the contract to a new contract easily.
+​		主从合约是智能合约可升级化最基础和易懂的技术之一。这个方法就是在部署其他所有合约的同时，部署一个主合约( master contract )。主合约储存其他所有合约的地址，并在需要查询时返回他们。这些合约就是作为"从合约"(slave contract)，他们需要和其他合约交互时都要去主合约那里查询最新的合约地址。我们只需要把新的从合约部署上去然后在主合约上修改地址记录，既可以完成合约升级了。 这自然不是开发可升级合约的最佳方法，但确是最简单的。这种方法有很多限制，比如老合约的数据和账户很难迁移到新合约。
 
-### #Eternal Storage contracts
+### 永久存储合约(Eternal Storage contracts)
 
-In this technique, we separate the logic and data contracts from each other. The data contract is supposed to be permanent and non-upgradable. The logic contract can be upgraded as many times as needed and the data contract is notified of the change. This is a fairly basic technique but has an obvious flaw. As the data contract is non-upgradable, any change required in the data structure or a bug / exploit in the data contract can render all the data useless. Another problem with this technique is that the logic contract will need to make an external call if it wants to access/manipulate data on the blockchain and external calls cost extra gas. This technique is usually combined with the Master-Slave technique to facilitate the inter contract communication.
+​		这个技术就是我们人为把逻辑合约( logic contract )和数据合约( data contract)分开。 数据合约做成永久的，不可升级的。逻辑合约可能多次升级，而数据合约去响应它的变化。 这个相当基础的方案有一个明显缺陷， 就是在数据合约不可升级的情况下，一旦存储有个bug或被攻击会导致所有的数据都不可用了。这个技术的另一个问题就是逻辑合约想要获取或者操作数据需要额外的一层调用，也就是产生额外的gas费了。它通常和主从合约结合使用，以改善合约内部的通信。
 
-### #Upgradable Storage Proxy Contracts
+### 可升级存储代理合约(Upgradable Storage Proxy Contracts)
 
-We can prevent paying for extra gas by making the eternal storage contracts act as a proxy to the logic contracts. The proxy contract, as well as the logic contract, will inherit the same storage contract so that their storage references align in the EVM. The proxy contract will have a fallback function that will delegate call the logic contract so that the logic contract can make changes in the storage of the proxy. The proxy contract will be eternal. This saves us the gas required for multiple calls to the storage contract as now, only one delegate call is needed no matter how many changes made in the data.
+​		我们可以通过让永久存储合约( eternal storage contracts )给逻辑合约做代理，以避免额外支出gas。代理合约(proxy contract)和逻辑合约继承自同一个存储合约，导致他们的存储在EVM中对齐。 代理合约的回退函数会委托调用逻辑合约，使得逻辑合约可以在代理中修改存储区。代理合约是永久的。 这使得我们省下了额外的gas，就算要多次修改存储区，也只有一次委托调用。
 
-#### #There are three components of this technique
+#### 该技术的三个组件：
 
-1. **Proxy contract**: It will act as eternal storage and delegate call the logic contract.
-2. **Logic contract**: It will do all the processing of the data.
-3. **Storage structure**: It contains the storage structure and is inherited by both proxy and logic contracts so that their storage pointers remain in sync on the blockchain.
+1. **代理合约(Proxy contract)**: 它作为永久的存储合约并委托调用逻辑合约
+2. **逻辑合约(Logic contract)**: 它会处理所有的数据
+3. **存储结构(Storage structure)**: 它包含存储的结构，并被前两者同时继承，所以它们的存储指针在区块链上同步。
 
 
 
@@ -34,64 +34,78 @@ We can prevent paying for extra gas by making the eternal storage contracts act 
 
 
 
-#### #Delegate Call
+#### 委托调用(Delegate Call)
 
-The core of this technique lies in the `DELEGATECALL` opcode provided by the EVM. `DELEGATECALL` is like a normal `CALL` except that the code at the target address is executed in the context of the calling contract (which invoked `DELEGATECALL`), and msg.sender and msg.value of the original call are preserved. Thus, when `DELEGATECALL` is used, the code at the target contract is executed, but the Storage, address, and balance of the calling contract are used. In other words, `DELEGATECALL` basically allows (delegates) target contract to do whatever it wants with the caller contract’s storage.
+​		这项技术依托于EVM的一个opcode:  `DELEGATECALL `，`DELEGATECALL`就像一个平常的`CALL`，不同点是`DELEGATECALL` 在目标地址调用时使用的是调用合约(就是调用`DELEGATECALL` 的合约)的上下文，同时保留原调用者的msg.sender和msg.value。因此使用`DELEGATECALL`的时候，代码是在目标合约执行，但是存储，地址和账户余额用的都是调用合约。换句话说`DELEGATECALL` 基本允许目标合约对调用者合约的存储区做任何事。
 
-We will use this to our advantage and create a proxy contract that will `DELEGATECALL` the Logic contract so that we can keep the data safe in the proxy contract while freely changing the logic contract as we see fit.
+​		我们将利用这点优势，创造一个委托调用逻辑合约的代理合约，以使得自由更改逻辑合约的情况下保持代理合约里数据的安全。
 
-#### #How to use upgradable storage proxy contracts?
+#### 怎么使用可存储代理合约？
 
-Let’s dive into a bit more details. The first contract we will need is the storage structure. It will define all the storage variables we need and will be inherited by both Proxy and Implementation contract. It will look something like contract StorageStructure {address public implementation;address public owner;mapping (address => uint) internal points;uint internal totalPlayers;}
+​		让我们深挖一点细节。我们需要创建的第一个合约是存储结构合约。它声明了所有的存储变量，又同时被代理合约和执行/逻辑合约继承。It will look something like 类似于这样
 
-We will now need an implementation/logic contract. Let’s create a buggy implementation that does not increment the totalPlayers counter when new players are added.
-
-contract ImplementationV1 is StorageStructure {modifier onlyOwner() {require (msg.sender == owner);_;}
-
-```
-function addPlayer(address \_player, uint \_points)   
-    public onlyOwner   
-{  
-    require (points\[\_player\] == 0);  
-    points\[\_player\] = \_points;  
+```solidity
+contract StorageStructure {
+	address public implementation;
+	address public owner;
+	mapping (address => uint) internal points;
+	uint internal totalPlayers;
 }
 ```
 
-function setPoints(address _player, uint _points)public onlyOwner{require (points[_player] != 0);points[_player] = _points;}}
+​		我们还需要一个执行/逻辑合约，我们创建一个简单的合约，新玩家加入时不增加totalPlayers计数。
 
-Now, the most critical part, the proxy contract.
+```solidity
+contract ImplementationV1 is StorageStructure {
+	modifier onlyOwner() {
+		require (msg.sender == owner);
+		_;
+	}
 
-contract Proxy is StorageStructure {
+	function addPlayer(address _player, uint _points) public onlyOwner {  
+    require (points[_player] == 0);  
+    points[_player] = _points;  
+	}
+
+	function setPoints(address _player, uint _points) public onlyOwner {
+		require (points[_player] != 0);
+		points[_player] = _points;}
+	}
+
 
 ```
-modifier onlyOwner() {  
+
+下边是最重要的，代理合约
+
+```solidity
+contract Proxy is StorageStructure {
+
+	modifier onlyOwner() {  
     require (msg.sender == owner);  
-    \_;  
-}  
-  
-/\*\*  
- \* [@dev](http://twitter.com/dev "Twitter profile for @dev") constructor that sets the owner address  
- \*/  
-constructor() public {  
+    _;  
+	}  
+
+/*  
+ * [@dev](http://twitter.com/dev "Twitter profile for @dev") constructor that sets the owner address  
+ */  
+	constructor() public {  
     owner = msg.sender;  
-}  
-  
-/\*\*  
- \* [@dev](http://twitter.com/dev "Twitter profile for @dev") Upgrades the implementation address  
- \* [@param](http://twitter.com/param "Twitter profile for @param") \_newImplementation address of the new implementation  
- \*/  
-function upgradeTo(address \_newImplementation)   
-    external onlyOwner   
-{  
-    require(implementation != \_newImplementation);  
-    \_setImplementation(\_newImplementation);  
-}  
-  
-/\*\*  
- \* [@dev](http://twitter.com/dev "Twitter profile for @dev") Fallback function allowing to perform a delegatecall   
- \* to the given implementation. This function will return   
- \* whatever the implementation call returns  
- \*/  
+	}  
+
+/*
+ * [@dev](http://twitter.com/dev "Twitter profile for @dev") Upgrades the implementation address  
+ * [@param](http://twitter.com/param "Twitter profile for @param") \_newImplementation address of the new implementation  
+ */  
+	function upgradeTo(address _newImplementation) external onlyOwner {  
+    require(implementation != _newImplementation);  
+    _setImplementation(_newImplementation);  
+	}  
+
+/*  
+ * [@dev](http://twitter.com/dev "Twitter profile for @dev") Fallback function allowing to perform a delegatecall   
+ * to the given implementation. This function will return   
+ * whatever the implementation call returns  
+ */  
 function () payable public {  
     address impl = implementation;  
     require(impl != address(0));  
@@ -107,235 +121,239 @@ function () payable public {
         default { return(ptr, size) }  
     }  
 }  
-  
-/\*\*  
- \* [@dev](http://twitter.com/dev "Twitter profile for @dev") Sets the address of the current implementation  
- \* [@param](http://twitter.com/param "Twitter profile for @param") \_newImp address of the new implementation  
- \*/  
-function \_setImplementation(address \_newImp) internal {  
-    implementation = \_newImp;  
-}  
+
+/*
+ * [@dev](http://twitter.com/dev "Twitter profile for @dev") Sets the address of the current implementation  
+ * [@param](http://twitter.com/param "Twitter profile for @param") \_newImp address of the new implementation  
+ */  
+	function _setImplementation(address _newImp) internal {  
+    implementation = _newImp;  
+	}  
 
 
 }
-```
-To make the contract work, we need to first deploy the Proxy and ImplementationV1 and then call `upgradeTo(address)` function of the Proxy contract while passing the address of our ImplementationV1 contract. We can now forget about the ImplementationV1 contract’s address and treat the Proxy contract’s address as our main address.
 
-To upgrade the contract, we need to create a new implementation of the logic contract. It can be something along the lines of
 
 ```
+
+​		为了让合约生效，我们需要先部署Proxy和ImplementationV1然后调用Proxy合约的`upgradeTo(address)` ，同时我们不再理会ImplementationV1的地址，现在我们忘掉ImplementationV1的合约地址然后把Proxy作为我们的主合约。
+
+​		为了升级合约我们需要再创建一个逻辑合约的实现ImplementationV2，看起来是这样的：
+
+```solidity
 contract ImplementationV2 is ImplementationV1 {
-
-
-function addPlayer(address \_player, uint \_points)   
-    public onlyOwner   
-{  
-    require (points\[\_player\] == 0);  
-    points\[\_player\] = \_points;  
+	function addPlayer(address _player, uint _points) public onlyOwner   {  
+    require (points[_player] == 0);  
+    points[_player] = _points;  
     totalPlayers++;  
-}
-
-
+	}
 }
 ```
-> You should notice that this contract also inherits the StorageStructure contract, albeit, indirectly.
+> 你应该注意到这个合约依然继承了存储结构合约，尽管是间接继承。
 
-All implementations must inherit the StorageStructure contract and it shall not be changed after the proxy is deployed to avoid unintended overwrite of proxy’s storage.
+​		所有的具体实现合约都必须继承自存储结构合约，并且在代理合约部署后不可更改，以避免代理合约的存储区的意外覆盖。
 
-To upgrade to the implementation, we deploy the ImplementationV2 contract on the network and then call `upgradeTo(address)` function of the Proxy contract while passing the address of the ImplementationV2 contract.
+​		为了升级具体实现的合约，我们在网络上部署ImplementationV2然后调用`upgradeTo(address)`同时不再理会ImplementationV2的地址
 
-This technique makes it fairly easy to upgrade the logic of our contract but it still does not allow us to upgrade the storage structure of our contract. We can solve that problem by using unstructured proxy contracts.
+ 		这个技术使得升级我们合约的逻辑变得简单，但是这依然不允许我们升级合约的存储结构，我们将用非结构化代理合约解决这个问题。
 
-### #Unstructured Upgradable Storage Proxy Contracts
+### 非结构化可升级存储代理合约(Unstructured Upgradable Storage Proxy Contracts)
 
-This is one of the most advanced methods to make contracts upgradable. It works by saving the addresses of the implementation and the owner at fixed positions in the storage such that they won’t be overwritten by the data being fed by the implementation/logic contract. We can use the `sload` and `sstore` opcodes to directly read and write to specific storage slots referenced by fixed pointers.
+​		这是合约可升级化的最先进方法之一。它通过存储执行合约和保存在固定位置的所有者的地址来保证数据不被执行/逻辑合约覆盖。我们可以使用`sload`和`sstore`操作码根据固定指针来直接读/写特定存储槽。
 
-This approach exploits the [layout of state variables in storage](https://solidity.readthedocs.io/en/latest/miscellaneous.html#layout-of-state-variables-in-storage) to avoid the fixed positions being overwritten by the logic contract. If we set the fixed position to something like `0x7` then it will get overwritten just after first 7 storage slots are used. To avoid this, we set the fixed storage position to something like `keccak256(“org.govblocks.implemenation.address”)`.
+​		这种方法利用了[状态变量在存储中的布局](https://solidity.readthedocs.io/en/latest/miscellaneous.html#layout-of-state-variables-in-storage)从而避免固定位置被逻辑合约覆盖。我们如果设置 `0x7` 为固定位置那么前七个存储槽被使用后它就会被覆盖。为了避免这种事，我们用`keccak256(“org.govblocks.implemenation.address”)`来设置固定位置。
 
-This eliminates the need for inheriting the StorageStructure contract in the proxy which means, we can now upgrade our storage structure as well. Upgrading storage structure is a tricky task though as we will need to make sure that our changes don’t cause the new storage layout to be misaligned with the previous storage layout.
+​		这就消解了代理合约继承存储结构合约的必要性，也就是我们现在可以升级存储结构合约了，然后升级存储结构合约依然难办，我们需要确保修改后新的存储布局和老的匹配。
 
-#### #There are two components of this technique
+#### 该技术的两个组件：
 
-1. Proxy Contract: It stores the address of the implementation contract at a fixed address and delegates calls to it.
+1. 代理合约: 它在一个固定地址存储执行合约的地址，并对其委托调用。
 
-2. Implementation contract: It is the main contract which holds the logic as well as the storage structure.
+2. 执行合约: 它作为主合约，保存所有的逻辑和数据结构。
 
-> You can even use your existing contracts with this technique as it does not require any change in your implementation contract.
+> 你甚至可以将此技术运用到现在的合约上，而不对执行合约做任何改动。
 
-```
-The proxy contract will look something like contract UnstructuredProxy {
+代理合约类似这样：
 
-```
+```solidity
+contract UnstructuredProxy {
+
 // Storage position of the address of the current implementation  
 bytes32 private constant implementationPosition =   
     keccak256("org.govblocks.implementation.address");  
-  
+
 // Storage position of the owner of the contract  
 bytes32 private constant proxyOwnerPosition =   
     keccak256("org.govblocks.proxy.owner");  
-  
-/\*\*  
-\* [@dev](http://twitter.com/dev "Twitter profile for @dev") Throws if called by any account other than the owner.  
-\*/  
+
+/**  
+* [@dev](http://twitter.com/dev "Twitter profile for @dev") Throws if called by any account other than the owner.  
+*/  
 modifier onlyProxyOwner() {  
     require (msg.sender == proxyOwner());  
-    \_;  
+    _;  
 }  
-  
-/\*\*  
-\* [@dev](http://twitter.com/dev "Twitter profile for @dev") the constructor sets owner  
-\*/  
+
+/**  
+* [@dev](http://twitter.com/dev "Twitter profile for @dev") the constructor sets owner  
+*/  
 constructor() public {  
-    \_setUpgradeabilityOwner(msg.sender);  
+    _setUpgradeabilityOwner(msg.sender);  
 }  
-  
-/\*\*  
- \* [@dev](http://twitter.com/dev "Twitter profile for @dev") Allows the current owner to transfer ownership  
- \* [@param](http://twitter.com/param "Twitter profile for @param") \_newOwner The address to transfer ownership to  
- \*/  
-function transferProxyOwnership(address \_newOwner)   
+
+/**  
+ * [@dev](http://twitter.com/dev "Twitter profile for @dev") Allows the current owner to transfer ownership  
+ * [@param](http://twitter.com/param "Twitter profile for @param") _newOwner The address to transfer ownership to  
+ */  
+function transferProxyOwnership(address _newOwner)   
     public onlyProxyOwner   
 {  
-    require(\_newOwner != address(0));  
-    \_setUpgradeabilityOwner(\_newOwner);  
+    require(_newOwner != address(0));  
+    _setUpgradeabilityOwner(_newOwner);  
 }  
-  
-/\*\*  
- \* [@dev](http://twitter.com/dev "Twitter profile for @dev") Allows the proxy owner to upgrade the implementation  
- \* [@param](http://twitter.com/param "Twitter profile for @param") \_implementation address of the new implementation  
- \*/  
-function upgradeTo(address \_implementation)   
+
+/**  
+ * [@dev](http://twitter.com/dev "Twitter profile for @dev") Allows the proxy owner to upgrade the implementation  
+ * [@param](http://twitter.com/param "Twitter profile for @param") \_implementation address of the new implementation  
+ */  
+function upgradeTo(address _implementation)   
     public onlyProxyOwner  
 {  
-    \_upgradeTo(\_implementation);  
+    _upgradeTo(_implementation);  
 }  
-  
-/\*\*  
- \* [@dev](http://twitter.com/dev "Twitter profile for @dev") Tells the address of the current implementation  
- \* [@return](http://twitter.com/return "Twitter profile for @return") address of the current implementation  
- \*/  
+
+/**  
+ * [@dev](http://twitter.com/dev "Twitter profile for @dev") Tells the address of the current implementation  
+ * [@return](http://twitter.com/return "Twitter profile for @return") address of the current implementation  
+ */  
 function implementation() public view returns (address impl) {  
     bytes32 position = implementationPosition;  
     assembly {  
         impl := sload(position)  
     }  
 }  
-  
-/\*\*  
- \* [@dev](http://twitter.com/dev "Twitter profile for @dev") Tells the address of the owner  
- \* [@return](http://twitter.com/return "Twitter profile for @return") the address of the owner  
- \*/  
+
+/**  
+ * [@dev](http://twitter.com/dev "Twitter profile for @dev") Tells the address of the owner  
+ * [@return](http://twitter.com/return "Twitter profile for @return") the address of the owner  
+ */  
 function proxyOwner() public view returns (address owner) {  
     bytes32 position = proxyOwnerPosition;  
     assembly {  
         owner := sload(position)  
     }  
 }  
-  
-/\*\*  
- \* [@dev](http://twitter.com/dev "Twitter profile for @dev") Sets the address of the current implementation  
- \* [@param](http://twitter.com/param "Twitter profile for @param") \_newImplementation address of the new implementation  
- \*/  
-function \_setImplementation(address \_newImplementation)   
+
+/**  
+ * [@dev](http://twitter.com/dev "Twitter profile for @dev") Sets the address of the current implementation  
+ * [@param](http://twitter.com/param "Twitter profile for @param") \_newImplementation address of the new implementation  
+ */  
+function _setImplementation(address _newImplementation)   
     internal   
 {  
     bytes32 position = implementationPosition;  
     assembly {  
-        sstore(position, \_newImplementation)  
+        sstore(position, _newImplementation)  
     }  
 }  
-  
-/\*\*  
- \* [@dev](http://twitter.com/dev "Twitter profile for @dev") Upgrades the implementation address  
- \* [@param](http://twitter.com/param "Twitter profile for @param") \_newImplementation address of the new implementation  
- \*/  
-function \_upgradeTo(address \_newImplementation) internal {  
+
+/**  
+ * [@dev](http://twitter.com/dev "Twitter profile for @dev") Upgrades the implementation address  
+ * [@param](http://twitter.com/param "Twitter profile for @param") \_newImplementation address of the new implementation  
+ */  
+function _upgradeTo(address _newImplementation) internal {  
     address currentImplementation = implementation();  
-    require(currentImplementation != \_newImplementation);  
-    \_setImplementation(\_newImplementation);  
+    require(currentImplementation != _newImplementation);  
+    _setImplementation(_newImplementation);  
 }  
-  
-/\*\*  
- \* [@dev](http://twitter.com/dev "Twitter profile for @dev") Sets the address of the owner  
- \*/  
-function \_setUpgradeabilityOwner(address \_newProxyOwner)   
+
+/**  
+ * [@dev](http://twitter.com/dev "Twitter profile for @dev") Sets the address of the owner  
+ */  
+function _setUpgradeabilityOwner(address _newProxyOwner)   
     internal   
 {  
     bytes32 position = proxyOwnerPosition;  
     assembly {  
-        sstore(position, \_newProxyOwner)  
+        sstore(position, _newProxyOwner)  
     }  
 }  
-```
 
 }
+```
 
-#### #How to use unstructured upgradable storage proxy contracts?
+#### 如何使用非结构化可升级存储代理合约？
 
-Using unstructured upgradable storage proxy contracts is fairly simple as this technique can work with almost all of the existing contracts. To use this technique, follow the below steps:
+​		使用非结构化存储代理合约非常简单，他可以应用到几乎所有的现存合约。以下是步骤：
 
-1. Deploy the proxy contract and the Implementation contract.
-2. call `upgradeTo(address)` function of the Proxy contract while passing the address of the Implementation contract.
+1. Deploy the proxy contract and the Implementation contract.部署代理合约和执行合约
+2. 调用代理合约的`upgradeTo(address)`同时不再理会执行合约的地址。
 
-We can now forget about the Implementation contract’s address and treat the Proxy contract’s address as the main address.
+​		我们现在可以忘掉执行合约的地址然后把代理合约的地址视为主地址。
 
-To upgrade to a new Implementation contract, we just have to deploy the new implementation contract and call the `upgradeTo(address)` function of the Proxy contract while passing the address of the new Implementation contract. It’s as simple as that!
+​		为了升级一个执行合约，我们只需要部署一个新的执行合约然后调用代理合约的`upgradeTo(address)`同时不再理会执行合约的地址。就是这么简单！
 
-Let’s see an example of how this works. We will again use the same logic contracts as we used in upgradable storage proxy contracts but we won’t need the storage structure. So, our ImplementationV1 can look something like contract ImplementationV1 {address public owner;mapping (address => uint) internal points;
+​		让我们通过一个简单的例子看看它是如何生效的。我们将再次使用可升级存储代理合约那一节的逻辑合约，但是不需要继承存储结构合约。所以我们的ImplementationV1应该是这样的：
 
 ```
+ImplementationV1 {
+address public owner;
+mapping (address => uint) internal points;
+
 modifier onlyOwner() {  
     require (msg.sender == owner);  
-    \_;  
+    _;  
 }  
     
 function initOwner() external {  
     require (owner == address(0));  
     owner = msg.sender;  
 }  
-  
-function addPlayer(address \_player, uint \_points)   
+
+function addPlayer(address _player, uint _points)   
     public onlyOwner   
 {  
-    require (points\[\_player\] == 0);  
-    points\[\_player\] = \_points;  
+    require (points[_player] == 0);  
+    points[_player\] = _points;  
 }  
-  
-function setPoints(address \_player, uint \_points)   
+
+function setPoints(address _player, uint _points)   
     public onlyOwner   
 {  
-    require (points\[\_player\] != 0);  
-    points\[\_player\] = \_points;  
+    require (points[_player] != 0);  
+    points[_player] = _points;  
 }  
-```
+
 
 }
 
-Next step would be to deploy this implementation and our proxy. Then, call `upgradeTo(address)` function of the Proxy contract while passing the address of the Implementation contract.
-
-You may notice that totalPlayers variable is not even declared in this implementation. We can upgrade this implementation to one which has totalPlayers variable declared and used. The new implementation could look something like contract ImplementationV2 is ImplementationV1 {uint public totalPlayers;
 
 ```
-function addPlayer(address \_player, uint \_points)   
-    public onlyOwner   
-{  
-    require (points\[\_player\] == 0);  
-    points\[\_player\] = \_points;  
+
+​		下一步就是部署执行合约和代理合约，然后调用代理合约的`upgradeTo(address)`同时不再理会执行合约的地址。
+
+​		你可能注意要在这个执行合约里totalPlayers甚至没有声明。我们可以升级这个执行合约让他被声明并使用，这个新的执行合约看起来是这样的：
+
+```solidity
+contract ImplementationV2 is ImplementationV1 {
+	uint public totalPlayers;
+	function addPlayer(address _player, uint _points) public onlyOwner {  
+    require (points[_player] == 0);  
+    points[_player] = _points;  
     totalPlayers++;  
-}  
+	}  
+}
 ```
 
-}
+​		为了升级执行合约，我们只需要部署合约，调用代理合约的 `upgradeTo(address)`同时不再理会我们新代理合约的地址，现在我们的合约已经可以在相同的地址持续记录totalPlayers了。
 
-To upgrade to this new implementation, all we have to do is deploy this contract on the network and, you guessed it right, call the `upgradeTo(address)` function of the Proxy contract while passing the address of our new Implementation contract. Now, our contract has evolved to keep a track of totalPlayers (new) while still being at the same address for the users.
+​		这个方法很强但是也有局限性，最重要的是代理合约的owner权限太大了。同时这种方法对于复杂的系统是不够用的，主从合约和非结构化可升级存储代理合约结合更适合构建需要可升级合约的dApp，这也是我们在 [GovBlocks](https://govblocks.io/)里使用的方法。
 
-This approach is extremely powerful but has a few limitations. One of the main concern is that the proxyOwner has too much power. Also, this approach alone is not enough for complex systems. A combination of Master-Slave and unstructured upgradable storage proxy contract is a more flexible approach for building a dApp with upgradable contracts and that’s exactly what we are using at [GovBlocks](https://govblocks.io/).
+### 总结
 
-### #Conclusion
+​		非结构化存储代理合约时最先进的合约可升级化技术之一，但是仍不完美。我们GovBlocks并不希望dApp所有者对d App有过多的控制权，毕竟他们是去中心化应用，所以我们决定在我们的代理合约中使用全网授权而非一个简单的proxyOwner。我会在下一篇文章里介绍我们是怎么做的。同时，我建议读者读一下Nitika的[论反对使用onlyOwner](https://medium.com/@nitikagoel2505/strengthening-the-weakest-link-in-smart-contract-security-onlyowner-c390d0e452b4) 。你也可以在github上看到我们的[代理合约](https://github.com/somish/govblocks-protocol/blob/npm/contracts/proxy/GovernedUpgradeabilityProxy.sol)。
 
-Unstructured Storage Proxy Contracts is one of the most advanced techniques out there to create upgradable smart contracts but it’s still not perfect. We, at GovBlocks, don’t want dApp owners to have unjustified control over the dApps. Afterall, they are Decentralized Applications! So, we decided to use a network-wide Authorizer in our proxy contracts rather than a simple proxyOwner. I will explain how we did this in a future article. Meanwhile, I recommend reading Nitika’s [argument against the use of onlyOwner](https://medium.com/@nitikagoel2505/strengthening-the-weakest-link-in-smart-contract-security-onlyowner-c390d0e452b4). You can also have a sneak peek of our [proxy contract on GitHub](https://github.com/somish/govblocks-protocol/blob/npm/contracts/proxy/GovernedUpgradeabilityProxy.sol).
-
-I hope that this post will help you in creating upgradable smart contracts!
+​		希望这篇文章能帮您写出可升级的智能合约！
 
 *Shoutout to Zepplin for* *[their work](https://github.com/zeppelinos/labs)* *on proxy techniques.*
 
