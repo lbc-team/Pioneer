@@ -1,83 +1,94 @@
 原文链接：https://chainstack.com/exploring-the-methods-of-looking-into-ethereums-transaction-pool/
 
-# Exploring the methods of looking into Ethereum’s transaction pool
+# 探索查看以太坊交易池的方法
 
 ![img](https://chainstack.com/wp-content/uploads/2020/12/image-1-1024x542.png)
+ 
 
-## Introduction
+## 介绍
+以太坊主网的内存池（称为交易池或 txpool）是动态内存中的区域，在那有待处理的交易驻留在其中，之后它们会被静态地包含在一个块中。
 
-The mempool of the Ethereum mainnet—called transaction pool or txpool—is the dynamic in-memory area where pending transactions reside before they are included in a block and thus become static.
+全局 txpool 的概念有点抽象，因为没有被所有待处理交易定义一个单独的池。 相反，以太坊主网上的每个节点都有自己的交易池，它们共同构成了全局池。
 
-The notion of a global txpool is a bit abstract as there is no single defined pool for all pending transactions. Instead, each node on the Ethereum mainnet has its own pool of transactions and, combined, they all form the global pool.
+交易在网络上广播并在被包含在块中之前，进入全局交易池的数千个待处理交易是一个不断变化的数据集，在任何给定的秒内都有数百万美元的流水。
 
-The thousands of pending transactions that enter the global pool by being broadcast on the network and before being included in a block are an always changing data set that’s holding millions of dollars at any given second.
+在这里可以做很多事情——很多人都可以做，并使这个 txpool 业务成为一个竞争激烈的市场。
 
-There’s a lot that one can do here—and many do and make this txpool business a highly competitive market.
 
-A few examples, listed in the order of inconspicuous to contentious:
+几个例子，按从不显眼到有争议的顺序列出：
 
-- Yield farming — you can watch the transactions movement between DeFi applications to be one of the first to detect the yield farming profitability changes.
-- Liquidity providing — you detect the potential liquidity movements in and out of DeFi applications and act on the changes.
-- Arbitrage — you can detect the movement of transactions that will affect token prices at different DEXes and make your arbitrage trades based on that.
-- Front running — you can automatically grab the existing pending transactions, simulate them to identify the potential profit if the transaction is executed, copy the transaction and swap the existing address with your own, and submit it with a higher miner fee so that your transaction gets executed on-chain before the one you are copying.
-- Doing a MEV — MEV stands for Miner Extractable Value, and it’s based on that miners are theoretically free to include any transactions in the blocks and/or reorder them. This is a variation of the front running where instead of submitting your transaction with a higher fee to the same pool you picked it from, you get it directly into a block through a miner and bypass the pool.
+- 收益农场 —— 你可以观察 DeFi 应用程序之间的交易动态，成为最先检测到收益农场盈利能力变化的应用程序之一。
 
-To run any of the described scenarios, you need access to the Ethereum txpool, and you need the methods to retrieve the transactions from the txpool. While Chainstack has you covered with fast dedicated nodes for the former, this article focuses on all the ways you can look into the txpool.
+- 流动性提供 —— 你检测进出 DeFi 应用程序的潜在流动性变动并根据这些变化采取行动。
 
-## Retrieving pending transactions with Geth
 
-Since pending transactions are your targets in the txpool space, we are now going to make this a structured effort and focus on answering the following questions while accompanying the answers with practical examples:
+- 套利 —— 你可以检测会影响不同 DEX 代币价格的交易动向，并以此为基础进行套利交易。
 
-- How do I retrieve pending transactions?
-- Why do I view global or local pending transactions?
-- Can I view global pending transactions without txpool namespace?
+- 前端运行 —— 你可以自动抓取现有的待处理交易，模拟它们以识别交易执行后的潜在利润，复制交易并将现有地址与你自己的交换，并以更高的矿工费提交，以便你的交易得到在你复制之前在链上执行。
 
-There are a few ways to retrieve pending transactions.
+- 做 MEV —— MEV 代表矿工可提取价值，它基于矿工理论上可以自由地将任何交易包含在区块中和/或重新排序它们。这是前端运行的一种变体，你无需以更高的费用将交易提交到你从中选择的同一个池中，而是通过矿工将其直接放入一个区块并绕过交易池。
 
-- Filters
-- Subscriptions
-- Txpool API
+要运行任何描述的场景，你需要访问以太坊交易池，并且你需要从交易池中检索交易的方法。 虽然 Chainstack 为你介绍了前者的快速专用节点，但本文重点介绍了你可以查看 txpool 的所有方式。
+ 
+## 使用 Geth 检索待处理的交易
+由于待处理的交易是你在 txpool 空间中的目标，我们现在将使其成为结构化的工作，并专注于回答以下问题，同时附上实际示例的答案：
+
+- 如何检索待处理的交易？
+- 为什么要查看全局或本地待处理交易？
+- 我可以在没有 txpool 命名空间的情况下查看全局待处理交易吗？
+ 
+
+有几种方法可以检索待处理的交易。
+
+- 过滤器
+- 订阅
+- 交易池 API
 - GraphQL API
 
-Before we start, lets clarify a few things:
+ 
 
-- **Global pending transactions** refer to pending transactions that are happening globally, which includes your newly created local pending transactions.
-- **Local pending transactions** refer strictly to the transactions that you created on your local node. Note that you need ‘personal’ namespace enabled for Geth to send local transactions.
-- **Pending transactions** refer to transactions that are pending due to various reasons, like extremely low gas, out of order nonce, etc.
-- Chainstack is using **Geth (Go Ethereum)** client.
+在我们开始之前，让我们搞清楚一些事情：
 
-### Filters
+- **全局待处理交易**是指全局发生的待处理交易，包括你新创建的本地待处理交易。
+- **本地待处理交易**严格指你在本地节点上创建的交易。 请注意，你需要为 Geth 启用“个人”命名空间才能发送本地交易。
+- **待处理交易**是指由于各种原因而待处理的交易，例如极低的gas、乱序随机数等。
+- Chainstack 正在使用 **Geth (Go Ethereum)** 客户端。
 
-When we create a filter on Geth, Geth will return a unique `filter_id`. Do note that this `filter_id` will only live for 5 minutes from the last query on that specific filter. If you query this filter after 5 minutes, the filter will not exist anymore.
 
-#### Creating a pending transaction filter and retrieving data from it
+### 过滤器
+
+当我们在 Geth 上创建过滤器时，Geth 将返回一个唯一的 `filter_id`。 请注意，从对该特定过滤器的最后一次查询开始，这个 `filter_id` 只会存在 5 分钟。 如果你在 5 分钟后查询此过滤器，则该过滤器将不再存在。
+
+#### 创建待处理交易过滤器并从中检索数据
+
 
 ##### cURL
 
-**Create filter**
+**创建过滤器**
 
-Request body:
+请求体:
 
 ```rust
 '{"jsonrpc":"2.0","method":"eth_newPendingTransactionFilter","params":[],"id":1}'
 ```
 
-Response body:
+响应体:
 
 ```json
 { "id":1, "jsonrpc": "2.0", "result": "0xb337f6e2f833ecffc6e9315ba06cd03d" }
 ```
 
-**Access filter**
 
-Request body:
+**访问过滤器**
+
+请求体:
 
 ```rust
 '{"jsonrpc":"2.0","method":"eth_getFilterChanges","params":
 ["0xb337f6e2f833ecffc6e9315ba06cd03d"],"id":2}'
 ```
 
-Response body:
+响应体:
 
 ```bash
 {"jsonrpc":"2.0","id":1,"result":
@@ -86,85 +97,85 @@ Response body:
 
 ##### Web3.js
 
-Filter for pending transactions is not supported anymore. Please use [Subscriptions](https://chainstack.com/exploring-the-methods-of-looking-into-ethereums-transaction-pool/#subscriptions).
-
+不再支持过滤待处理交易。 请使用[订阅](https://chainstack.com/exploring-the-methods-of-looking-into-ethereums-transaction-pool/#subscriptions).
+ 
 ##### Web3.py
 
-**Create filter**
+**创建过滤器**
 
 ```ini
 pending_transaction_filter= web3.eth.filter('pending')
 ```
 
-**Access filter**
+**访问过滤器**
 
 ```scss
 print(pending_transaction_filter.get_new_entries())
 ```
+ 
+### 过滤器混淆的常见问题
 
-### Common sources of confusion on filters
+#### Web3.py 和pending参数
 
-#### Web3.py and the pending argument
+为什么 web3.py 的输入参数是 *pending* 而不是包含常用过滤器参数，例如 `fromBlock`、`toBlock`、`address`、`topics`。
 
-Why does web3.py have their input arguments as *pending* instead of a dictionary which contains the usual filter parameters like `fromBlock`, `toBlock`, `address`, `topics`.
 
-This is because Web3 does the mapping internally. If we look at the [web3.py source code](https://github.com/ethereum/web3.py/blob/72457e6f9f3cb6d51fe492d1a65bed7904639760/web3/eth.py#L474), when web3.py receives a string pending, it will be mapped to `eth_newPendingTransactionFilter`, and when web3.py receives a dictionary, it is mapped to `eth_newFilter`.
+这是因为 Web3 在内部进行映射。 如果我们查看 [web3.py 源代码](https://github.com/ethereum/web3.py/blob/72457e6f9f3cb6d51fe492d1a65bed7904639760/web3/eth.py#L474)，当 web3.py 收到一个待处理的字符串时，它 会映射到 `eth_newPendingTransactionFilter`，当 web3.py 收到字典参数时，会映射到 `eth_newFilter`。
+ 
+除此之外，web3.py 有 `get_new_entries` 和 `get_all_entries` 用于过滤器，但 `get_all_entries` 在我们的例子中不起作用。 这是因为 `eth_newPendingTransactionFilter` 没有可用的 `get_all_entries`。
+ 
+#### 从最新块到待处理块的过滤器
 
-To add to this, web3.py has `get_new_entries` as well as `get_all_entries` for filters but `get_all_entries` does not work in our case. This is because `eth_newPendingTransactionFilter` does not have `get_all_entries` available for it.
+为什么下面的过滤器没有给我实时的待处理交易？
 
-#### From latest block to pending block filter
-
-Why doesn’t the following filter give me real-time pending transactions?
 
 ```python
 web3.eth.filter({'fromBlock': 'latest', 'toBlock': 'pending'})
 ```
+过滤器仅在状态更改时返回`new_entries()`。 仅当有新的最新块或待处理块时，此特定过滤器状态才会更改。 因此，只有在有新的最新块或待处理块时，你才会收到更改，即 `(eth.getBlock('latest') / pending)`。
 
-A filter only returns `new_entries()` when the state has changed. This specific filter state changes only when there is a new latest block or pending block. Thus, you will only receive changes when there is a new latest block or pending block, i.e. `(eth.getBlock('latest') / pending)`.
+#### getPendingTransactions 过滤器
 
-#### The getPendingTransactions filter
-
-Why is the following giving me a different or empty result?
+为什么给我一个不同或空的结果？
 
 ```scss
 web3.eth.getPendingTransactions().then(console.log)
 ```
+ 
+此函数映射到 `eth.pendingTransactions`，这是一个检查本地待处理交易的函数，不会为你提供全局交易。
 
-This function is mapped to `eth.pendingTransactions` which is a function to check local pending transactions and does not give you global transactions.
+基于 [Geth 源代码](https://github.com/ethereum/go-ethereum/blob/ead814616c094331915b03edd82d4200a7880178/internal/ethapi/api.go#L1700)，只有 `pendingTransactions` 的 `from` 字段匹配 将显示你的个人帐户。
+ 
 
-Based on the [Geth source code](https://github.com/ethereum/go-ethereum/blob/ead814616c094331915b03edd82d4200a7880178/internal/ethapi/api.go#L1700), only `pendingTransactions` that has its `from` field matching with your personal account will be shown.
+### 订阅
 
-### Subscriptions
+订阅是通过 WebSocket 从服务器到客户端的实时数据流。 你将需要一个持续活跃的连接来流式传输此类事件。 你不能为此使用 curl，如果你想通过命令行访问它，则必须使用像 [websocat](https://github.com/vi/websocat) 这样的 WebSocket 客户端。 执行后，待处理的交易 ID 流将开始流入。
+ 
 
-Subscriptions is real-time streaming of data from server to client through WebSocket. You will need a constantly active connection to stream such events. You cannot use curl for this and have to use a WebSocket client like [websocat](https://github.com/vi/websocat) if you want to access it via command line. Once executed, a stream of pending transaction IDs will start flowing in.
+对于其他受支持的订阅，请查看 Geth 文档：[支持的订阅](https://geth.ethereum.org/docs/rpc/pubsub#supported-subscriptions)。
 
-For other supported subscriptions, check the Geth documentation: [Supported Subscriptions](https://geth.ethereum.org/docs/rpc/pubsub#supported-subscriptions).
-
-#### Creating a subscription
+#### 创建订阅
 
 ##### Websocat
 
-**Connect to node**
+**连接节点**
 
 ```perl
 websocat wss://username:password@ws-nd-123-456-789.p2pify.com
 ```
+**创建订阅**
 
-**Create subscription**
-
-Request body:
+请求体:
 
 ```json
 {"id": 1, "method": "eth_subscribe", "params": ["newPendingTransactions"]}
 ```
-
-Response body:
+响应体:
 
 ```json
 {"jsonrpc":"2.0","id":1,"result":"0x2d4f3eb938cdb0b6fa9052de7c4da5de"}
 ```
-
-**Incoming stream**
+ **传入流**
 
 ```bash
 {"jsonrpc":"2.0","method":"eth_subscription","params":
@@ -172,42 +183,44 @@ Response body:
 433d5de600347e97b6a8a855daf8765c18cf1b7efc53461"}}
 ...
 ```
+ 
+### 常见困惑的问题订阅
 
-### Common sources of confusion on subscriptions
+#### Web3.js 'pendingTransactions' 和 Geth 'newPendingTransactions'
 
-#### Web3.js ‘pendingTransactions’ and Geth ‘newPendingTransactions’
+Web3.js 将 `pendingTransactions` WebSocket 调用直接映射到 Geth JSON-RPC API 中的 `newPendingTransactions`。
 
-Web3.js has the `pendingTransactions` WebSocket calls mapped directly to `newPendingTransactions` in Geth JSON-RPC API.
+要使用 web3.js 订阅待处理交易，你必须使用 `pendingTransactions`。
+ 
+要使用 Geth JSON-RPC API 订阅待处理交易，你必须使用`newPendingTransactions`。
 
-To subscribe to pending transactions using web3.js, you must use `pendingTransactions`.
-
-To subscribe to pending transactions using Geth JSON-RPC API, you must use `newPendingTransactions`.
-
-For detailed instructions and code samples on how to subscribe using web3.js, see [Subscribing to global new pending transactions with web3.js](https://support.chainstack.com/hc/en-us/articles/900003426246-Subscribing-to-global-new-pending-transactions).
+有关如何使用 web3.js 订阅的详细说明和代码示例，请参阅[使用 web3.js 订阅全球新的待处理交易](https://support.chainstack.com/hc/en-us/articles/900003426246-Subscribing -to-global-new-pending-transactions)。
 
 ### Txpool API
+Txpool 是一个特定于 Geth 的 API 命名空间，它在本地内存池中保存待处理和排队的交易。 Geth 的默认值为 4096 个待处理交易和 1024 个排队交易。 但是，[Etherscan 报告](https://etherscan.io/txsPending) 待处理的交易数量要大得多。 如果我们查看 Geth 的 txpool，我们将无法获得所有交易。 一旦 4096 池已满，Geth 就会用新的待处理交易替换旧的待处理值。
 
-Txpool is a Geth-specific API namespace that keeps pending and queued transactions in the local memory pool. Geth’s default is 4096 pending and 1024 queued transactions. However, [Etherscan reports](https://etherscan.io/txsPending) a much bigger number of pending transactions. If we view Geth’s txpool, we will not be able to get all of the transactions. Once the pool of 4096 is full, Geth replaces older pending values with newer pending transactions.
 
-If you need a bigger pool to be stored on your node, the flag `--txpool.globalslots` can be adjusted to a higher value on [Geth CLI options](https://geth.ethereum.org/docs/interface/command-line-options). Do note that the larger the number, the bigger the payload size.
+如果你需要在节点上存储更大的池，可以在 [Geth CLI 选项](https://geth.ethereum.org/docs/interface/) 上将标志 `--txpool.globalslots` 调整为更高的值 命令行选项）。 请注意，数字越大，有效载荷越大。
 
-If you see your `txpool_status` to be empty, it can mean your node has not fully synced.
+如果你看到 `txpool_status` 为空，则可能意味着你的节点尚未完全同步。
 
-The txpool namespace is only supported on Chainstack dedicated nodes.
+txpool 命名空间仅在 Chainstack 专用节点上受支持。
 
-#### Use ‘txpool_content’ to get the pending and queued transactions
+
+#### 使用‘txpool_content’获取待处理和排队的交易
 
 ##### cURL
 
-**Create filter**
 
-Request body:
+**创建过滤器**
+
+请求体:
 
 ```json
 {"jsonrpc":"2.0","method":"txpool_content","id":1}
 ```
 
-Response body:
+响应体:
 
 ```bash
 { "jsonrpc": "2.0", "id": 1, "result": { "pending": {...}, "queued": {...} } }
@@ -215,7 +228,7 @@ Response body:
 
 ##### Web3.js
 
-`txpool_content` is not supported.
+`txpool_content` 不被支持.
 
 ##### Web3.py
 
@@ -223,11 +236,12 @@ Response body:
 
 ### GraphQL API
 
-The biggest advantage of [using GraphQL](https://chainstack.com/graphql-on-ethereum-availability-on-chainstack-and-a-quick-rundown/) is that you can filter out the specific fields of the transaction that you want. The query in GraphQL goes through the elements within the txpool. Thus, its limitations are the same as the ones of txpool as stated above.
+[使用 GraphQL](https://chainstack.com/graphql-on-ethereum-availability-on-chainstack-and-a-quick-rundown/) 的最大优点是可以过滤掉交易的具体字段 你要的那个。 GraphQL 中的查询会遍历 txpool 中的元素。 因此，它的限制与上述 txpool 的限制相同。
 
-The following is an example which shows the information of a pending transaction.
+以下是显示待处理交易信息的示例。
 
-Query example:
+
+查询实例:
 
 ```css
 query {
@@ -254,15 +268,16 @@ query {
     }
   }
 }
-```
+``` 
 
-GraphQL API is currently supported on Chainstack [dedicated Ethereum nodes](https://chainstack.com/pricing/).
+Chainstack [专用以太坊节点](https://chainstack.com/pricing/) 目前支持 GraphQL API。
 
-I hope this blog serves you well in understanding the various ways of retrieving pending transactions.
+我希望这个博客能很好地帮助你了解检索待处理交易的各种方式。
 
-## Additional resources
+
+## 额外信息
 
 - [Web3.js](https://web3js.readthedocs.io/)
-- [Ethereum JSON-RPC API](https://eth.wiki/json-rpc/API)
-- [Checking pending and queued transactions in your Ethereum node’s local pool](https://support.chainstack.com/hc/en-us/articles/900000820506-Checking-pending-and-queued-transactions-in-your-Ethereum-node-s-local-pool)
-- [Subscribing to global new pending transaction with web3.js](https://support.chainstack.com/hc/en-us/articles/900003426246-Subscribing-to-global-new-pending-transactions)
+- [以太坊 JSON-RPC API](https://eth.wiki/json-rpc/API)
+- [检查以太坊节点本地池中的待处理和排队交易](https://support.chainstack.com/hc/en-us/articles/900000820506-Checking-pending-and-queued-transactions-in-your-Ethereum -node-s-local-pool)
+- [使用 web3.js 订阅全球新待处理交易](https://support.chainstack.com/hc/en-us/articles/900003426246-Subscribing-to-global-new-pending-transactions)
