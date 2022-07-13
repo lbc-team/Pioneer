@@ -8,7 +8,7 @@
 ## 介绍
 以太坊主网的内存池（称为交易池或 txpool）是动态内存中的区域，在那有待处理的交易驻留在其中，之后它们会被静态地包含在一个块中。
 
-全局 txpool 的概念有点抽象，因为没有被所有待处理交易定义一个单独的池。 相反，以太坊主网上的每个节点都有自己的交易池，它们共同构成了全局池。
+全局 txpool 的概念有点抽象，因为它不是为所有待处理交易定义一个单独的池。 相反，以太坊主网上的每个节点都有自己的交易池，它们共同构成了全局池。
 
 交易在网络上广播并在被包含在块中之前，进入全局交易池的数千个待处理交易是一个不断变化的数据集，在任何给定的秒内都有数百万美元的流水。
 
@@ -24,11 +24,11 @@
 
 - 套利 —— 你可以检测会影响不同 DEX 代币价格的交易动向，并以此为基础进行套利交易。
 
-- 前端运行 —— 你可以自动抓取现有的待处理交易，模拟它们以识别交易执行后的潜在利润，复制交易并将现有地址与你自己的交换，并以更高的矿工费提交，以便你的交易得到在你复制之前在链上执行。
+- 抢跑 —— 你可以自动抓取现有的待处理交易，模拟它们以识别交易执行后的潜在利润，复制交易并将现有地址替换为自己的地址，并以更高的矿工费提交，以便你的交易得到在被你复制的交易之前在链上执行。
 
-- 做 MEV —— MEV 代表矿工可提取价值，它基于矿工理论上可以自由地将任何交易包含在区块中和/或重新排序它们。这是前端运行的一种变体，你无需以更高的费用将交易提交到你从中选择的同一个池中，而是通过矿工将其直接放入一个区块并绕过交易池。
+- 做 MEV —— MEV 代表矿工可提取价值，它基于矿工理论上可以自由地将任何交易包含在区块中和/或重新排序它们。这是抢跑的一种变体，你无需以更高的费用将交易提交到你从中选择的同一个池中，而是通过矿工将其直接放入一个区块并绕过交易池。
 
-要运行任何描述的场景，你需要访问以太坊交易池，并且你需要从交易池中检索交易的方法。 虽然 Chainstack 为你介绍了前者的快速专用节点，但本文重点介绍了你可以查看 txpool 的所有方式。
+要运行任何以上描述的场景，你需要访问以太坊交易池，并且你需要从交易池中检索交易的方法。 虽然 Chainstack 为你介绍了前者的快速专用节点，但本文重点介绍了你可以查看 txpool 的所有方式。
  
 ## 使用 Geth 检索待处理的交易
 由于待处理的交易是你在 txpool 空间中的目标，我们现在将使其成为结构化的工作，并专注于回答以下问题，同时附上实际示例的答案：
@@ -50,8 +50,8 @@
 在我们开始之前，让我们搞清楚一些事情：
 
 - **全局待处理交易**是指全局发生的待处理交易，包括你新创建的本地待处理交易。
-- **本地待处理交易**严格指你在本地节点上创建的交易。 请注意，你需要为 Geth 启用“个人”命名空间才能发送本地交易。
-- **待处理交易**是指由于各种原因而待处理的交易，例如极低的gas、乱序随机数等。
+- **本地待处理交易**严格指你在本地节点上创建的交易。 请注意，你需要为 Geth 启用“personal”命名空间才能发送本地交易。
+- **待处理交易**是指由于各种原因而待处理的交易，例如极低的gas、乱序nonce等。
 - Chainstack 正在使用 **Geth (Go Ethereum)** 客户端。
 
 
@@ -152,7 +152,7 @@ web3.eth.getPendingTransactions().then(console.log)
 订阅是通过 WebSocket 从服务器到客户端的实时数据流。 你将需要一个持续活跃的连接来流式传输此类事件。 你不能为此使用 curl，如果你想通过命令行访问它，则必须使用像 [websocat](https://github.com/vi/websocat) 这样的 WebSocket 客户端。 执行后，待处理的交易 ID 流将开始流入。
  
 
-对于其他受支持的订阅，请查看 Geth 文档：[支持的订阅](https://geth.ethereum.org/docs/rpc/pubsub#supported-subscriptions)。
+对于其他可支持的订阅内容，请查看 Geth 文档：[支持的订阅](https://geth.ethereum.org/docs/rpc/pubsub#supported-subscriptions)。
 
 #### 创建订阅
 
@@ -184,7 +184,7 @@ websocat wss://username:password@ws-nd-123-456-789.p2pify.com
 ...
 ```
  
-### 常见困惑的问题订阅
+### 使用订阅易混淆的常见问题
 
 #### Web3.js 'pendingTransactions' 和 Geth 'newPendingTransactions'
 
@@ -194,7 +194,7 @@ Web3.js 将 `pendingTransactions` WebSocket 调用直接映射到 Geth JSON-RPC 
  
 要使用 Geth JSON-RPC API 订阅待处理交易，你必须使用`newPendingTransactions`。
 
-有关如何使用 web3.js 订阅的详细说明和代码示例，请参阅[使用 web3.js 订阅全球新的待处理交易](https://support.chainstack.com/hc/en-us/articles/900003426246-Subscribing -to-global-new-pending-transactions)。
+有关如何使用 web3.js 订阅的详细说明和代码示例，请参阅[使用 web3.js 订阅全局新的待处理交易](https://support.chainstack.com/hc/en-us/articles/900003426246-Subscribing -to-global-new-pending-transactions)。
 
 ### Txpool API
 Txpool 是一个特定于 Geth 的 API 命名空间，它在本地内存池中保存待处理和排队的交易。 Geth 的默认值为 4096 个待处理交易和 1024 个排队交易。 但是，[Etherscan 报告](https://etherscan.io/txsPending) 待处理的交易数量要大得多。 如果我们查看 Geth 的 txpool，我们将无法获得所有交易。 一旦 4096 池已满，Geth 就会用新的待处理交易替换旧的待处理值。
@@ -236,7 +236,7 @@ txpool 命名空间仅在 Chainstack 专用节点上受支持。
 
 ### GraphQL API
 
-[使用 GraphQL](https://chainstack.com/graphql-on-ethereum-availability-on-chainstack-and-a-quick-rundown/) 的最大优点是可以过滤掉交易的具体字段 你要的那个。 GraphQL 中的查询会遍历 txpool 中的元素。 因此，它的限制与上述 txpool 的限制相同。
+[使用 GraphQL](https://chainstack.com/graphql-on-ethereum-availability-on-chainstack-and-a-quick-rundown/) 的最大优点是可以过滤掉你认为是具体的交易字段。 GraphQL 中的查询会遍历 txpool 中的元素。 因此，它的限制与上述 txpool 的限制相同。
 
 以下是显示待处理交易信息的示例。
 
@@ -280,4 +280,4 @@ Chainstack [专用以太坊节点](https://chainstack.com/pricing/) 目前支持
 - [Web3.js](https://web3js.readthedocs.io/)
 - [以太坊 JSON-RPC API](https://eth.wiki/json-rpc/API)
 - [检查以太坊节点本地池中的待处理和排队交易](https://support.chainstack.com/hc/en-us/articles/900000820506-Checking-pending-and-queued-transactions-in-your-Ethereum -node-s-local-pool)
-- [使用 web3.js 订阅全球新待处理交易](https://support.chainstack.com/hc/en-us/articles/900003426246-Subscribing-to-global-new-pending-transactions)
+- [使用 web3.js 订阅全局新待处理交易](https://support.chainstack.com/hc/en-us/articles/900003426246-Subscribing-to-global-new-pending-transactions)
