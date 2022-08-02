@@ -1,80 +1,99 @@
 原文链接：https://dev.to/jacobedawson/import-test-a-popular-nft-smart-contract-with-hardhat-ethers-12i5
 
 ![06537eazw81rxn3xzv54.jpg](https://img.learnblockchain.cn/attachments/2022/05/BuyLYxvN62942b1836696.jpg)
+ 
 
-# Import & Test a Popular NFT Smart Contract with Hardhat & Ethers
+# 用hardhat和Ethers引入测试知名的NFT智能合约
 
-Today we're going to learn how to use the very cool [smart-contract development framework Hardhat](https://hardhat.org/) to locally import & test a publicly deployed smart contract. To make things fun & relevant, we'll be using the [Bored Ape Yacht Club](https://boredapeyachtclub.com/) NFT smart contract in our example. Using a well-known project's smart contract should make it clear how open the Ethereum ecosystem is, and how many opportunities there are to get started in Dapp and smart contract development!
+今天我们将学习如何使用非常酷的[智能合约开发框架Hardhat](https://hardhat.org/),在本地导入,并且测试公开部署的智能合约。 为了让事情变得有趣和相关，我们将在示例中使用 Bored Ape Yacht Club NFT 智能合约。使用知名项目的智能合约应该清楚以太坊生态的开放程度，以及有多少上手Dapp和智能合约开发的机会！
 
-By the end of this tutorial you will know the following:
 
-- How to find smart contract code for specific projects
-- How to add that code to a local development environment
-- How to install & set-up a simple Hardhat development environment
-- How to compile a contract and write tests for it
+在本教程结束时，你将了解以下内容：
 
-This tutorial won't involve any front-end development, but if you're interested in understanding how to get started with Web3 dapp development, feel free to check out my previous tutorials here on dev.to:
+- 如何找到特定项目的智能合约代码
+- 如何将该代码添加到本地开发环境
+- 如何安装和设置一个简单的Hardhat开发环境
+- 如何编译合约并为其编写测试功能
 
-- [Build a Web3 Dapp in React & Login with MetaMask](https://dev.to/jacobedawson/build-a-web3-dapp-in-react-login-with-metamask-4chp)
-- [Send React Web3 Transactions via MetaMask with useDapp](https://dev.to/jacobedawson/send-react-web3-dapp-transactions-via-metamask-2b8n)
 
-### Step 1: Finding the Smart Contract Code
 
-To begin with, we're going to start by choosing a project (Bored Ape Yacht Club), and then tracking down the smart contract code. Personally the first thing I'd do in this case is quickly check out the website of the project in question to see if they have a link to their contracts. In this case, https://boredapeyachtclub.com/ only contains social links, so we'll have to look elsewhere.
+本教程不涉及任何前端开发，但如果你有兴趣了解如何开始 Web3 dapp 开发，请随时在 dev.to 上查看我以前的教程：
 
-Since Bored Ape Yacht Club is an Ethereum-based NFT project, our next port of call will be [Etherscan](https://etherscan.io/), the Ethereum blockchain explorer. Since I know that Bored Ape Yacht Club uses the symbol BAYC, I can just search for that symbol using Etherscan (why, yes, I use dark mode on everything, how could you tell?):
+ 
+- [在 React 中构建 Web3 Dapp, 并使用 MetaMask 登录](https://dev.to/jacobedawson/build-a-web3-dapp-in-react-login-with-metamask-4chp)
+- [使用 useDapp 通过 MetaMask 发送 React Web3 交易](https://dev.to/jacobedawson/send-react-web3-dapp-transactions-via-metamask-2b8n)
+
+
+
+### 第 1 步：查找智能合约代码
+
+
+首先，我们将首先选择一个项目（Bored Ape Yacht Club），然后追踪智能合约代码。 就个人而言，在这种情况下，我要做的第一件事是快速查看相关项目的网站，看看他们是否有指向合约的链接。 在这种情况下，https://boredapeyachtclub.com/ 仅包含社交链接，因此我们将不得不寻找其他地方。
+
+
+由于Bored Ape Yacht Club是一个基于以太坊的 NFT 项目，我们的下一个停靠点将是以太坊区块链浏览器 [Etherscan](https://etherscan.io/)。 因为我知道 Bored Ape Yacht Club 使用符号 BAYC，所以我可以使用 Etherscan 搜索该符号（为什么，是的，我对所有东西都使用暗模式，你怎么知道？ 
+
+
 
 [![image](https://res.cloudinary.com/practicaldev/image/fetch/s--Upq6jmnu--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/o6wz8nqernbmpadnfi0q.png)](https://res.cloudinary.com/practicaldev/image/fetch/s--Upq6jmnu--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/o6wz8nqernbmpadnfi0q.png)
 
-And there we go - we can see that this is a verified ERC-721 token contract with the name we're looking for! If we click on the search result we'll go through to the page for the BoredApeYachtClub token, with the Etherscan address: https://etherscan.io/token/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d
 
-That's great, we're getting closer - in the top right hand section of the token page, called "Profile Summary", we will see a "Contract" address with a link:
+我们开始了 - 我们可以看到这是一个经过验证的 ERC-721 代币合约，其名称是我们正在寻找的！ 如果我们点击搜索结果，我们将进入 BoredApeYachtClub 代币页面，其 Etherscan 地址为：https://etherscan.io/token/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d
+
+太好了，我们越来越近了——在token页面的右上角，称为“资料摘要”，我们将看到一个带有链接的”合约”地址：
 
 [![image](https://res.cloudinary.com/practicaldev/image/fetch/s--Sbboz9Hp--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/va8pqml5d2wxrxr11ciw.png)](https://res.cloudinary.com/practicaldev/image/fetch/s--Sbboz9Hp--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/va8pqml5d2wxrxr11ciw.png)
 
-If we click that we'll arrive at the "Contract" page on Etherscan - this is what we're looking for! Click on the "Contract" tab:
+如果我们点击它，我们将到达 Etherscan 上的“合约”页面——这就是我们要寻找的！ 点击“合约”标签：
 
 [![image](https://res.cloudinary.com/practicaldev/image/fetch/s--6H_DDmp6--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/rihi89wfk1rr33vtrqi0.png)](https://res.cloudinary.com/practicaldev/image/fetch/s--6H_DDmp6--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/rihi89wfk1rr33vtrqi0.png)
 
-And there we have it - the verified contract source code for the contract named BoredApeYachtClub. Here's the Etherscan link to that specific section: https://etherscan.io/address/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d#code
+ 
 
-Now, at this point you might be wondering if there's a way to programmatically retrieve the contract code, given that we know the contract name, symbol and address. The answer is: of course :) But let's do it the manual way for now, I'll leave it to you to devise some more efficient ways to grab the contract using code ;)
+我们有了它 - 名为 BoredApeYachtClub 是经过验证的合约源代码。 这是该特定部分的 Etherscan 链接：https://etherscan.io/address/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d#code
+
+ 
+
+现在，鉴于我们知道合约名称、符号和地址，此时你可能想知道是否有其他办法以编程方式检索合约代码。 答案是：当然 :) 。但是现在让我们以手动方式进行，我将留给你设计一些更有效的方法来使用代码获取合约 :) 
+
 
 [![image](https://res.cloudinary.com/practicaldev/image/fetch/s--nlfhRO9O--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/hmlr5ow7oyuvdna1fdki.png)](https://res.cloudinary.com/practicaldev/image/fetch/s--nlfhRO9O--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/hmlr5ow7oyuvdna1fdki.png)
 
-We've almost finished step 1 - we can copy the contract code and save it somewhere - for now you can just put it in a note pad or save it in a file somewhere, we're going to come back to this file later on in the tutorial. Next up, we'll set up our Hardhat environment..
 
-### Step 2: Setting up our Hardhat Project
+我们几乎完成了第 1 步 - 我们可以复制合约代码并将其保存在某个地方 - 现在你可以将其放在记事本中或将其保存在某个文件中，稍后我们将回到这个文件 在教程中。 接下来，我们将设置Hardhat环境..
 
-Tooling for Ethereum development hasn't had very long to evolve - the initial release of Ethereum was in July, 2015 - as of the writing of this article it has been only 6 years (which is hard to believe considering how far the Ethereum ecosystem has come during that time). Thanks to the efforts of the Ethereum community, we've progressed from rudimentary development environments that were only intuitive for experienced developers, through to 2021, where we've been blessed with finely-crafted frameworks, tools & libraries that make developing for the Ethereum ecosystem a breeze.
+### 步骤 2：设置我们的Hardhat项目
+
+以太坊开发工具的发展并没有很长的时间——以太坊的最初版本是在 2015年7月——截至撰写本文时，它只有 6 年（这很难相信以太坊生态系统在这段时间里已经走了多远）。感谢以太坊社区的努力，我们已经从只适合有经验的开发人员的基本开发环境发展到2021年，我们有幸拥有为以太坊生态开发精心准备的框架、工具和库。
+
 
 [![image](https://res.cloudinary.com/practicaldev/image/fetch/s--FsjkCbMW--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/dtbm0mil8a1ex0agp4ua.png)](https://res.cloudinary.com/practicaldev/image/fetch/s--FsjkCbMW--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/dtbm0mil8a1ex0agp4ua.png)
 
-The folks over at Nomic Labs have had their heads down building what has quickly become the gold-standard in Ethereum development environments: [Hardhat](https://hardhat.org/). It encompasses test running, compilation, deployment, a rich plugin-system and a local network to run everything against. When combined with other great tools like [Ethers](https://docs.ethers.io/v5/), [Waffle](https://getwaffle.io/), and [Chai](https://www.chaijs.com/), Hardhat puts an entire control panel in front of you to take an Ethereum project all the way from idea to [IDO](https://hackernoon.com/what-is-ido-the-new-alternative-to-ieo-and-ico-70l34zf).
+ 
+Nomic Labs 的伙伴已经低调地构建了迅速成为以太坊开发环境中黄金标准的东西：[Hardhat](https://hardhat.org/)。 它包括测试运行、编译、部署、丰富的插件系统和运行一切的本地网络。 当与 [Ethers](https://docs.ethers.io/v5/)、[Waffle](https://getwaffle.io/) 和 [Chai](https://www. chaijs.com/)，Hardhat 将整个控制面板放在你面前，让以太坊项目从构思到 [IDO](https://hackernoon.com/what-is-ido-the-new-alternative-to-ieo-and-ico-70l34zf)。
 
-NOTE: The instructions for this section can also be found in more detail here: https://hardhat.org/getting-started/#overview
 
-Let's start by creating a new folder in your local environment:
+注意：此部分的说明也可以在此处找到更详细的说明：https://hardhat.org/getting-started/#overview
+
+让我们首先在本地环境中创建一个新文件夹：
 
 ```
 mkdir hardhat-tutorial
 ```
 
 
-
-Move into that new folder, run `npm init -Y`, and then install hardhat:
+进入那个新文件夹，运行`npm init -Y`，然后安装hardhat：
 
 ```
 npm i -D hardhat
 ```
 
 
-
-Now run `npx hardhat` and select "Create an empty hardhat.config.js":
+现在运行 `npx hardhat` 并选择“创建一个空的 hardhat.config.js”：
 
 [![image](https://res.cloudinary.com/practicaldev/image/fetch/s---9JzCr0W--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/316a9tftmd3jx60dglun.png)](https://res.cloudinary.com/practicaldev/image/fetch/s---9JzCr0W--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/316a9tftmd3jx60dglun.png)
 
-That will add a hardhat.config.js file for us, which we'll have a look at soon. We're also going to install some other tools, including the Waffle test suite and Ethers. So run:
+我们很快就会看到将为我们添加一个 hardhat.config.js 文件。我们还将安装一些其他工具，包括 Waffle 测试套件和 Ethers。 所以运行：
 
 ```
 npm i -D @nomiclabs/hardhat-waffle ethereum-waffle chai @nomiclabs/hardhat-ethers ethers
@@ -82,17 +101,16 @@ npm i -D @nomiclabs/hardhat-waffle ethereum-waffle chai @nomiclabs/hardhat-ether
 
 
 
-Let's go all the way and make our [Hardhat project TypeScript ready](https://hardhat.org/guides/typescript.html).
+为了我们一路顺利，让我们的 [Hardhat 项目 TypeScript 准备就绪](https://hardhat.org/guides/typescript.html)。
 
-First, install TypeScript and some types:
+首先，安装 TypeScript 和一些类型：
 
 ```
 npm i -D ts-node typescript @types/node @types/chai @types/mocha
 ```
 
 
-
-Then we'll rename our `hardhat.config.js` file to be `hardhat.config.ts`:
+然后我们将`hardhat.config.js` 文件重命名为 `hardhat.config.ts`：
 
 ```
 mv hardhat.config.js hardhat.config.ts
@@ -100,9 +118,9 @@ mv hardhat.config.js hardhat.config.ts
 
 
 
-We now need to make a change to our `hardhat.config.ts` file, since with a Hardhat TypeScript project plugins need to be loaded with `import` instead of `require`, and functions must be explictly imported:
+我们现在需要对我们的 `hardhat.config.ts` 文件进行更改，因为对于 Hardhat TypeScript 项目，插件需要使用 `import` 而不是 `require` 加载，并且必须显式导入函数：
 
-Change this:
+改变这里：
 
 ```
 // hardhat.config.ts
@@ -126,7 +144,7 @@ module.exports = {
 
 
 
-Into this:
+进入这里：
 
 ```
 // hardhat.config.ts
@@ -146,17 +164,19 @@ export default {
 };
 ```
 
+ 令人愉快的 - 我们使用 TypeScript 进行设置。 现在，如果你再次运行 `npx hardhat`，你应该会在控制台中看到一些帮助说明：
 
-
-Sweet - we're setup with TypeScript. Now if you run `npx hardhat` again you should see some help instructions in your console:
 
 [![image](https://res.cloudinary.com/practicaldev/image/fetch/s--UfC3Uaz9--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/3l32vplkvko7vk2rbguh.png)](https://res.cloudinary.com/practicaldev/image/fetch/s--UfC3Uaz9--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/3l32vplkvko7vk2rbguh.png)
 
-Great! If you've made it this far we have a Hardhat project configured with TypeScript and our required tools are installed.
+ 
 
-Notice in the screenshot above that there is a section called "Available Tasks" - this is a list of built-in tasks that are provided by the Hardhat team, enabling us to run important tasks from the get-go. Hardhat is extremely malleable, and works with 3rd party plugins that help us to adapt our project to our specific needs. We've already installed the hardhat-waffle and hardhat-ethers plugins, and you can find an extensive list of plugins here: https://hardhat.org/plugins/
 
-We can also create our own tasks. If you open `hardhat.config.ts` you'll see the sample "accounts" task definition. The task definition function takes 3 arguments - a name, a description, and a callback function that carries out the task. If you change the description of the "accounts" task, to "Hello, world!", and then run `npx hardhat` in your console, you'll see that the "accounts" task now has the description "Hello, world!".
+厉害了！ 如果你已经做到了这一点，我们就有了一个使用 TypeScript 配置的 Hardhat 项目，并且安装了我们所需的工具。
+
+请注意，在上面的屏幕截图中，有一个名为"Available Tasks"的部分 - 这是 Hardhat 团队提供的内置任务列表，使我们能够从一开始就运行重要任务。 Hardhat 具有极强的延展性，可与三方插件一起使用，帮助我们调整项目以满足我们的特定需求。 我们已经安装了 hardhat-waffle 和 hardhat-ethers 插件，你可以在此处找到大量插件列表：https://hardhat.org/plugins/
+
+我们也可以创建自己的任务。 如果你打开 `hardhat.config.ts`，你将看到示例“帐户”任务定义。 任务定义函数接受 3 个参数 - 名称、描述和执行任务的回调函数。 如果你将“accounts”任务的描述更改为“Hello, world!”，然后在控制台中运行`npx hardhat`，你将看到“accounts”任务现在具有描述“Hello, world!”。
 
 ```
 // hardhat.config.ts
@@ -181,52 +201,60 @@ export default {
 
 
 [![image](https://res.cloudinary.com/practicaldev/image/fetch/s--0rZJ_vMT--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/ppslyd1vdj4xl6bpaf7v.png)](https://res.cloudinary.com/practicaldev/image/fetch/s--0rZJ_vMT--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/ppslyd1vdj4xl6bpaf7v.png)
+ 
 
-Now our simple Hardhat project is all set up, let's move on to importing & compiling our Bored Ape contract...
+现在我们简单的 Hardhat 项目已经全部建立，让我们继续导入和编译我们的 Bored Ape 合约......
 
-### Step 3: Importing & Compiling our Contract
+ 
+### 第 3 步：导入和编译我们的合约
 
-Let's start by creating a new folder called `contracts` in our root directory (Hardhat uses the "contracts" folder as the source folder by default - if you want to change that name, you'll need to configure it within the `hardhat.config.ts` file):
+让我们首先在我们的根目录中创建一个名为 `contracts` 的新文件夹（Hardhat 默认使用“contracts”文件夹作为源文件夹 - 如果你想更改该名称，你需要在 `hardhat.config.ts` 文件里配置）：
 
 ```
 mdkir contracts
 ```
 
+ 
 
+在 contracts 文件夹中创建一个名为“bored-ape.sol”的新文件，然后粘贴我们之前从 Etherscan 复制的合约代码。
 
-Create a new file called `bored-ape.sol` in the contracts folder, then paste the contract code that we copied from Etherscan earlier.
+注意：.sol 扩展名是 Solidity 文件扩展名。 要为 Solidity 文件添加语法突出显示和类型提示，[Juan Blanco 称为“solidity”]（https://marketplace.visualstudio.com/items?itemName=JuanBlanco.solidity）制作了一个很棒的 VSCode 扩展 - 我建议安装 它使开发 Solidity 更容易：
 
-NOTE: The .sol extension is the Solidity file extension. To add syntax highlighting and type hints for Solidity files, there is a great VSCode extension made by [Juan Blanco called "solidity"](https://marketplace.visualstudio.com/items?itemName=JuanBlanco.solidity) - I recommend installing it to make developing Solidity easier:
 
 [![image](https://res.cloudinary.com/practicaldev/image/fetch/s--hF14pbnX--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/hdlme4tjzpe9cc7k35kd.png)](https://res.cloudinary.com/practicaldev/image/fetch/s--hF14pbnX--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/hdlme4tjzpe9cc7k35kd.png)
 
-I also use a VSCode extension called ["Solidity Visual Developer"](https://marketplace.visualstudio.com/items?itemName=tintinweb.solidity-visual-auditor), and you'll find many more in the VSCode marketplace.
+ 
 
-Now that we have a `contracts` folder with the `bored-ape.sol` contract inside it, we are ready to compile the contract. We can use a built-in `compile` task to do this - all we need to do is run:
+我还使用了一个名为 ["Solidity Visual Developer"](https://marketplace.visualstudio.com/items?itemName=tintinweb.solidity-visual-auditor) 的 VSCode 扩展，你会在 VSCode 市场中找到更多。
+
+现在我们有了一个 `contracts` 文件夹，里面有 `bored-ape.sol` 合约，我们准备编译合约。 我们可以使用内置的 `compile` 任务来执行此操作 - 我们需要做的就是运行：
+
 
 ```
 npx hardhat compile
 ```
 
 
+当我们使用 Hardhat 编译合约时，将为每个合约生成两个文件，并放置在 `artifacts/contracts/<CONTRACT NAME>` 文件夹中。 这两个文件（一个“artifact”.json 文件和一个调试“dbg”.json 文件）将为*每个合约*生成——我们从 Etherscan 复制的 Bored Ape 合约代码实际上包含多个“合约”。
 
-When we compile a contract with Hardhat, two files will be generated for each contract and placed into a `artifacts/contracts/<CONTRACT NAME>` folder. These two files (an "artifact" .json file, and a debug "dbg" .json file) will be generated for *each contract* - the Bored Ape contract code that we copied from Etherscan actually contains multiple "contracts".
 
-If you view the original `contracts/bored-ape.sol` file you can see that the "contract" keyword is used 15 times in total, and each instance has its own contract name - therefore, after compiling the `bored-ape.sol` file we will end up with 30 files in the `artifacts/contracts/bored-ape.sol/` folder.
+如果查看原始的 `contracts/bored-ape.sol` 文件，你会发现“contract”关键字总共使用了 15 次，并且每个实例都有自己的合约名称 - 因此，在编译 `bored-ape. sol` 文件我们最终会在 `artifacts/contracts/bored-ape.sol/` 文件夹中得到 30 个文件。
 
-That's ok though - since Solidity contracts are essentially object-oriented classes, we need only be concerned with the `BoredApeYachtClub.json` artifact - this is the file that contains the "BoredApeYachtClub" ABI (the [Application Binary Interface](https://docs.soliditylang.org/en/latest/abi-spec.html#abi-json), a JSON representation of the contract's variables & functions), and is exactly what we need to pass into Ethers in order to create a contract instance.
+不过没关系 - 因为 Solidity 合约本质上是面向对象的类，我们只需要关注 `BoredApeYachtClub.json` 工件 - 这是包含“BoredApeYachtClub” ABI 的文件（[应用程序二进制接口]（https://docs.soliditylang.org/en/latest/abi-spec.html#abi-json），合约变量和函数的 JSON 表示），这正是我们需要传递给以太币以创建合约实例的内容 .
 
-We've now achieved 3 out of our 4 objectives - our last objective for this tutorial is to write a test file so that we can run tests against our imported contract.
+ 
+我们现在已经实现了3/4的目标，——本教程的最后一个目标是编写一个测试文件，以便我们可以针对我们导入的合约运行测试。
 
-### Step 4: Writing Tests for our Contract
+### 第 4 步：为我们的合约编写测试
 
-Testing is a deep and complex subject, so we're going to keep this simple, so that you understand the general process and can dive deeper into the subject at your own pace. Our goal for this step will be to setup and write some tests for the "BoredApeYachtClub" contract.
+测试是一个深刻而复杂的主题，因此我们将保持简单，以便你了解一般流程并按照自己的步调深入研究该主题。 我们这一步的目标是为“BoredApeYachtClub”合约设置和编写一些测试。
+ 
+我们已经安装了“hardhat-ethers”，这是一个 Hardhat 插件，可以让我们访问“Ethers”库，并使我们能够与我们的智能合约进行交互。
 
-We've already installed "hardhat-ethers", which is a Hardhat plugin that will give us access to the "Ethers" library, and enable us to interact with our smart contract.
+注意：如果你有一个 JavaScript / Hardhat 项目，Hardhat Runtime Environment 的所有属性都会自动注入到全局范围内。 然而，当使用 TypeScript 时，全局范围内没有可用的东西，所以我们必须显式地导入实例。
 
-NOTE: If you have a JavaScript / Hardhat project, all of the properties of the Hardhat Runtime Environment are automatically injected into the global scope. When using TypeScript, however, nothing is available in the global scope, so we have to import instances explicitly.
+让我们在根目录下的 `test` 文件夹中新建一个测试，并命名为 `bored-ape.test.ts`。 现在我们将编写一个测试，我将在代码注释中解释我们在做什么：
 
-Let's create a new test in the `test` folder in the root directory, and call it `bored-ape.test.ts`. Now we'll write a test, and I'll explain what we're doing in the code comments:
 
 ```
 // bored-ape.test.ts
@@ -255,44 +283,43 @@ describe("Bored Ape", () => {
   });
 });
 ```
-
-
-
-That's a fair bit of code! Essentially we are creating a Contract Factory, which contains additional information necessary to deploy a contract. Once we have the Contract Factory, we can use the `.deploy()` method, passing in variables that are required by the contract constructor. Here is the original contract constructor:
+ 
+这是相当多的代码！ 本质上，我们正在创建一个合约工厂，其中包含部署合约所需的额外信息。 一旦我们有了合约工厂，我们就可以使用 .deploy() 方法，传入合约构造函数所需的变量。 这是原始的合约构造函数：
 
 ```
 //bored-ape.sol
 constructor(string memory name, string memory symbol, uint256 maxNftSupply, uint256 saleStart) ERC721(name, symbol)
 ```
+ 
 
+构造函数接受 4 个参数，每个参数都有类型定义：
 
+- name，字符串
+- symbol ，字符串
+- maxNftSupply，数字
+- saleStart，数字
 
-The constructor takes 4 arguments, each with type definitions:
-
-- name, a string
-- symbol, a string
-- maxNftSupply, a number
-- saleStart, a number
-
-Ok - now comes the moment of truth - let's run our test with:
+好的 - 现在是关键时刻 - 让我们运行我们的测试：
 
 ```
 npx hardhat test
 ```
 
+你应该看到如下内容：
 
-
-You should see something like this:
 
 [![image](https://res.cloudinary.com/practicaldev/image/fetch/s--90AWA7DQ--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/2bgksduuxlg8tjzqtmpt.png)](https://res.cloudinary.com/practicaldev/image/fetch/s--90AWA7DQ--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/2bgksduuxlg8tjzqtmpt.png)
 
-But hang on - why is it failing? Well, we can see under 1) Bored Ape `AssertionError: Expected "10000" to be equal 5000`. This is nothing to worry about - I've deliberately added a test case that will fail on the first run - this is good practice, to help remove false positives. If we don't add a failing case to begin with, we can't be certain that we aren't accidentally writing a test that will always return true. A more thorough version of this method would actually begin with creating the test first and then gradually writing code to make it pass, but since it's not the focus of this tutorial we'll gloss over that. If you're interested in learning more about this style of writing tests and then implementing code to make it pass, here are a couple of good introductions:
+ 
+
+但是坚持住 - 为什么它失败了？好吧，我们可以看到 1) Bored Ape `AssertionError: Expected "10000" to be equal 5000`。这没什么好担心的——我故意添加了一个在第一次运行时会失败的测试用例——这是一种很好的做法，有助于消除误报。如果我们一开始不添加一个失败的案例，我们就不能确定我们不会意外地编写一个总是返回 true 的测试。这种方法的更彻底的版本实际上会首先创建测试，然后逐渐编写代码以使其通过，但由于它不是本教程的重点，我们将忽略它。如果你有兴趣了解更多关于这种编写测试的风格，然后实现代码以使其通过，这里有几个很好的介绍：
+
 
 - https://www.codecademy.com/articles/tdd-red-green-refactor
 - http://blog.cleancoder.com/uncle-bob/2014/12/17/TheCyclesOfTDD.html
 - https://medium.com/@tunkhine126/red-green-refactor-42b5b643b506
 
-To make our test pass, edit this line to include 10000:
+为了让我们通过测试，修改这行，值修改为10000:
 
 ```
 expect(await boredApeContract.MAX_APES()).to.equal(10000);
@@ -302,9 +329,11 @@ expect(await boredApeContract.MAX_APES()).to.equal(10000);
 
 [![image](https://res.cloudinary.com/practicaldev/image/fetch/s---bEolRJ2--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/svlex3607kmajgjpu0ph.png)](https://res.cloudinary.com/practicaldev/image/fetch/s---bEolRJ2--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/svlex3607kmajgjpu0ph.png)
 
-Nice! We now have a passing test case :) Let's write a few more tests to flex our muscles.
+ 
 
-Before we do that though, we're going to use a helper function called `beforeEach` that will simplify the setup for each test, and allow us to reuse variables for each test. We'll move our contract deployment code into the `beforeEach` function, and as you can see, we can use the `boredApeContract` instance in our "initialize" test:
+好的！ 我们现在有一个通过测试用例 :) 让我们再写几个测试来强化练习。
+
+不过，在我们这样做之前，我们将使用一个名为“beforeEach”的辅助函数，它将简化每个测试的设置，并允许我们为每个测试重用变量。 我们将把合约部署代码移动到 `beforeEach` 函数中，如你所见，我们可以在“初始化”测试中使用 `boredApeContract` 实例：
 
 ```
 // bored-ape.test.ts
@@ -341,14 +370,13 @@ describe("Bored Ape", () => {
   });
 });
 ```
+ 
 
+由于我们使用的是 TypeScript，我们在“beforeEach”中为我们的变量导入了类型，并添加了一个“owner”和“address1”变量，可以在需要地址的测试用例中使用。 我们通过添加另一个测试“应该设置正确的所有者”来使用所有者变量 - 这将检查合约的所有者是否与我们部署合约时返回的所有者相同。
 
+在 `bored-ape.sol` 文件中，请注意有一个名为 `mintApe` 的函数，它接收多个令牌（代表 Bored Ape NFT），并且还期望接收一些 ETH。 让我们为该函数编写一个测试，这将让我们尝试支付，并迫使我们使用合约中的其他一些方法来使测试通过。
 
-Since we're using TypeScript, we've imported types for our variables in "beforeEach", and have added an "owner" and "address1" variable that can be used in test cases that require addresses. We've made use of the owner variable by adding another test "Should set the right owner" - this checks that the owner of the contract is the same one that is returned when we deployed the contract.
-
-In the `bored-ape.sol` file, notice that there is a function called `mintApe` which takes in both a number of tokens (representing Bored Ape NFTs), and also expects to receive some ETH. Let's write a test for that function, which will let us try out payments, and force us to make use of some other methods in the contract to make the test pass.
-
-We'll start by defining the test:
+我们将从定义测试开始：
 
 ```
 // bored-ape.test.ts
@@ -360,26 +388,27 @@ it("Should mint an ape", async () => {
 });
 ```
 
+由于 `mintApe` 方法没有返回值，我们将监听一个名为“Transfer”的事件——我们可以跟踪 `mintApe` 函数的继承，并看到它最终调用了 ERC-721 的 `_mint` 函数，并发出 { Transfer } 事件：
 
-
-Since the `mintApe` method doesn't return a value, we are going to listen for an event called "Transfer" - we can trace the `mintApe` function's inheritance and see that ultimately it calls the `_mint` function of an ERC-721 token and emits a { Transfer } event:
 
 [![image](https://res.cloudinary.com/practicaldev/image/fetch/s--hm-o1ujT--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/xtqzs2uj42dm2yxb5fyp.png)](https://res.cloudinary.com/practicaldev/image/fetch/s--hm-o1ujT--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/xtqzs2uj42dm2yxb5fyp.png)
+ 
 
-At the moment it doesn't matter that we listen for the "Transfer" event - this test is going to fail since `mintApe` contains a number of conditions that we haven't fulfilled:
+目前，我们监听“Transfer”事件并不重要——这个测试将会失败，因为 `mintApe` 包含许多我们没有满足的条件：
+
 
 [![image](https://res.cloudinary.com/practicaldev/image/fetch/s--mSxWDSGO--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/3nynbhcek8zd74pos4gy.png)](https://res.cloudinary.com/practicaldev/image/fetch/s--mSxWDSGO--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/3nynbhcek8zd74pos4gy.png)
 
-We can see that an error "Sale must be active to mint Ape", so it looks like first we have to call the contract method `flipSaleState`:
+ 
 
+我们可以看到一个错误“Sale must be active to mint Ape”，所以看起来我们首先必须调用合约方法`flipSaleState`：
 ```
 // bored-ape.test.ts
 await boredApeContract.flipSaleState();
 ```
 
 
-
-Run `npx hardhat test` and...we're still failing - but with a different error! A different error is actually great news, because it means we're making progress :) Looks like "Ether value sent is not correct" - which makes sense, since we didn't send any ETH along with our contract call. Notice that the `mintApe` method signature contains the keyword "payable":
+运行 `npx hardhat test` 并且......我们仍然失败 - 但出现了不同的错误！ 一个不同的错误实际上是个好消息，因为这意味着我们正在取得进展 :) 看起来“发送的以太币值不正确”——这是有道理的，因为我们没有在合约调用中发送任何 ETH。 请注意，`mintApe` 方法签名包含关键字“payable”：
 
 ```
 // bored-ape.sol
@@ -387,8 +416,8 @@ function mintApe(uint numberOfTokens) public payable
 ```
 
 
+这意味着该方法可以（并且期望）接收 ETH。 我们可以通过调用 `apePrice` getter 方法首先检索 Bored Ape 所需的成本：
 
-That means that this method can (and expects to) receive ETH. We can retrieve the required cost of a Bored Ape first by calling the `apePrice` getter method:
 
 ```
 // bored-ape.sol
@@ -396,8 +425,8 @@ uint256 public constant apePrice = 80000000000000000; //0.08 ETH
 ```
 
 
+最后，我们需要导入更多函数，使用 `apePrice` 作为我们的值，并通过调用 `mintApe` 将其作为 ETH 发送。 我们还将另一个名为 `withArgs` 的方法触发我们的 `emit` ，这将使我们能够监听“Transfer”事件发出的参数：
 
-Finally, we need to import some more functions, use `apePrice` as our value, and send it through as ETH with our call to `mintApe`. We'll also chain another method called `withArgs` to our `emit` call, which will give us the ability to listen to the arguments emitted by the "Transfer" event:
 
 ```
 // bored-ape.test.ts
@@ -421,8 +450,7 @@ it("Should mint an ape", async () => {
 ```
 
 
-
-We're using an "overrides" object (https://docs.ethers.io/ethers.js/html/api-contract.html#overrides) to add additional data to our method call - in this case, a value property that will be received by the contract's `mintApe` method as `msg.value`, ensuring that we now satisfy the condition of the "Ether value sent is not correct" requirement:
+我们正在使用“覆盖”对象（https://docs.ethers.io/ethers.js/html/api-contract.html#overrides）向我们的方法调用添加额外的数据——在本例中是一个值属性 这将被合约的`mintApe`方法作为`msg.value`接收，确保我们现在满足“发送的以太值不正确”要求的条件：
 
 ```
 // bored-ape.sol
@@ -430,10 +458,9 @@ require(apePrice.mul(numberOfTokens) <= msg.value, "Ether value sent is not corr
 ```
 
 
+我们已经将`chai`导入到我们的测试文件中，这样我们就可以使用chai “matchers”——我们将它与从“ethereum-waffle”导入的“solidity”匹配器结合起来：https://ethereum-waffle.readthedocs.io/en/latest/matchers.html - 现在我们能够指定我们期望从“Transfer”事件接收的确切参数，并且我们可以确保测试实际上按预期通过。
 
-We've imported `chai` into our test file so that we can use chai "matchers" - which we combine with the "solidity" matcher imported from "ethereum-waffle": https://ethereum-waffle.readthedocs.io/en/latest/matchers.html - now we are able to specify the exact arguments that we expect to receive from the "Transfer" event, and we can ensure that the test is actually passing as intended.
-
-If you're wondering how we determined the arguments we expect to receive, I'll explain: First, we can inspect the `_mint` method in `bored-ape.sol` and see that `Transfer` emits 3 arguments.
+如果你想知道我们如何确定我们期望接收的参数，我将解释：首先，我们可以检查 `bored-ape.sol` 中的 `_mint` 方法，并看到 `Transfer` 发出 3 个参数。
 
 ```
 // bored-ape.sol
@@ -441,21 +468,20 @@ emit Transfer(address(0), to, tokenId);
 ```
 
 
+第一个参数是“零帐户”：https://ethereum.stackexchange.com/questions/13523/what-is-the-zero-account-as-describe-by-the-solidity-docs - 也称为“地址零”。 第二个参数“to”是发送 `mintApe` 交易的地址——在这种情况下，我们只是使用所有者的地址。 最后，tokenId 在 `mintApe` 方法的 for 循环中定义，并设置为等于调用 `tokenSupply` getter 的返回值。
 
-The first argument is the "Zero account": https://ethereum.stackexchange.com/questions/13523/what-is-the-zero-account-as-described-by-the-solidity-docs - also known as "AddressZero". The second argument "to" is the address that sent the `mintApe` transaction - in this case we're just using the owner's address. Lastly, the tokenId is defined within a for-loop in the `mintApe` method, and is set to be equal to the return value of calling the `tokenSupply` getter.
+一旦我们知道这些值是什么，我们就可以将它们输入到我们的 `withArgs` 方法中，包括由 ethers 库提供的一个方便的常量，称为 `AddressZero`：
 
-Once we know what these values are, we can input them into our `withArgs` method, including a handy constant provided by the ethers library called `AddressZero`:
 
 ```
 // bored-ape.test.ts
 .withArgs(ethers.constants.AddressZero, owner.address, tokenId);
 ```
 
+ 
+就是这样 - 我们可以运行“npx hardhat test”，我们将获得通过测试。 如果你更改 `withArgs` 中的任何值，你将得到一个失败的测试 - 正是我们所期望的！
 
-
-And that's it - we can run `npx hardhat test` and we'll get a passing test. If you change any of the values in `withArgs` you'll get a failing test - exactly what we expect!
-
-Here's what the final test file looks like:
+这是最终测试文件的样子：
 
 ```
 import { expect } from "chai";
@@ -509,19 +535,17 @@ describe("Bored Ape", () => {
 });
 ```
 
+大奖！ 做得好，我们已经涵盖了本教程的所有目标：
 
+- 如何找到特定项目的智能合约代码
+- 如何将该代码添加到本地开发环境
+- 如何安装和设置一个简单的安全帽开发环境
+- 如何编译合约并为其编写测试
 
-Jackpot! Well done, we've covered all of our objectives for this tutorial:
+希望这能让你对使用 Hardhat、Ethers、Chai 和 Mocha 导入和测试合约的过程有所了解。 当你编写自己的 Solidity 合约时，可以遵循相同的流程，当与前端存储库结合使用时，你将拥有完整的开发套件的强大功能，其中包含非常直观的流程和详尽的文档。
 
-- How to find smart contract code for specific projects
-- How to add that code to a local development environment
-- How to install & set-up a simple Hardhat development environment
-- How to compile a contract and write tests for it
+如果你想查看本教程的源代码，可以在这里找到：https://github.com/jacobedawson/import-test-contracts-hardhat
 
-Hopefully this has given you some insight into the process of importing and testing contracts with Hardhat, Ethers, Chai & Mocha. The same processes can be followed when you write your own Solidity contracts, and when combined with a front-end repo you have the power of a complete development suite with really intuitive processes & thorough documentation.
+感谢参与 :)
 
-If you'd like to view the source code for this tutorial, you can find it here: https://github.com/jacobedawson/import-test-contracts-hardhat
-
-Thanks for playing ;)
-
-Follow me on Twitter: https://twitter.com/jacobedawson
+在 Twitter 上关注我：https://twitter.com/jacobedawson
