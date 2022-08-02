@@ -44,7 +44,7 @@
 
 [![image](https://res.cloudinary.com/practicaldev/image/fetch/s--Sbboz9Hp--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/va8pqml5d2wxrxr11ciw.png)](https://res.cloudinary.com/practicaldev/image/fetch/s--Sbboz9Hp--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/va8pqml5d2wxrxr11ciw.png)
 
-如果我们点击它，我们将到达 Etherscan 上的“合约”页面——这就是我们要寻找的！ 点击“合约”标签：
+如果我们点击它，我们将到Etherscan上的“合约”页面——这就是我们要寻找的！ 点击“合约”标签：
 
 [![image](https://res.cloudinary.com/practicaldev/image/fetch/s--6H_DDmp6--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/rihi89wfk1rr33vtrqi0.png)](https://res.cloudinary.com/practicaldev/image/fetch/s--6H_DDmp6--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/rihi89wfk1rr33vtrqi0.png)
 
