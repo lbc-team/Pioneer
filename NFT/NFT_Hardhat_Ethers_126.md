@@ -3,9 +3,9 @@
 ![06537eazw81rxn3xzv54.jpg](https://img.learnblockchain.cn/attachments/2022/05/BuyLYxvN62942b1836696.jpg)
  
 
-# 用hardhat和Ethers引入测试知名的NFT智能合约
+# 用Hardhat和Ethers引入测试知名的NFT智能合约
 
-今天我们将学习如何使用非常酷的[智能合约开发框架Hardhat](https://hardhat.org/),在本地导入,并且测试公开部署的智能合约。 为了让事情变得有趣和相关，我们将在示例中使用 Bored Ape Yacht Club NFT 智能合约。使用知名项目的智能合约应该清楚以太坊生态的开放程度，以及有多少上手Dapp和智能合约开发的机会！
+今天我们将学习如何使用非常酷的[智能合约开发框架Hardhat](https://hardhat.org/),在本地导入,并且测试公开部署的智能合约。 为了让事情变得有趣和相关，将在示例中使用 Bored Ape Yacht Club NFT 智能合约。使用知名项目的智能合约应该清楚以太坊生态的开放程度，以及有多少上手Dapp和智能合约开发的机会！
 
 
 在本教程结束时，你将了解以下内容：
@@ -28,7 +28,7 @@
 ### 第 1 步：查找智能合约代码
 
 
-首先，我们将首先选择一个项目（Bored Ape Yacht Club），然后追踪智能合约代码。 就个人而言，在这种情况下，我要做的第一件事是快速查看相关项目的网站，看看他们是否有指向合约的链接。 在这种情况下，https://boredapeyachtclub.com/ 仅包含社交链接，因此我们将不得不寻找其他地方。
+首先，我们将首先选择一个项目（Bored Ape Yacht Club），然后追踪智能合约代码。 就个人而言，在这种情况下，我要做的第一件事是快速查看相关项目的网站，看看他们是否有指向合约的链接。 在这种情况下，https://boredapeyachtclub.com/ 仅包含社交链接，因此将不得不寻找其他地方。
 
 
 由于Bored Ape Yacht Club是一个基于以太坊的 NFT 项目，我们的下一个停靠点将是以太坊区块链浏览器 [Etherscan](https://etherscan.io/)。 因为我知道 Bored Ape Yacht Club 使用符号 BAYC，所以我可以使用 Etherscan 搜索该符号（为什么，是的，我对所有东西都使用暗模式，你怎么知道？ 
@@ -38,13 +38,13 @@
 [![image](https://res.cloudinary.com/practicaldev/image/fetch/s--Upq6jmnu--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/o6wz8nqernbmpadnfi0q.png)](https://res.cloudinary.com/practicaldev/image/fetch/s--Upq6jmnu--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/o6wz8nqernbmpadnfi0q.png)
 
 
-我们开始了 - 我们可以看到这是一个经过验证的 ERC-721 代币合约，其名称是我们正在寻找的！ 如果我们点击搜索结果，我们将进入 BoredApeYachtClub 代币页面，其 Etherscan 地址为：https://etherscan.io/token/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d
+我们开始了 - 可以看到这是一个经过验证的 ERC-721 代币合约，其名称是我们正在寻找的！ 如果我们点击搜索结果，将进入 BoredApeYachtClub 代币页面，其 Etherscan 地址为：https://etherscan.io/token/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d
 
-太好了，我们越来越近了——在token页面的右上角，称为“资料摘要”，我们将看到一个带有链接的”合约”地址：
+太好了，我们越来越近了——在token页面的右上角，称为“Profile Summary(资料摘要)”，将看到一个带有链接的”Contract(合约)”地址:
 
 [![image](https://res.cloudinary.com/practicaldev/image/fetch/s--Sbboz9Hp--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/va8pqml5d2wxrxr11ciw.png)](https://res.cloudinary.com/practicaldev/image/fetch/s--Sbboz9Hp--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/va8pqml5d2wxrxr11ciw.png)
 
-如果我们点击它，我们将到达 Etherscan 上的“合约”页面——这就是我们要寻找的！ 点击“合约”标签：
+如果我们点击它，将到达 Etherscan 上的“Contract(合约)”页面——这就是要寻找的！ 点击”Contract(合约)”标签：
 
 [![image](https://res.cloudinary.com/practicaldev/image/fetch/s--6H_DDmp6--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/rihi89wfk1rr33vtrqi0.png)](https://res.cloudinary.com/practicaldev/image/fetch/s--6H_DDmp6--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/rihi89wfk1rr33vtrqi0.png)
 
@@ -60,7 +60,7 @@
 [![image](https://res.cloudinary.com/practicaldev/image/fetch/s--nlfhRO9O--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/hmlr5ow7oyuvdna1fdki.png)](https://res.cloudinary.com/practicaldev/image/fetch/s--nlfhRO9O--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/hmlr5ow7oyuvdna1fdki.png)
 
 
-我们几乎完成了第 1 步 - 我们可以复制合约代码并将其保存在某个地方 - 现在你可以将其放在记事本中或将其保存在某个文件中，稍后我们将回到这个文件 在教程中。 接下来，我们将设置Hardhat环境..
+我们几乎完成了第 1 步 - 可以复制合约代码并将其保存在某个地方 - 现在你可以将其放在记事本中或将其保存在某个文件中，稍后我们将回到这个文件 在教程中。 接下来，我们将设置Hardhat环境..
 
 ### 步骤 2：设置我们的Hardhat项目
 
@@ -70,7 +70,7 @@
 [![image](https://res.cloudinary.com/practicaldev/image/fetch/s--FsjkCbMW--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/dtbm0mil8a1ex0agp4ua.png)](https://res.cloudinary.com/practicaldev/image/fetch/s--FsjkCbMW--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/dtbm0mil8a1ex0agp4ua.png)
 
  
-Nomic Labs 的伙伴已经低调地构建了迅速成为以太坊开发环境中黄金标准的东西：[Hardhat](https://hardhat.org/)。 它包括测试运行、编译、部署、丰富的插件系统和运行一切的本地网络。 当与 [Ethers](https://docs.ethers.io/v5/)、[Waffle](https://getwaffle.io/) 和 [Chai](https://www. chaijs.com/)，Hardhat 将整个控制面板放在你面前，让以太坊项目从构思到 [IDO](https://hackernoon.com/what-is-ido-the-new-alternative-to-ieo-and-ico-70l34zf)。
+Nomic Labs 的伙伴们已经低调地创造了以太坊开发环境的标准：[Hardhat](https://hardhat.org/)。 它包括测试运行、编译、部署、丰富的插件系统和运行一切的本地网络。 当与 [Ethers](https://docs.ethers.io/v5/)、[Waffle](https://getwaffle.io/) 和 [Chai](https://www. chaijs.com/)，Hardhat 将整个控制面板放在你面前，让以太坊项目从构思到 [IDO](https://hackernoon.com/what-is-ido-the-new-alternative-to-ieo-and-ico-70l34zf)。
 
 
 注意：此部分的说明也可以在此处找到更详细的说明：https://hardhat.org/getting-started/#overview
@@ -89,11 +89,11 @@ npm i -D hardhat
 ```
 
 
-现在运行 `npx hardhat` 并选择“创建一个空的 hardhat.config.js”：
+现在运行 `npx hardhat` 并选择“Create an empty hardhat.config.js(新建一个hardhat.config.js文件)”：
 
 [![image](https://res.cloudinary.com/practicaldev/image/fetch/s---9JzCr0W--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/316a9tftmd3jx60dglun.png)](https://res.cloudinary.com/practicaldev/image/fetch/s---9JzCr0W--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/316a9tftmd3jx60dglun.png)
 
-我们很快就会看到将为我们添加一个 hardhat.config.js 文件。我们还将安装一些其他工具，包括 Waffle 测试套件和 Ethers。 所以运行：
+我们很快就会看到将为添加一个 hardhat.config.js 文件。我们还将安装一些其他工具，包括 Waffle 测试套件和 Ethers。 所以运行：
 
 ```
 npm i -D @nomiclabs/hardhat-waffle ethereum-waffle chai @nomiclabs/hardhat-ethers ethers
@@ -101,7 +101,7 @@ npm i -D @nomiclabs/hardhat-waffle ethereum-waffle chai @nomiclabs/hardhat-ether
 
 
 
-为了我们一路顺利，让我们的 [Hardhat 项目 TypeScript 准备就绪](https://hardhat.org/guides/typescript.html)。
+为了我们一路顺利，让 [Hardhat 项目 TypeScript 准备就绪](https://hardhat.org/guides/typescript.html)。
 
 首先，安装 TypeScript 和一些类型：
 
@@ -118,7 +118,7 @@ mv hardhat.config.js hardhat.config.ts
 
 
 
-我们现在需要对我们的 `hardhat.config.ts` 文件进行更改，因为对于 Hardhat TypeScript 项目，插件需要使用 `import` 而不是 `require` 加载，并且必须显式导入函数：
+我们现在需要对 `hardhat.config.ts` 文件进行更改，因为对于 Hardhat TypeScript 项目，插件需要使用 `import` 而不是 `require` 加载，并且必须显式导入函数：
 
 改变这里：
 
@@ -172,11 +172,11 @@ export default {
  
 
 
-厉害了！ 如果你已经做到了这一点，我们就有了一个使用 TypeScript 配置的 Hardhat 项目，并且安装了我们所需的工具。
+厉害了！ 如果你已经做到了这一点，我们就有了一个使用 TypeScript 配置的 Hardhat 项目，并且安装了所需的工具。
 
-请注意，在上面的屏幕截图中，有一个名为"Available Tasks"的部分 - 这是 Hardhat 团队提供的内置任务列表，使我们能够从一开始就运行重要任务。 Hardhat 具有极强的延展性，可与三方插件一起使用，帮助我们调整项目以满足我们的特定需求。 我们已经安装了 hardhat-waffle 和 hardhat-ethers 插件，你可以在此处找到大量插件列表：https://hardhat.org/plugins/
+请注意，在上面的屏幕截图中，有一个名为"Available Tasks"的部分 - 这是 Hardhat 团队提供的内置任务列表，使我们能够从一开始就运行重要任务。 Hardhat 具有极强的延展性，可与三方插件一起使用，帮助我们调整项目以满足特定需求。 我们已经安装了 hardhat-waffle 和 hardhat-ethers 插件，你可以在此处找到大量插件列表：https://hardhat.org/plugins/
 
-我们也可以创建自己的任务。 如果你打开 `hardhat.config.ts`，你将看到示例“帐户”任务定义。 任务定义函数接受 3 个参数 - 名称、描述和执行任务的回调函数。 如果你将“accounts”任务的描述更改为“Hello, world!”，然后在控制台中运行`npx hardhat`，你将看到“accounts”任务现在具有描述“Hello, world!”。
+我们也可以创建自己的任务。 如果你打开 `hardhat.config.ts`，你将看到示例“accounts(帐户)”任务定义。 任务定义函数接受 3 个参数 - 名称、描述和执行任务的回调函数。 如果你将“accounts(帐户)”任务的描述更改为“Hello, world!”，然后在控制台中运行`npx hardhat`，你将看到“accounts(帐户)”任务现在具有描述“Hello, world!”。
 
 ```
 // hardhat.config.ts
@@ -203,12 +203,12 @@ export default {
 [![image](https://res.cloudinary.com/practicaldev/image/fetch/s--0rZJ_vMT--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/ppslyd1vdj4xl6bpaf7v.png)](https://res.cloudinary.com/practicaldev/image/fetch/s--0rZJ_vMT--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/ppslyd1vdj4xl6bpaf7v.png)
  
 
-现在我们简单的 Hardhat 项目已经全部建立，让我们继续导入和编译我们的 Bored Ape 合约......
+现在我们简单的 Hardhat 项目已经全部建立，继续导入和编译我们的 Bored Ape 合约......
 
  
 ### 第 3 步：导入和编译我们的合约
 
-让我们首先在我们的根目录中创建一个名为 `contracts` 的新文件夹（Hardhat 默认使用“contracts”文件夹作为源文件夹 - 如果你想更改该名称，你需要在 `hardhat.config.ts` 文件里配置）：
+让我们首先在根目录中创建一个名为 `contracts` 的新文件夹（Hardhat 默认使用“contracts(合约)”文件夹作为源文件夹 - 如果你想更改该名称，你需要在 `hardhat.config.ts` 文件里配置）：
 
 ```
 mdkir contracts
@@ -235,15 +235,15 @@ npx hardhat compile
 ```
 
 
-当我们使用 Hardhat 编译合约时，将为每个合约生成两个文件，并放置在 `artifacts/contracts/<CONTRACT NAME>` 文件夹中。 这两个文件（一个“artifact”.json 文件和一个调试“dbg”.json 文件）将为*每个合约*生成——我们从 Etherscan 复制的 Bored Ape 合约代码实际上包含多个“合约”。
+当我们使用 Hardhat 编译合约时，将为每个合约生成两个文件，并放置在 `artifacts/contracts/<CONTRACT NAME>` 文件夹中。 这两个文件（分别是“artifact”.json 文件和“dbg”.json 文件）将为*每个合约*生成这样的文件——我们从 Etherscan 复制的 Bored Ape 合约代码实际上包含多个“contracts(合约)”。
 
 
-如果查看原始的 `contracts/bored-ape.sol` 文件，你会发现“contract”关键字总共使用了 15 次，并且每个实例都有自己的合约名称 - 因此，在编译 `bored-ape. sol` 文件我们最终会在 `artifacts/contracts/bored-ape.sol/` 文件夹中得到 30 个文件。
+如果查看原始的 `contracts/bored-ape.sol` 文件，你会发现“contract(合约)”关键字总共使用了 15 次，并且每个实例都有自己的合约名称 - 因此，在编译 `bored-ape. sol` 文件我们最终会在 `artifacts/contracts/bored-ape.sol/` 文件夹中得到 30 个文件。
 
-不过没关系 - 因为 Solidity 合约本质上是面向对象的类，我们只需要关注 `BoredApeYachtClub.json` 工件 - 这是包含“BoredApeYachtClub” ABI 的文件（[应用程序二进制接口]（https://docs.soliditylang.org/en/latest/abi-spec.html#abi-json），合约变量和函数的 JSON 表示），这正是我们需要传递给以太币以创建合约实例的内容 .
+不过没关系 - 因为 Solidity 合约本质上是面向对象的类，我们只需要关注 `BoredApeYachtClub.json` 工件 - 这是包含“BoredApeYachtClub” ABI 的文件（[应用程序二进制接口]（https://docs.soliditylang.org/en/latest/abi-spec.html#abi-json），合约变量和函数的 JSON 表示），这正是我们需要使用以太币以创建合约实例的内容 .
 
  
-我们现在已经实现了3/4的目标，——本教程的最后一个目标是编写一个测试文件，以便我们可以针对我们导入的合约运行测试。
+我们现在已经实现了3/4的目标，——本教程的最后一个目标是编写一个测试文件，以便我们可以针对导入的合约运行测试。
 
 ### 第 4 步：为我们的合约编写测试
 
@@ -251,7 +251,7 @@ npx hardhat compile
  
 我们已经安装了“hardhat-ethers”，这是一个 Hardhat 插件，可以让我们访问“Ethers”库，并使我们能够与我们的智能合约进行交互。
 
-注意：如果你有一个 JavaScript / Hardhat 项目，Hardhat Runtime Environment 的所有属性都会自动注入到全局范围内。 然而，当使用 TypeScript 时，全局范围内没有可用的东西，所以我们必须显式地导入实例。
+注意：如果你有一个 JavaScript / Hardhat 项目，Hardhat Runtime Environment 的所有属性都会自动注入到全局范围内。 然而，当使用 TypeScript 时，没有全局范围内可用的上下文，所以我们必须显式地导入实例。
 
 让我们在根目录下的 `test` 文件夹中新建一个测试，并命名为 `bored-ape.test.ts`。 现在我们将编写一个测试，我将在代码注释中解释我们在做什么：
 
@@ -284,7 +284,7 @@ describe("Bored Ape", () => {
 });
 ```
  
-这是相当多的代码！ 本质上，我们正在创建一个合约工厂，其中包含部署合约所需的额外信息。 一旦我们有了合约工厂，我们就可以使用 .deploy() 方法，传入合约构造函数所需的变量。 这是原始的合约构造函数：
+这是相当多的代码！ 本质上，我们正在创建一个合约工厂，其中包含部署合约所需的额外信息。 一旦我们有了合约工厂，就可以使用 .deploy() 方法，传入合约构造函数所需的变量。 这是原始的合约构造函数：
 
 ```
 //bored-ape.sol
@@ -312,7 +312,7 @@ npx hardhat test
 
  
 
-但是坚持住 - 为什么它失败了？好吧，我们可以看到 1) Bored Ape `AssertionError: Expected "10000" to be equal 5000`。这没什么好担心的——我故意添加了一个在第一次运行时会失败的测试用例——这是一种很好的做法，有助于消除误报。如果我们一开始不添加一个失败的案例，我们就不能确定我们不会意外地编写一个总是返回 true 的测试。这种方法的更彻底的版本实际上会首先创建测试，然后逐渐编写代码以使其通过，但由于它不是本教程的重点，我们将忽略它。如果你有兴趣了解更多关于这种编写测试的风格，然后实现代码以使其通过，这里有几个很好的介绍：
+但是坚持住 - 为什么它失败了？好吧，我们可以看到 1) Bored Ape `AssertionError: Expected "10000" to be equal 5000`。这没什么好担心的——我故意添加了一个在第一次运行时会失败的测试用例——这是一种很好的做法，有助于消除误报。如果我们一开始不添加一个失败的案例，我们就不能确定不会意外地编写一个总是返回 true 的测试。这种方法的更彻底的版本实际上会首先创建测试，然后逐渐编写代码以使其通过，但由于它不是本教程的重点，我们将忽略它。如果你有兴趣了解更多关于这种编写测试的风格，然后实现代码以使其通过，这里有几个很好的介绍：
 
 
 - https://www.codecademy.com/articles/tdd-red-green-refactor
@@ -331,9 +331,9 @@ expect(await boredApeContract.MAX_APES()).to.equal(10000);
 
  
 
-好的！ 我们现在有一个通过测试用例 :) 让我们再写几个测试来强化练习。
+好的！ 现在有一个测试用例通过了 :) 让我们再写几个测试来强化练习。
 
-不过，在我们这样做之前，我们将使用一个名为“beforeEach”的辅助函数，它将简化每个测试的设置，并允许我们为每个测试重用变量。 我们将把合约部署代码移动到 `beforeEach` 函数中，如你所见，我们可以在“初始化”测试中使用 `boredApeContract` 实例：
+不过，在我们这样做之前，将使用一个名为“beforeEach”的辅助函数，它将简化每个测试的设置，并允许为每个测试重用变量。 我们将把合约部署代码移动到 `beforeEach` 函数中，如你所见，可以在“初始化”测试中使用 `boredApeContract` 实例：
 
 ```
 // bored-ape.test.ts
@@ -372,11 +372,11 @@ describe("Bored Ape", () => {
 ```
  
 
-由于我们使用的是 TypeScript，我们在“beforeEach”中为我们的变量导入了类型，并添加了一个“owner”和“address1”变量，可以在需要地址的测试用例中使用。 我们通过添加另一个测试“应该设置正确的所有者”来使用所有者变量 - 这将检查合约的所有者是否与我们部署合约时返回的所有者相同。
+由于我们使用的是 TypeScript，在“beforeEach”中为我们的变量导入了类型，并添加了一个“owner”和“address1”变量，可以在需要地址的测试用例中使用。 我们通过添加另一个测试“应该设置正确的所有者”来使用所有者变量 - 这将检查合约的所有者是否与我们部署合约时返回的所有者相同。
 
-在 `bored-ape.sol` 文件中，请注意有一个名为 `mintApe` 的函数，它接收多个令牌（代表 Bored Ape NFT），并且还期望接收一些 ETH。 让我们为该函数编写一个测试，这将让我们尝试支付，并迫使我们使用合约中的其他一些方法来使测试通过。
+在 `bored-ape.sol` 文件中，请注意有一个名为 `mintApe` 的函数，它接收多个token（代表 Bored Ape NFT），并且还期望接收一些 ETH。 让我们为该函数编写一个测试，这将让我们尝试支付，并迫使我们使用合约中的其他一些方法来使测试通过。
 
-我们将从定义测试开始：
+将从定义测试开始：
 
 ```
 // bored-ape.test.ts
@@ -388,13 +388,13 @@ it("Should mint an ape", async () => {
 });
 ```
 
-由于 `mintApe` 方法没有返回值，我们将监听一个名为“Transfer”的事件——我们可以跟踪 `mintApe` 函数的继承，并看到它最终调用了 ERC-721 的 `_mint` 函数，并发出 { Transfer } 事件：
+由于 `mintApe` 方法没有返回值，我们将监听一个名为“Transfer”的事件——可以跟踪 `mintApe` 函数的继承，并看到它最终调用了 ERC-721 的 `_mint` 函数，并发出 { Transfer } 事件：
 
 
 [![image](https://res.cloudinary.com/practicaldev/image/fetch/s--hm-o1ujT--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/xtqzs2uj42dm2yxb5fyp.png)](https://res.cloudinary.com/practicaldev/image/fetch/s--hm-o1ujT--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/xtqzs2uj42dm2yxb5fyp.png)
  
 
-目前，我们监听“Transfer”事件并不重要——这个测试将会失败，因为 `mintApe` 包含许多我们没有满足的条件：
+目前，我们监听“Transfer”事件并不重要——这个测试将会失败，因为 `mintApe` 包含许多没有满足的条件：
 
 
 [![image](https://res.cloudinary.com/practicaldev/image/fetch/s--mSxWDSGO--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/3nynbhcek8zd74pos4gy.png)](https://res.cloudinary.com/practicaldev/image/fetch/s--mSxWDSGO--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/3nynbhcek8zd74pos4gy.png)
@@ -408,7 +408,7 @@ await boredApeContract.flipSaleState();
 ```
 
 
-运行 `npx hardhat test` 并且......我们仍然失败 - 但出现了不同的错误！ 一个不同的错误实际上是个好消息，因为这意味着我们正在取得进展 :) 看起来“发送的以太币值不正确”——这是有道理的，因为我们没有在合约调用中发送任何 ETH。 请注意，`mintApe` 方法签名包含关键字“payable”：
+运行 `npx hardhat test` 并且......我们仍然失败 - 但出现了不同的错误！ 一个不同的错误实际上是个好消息，因为这意味着正在取得进展 :) 看起来“Ether value sent is not correct(发送的以太币不正确)”——这是有道理的，因为我们没有在合约调用中发送任何 ETH。 请注意，`mintApe` 方法签名包含关键字“payable”：
 
 ```
 // bored-ape.sol
@@ -416,7 +416,7 @@ function mintApe(uint numberOfTokens) public payable
 ```
 
 
-这意味着该方法可以（并且期望）接收 ETH。 我们可以通过调用 `apePrice` getter 方法首先检索 Bored Ape 所需的成本：
+这意味着该方法可以（并且期望）接收 ETH。 我们可以通过调用 `apePrice` getter 方法首先能得到 Bored Ape 所需的成本：
 
 
 ```
@@ -425,7 +425,7 @@ uint256 public constant apePrice = 80000000000000000; //0.08 ETH
 ```
 
 
-最后，我们需要导入更多函数，使用 `apePrice` 作为我们的值，并通过调用 `mintApe` 将其作为 ETH 发送。 我们还将另一个名为 `withArgs` 的方法触发我们的 `emit` ，这将使我们能够监听“Transfer”事件发出的参数：
+最后，我们需要导入更多函数，使用 `apePrice` 作为我们的值，并通过调用 `mintApe` 将其作为 ETH 发送。 还将另一个名为 `withArgs` 的方法触发我们的 `emit` ，这将使能够监听“Transfer”事件发出的参数：
 
 
 ```
@@ -450,7 +450,7 @@ it("Should mint an ape", async () => {
 ```
 
 
-我们正在使用“覆盖”对象（https://docs.ethers.io/ethers.js/html/api-contract.html#overrides）向我们的方法调用添加额外的数据——在本例中是一个值属性 这将被合约的`mintApe`方法作为`msg.value`接收，确保我们现在满足“发送的以太值不正确”要求的条件：
+我们正在使用“overrides”对象（https://docs.ethers.io/ethers.js/html/api-contract.html#overrides）向方法调用添加额外的数据——在本例中是一个值属性 这将被合约的`mintApe`方法作为`msg.value`接收，确保满足“发送的以太值不正确”的条件：
 
 ```
 // bored-ape.sol
@@ -458,9 +458,9 @@ require(apePrice.mul(numberOfTokens) <= msg.value, "Ether value sent is not corr
 ```
 
 
-我们已经将`chai`导入到我们的测试文件中，这样我们就可以使用chai “matchers”——我们将它与从“ethereum-waffle”导入的“solidity”匹配器结合起来：https://ethereum-waffle.readthedocs.io/en/latest/matchers.html - 现在我们能够指定我们期望从“Transfer”事件接收的确切参数，并且我们可以确保测试实际上按预期通过。
+我们已经将`chai`导入到测试文件中，这样我们就可以使用chai “matchers”——将它与从“ethereum-waffle”导入的“solidity”匹配器结合起来：https://ethereum-waffle.readthedocs.io/en/latest/matchers.html - 现在能够指定我们期望从“Transfer”事件接收的确切参数，并且我们可以确保测试实际上按预期通过。
 
-如果你想知道我们如何确定我们期望接收的参数，我将解释：首先，我们可以检查 `bored-ape.sol` 中的 `_mint` 方法，并看到 `Transfer` 发出 3 个参数。
+如果你想知道我们如何确定期望接收的参数，我将解释：首先，我们可以检查 `bored-ape.sol` 中的 `_mint` 方法，并看到 `Transfer` 发出 3 个参数。
 
 ```
 // bored-ape.sol
@@ -468,9 +468,9 @@ emit Transfer(address(0), to, tokenId);
 ```
 
 
-第一个参数是“零帐户”：https://ethereum.stackexchange.com/questions/13523/what-is-the-zero-account-as-describe-by-the-solidity-docs - 也称为“地址零”。 第二个参数“to”是发送 `mintApe` 交易的地址——在这种情况下，我们只是使用所有者的地址。 最后，tokenId 在 `mintApe` 方法的 for 循环中定义，并设置为等于调用 `tokenSupply` getter 的返回值。
+第一个参数是“Zero account(零地址)”：https://ethereum.stackexchange.com/questions/13523/what-is-the-zero-account-as-describe-by-the-solidity-docs - 也称为“AddressZero(零地址)”。 第二个参数“to”是发送 `mintApe` 交易的地址——在这种情况下，我们只是使用所有者的地址。 最后，tokenId 在 `mintApe` 方法的 for 循环中定义，并设置为等于调用 `tokenSupply` getter 的返回值。
 
-一旦我们知道这些值是什么，我们就可以将它们输入到我们的 `withArgs` 方法中，包括由 ethers 库提供的一个方便的常量，称为 `AddressZero`：
+一旦我们知道这些值是什么，我们就可以将它们输入到 `withArgs` 方法中，包括由 ethers 库提供的一个方便的常量，称为 `AddressZero`：
 
 
 ```
@@ -479,7 +479,7 @@ emit Transfer(address(0), to, tokenId);
 ```
 
  
-就是这样 - 我们可以运行“npx hardhat test”，我们将获得通过测试。 如果你更改 `withArgs` 中的任何值，你将得到一个失败的测试 - 正是我们所期望的！
+就是这样 - 我们可以运行“npx hardhat test”，将获得通过测试。 如果你更改 `withArgs` 中的任何值，你将得到一个失败的测试 - 正是所期望的！
 
 这是最终测试文件的样子：
 
