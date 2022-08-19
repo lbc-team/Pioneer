@@ -1,7 +1,7 @@
 原文链接：https://steveng.medium.com/performing-merkle-airdrop-like-uniswap-85e43543a592
 
 # 像Uniswap一样执行Merkle空投
-*If you want to skip directly on how to implement Uniswap airdrop, proceed to the section:* **Steps on creating a Merkle Airdro**p
+*如果你想直接跳过如何实现Uniswap空投，请继续阅读以下部分：* **创建Merkle空投的步骤**
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/kBck9IbG6285e77c2632c.jpeg)
 
