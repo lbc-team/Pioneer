@@ -65,7 +65,7 @@ Merkle-based 空投基于 Merkle Tree 数据结构。
 
 Merkle 树是有效的，因为我们不需要遍历整个树来证明我们的值存在于 Merkle 树中。 例如，要证明 **F** 属于 Merkle 树，我们只需要提供 **E, H(GH),** 和 **H(ABCD)** 并且有根的人可以验证是否 **F** 属于Merkle树。
 
-> *验证它只需要对数！*
+> *验证它只需要对数级别的时间！*
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/k5t2bk0N6285e8c3d7ee1.png)
  
