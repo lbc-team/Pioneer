@@ -1,13 +1,14 @@
 原文链接：https://steveng.medium.com/performing-merkle-airdrop-like-uniswap-85e43543a592
 
 # 像Uniswap一样执行Merkle空投
+
 *如果你想直接跳过如何实现Uniswap空投，请继续阅读以下部分：* **创建Merkle空投的步骤**
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/kBck9IbG6285e77c2632c.jpeg)
 
 图片来自 https://ccoingossip.com/what-is-airdrop-in-crypto-world/
 
-空投是指项目决定向一组用户分发代币的事件。以下是实施空投的一些潜在方法：
+空投是指项目决定向一组用户分发代币的事件。以下是实现空投的一些潜在方法：
 
 1. **管理员调用函数发送代币**
 
@@ -36,7 +37,7 @@ function airdrop(address address, uint256 amount) onlyOwner {
 
 # 什么是Merkle空投？
 
-Merkle-based Airdrop是基于默克尔树的数据结构。
+Merkle-based 空投是基于默克尔树的数据结构。
 
 > *我强烈鼓励不熟悉 Merkle 树的人观看此视频*  https://www.youtube.com/watch?v=qHMLy5JjbjQ
 
@@ -103,4 +104,4 @@ const root = merkleTree.getHexRoot();
 
 # 概括
 
-一旦您了解了 Merkle 空投的工作原理，实施就非常简单。该用例不仅适用于空投，您还可以为具有白名单要求的应用程序实现此功能，如IDO 或早期访问某些功能。
+一旦您了解了 Merkle 空投的工作原理，实现就非常简单。该用例不仅适用于空投，您还可以为具有白名单要求的应用程序实现此功能，如IDO 或早期访问某些功能。
