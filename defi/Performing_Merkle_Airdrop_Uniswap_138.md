@@ -1,18 +1,18 @@
 原文链接：https://steveng.medium.com/performing-merkle-airdrop-like-uniswap-85e43543a592
 
-# Performing Merkle Airdrop like Uniswap
+# 像Uniswap一样执行Merkle空投
 
-*If you want to skip directly on how to implement Uniswap airdrop, proceed to the section:* **Steps on creating a Merkle Airdro**p
+*如果你想直接跳过如何实现Uniswap空投，请继续阅读以下部分：* **创建Merkle空投的步骤**
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/kBck9IbG6285e77c2632c.jpeg)
 
-Image from https://ccoingossip.com/what-is-airdrop-in-crypto-world/
+图片来自 https://ccoingossip.com/what-is-airdrop-in-crypto-world/
 
-An airdrop is an event when the project decides to give tokens away to a group of users. These are some potential way to implement airdrop:
+空投是指项目决定向一组用户分发代币的事件。以下是实现空投的一些潜在方法：
 
-1. **Admin call a function to send tokens**
+1. **管理员调用函数发送代币**
 
-In this case, a function implemented like below:
+在这种情况下，一个函数实现如下：
 
 ```
 function airdrop(address address, uint256 amount) onlyOwner {
@@ -20,91 +20,88 @@ function airdrop(address address, uint256 amount) onlyOwner {
 }
 ```
 
-In this scenario, the owner would have to pay the gas fee to call the function and it will not be sustainable if the list of addresses is huge and especially on ETH.
+在这种场景下，所有者必须支付gas费才能调用该函数，如果地址列表很大，尤其是在ETH上，这将是不可持续的。
 
-**2. Storing the list of whitelisted addresses on the contract**
+2. **在合约上存储白名单地址列表**
 
-You would likely implement a mapping `mapping(address => some struct)` which stores all the whitelisted addresses and whether the address has claimed the airdrop. Similarly, the owner would also have to pay the gas fee to store the list of whitelisted addresses of the contract.
+您可能会实现一个映射，该映射 `mapping(address => some struct)`存储所有列入白名单的地址以及该地址是否已认领空投。同样，所有者也必须支付gas费用来存储合约的白名单地址列表。
 
-# Merkle Airdrop
+# Merkle空投
 
-For Merkle airdrop implementation, the same objective is accomplished with the following benefit:
+对于Merkle空投，实现了相同的目标并具有以下好处：
 
-- The owner only pay the gas fee to create the contract and storing the Merkle root on the contract
-- Whitelisted addresses can call the contract on their own to claim their airdrop — this also opens up the possibility of having a deadline to claim the airdrop.
+- 所有者只需支付gas费来创建合约并将 Merkle 根存储在合约上。
+- 列入白名单的地址可以自行调用合约来申领空投——这也开启了在截止日期前申领空投的可能性。
 
-And if you are in Defi early enough, Uniswap's initial airdrop is done through Merkle — ref https://github.com/Uniswap/merkle-distributor
+如果你在Defi中足够早，Uniswap的初始空投是通过Merkle完成的——参考 https://github.com/Uniswap/merkle-distributor
 
-# What is Merkle Airdrop?
+# 什么是Merkle空投？
 
-Merkle-based Airdrop is based on Merkle Tree data structure.
+Merkle-based 空投是基于默克尔树的数据结构。
 
-> I strongly encourage people who are new to Merkle tree to watch this video https://www.youtube.com/watch?v=qHMLy5JjbjQ
+> *我强烈鼓励不熟悉 Merkle 树的人观看此视频*  https://www.youtube.com/watch?v=qHMLy5JjbjQ
 
-Take the example below, if we have 8 values to store (**A to H**), we start by
+举个例子，如果我们有8个值要存储（**A 到 H**）
 
-- Form second layer: Hash(A+B), Hash(C+D), Hash(E+F), Hash(G+H)
-- Form third layer: Hash(Hash(A+B), Hash(C+D)), Hash( Hash(E+F), Hash(G+H))
-- Finally, the fourth level showed in orange.
+- 形成第二层：Hash(A+B), Hash(C+D), Hash(E+F), Hash(G+H)
+- 形成第三层：Hash(Hash(A+B), Hash(C+D)), Hash(Hash(E+F), Hash(G+H))
+- 最后，第四级显示为橙色。
 
-The one in orange is what we call **Merkle root**, the root of the tree.
+橙色的就是我们所说的**Merkle root**，即树的根。
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/GEJcdQir6285e88586f38.png)
 
-**Why is this effective?**
+**为什么这有效?**
 
-Merkle tree is effective as we do not need the go through the entire tree in order to prove our value exists in the Merkle tree. For example, to prove that **F** belongs to the Merkle tree, we only need to provide **E, H(GH),** and **H(ABCD)** and someone with the root can verify if **F** belongs to the Merkle Tree.
+Merkle树是有效的，因为我们不需要遍历整个树来证明我们的值存在于Merkle树中。例如，要证明**F**属于 Merkle树，我们只需要提供**E、H(GH)**和**H(ABCD)**，有Merkle根的人就可以验证**F**是否属于Merkle树。
 
-> *It takes only logarithmic time to verify proof!*
+> *验证证明只需要对数级的时间！*
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/k5t2bk0N6285e8c3d7ee1.png)
 
-# Steps on creating a Merkle Airdrop
+# 创建Merkle空投的步骤
 
-Reference for the code can be found at https://github.com/steve-ng/merkle-airdrop — 2 main libraries are used
+代码参考可以在 https://github.com/steve-ng/merkle-airdrop 找到——使用了 2 个主要库
 
-- Frontend: https://github.com/miguelmota/merkletreejs
-- Solidity side: https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v4.3/contracts/utils/cryptography/MerkleProof.sol
+- 前端：https://github.com/miguelmota/merkletreejs
+- Solidity：https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v4.3/contracts/utils/cryptography/MerkleProof.sol
 
-**Pre-requisite**
+**先决条件**
 
-- Generate the list of whitelisted and amount they are qualified for
-- Generate the Merkle root based on the list
+- 生成他们有资格获得的白名单和金额列表
+- 根据列表生成Merkle根
 
-The example can be found in https://github.com/steve-ng/merkle-airdrop/blob/main/test/MerkleDistributor.ts
+该示例可以在 https://github.com/steve-ng/merkle-airdrop/blob/main/test/MerkleDistributor.ts 中找到
 
 ```
-// Generate the list of whitelisted user and amount qualified 
+// 生成有资格的白名单和金额列表
 const users = [    
   { address: "0x..", amount: 10 },    
   { address: "0x..", amount: 15 },    
   { address: "0x...", amount: 20 },    
   { address: "0x..", amount: 30 },  
 ]; 
-// Encode the datastructure 
+// 编码数据结构
 const elements = users.map((x) =>     
   utils.solidityKeccak256(
     ["address", "uint256"], [x.address, x.amount]));
 const merkleTree = 
   new MerkleTree(elements, keccak256, { sort: true });
-// Generate the root 
+// 生成Merkle根
 const root = merkleTree.getHexRoot();
 ```
 
-**In your smart contract**
+**在你的智能合约中**
 
-Store the Merkle Root generated in your smart contract — you can refer to https://github.com/steve-ng/merkle-airdrop/blob/main/contracts/MerkleDistributor.sol
+生成的 Merkle根存储在你的智能合约中——你可以参考 https://github.com/steve-ng/merkle-airdrop/blob/main/contracts/MerkleDistributor.sol
 
-**In your frontend**
+**在你的前端**
 
-- Store all the address that’s eligible for the airdrop, such that when the user comes to your site, they can immediately see if they are eligible
-- If they are eligible, call the smart contract with the proof.
+- 存储所有符合空投条件的地址，这样当用户访问你的站点时，他们可以立即查看他们是否符合条件
+- 如果他们符合条件，请使用证明调用智能合约。
 
-Similarly, the code can be found in the test cases at https://github.com/steve-ng/merkle-airdrop/blob/main/test/MerkleDistributor.ts#L46
+同样，代码可以在 https://github.com/steve-ng/merkle-airdrop/blob/main/test/MerkleDistributor.ts#L46 的测试用例中找到
 
-# Summary
+# 概括
 
-Once you know how Merkle airdrop works, the implementation is very straightforward. The use case is not only for airdrop, you can also implement this for applications with a whitelisting requirements, eg. IDO or early access to some feature.
-
-
-
+一旦您了解了 Merkle 空投的工作原理，实现就非常简单。该用例不仅适用于空投，您还可以为具有白名单要求的应用程序实现此功能，如IDO 或早期访问某些功能。
