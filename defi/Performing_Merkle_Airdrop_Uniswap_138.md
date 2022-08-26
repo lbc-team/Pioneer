@@ -11,7 +11,8 @@
 图片来自https://ccoingossip.com/what-is-airdrop-in-crypto-world/
 
  
-
+ 
+ 
 
 空投是项目决定将代币赠送给一部分用户时的事件。 这些是实现空投的一些潜在方法：
 
