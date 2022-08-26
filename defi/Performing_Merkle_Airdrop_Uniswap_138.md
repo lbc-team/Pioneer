@@ -8,11 +8,9 @@
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/kBck9IbG6285e77c2632c.jpeg)
 
-图片来自https://ccoingossip.com/what-is-airdrop-in-crypto-world/
+图片来自 https://ccoingossip.com/what-is-airdrop-in-crypto-world/
 
- 
- 
- 
+
 
 空投是项目决定将代币赠送给一部分用户时的事件。 这些是实现空投的一些潜在方法：
 
