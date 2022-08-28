@@ -1,7 +1,8 @@
 #!/bin/sh
 # 用法: ./job_info.sh fileName
 
-lines=$(($(cat $1 | grep -v ^$ | wc -l)))
+# lines=$(($(cat $1 | grep -v ^$ | wc -l)))
+lines=$(python validLine.py $1)
 reviews=$((lines/4))
 
 echo "- Markdown文件： [$1](https://github.com/lbc-team/Pioneer/blob/master/$1)"
