@@ -2,193 +2,193 @@
 
 
 
-# Become a blockchain Expert: Beginner to Advanced (for FREE)
+# 成为区块链专家：从初级到高级
 
-What if all my skills suddenly faded away? What would i do differently if i got back 2 years ago without any blockchain skills?
+如果我的技能突然消失了怎么办？如果我回到 2 年前在没有任何区块链技能的情况下，我会做些什么不同的事情？
 
-What if i want to start from zero WITHOUT any knowledge? There are very good questions which may interest you today.
+如果我想在没有任何知识的情况下从零开始怎么办？今天有一些很好的问题可能会让你感兴趣。
 
-**Here is the FULL plan you absolutely need to follow to succeed in the blockchain space and become a good WEB3 DEV (and/or) WEB3 AUDITOR**
+**要想在区块链领域取得成功，成为一名优秀的WEB3开发者或WEB3审计员，你绝对需要遵循以下完整的计划**
 
-I will assume that:
+我会假设：
 
-- That you don’t have any experience in programming, computer science and finance.
-- You know how to use a computer, navigate into a browser and “play” with social media.
-- You already have 1–2 free hour per day when you can focus on building a skill.
+- 你在编程、计算机科学和金融方面没有任何经验。
+- 你知道如何使用电脑，如何使用浏览器，如何“玩”社交媒体。
+- 你每天已经有1-2个小时的空闲时间，可以专注于培养一项技能。
 
-**Let’s GO !**
-## ⏩ Part 1: get the BASICS (mandatory)
+**现在开始!**
+## ⏩ 第1部分: 掌握基础知识(必修课)
 
-If you don’t have any experience with blockchain and programming you absolutely need follow ALL steps of this **PART 1, you’ll get the basics of all the next parts (2–4)** otherwise you can skips some steps of this part.
+如果你没有任何区块链和编程的经验，绝对需要遵循第1部分的所有步骤， **你将获得所有后续部分的基础知识(2-4)。**否则，您可以跳过这部分的一些步骤。
 
-### ▶ Step 1: Learn basics about blockchain and crypto.
+### ▶ 第1步：学习区块链和加密的基础知识
 
-The very first step is to familiarize yourself with the crypto world.
+第一步是熟悉加密世界。
 
-1. Learn **the “crypto” vocabulary.** (https://time.com/nextadvisor/investing/cryptocurrency/crypto-terms-you-should-know-before-investing/)
-2. Invest a small amount (like 100$) on the crypto of your choice by using known exchanges like **Kraken**, **Kucoin**, **Binance**, **Coinbase**…
-3. Read **Mastering Bitcoin** (https://www.amazon.com/Mastering-Bitcoin-Andreas-M-Antonopoulos/dp/1449374042) AND **Mastering Ethereum** ([https://www.amazon.com/Mastering-Ethereum-Building-Smart-Contracts/dp/1491971940/](https://www.amazon.com/Mastering-Ethereum-Building-Smart-Contracts/dp/1491971940/ref=sr_1_7?crid=1P7BLEJLMHNWD&keywords=etherum&qid=1659705431&s=books&sprefix=etherum%2Cstripbooks-intl-ship%2C149&sr=1-7)) you’ll understand how the **blockchain** and *smart contract*s work *in depth*. (you can find free PDFs online.)
-4. Learn what are the different types of wallet and how to secure them.(https://www.security.org/crypto/protection/)
+1. 学习**“加密”词汇** (https://time.com/nextadvisor/investing/cryptocurrency/crypto-terms-you-should-know-before-investing/)
+2. 通过使用**Kraken**, **Kucoin**, **Binance**, **Coinbase**等已知交易所，在你选择的加密货币上进行少量投资(如100美元)
+3. 阅读**精通比特币** (https://www.amazon.com/Mastering-Bitcoin-Andreas-M-Antonopoulos/dp/1449374042) 和**精通以太坊** ([https://www.amazon.com/Mastering-Ethereum-Building-Smart-Contracts/dp/1491971940/](https://www.amazon.com/Mastering-Ethereum-Building-Smart-Contracts/dp/1491971940/ref=sr_1_7?crid=1P7BLEJLMHNWD&keywords=etherum&qid=1659705431&s=books&sprefix=etherum%2Cstripbooks-intl-ship%2C149&sr=1-7))。你将深入了解区块链和智能合约的工作原理。(你可以在网上找到免费的pdf文件。)
+4. 了解不同类型的钱包以及如何保护它们。(https://www.security.org/crypto/protection/)
 
-### ▶ Step 2: Learn basics about programming and computer science.
+### ▶ 第2步：学习编程和计算机科学的基础知识
 
-1. You’ll use sometimes the (ugly) command line and terminal in your projects, better to learn now. [(https://www.codecademy.com/learn/learn-the-command-line](https://www.codecademy.com/learn/learn-the-command-line), this course is about Linux, but it applies to **Powershell** too)
-2. Of course you’ll need programming to create and audit smart contracts on the blockchain, before learning a programming language you need to acquire the basics of programming. (https://www.codecademy.com/learn/learn-how-to-code/modules/bop-i)
-3. Finally, learn basic computer science in order to fully understand all blockchain concepts: [(https://www.tutorialspoint.com/basics_of_computer_science/index.htm](https://www.tutorialspoint.com/basics_of_computer_science/index.htm))
+1. 你有时会在项目中使用命令行和终端，最好现在就学习。[(https://www.codecademy.com/learn/learn-the-command-line](https://www.codecademy.com/learn/learn-the-command-line), 本课程是关于Linux的，但也适用于Powershell)
+2. 当然，你需要编程来创建和审计区块链上的智能合约，在学习编程语言之前，您需要获得编程的基础知识。(https://www.codecademy.com/learn/learn-how-to-code/modules/bop-i)
+3. 最后，学习基本的计算机科学，以充分理解所有区块链概念::[(https://www.tutorialspoint.com/basics_of_computer_science/index.htm](https://www.tutorialspoint.com/basics_of_computer_science/index.htm))
 
-### ▶ Step 3: Learn basics about web. (HTML and JS)
+### ▶ 第3步：学习网络基础知识(HTML和JS)
 
-1. Start to learn about **HTML** and how to build basic websites, https://www.codecademy.com/learn/learn-html is by far the best resource to learn **HTML** very **FAST**.
-2. Learn **JS** to create **BEAUTIFUL** and **INTERACTIVE** web pages: https://www.codecademy.com/catalog/language/javascript
-3. (optional, you can learn a **JS** framework to build websites faster, I strongly advise you to use **reactJS**: https://en.reactjs.org/)
+1. 开始学习HTML和如何构建基本的网站, https://www.codecademy.com/learn/learn-html 是目前为止学习**HTML**非常**快速**的最佳资源。
+2. 学习**JS**来创建**漂亮**的**交互式**网页: https://www.codecademy.com/catalog/language/javascript
+3. (可选，你可以学习**JS**框架来更快地构建网站，强烈建议使用**reactJS**: https://en.reactjs.org/)
 
-### ▶ Step 4: Others MANDATORY prerequisites.
+### ▶ 第4步：其他必备条件
 
-1. Learn about finance and economics as blockchain is highly related to this field, **Investopedia** is by far the BEST FREE website to learn: [https://www.investopedia.com](https://www.investopedia.com/)
-2. Learn about basics of **MATH** (here is all the math you need: https://medium.com/@TrustChain/do-you-need-math-to-get-started-in-smart-contract-hacking-443ff52b418d)
-3. Strength you English skills (and accent) if you’re not a native English. All the content you’ll **read/watch** in the blockchain sphere is **in English**.
+1. 了解金融和经济，因为区块链与这一领域高度相关， **Investopedia**是迄今为止最好的免费网站: [https://www.investopedia.com](https://www.investopedia.com/)
+2. 学习**数学**基础知识 (以下是你需要的所有数学知识: https://medium.com/@TrustChain/do-you-need-math-to-get-started-in-smart-contract-hacking-443ff52b418d)
+3. 如果你的母语不是英语，那就加强你的英语技能(和口音)。你将在区块链领域**阅读/观看**的所有内容都是**英语**的。
 
-## ⏩ Part 2: Become a solidity EXPERT
+## ⏩ 第2部分：成为Solidity专家
 
-### ▶ Step 5: Learn Solidity. (beginner to intermediate)
+### ▶ 第5步：学习Solidity (初级到高级)
 
-Once you’re done with the basics, it’s time to start:
-**Cryptozombie**: https://cryptozombies.io/ is by far the most recommended resource to begin if you have **ZERO** experience.
+一旦你完成了基础，就该开始了:
+如果你**零**经验，**Cryptozombie**: https://cryptozombies.io/ 是最值得推荐的入门资源。
 
-### ▶ Step 6: Create Solidity projects.
+### ▶ 第6步：创建Solidity项目
 
-At this point, you need to confront the real life and start gaining “true” experience. Your goal is now to build some **web3** projects, here is some ideas:
+在这一点上，你需要面对现实生活，开始获得“真正的”经验。你现在的目标是构建一些**web3**项目，这里有一些想法:
 
-- An **upgradable NFT** smart contract
-- A personal **Portfolio** (where you can expose your creations and your resume.)
-- **A DAO** (Decentralized autonomous organization)
-- A Reflexion Token with taxes on each transfer.
+- **可升级的 NFT**智能合约
+- 个人**作品集**(你可以在其中展示你的创作和简历)
+- **A DAO** (去中心化自治组织)
+- 每次转移都要交税的反射代币
 
-### ▶ Step 7: Diving deeper into solidity.
+### ▶ 第7步：深入Solidity
 
-- Learn **Reverse Engineering** of smart contracts: https://medium.com/@TrustChain/list/reversing-and-degugging-evm-smart-contracts-f4dd9195d07b .
-- **Ethereum** documentation: https://ethereum.org/en/developers/docs/ where you can learn a lot of interesting stuff.
-- **Smart contract programmer** is a YouTube channel with lot of content about web3: https://www.youtube.com/channel/UCJWh7F3AFyQ_x01VKzr9eyA .
+- 学习智能合约的**逆向工程**: https://medium.com/@TrustChain/list/reversing-and-degugging-evm-smart-contracts-f4dd9195d07b 。
+- **以太坊** 文档: https://ethereum.org/en/developers/docs/ 在那里你可以学到很多有趣的东西。
+- **Smart contract programmer**是一个YouTube频道，里面有很多关于web3的内容: https://www.youtube.com/channel/UCJWh7F3AFyQ_x01VKzr9eyA 。
 
-## ⏩ Part 3: Learn Solidity Cybersecurity
+## ⏩ 第3部分：学习Solidity网络安全
 
-If you’re a **web3 dev**, you obviously don’t want that someone drain all you smart contract funds, as a result you need the have more than the basics about cybersecurity on blockchain to avoid hacks.
+如果你是一个**web3开发人员**，你显然不希望有人耗尽你所有的智能合约资金，因此，你需要有更多的区块链网络安全的基础知识，以避免黑客攻击。
 
-(If you don’t want to be a blockchain auditor, you can skip step 9 and 10)
+(如果你不想成为区块链审计员，可以跳过第9步和第10步)
 
-### ▶ Step 8: Practice solidity CTF challenges.
+### ▶ 第8步：练习Solidity CTF挑战
 
-A “CTF” is a “cybersecurity” challenge where your goal is to “hack” a vulnerable smart contract (deployed on **testnet** of course, without real money). It’s like hacking but without any illegal purpose.
+“CTF”是一个“网络安全”挑战，你的目标是“侵入”一个易受攻击的智能合约(当然部署在**testnet**上，没有真钱)。这就像黑客入侵，但没有任何非法目的。
 
-You will quickly get familiar with all well-know vulnerability on **Ethereum**.
+你将很快熟悉**以太坊**上所有众所周知的漏洞。
 
-Here is well-known **CTFs**:
+以下是著名的 **CTFs**:
 
 - https://ethernaut.openzeppelin.com/
 - https://capturetheether.com/
 - https://www.damnvulnerabledefi.xyz/
 - https://ciphershastra.com/Maya.html
 
-### ▶ Step 9: Practice your AUDIT skills in real life.
+### ▶ 第9步：在现实生活中练习你的审计技能
 
-Once you’re comfortable with most of the CTFs, you can practice on real life projects.
+一旦你熟悉了大多数CTFs，就可以在现实生活中的项目中进行实践。
 
-1. Read some audit report by **already known blockchain security companies** in order to be familiar of the report methodology and the list of security flaws. (You can go here: https://hashex.org/audits/conducted-audits, https://solidproof.io/projects or here: https://hacken.io/audits/)
-2. Chose some already audited projects by big blockchain security companies and **try to audit them again WITHOUT seeing the true report**, once you’re done, **compare YOUR audit report with the COMPANY’s audit report** and observe what you have done right & wrong.
-3. Repeat on a dozen of projects in order to build your real life audit skills.
+1. 阅读一些**知名区块链安全公司**的审计报告，以熟悉报告的方法和安全漏洞列表。(可以去这里：https://hashex.org/audits/conducted-audits, https://solidproof.io/projects 或这里：https://hacken.io/audits/)
+2. 选择一些已经被大型区块链安全公司审计的项目，并**尝试在没有看到真实报告的情况下再次审计他们**，一旦你完成了，**将你的审计报告与公司的审计报告进行比较**，观察你做的对与错。
+3. 重复十几个项目，以建立你现实生活中的审计技能。
 
-Many of the **Ethereum** vulnerability are stored here: https://swcregistry.io/
+许多以太坊漏洞都存储在这里: https://swcregistry.io/
 
-### ▶ Step 10: Reproduce known HACKS.
+### ▶  第10步：再现已知的攻击
 
-To grow up you practical cybersecurity skills, you need to understand how previous smart contract were hacked.
+为了培养实用的网络安全技能，你需要了解之前的智能合约是如何被黑客攻击的。
 
-The more you’ve learnt how smart contract were hacked, the best you will be to recognize theses flaws in your next challenges!
+你越了解智能合约是如何被黑客攻击的，你就越能在你的下一个挑战中认识到这些缺陷!
 
-https://rekt.news/ shows the most prominent hacks in **DEFI**, you can easy find the source code of the projects, redeploy the contract and retry the hack. (If you can’t find the flaw by yourself, you can still search someone who explains happened on google.)
+https://rekt.news/ 展示了**DEFI**中最突出的攻击，你可以轻松找到项目的源代码,重新部署合约并重试攻击。 (如果你自己找不到漏洞，你仍然可以在谷歌上找到解释事件发生的人。)
 
-### ▶ Step 10bis (optional) : Do some bug bounty
+### ▶ 第10步附加（可选）：做一些bug奖励
 
-Bug bounty is like CTF, but there is 2 differences:
+Bug奖励类似于CTF，但有两个区别:
 
-1. Instead of “testnet” smart contract, you try to find flaws on already deployed projects on **mainnet**.
-2. if you find a flaw or a bug you can get an amount of money.
+1. 将尝试在**主网**上已经部署的项目上寻找缺陷，而不是“测试网”的智能合约。
+2. 如果你发现了一个缺陷或漏洞，可以得到一笔钱。
 
-This is optional, but it can **significantly** improve your resume.
+这是可选的，但它可以**显著**改善你的简历。
 
 - https://hackenproof.com/
 - https://immunefi.com/
 - https://code4rena.com/
 
-### ▶ Step 11: Get Informed
+### ▶ 第11步：了解情况
 
-The sphere of blockchain is evolving at a very fast rate.
+区块链领域正在以非常快的速度发展。
 
-What was true 3 months a go may be not true today!
+3个月前是正确的，今天可能就不正确了!
 
-This is why you need **(at all cost)** to setup your own personal feed.
+这就是为什么你需要(**不惜一切代价**)设置自己的个人订阅源。
 
-I use **Inoreader** (https://www.inoreader.com/) to combine all my sources of information (**Blogs**, **YouTube**, **Telegram**, **Podcasts**, **Newsletters, Twitter** and so on…) in one place.
+我用**Inoreader** (https://www.inoreader.com/) 把我所有的信息源(**博客**, **YouTube**, **Telegram**, **Podcasts**, **简讯, Twitter**等)合并到一个地方。
 
-This is a lot easier, and I check my own feed 1–2 times a day when I’m done with my work, there is a high number of advantages with this method:
+这很容易，当我完成我的工作时，我每天查看我自己的订阅源 1-2次，这种方法有很多优点:
 
-- You don’t need one account for every social media.
-- It’s a lot more practical.
-- The social media “**algorithm**” can’t recommend **“trashy”** content to you.
-- You can include your own CSS to personalize the feed theme.
-- And a lot more.
+- 你不需要每个社交媒体都有一个账户。
+- 这样更实用。
+- 社交媒体的“**算法**”不会向你推荐“**垃圾**”内容。
+- 您可以包含自己的CSS来个性化订阅源主题。
+- 还有更多。
 
-## ⏩ Part 4: Build an UNBREAKABLE network.
+## ⏩ 第4部分：建立一个牢不可破的网络
 
-Yo may already head that “your network is your net-worth”.
+你可能已经意识到“你的网络就是你的净资产”。
 
-This is **TRUE** is every aspect of life, but even more on crypto. **If don’t know anyone, all you knowledge is worthless.**
+生活的方方面面都是如此，但在加密领域更是如此。**如果不认识任何人，你所有的知识都是一文不值。**
 
-Unfortunately, this is the hardest part of this series, unlike **PART 1–3** where you can advance and learn very fast, **building a network is way more costly in time and in resources.**
+不幸的是，这是本系列中最难的部分，不像**第1-3部分**中您可以快速地进步和学习， **建立一个网络在时间和资源上的成本要高得多。**
 
-### ▶ Step 12: Build a social media presence. (and create content)
+### ▶  第12步：建立社交媒体形象(和创建内容)
 
-You can try to REGULARLY post content on:
+你可以尝试定期发布内容:
 
-- **LinkedIn,** a must have in your professional carrier.
-- **Twitter,** if you like drama.
-- **Medium**, if you like to write and share your knowledge (like me).
-- **YouTube**, if you like to post videos and share your knowledge.
+- **LinkedIn,** 你的专业运营商中的必备品。
+- **Twitter,**如果你喜欢戏剧.
+- **Medium**,如果你喜欢写作和分享你的知识（比如我）。
+- **YouTube**,如果您喜欢发布视频并分享您的知识。 
 - **Instagram**/**TikTok.**
 
-**Chose 1 or 2 platforms MAXIMUM** and try to build an audience here, when you will be seeking a job, you social media presence will yield you a decisive advantage against others applicants.
+**最多选择1到2个平台**，并尝试在这里建立受众，当你找工作时，你的社交媒体表现将使你在与其他求职者相比时具有决定性的优势。
 
-You may be able (also) to earn passive income from your content (by using ads or affiliation) without adding more work.
+你也许能够从你的内容中获得被动收入（通过使用广告或从属关系），而无需增加更多的工作。
 
-### ▶ Step 13: Join communities, DAOs or meetups.
+### ▶ 第13步：加入社区、DAO 或聚会
 
-You can join communities on **Telegram** and on discord to build step by step your reputation.
+你可以加入**Telegram** 和discord上的社区，逐步建立你的声誉。
 
-- You can answer to questions.
-- Discuss with other members.
-- Show that you’re implied in the project.
+- 你可以回答问题。
+- 与其他成员讨论。
+- 表明你参与了项目。
 
-This will allow you to build your network, to make new friends to improve your skills.
+这会让你建立自己的人际网络，结交新朋友，提高自己的技能。
 
-Maybe at one time, some people of your “network” will need a smart contract developer and/or auditor. As they already trust your by your “friendship”, you can get the job.
+也许在某个时候，你的“网络”中的一些人将需要智能合约开发者或审计员。因为他们已经通过你的“友谊”信任你，你可以得到这份工作。
 
-- If you want to dive deeper:
+- 如果你想深入了解:
 
-[How to Network and Make Friends in CryptoStop trying to approach people on LinkedIn, you need to understand the structure of content, conversation, and…medium.com](https://medium.com/coinmonks/how-to-network-and-make-friends-in-crypto-796e123e9584)
+[如何在加密领域建立网络和交朋友 停止尝试在LinkedIn上与人接触，你需要了解内容、对话和社区的结构](https://medium.com/coinmonks/how-to-network-and-make-friends-in-crypto-796e123e9584)
 
-### ▶ Step 14: Learn basics of psychology and marketing
+### ▶ 第14步：学习心理学和市场营销的基础知识
 
-If you want to be hired for a job and gain the upper-hand among others you need to develop your social skills.
+如果你想获得一份工作，并在其他人中占据上风，你需要发展你的社交技巧。
 
-This book is the best in order to achieve this objective: https://www.amazon.fr/influence-Persuasion-Robert-Cialdini-PhD/dp/006124189X
+本书是实现这一目标的最佳选择: https://www.amazon.fr/influence-Persuasion-Robert-Cialdini-PhD/dp/006124189X
 
-## ⏩ Part 5: Conclusion.
+## ⏩ 第4部分：结论
 
-Mastering blockchain is not a skill as hard as thought. Especially the solidity language which is way easier that most of others programming language.
+掌握区块链并不像想象中那么难。特别是solidity语言，它比大多数其他编程语言更容易。
 
-Since blockchain is a “high paying” skill, there will be more and more people entering in the market and hence more competition.
+因为区块链是一种“高收入”技能，所以进入市场的人会越来越多，竞争也会越来越激烈。
 
-I advise you to start right now before it’s too late.
+我建议你现在就开始，否则就太晚了。
 
 
 
