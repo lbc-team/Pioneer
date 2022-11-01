@@ -150,8 +150,8 @@ Bug奖励类似于CTF，但有两个区别:
 
 你可以尝试定期发布内容:
 
-- **LinkedIn,** 你的专业运营商中的必备品。
-- **Twitter,**如果你喜欢戏剧.
+- **LinkedIn,** 你的专业履历。
+- **Twitter,** 如果你喜欢唠嗑。
 - **Medium**,如果你喜欢写作和分享你的知识（比如我）。
 - **YouTube**,如果您喜欢发布视频并分享您的知识。 
 - **Instagram**/**TikTok.**
@@ -182,7 +182,7 @@ Bug奖励类似于CTF，但有两个区别:
 
 本书是实现这一目标的最佳选择: https://www.amazon.fr/influence-Persuasion-Robert-Cialdini-PhD/dp/006124189X
 
-## ⏩ 第4部分：结论
+## ⏩ 第5部分：结论
 
 掌握区块链并不像想象中那么难。特别是solidity语言，它比大多数其他编程语言更容易。
 
