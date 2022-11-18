@@ -6,25 +6,25 @@
 
 用于购买计算、状态转移还有存储空间的开销被称做 *燃料（下文统称 gas）*。 gas 的作用是确定交易的优先级, 同时形成一种能抵御【女巫攻击】（[Sybil resistance](https://en.wikipedia.org/wiki/Sybil_attack)）的机制 ，而且还能防止【停止问题】（[halting problem](https://en.wikipedia.org/wiki/Halting_problem)）引起的攻击。
 
-*欢迎阅读我的文章* [*Solidity 基础* ](https://medium.com/@danielyamagata/solidity-basics-your-first-smart-contract-f11f4f7853d0)*去了解gas的方方面面*
+*欢迎阅读我的文章* [*Solidity 基础* ](https://medium.com/@danielyamagata/solidity-basics-your-first-smart-contract-f11f4f7853d0)*去了解 gas 的方方面面*
 
-这些非典型的开销导致经典的软件设计模式在合约编程语言中看起来既低效又奇怪。如果想要识别这些模式并理解它们与运行效率的关系，您必须首先对以太坊虚拟机（即 EVM）有一个基本的了解。
+这些非典型的开销导致经典的软件设计模式在合约编程语言中看起来既低效又奇怪。如果想要识别这些模式并理解他们导致效率高低的原因，你必须首先对以太坊虚拟机（即 EVM）有一个基本的了解。
 
 **什么是EVM？**
 
-*如果您已经熟悉 EVM，请随时跳到下个部分：* ***什么是 EVM 操作码？***
+*如果你已经熟悉 EVM，请随时跳到下个部分：* ***什么是 EVM 操作码？***
 
-一个任何区块链都是一个基于交易的 [*状态机*](https://en.wikipedia.org/wiki/Finite-state_machine)。 区块链递增地执行交易，交易完成后就变成新状态。因此，区块链上的每笔交易都是一次*状态转换*。
+任何一个区块链都是一个基于交易的 [*状态机*](https://en.wikipedia.org/wiki/Finite-state_machine)。 区块链递增地执行交易，交易完成后就变成新状态。因此，区块链上的每笔交易都是一次*状态转换*。
 
-简单的区块链，如比特币，本身只支持简单的交易传输。相比之下，可以运行智能合约的链，如以太坊，实现了两种类型的账户，即外部账户和合约账户，所以支持复杂的逻辑。
+简单的区块链，如比特币，本身只支持简单的交易传输。相比之下，可以运行智能合约的链，如以太坊，实现了两种类型的账户，即外部账户和智能合约账户，所以支持复杂的逻辑。
 
-外部账户由用户通过私钥控制，不包含代码，而合约账户仅受其关联的代码控制。EVM 代码以[字节码](https://en.wikipedia.org/wiki/Bytecode)的形式存储在虚拟 [ROM](https://en.wikipedia.org/wiki/Read-only_memory)中。
+外部账户由用户通过私钥控制，不包含代码；而只能合约账户仅受其关联的代码控制。EVM 代码以[字节码](https://en.wikipedia.org/wiki/Bytecode)的形式存储在虚拟 [ROM](https://en.wikipedia.org/wiki/Read-only_memory) 中。
 
 EVM 负责区块链上所有交易的执行和处理。它是一个栈机器，栈上的每个元素长度都是 256 位或 32 字节。EVM 嵌在每个以太坊节点中，负责执行合约的字节码。
 
-EVM 把数据保存在存储（Storage）和内存（memory）中。*存储（Storage）*用于永久存储数据，而*内存（memory）*仅在函数调用期间保存数据。还有一个地方保存了函数参数的数据，叫做*调用数据（calldata）*，这个存储方式有点像内存，但数据是不可修改的。
+EVM 把数据保存在*存储（Storage）*和*内存（Memory）*中。*存储（Storage）*用于永久存储数据，而*内存（Memory）*仅在函数调用期间保存数据。还有一个地方保存了函数参数，叫做*调用数据（calldata）*，这种存储方式有点像内存，不同的是不可以修改这类数据。
 
-*在 Preethi Kasireddy 的文章中了解有关以太坊和 EVM 的更多信息[*“Ethereum 是如何工作的？”*]* (https://www.preethikasireddy.com/post/how-does-ethereum-work-anyway#:~:text=The Ethereum blockchain is essentially,transition to a new state.)。
+*在 Preethi Kasireddy 的文章中了解有关以太坊和 EVM 的更多信息* [*“Ethereum 是如何工作的？”*](https://www.preethikasireddy.com/post/how-does-ethereum-work-anyway#:~:text=The Ethereum blockchain is essentially,transition to a new state.)。
 
 智能合约是用高级语言编写的，例如 Solidity、Vyper 或 Yul，随后通过编译器编译成 EVM 字节码。但是，有时直接在代码中使用字节码会更高效（省gas）。
 
@@ -54,7 +54,7 @@ Solidity 字节码示例
 
 **为什么了解 EVM 操作码很重要？**
 
-想要降低 gas 开销，了解 EVM 操作码极其重要，这也会降低你的终端用户的成本。由于不同的 EVM 操作码的成本是不同的，因此虽然实现了相同结果，但不同的编码方式可能会导致更高的开销。了解哪些操作码是比较昂贵的，可以帮助您最大程度地减少甚至避免使用它们。您可以查看 [以太坊文档](https://ethereum.org/en/developers/docs/evm/opcodes/) 以获取 EVM 操作码及其相关 gas 开销的列表。
+想要降低 gas 开销，了解 EVM 操作码极其重要，这也会降低你的终端用户的成本。由于不同的 EVM 操作码的成本是不同的，因此虽然实现了相同结果，但不同的编码方式可能会导致更高的开销。了解哪些操作码是比较昂贵的，可以帮助你最大程度地减少甚至避免使用它们。你可以查看 [以太坊文档](https://ethereum.org/en/developers/docs/evm/opcodes/) 以获取 EVM 操作码及其相关 gas 开销的列表。
 
 ![4.png](https://img.learnblockchain.cn/attachments/2022/09/p1uzciT06316af8d1666d.png)
 
@@ -68,7 +68,7 @@ EXP 操作码用于求幂，其 gas 消耗由公式决定：如果指数为零�
 
 一个字节是 8 位，一个字节可以表示 0 到 2⁸-1 之间的值（即0-255），两个字节可以表示 2⁸ 到 2¹⁶-1 之间的值，以此类推。因此，例如求 10¹⁸ 将花费 10 + 50 * 1 = 60 gas，而求 10³⁰⁰ 将花费 10 + 50 * 2 = 160 gas，因为来表示 18 需要一个字节，表示 300 需要两个字节。
 
-从上面可以清楚地看出，在某些时候您应该使用乘法而不是求幂。下面一个具体的例子：
+从上面可以清楚地看出，在某些时候你应该使用乘法而不是求幂。下面一个具体的例子：
 
 ```
 contract squareExample {
@@ -196,7 +196,7 @@ function getVaultValue(uint256 vaultId) external view returns (uint256) {
 
 EfficcientVaults 的 *createVault()* 与 IneficcientVaults 相比，效率提高了 61%，消耗的 gas 减少了约 76,300。
 
-应该注意的是，在某些情况下在合约中创建新合约是可取的，并且通常是为了不可变性和效率。*随着合约的大小增加，与合约的所有交互的交易成本也将增加。*因此，如果您希望在链上存储大量数据，最好通过多个单独的合约分离这些数据。除此之外，应避免创建新合同。
+应该注意的是，在某些情况下在合约中创建新合约是可取的，并且通常是为了不可变性和效率。*随着合约的大小增加，与合约的所有交互的交易成本也将增加。*因此，如果你希望在链上存储大量数据，最好通过多个单独的合约分离这些数据。除此之外，应避免创建新合同。
 
 **存储数据：SSTORE**
 
@@ -214,7 +214,7 @@ tokenURI() 函数的标准实现。 (来源：[OpenZeppelin](https://github.com/
 
 ![10.png](https://img.learnblockchain.cn/attachments/2022/09/WmjqnrXF6316afa3478a4.png)
 
-如果点击链接，您将看到 BAYC #0 元数据的 JSON 文件：
+如果点击链接，你将看到 BAYC #0 元数据的 JSON 文件：
 
 ![11.png](https://img.learnblockchain.cn/attachments/2022/09/eBv6mhxk6316afa76f064.png)
 
@@ -226,7 +226,7 @@ tokenURI() 函数的标准实现。 (来源：[OpenZeppelin](https://github.com/
 
 *以上所有代码都可以在我的[*Github*](https://github.com/tokyoDan67/evmOpcodeExamples)上找到*
 
-感谢您阅读，希望您喜欢这篇文章！
+感谢你阅读，希望你喜欢这篇文章！
 
 如果有机会，我愿意介绍更多的 gas 优化和细微差别。要了解更多信息，我建议使用以下资源：
 
@@ -235,7 +235,7 @@ tokenURI() 函数的标准实现。 (来源：[OpenZeppelin](https://github.com/
 - [*EVM: 从 Solidity 到字节码， 内存和存储*](https://www.youtube.com/watch?v=RxL_1AfV7N4&ab_channel=EthereumEngineeringGroup) 作者： Ethereum 工程小组
 - [*以太坊黄皮书*](https://ethereum.github.io/yellowpaper/paper.pdf)
 
-*请联系我和我所在的团队：* [*Bloccelerate VC*](https://www.bloccelerate.vc/) *如果您正在 Web3 中创业，我们希望支持伟大的创始人*
+*请联系我和我所在的团队：* [*Bloccelerate VC*](https://www.bloccelerate.vc/) *如果你正在 Web3 中创业，我们希望支持伟大的创始人*
 
 [网站](https://bloccelerate.vc/)
 
@@ -243,5 +243,5 @@ tokenURI() 函数的标准实现。 (来源：[OpenZeppelin](https://github.com/
 
 [推特](https://twitter.com/daniel_yamagata)
 
-*如果您对我将来应该涉及的工具或话题有任何建议，请随时给我留言*
+*如果你对我将来应该涉及的工具或话题有任何建议，请随时给我留言*
 
