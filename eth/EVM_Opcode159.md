@@ -1,10 +1,6 @@
 原文链接：https://medium.com/@danielyamagata/understand-evm-opcodes-write-better-smart-contracts-e64f017b619
 
-
-
 # 深入理解EVM操作码，才写出更好的智能合约。
-
-
 
 Your good developer habits are leading you to write inefficient smart contracts. For typical programming languages, the only costs associated with state changes and computation are time and the electricity used by the hardware. However, for EVM-compatible languages, such as Solidity and Vyper, these actions explicitly cost *money*. This cost is in the form of the blockchain’s native currency (ETH for Etheruem, AVAX for Avalanche, etc.), which can be thought of as a commodity used to pay for these actions.
 
@@ -12,37 +8,54 @@ Your good developer habits are leading you to write inefficient smart contracts.
 
 The cost for computation, state transitions, and storage is called *gas*. Gas is used to prioritize transactions, as a [Sybil resistance](https://en.wikipedia.org/wiki/Sybil_attack) mechanism, and to prevent attacks stemming from the [halting problem](https://en.wikipedia.org/wiki/Halting_problem).
 
+用于购买计算、状态转移还有存储空间的开销被称做 *燃料*。 燃料的作用是确定交易的优先级, 同时形成一种能抵御【女巫攻击】的机制（Sybil resistance)(https://en.wikipedia.org/wiki/Sybil_attack) ，而且还能防止【停止问题】引起的攻击 [halting problem](https://en.wikipedia.org/wiki/Halting_problem)。
+
 *Feel free to read my article on* [*Solidity basics* ](https://medium.com/@danielyamagata/solidity-basics-your-first-smart-contract-f11f4f7853d0)*to learn more about gas*
+
+*欢迎阅读我的文章* [*Solidity 基础* ](https://medium.com/@danielyamagata/solidity-basics-your-first-smart-contract-f11f4f7853d0)*去了解燃料的方方面面*
 
 These atypical costs lead to software design patterns that would seem both inefficient and strange in typical programming languages. To be able to recognize these patterns and grasp why they lead to cost efficiencies, you must first have a basic understanding of the Ethereum Virtual Machine, i.e. the EVM.
 
-**What is the EVM?**
+这些非典型的开销导致经典的软件设计模式在合约编程语言中看起来既低效又奇怪。如果想要识别这些模式并理解它们与运行效率的关系，您必须首先对以太坊虚拟机（即 EVM）有一个基本的了解。
 
-*If you are already familiar with the EVM, feel free to skip to the section,* ***What are EVM Opcodes?\***
+**What is the EVM?**
+**什么是EVM？**
+
+*如果您已经熟悉 EVM，请随时跳到下个部分：* ***什么是 EVM 操作码？\***
 
 A blockchain is a transaction-based [*state machine*](https://en.wikipedia.org/wiki/Finite-state_machine). Blockchains incrementally execute transactions, which morph into some new state. Therefore, each transaction on a blockchain is a *transition of state.*
 
+一个任何区块链都是一个基于交易的 [*状态机*](https://en.wikipedia.org/wiki/Finite-state_machine)。 区块链递增地执行交易，交易完成后就变成新状态。因此，区块链上的每笔交易都是一次*状态转换*。
+
 Simple blockchains, like Bitcoin, natively only support simple transfers. In contrast, smart-contract compatible chains, like Ethereum, implement two types of accounts, externally owned accounts and contract accounts, in order to support complex logic.
 
+简单的区块链，如比特币，本身只支持简单的交易传输。相比之下，可以运行智能合约的链，如以太坊，实现了两种类型的账户，即外部账户和合约账户，所以支持复杂的逻辑。
+
 Externally owned accounts are controlled by users via private keys and have no code associated with them, while contract accounts are solely controlled by their associated code. EVM code is stored as [bytecode](https://en.wikipedia.org/wiki/Bytecode) in a virtual [ROM](https://en.wikipedia.org/wiki/Read-only_memory).
+外部账户由用户通过私钥控制，不包含代码，而合约账户仅受其关联的代码控制。EVM 代码以[字节码](https://en.wikipedia.org/wiki/Bytecode)的形式存储在虚拟 [ROM] (https://en.wikipedia.org/wiki/Read-only_memory)中。
 
 The EVM handles the execution and processing of all transactions on the underlying blockchain. It is a stack machine in which each item on the stack is 256-bits or 32 bytes. The EVM is embedded within each Ethereum node and is responsible for executing the contract’s bytecode.
+EVM 负责区块链上所有交易的执行和处理。它是一个栈机器，栈上的每个元素长度都是 256 位或 32 字节。EVM 嵌在每个以太坊节点中，负责执行合约的字节码。
 
 The EVM stores data in both storage and memory. *Storage* is used to store data permanently while *memory* is used to store data during function calls. You can also pass in function arguments as *calldata,* which act similar to allocating to memory except the data is non-modifiable.
+EVM 把数据保存在存储（Storage）和内存（memory）中。*存储（Storage）*用于永久存储数据，而*内存（memory）*仅在函数调用期间保存数据。还有一个地方保存了函数参数的数据，叫做*调用数据（calldata）*，这个存储方式有点像内存，但数据是不可修改的。
 
 *Learn more about Ethereum and the EVM in Preethi Kasireddy’s* [*article, “How does Ethereum work, anyway?”*](https://www.preethikasireddy.com/post/how-does-ethereum-work-anyway#:~:text=The Ethereum blockchain is essentially,transition to a new state.)
+*在 Preethi Kasireddy 的文章中了解有关以太坊和 EVM 的更多信息[*“Ethereum 是如何工作的？”*]* (https://www.preethikasireddy.com/post/how-does-ethereum-work-anyway#:~:text=The Ethereum blockchain is essentially,transition to a new state.)。
 
 Smart contracts are written in higher-level languages, such as Solidity, Vyper, or Yul, and subsequently broken down into EVM bytecode via a compiler. However, there are times when it is more gas efficient to use bytecode directly in your code.
+智能合约是用高级语言编写的，例如 Solidity、Vyper 或 Yul，随后通过编译器编译成 EVM 字节码。但是，有时直接在代码中使用字节码会更高效。
 
 ![1.png](https://img.learnblockchain.cn/attachments/2022/09/3yW6IizY6316af8248ebd.png)
 
-[LooksRare’s TransferSelectorNFT smart contract](https://github.com/LooksRare/contracts-exchange-v1/blob/master/contracts/TransferSelectorNFT.sol)
+[LooksRare 写的 TransferSelectorNFT 智能合约](https://github.com/LooksRare/contracts-exchange-v1/blob/master/contracts/TransferSelectorNFT.sol)
 
 EVM bytecode is written in hexadecimal. It is the language that the virtual machine is able to interpret. This is somewhat analogous to how CPUs can only interpret machine code.
+EVM 字节码以十六进制编写。它是一种虚拟机能够解释的语言。这有点像 CPU 只能解释机器代码。
 
 ![2.png](https://img.learnblockchain.cn/attachments/2022/09/gUZSV7fM6316af85c8841.png)
 
-Example of Solidity Bytecode
+Solidity 字节码示例
 
 **What are EVM Opcodes?**
 
