@@ -1,8 +1,8 @@
 原文链接：https://medium.com/@danielyamagata/understand-evm-opcodes-write-better-smart-contracts-e64f017b619
 
-# 深入理解EVM操作码，才写出更好的智能合约。
+# 深入理解EVM操作码，让你写出更好的智能合约。
 
-你的一些编程“好习惯”反而会让你写出低效的智能合约。对于普通编程语言而言，计算机做运算和改变程序的状态顶多只是费点电或者费点时间，但对于 EVM 兼容类的编程语言，显然执行这些操作都是*费钱*的！例如 Solidity 和 Vyper。这些花费的形式是区块链的原生货币（如以太坊的 ETH，Avalanche 的 AVAX 等等...），想象成你是在用原生货币买计算操作。
+你的一些编程“好习惯”反而会让你写出低效的智能合约。对于普通编程语言而言，计算机做运算和改变程序的状态顶多只是费点电或者费点时间，但对于 EVM 兼容类的编程语言（例如 Solidity 和 Vyper），执行这些操作都是*费钱*的！这些花费的形式是区块链的原生货币（如以太坊的 ETH，Avalanche 的 AVAX 等等...），想象成你是在用原生货币买计算资源。
 
 用于购买计算、状态转移还有存储空间的开销被称做 *燃料（下文统称gas）*。 gas 的作用是确定交易的优先级, 同时形成一种能抵御【女巫攻击】的机制（Sybil resistance)(https://en.wikipedia.org/wiki/Sybil_attack) ，而且还能防止【停止问题】引起的攻击 [halting problem](https://en.wikipedia.org/wiki/Halting_problem)。
 
