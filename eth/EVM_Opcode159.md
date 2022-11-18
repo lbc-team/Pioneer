@@ -8,11 +8,11 @@ Your good developer habits are leading you to write inefficient smart contracts.
 
 The cost for computation, state transitions, and storage is called *gas*. Gas is used to prioritize transactions, as a [Sybil resistance](https://en.wikipedia.org/wiki/Sybil_attack) mechanism, and to prevent attacks stemming from the [halting problem](https://en.wikipedia.org/wiki/Halting_problem).
 
-用于购买计算、状态转移还有存储空间的开销被称做 *燃料*。 燃料的作用是确定交易的优先级, 同时形成一种能抵御【女巫攻击】的机制（Sybil resistance)(https://en.wikipedia.org/wiki/Sybil_attack) ，而且还能防止【停止问题】引起的攻击 [halting problem](https://en.wikipedia.org/wiki/Halting_problem)。
+用于购买计算、状态转移还有存储空间的开销被称做 *燃料（下文统称gas）*。 gas 的作用是确定交易的优先级, 同时形成一种能抵御【女巫攻击】的机制（Sybil resistance)(https://en.wikipedia.org/wiki/Sybil_attack) ，而且还能防止【停止问题】引起的攻击 [halting problem](https://en.wikipedia.org/wiki/Halting_problem)。
 
 *Feel free to read my article on* [*Solidity basics* ](https://medium.com/@danielyamagata/solidity-basics-your-first-smart-contract-f11f4f7853d0)*to learn more about gas*
 
-*欢迎阅读我的文章* [*Solidity 基础* ](https://medium.com/@danielyamagata/solidity-basics-your-first-smart-contract-f11f4f7853d0)*去了解燃料的方方面面*
+*欢迎阅读我的文章* [*Solidity 基础* ](https://medium.com/@danielyamagata/solidity-basics-your-first-smart-contract-f11f4f7853d0)*去了解gas的方方面面*
 
 These atypical costs lead to software design patterns that would seem both inefficient and strange in typical programming languages. To be able to recognize these patterns and grasp why they lead to cost efficiencies, you must first have a basic understanding of the Ethereum Virtual Machine, i.e. the EVM.
 
@@ -44,7 +44,7 @@ EVM 把数据保存在存储（Storage）和内存（memory）中。*存储（St
 *在 Preethi Kasireddy 的文章中了解有关以太坊和 EVM 的更多信息[*“Ethereum 是如何工作的？”*]* (https://www.preethikasireddy.com/post/how-does-ethereum-work-anyway#:~:text=The Ethereum blockchain is essentially,transition to a new state.)。
 
 Smart contracts are written in higher-level languages, such as Solidity, Vyper, or Yul, and subsequently broken down into EVM bytecode via a compiler. However, there are times when it is more gas efficient to use bytecode directly in your code.
-智能合约是用高级语言编写的，例如 Solidity、Vyper 或 Yul，随后通过编译器编译成 EVM 字节码。但是，有时直接在代码中使用字节码会更高效。
+智能合约是用高级语言编写的，例如 Solidity、Vyper 或 Yul，随后通过编译器编译成 EVM 字节码。但是，有时直接在代码中使用字节码会更高效（省gas）。
 
 ![1.png](https://img.learnblockchain.cn/attachments/2022/09/3yW6IizY6316af8248ebd.png)
 
@@ -57,23 +57,28 @@ EVM 字节码以十六进制编写。它是一种虚拟机能够解释的语言�
 
 Solidity 字节码示例
 
-**What are EVM Opcodes?**
+**什么是 EVM 操作码？**
 
 All Ethereum bytecode can be broken down into a series of operands and opcodes. Opcodes are predefined instructions that the EVM interprets and is subsequently able to execute. For example, the ADD opcode is represented as 0x01 in EVM bytecode. It removes two elements from the stack and pushes the result.
+所有以太坊字节码都可以分解为一系列操作数和操作码。操作码是一些预定义的操作指令，EVM 识别后能够执行这个操作。例如，ADD 操作码在 EVM 字节码中表示为 0x01。它从栈中删除两个元素并把结果压入栈中。
 
-The number of elements removed from and pushed onto the stack depends on the opcode. For example, there are thirty-two PUSH opcodes: PUSH1 through PUSH32. PUSH* adds a * byte item on the stack that ranges from 0 to 32 bytes in size. It does not remove any values from the stack and adds a single value. In contrast, the ADDMOD opcode represents the [modulo addition operation](https://libraryguides.centennialcollege.ca/c.php?g=717548&p=5121840#:~:text=Properties of addition in modular,%2B d ( mod N ) .) and removes three items from the stack and subsequently pushes the result. Notably, the PUSH opcodes are the only ones that come with operands.
+从堆栈中移除和压入堆栈的元素数量取决于操作码。例如，PUSH 操作码有 32 个：PUSH1 到 PUSH32。 PUSH在栈上 * 添加一个 * 字节元素，元素的大小可以从 0 到 32 字节。它不会从栈中删除元素。作为对比, 操作码 ADDMOD 表示 [模加法运算](https://libraryguides.centennialcollege.ca/c.php?g=717548&p=5121840#:~:text=Properties of addition in modular,%2B d ( mod N ) .) ，它从栈中删除3个元素然后压入模加结果。请注意，PUSH 操作码是唯一带有操作数的操作码。
 
 ![3.png](https://img.learnblockchain.cn/attachments/2022/09/cuWOtV4M6316af89b9b6d.png)
 
 The Opcodes of the Prior Bytecode Example
+操作码示例
 
 Each opcode is one byte and has a differing cost. Depending on the opcode, these costs are either fixed or determined by a formula. For example, the ADD opcode costs 3 gas. In contrast, SSTORE, the opcode which saves data in storage, costs 20,000 gas when a storage value is set to a non-zero value from zero and costs 5000 gas when a storage variable’s value is set to zero or remains unchanged from zero.
+每个操作码都占一个字节，并且操作成本有大有小。操作码的操作成本是固定的或由公式算出来。例如，ADD 操作码固定需要 3 个 gas。而将数据保存在存储中的操作码 SSTORE ，当把值从0设置为非0时消耗 20,000 gas，当把值改为0或保持为0不变时消耗 5000 gas。
 
 *SSTORE’s cost actually varies further depending on if a value has been accessed or not. Full details of SSTORE’s and SLOAD’s costs can be found* [*here*](https://hackmd.io/@fvictorio/gas-costs-after-berlin)
+*SSTORE 的开销实际上会其他变化，具体取决于是否已访问过这个值。可以在这里找到有关 SSTORE 和 SLOAD 开销的完整详细信息* [*详见*](https://hackmd.io/@fvictorio/gas-costs-after-berlin)
 
-**Why is understanding EVM Opcodes important?**
+**为什么了解 EVM 操作码很重要？**
 
 Understanding EVM opcodes is extremely important for minimizing gas consumption, and, in turn, reducing costs for your end user. Since the cost associated with EVM opcodes is arbitrary, different coding patterns that achieve the same result might lead to greatly higher costs. Knowing which opcodes are the most expensive will help you minimize and avoid their usage when unnecessary. View the [Ethereum documentation](https://ethereum.org/en/developers/docs/evm/opcodes/) for a full list of EVM opcodes and their associated gas costs.
+想要降低 gas 开销，了解 EVM 操作码极其重要，这也会降低你的终端用户的成本。由于不同的 EVM 操作码的成本是不同的，因此虽然实现了相同结果，但不同的编码方式可能会导致更高的开销。了解哪些操作码是比较昂贵的，可以帮助您最大程度地减少甚至避免使用它们。您可以查看 [以太坊文档](https://ethereum.org/en/developers/docs/evm/opcodes/) 以获取 EVM 操作码及其相关 gas 开销的列表。
 
 ![4.png](https://img.learnblockchain.cn/attachments/2022/09/p1uzciT06316af8d1666d.png)
 
