@@ -21,7 +21,7 @@ These atypical costs lead to software design patterns that would seem both ineff
 **What is the EVM?**
 **什么是EVM？**
 
-*如果您已经熟悉 EVM，请随时跳到下个部分：* ***什么是 EVM 操作码？\***
+*如果您已经熟悉 EVM，请随时跳到下个部分：* ***什么是 EVM 操作码？***
 
 A blockchain is a transaction-based [*state machine*](https://en.wikipedia.org/wiki/Finite-state_machine). Blockchains incrementally execute transactions, which morph into some new state. Therefore, each transaction on a blockchain is a *transition of state.*
 
@@ -32,7 +32,7 @@ Simple blockchains, like Bitcoin, natively only support simple transfers. In con
 简单的区块链，如比特币，本身只支持简单的交易传输。相比之下，可以运行智能合约的链，如以太坊，实现了两种类型的账户，即外部账户和合约账户，所以支持复杂的逻辑。
 
 Externally owned accounts are controlled by users via private keys and have no code associated with them, while contract accounts are solely controlled by their associated code. EVM code is stored as [bytecode](https://en.wikipedia.org/wiki/Bytecode) in a virtual [ROM](https://en.wikipedia.org/wiki/Read-only_memory).
-外部账户由用户通过私钥控制，不包含代码，而合约账户仅受其关联的代码控制。EVM 代码以[字节码](https://en.wikipedia.org/wiki/Bytecode)的形式存储在虚拟 [ROM] (https://en.wikipedia.org/wiki/Read-only_memory)中。
+外部账户由用户通过私钥控制，不包含代码，而合约账户仅受其关联的代码控制。EVM 代码以[字节码](https://en.wikipedia.org/wiki/Bytecode)的形式存储在虚拟 [ROM](https://en.wikipedia.org/wiki/Read-only_memory)中。
 
 The EVM handles the execution and processing of all transactions on the underlying blockchain. It is a stack machine in which each item on the stack is 256-bits or 32 bytes. The EVM is embedded within each Ethereum node and is responsible for executing the contract’s bytecode.
 EVM 负责区块链上所有交易的执行和处理。它是一个栈机器，栈上的每个元素长度都是 256 位或 32 字节。EVM 嵌在每个以太坊节点中，负责执行合约的字节码。
@@ -117,7 +117,7 @@ function efficcientSquare() external {
 Both *inefficcientSquare* and *efficcientSquare* set the state variable, *x*, to the square of itself. However, the arithmetic of *inefficcientSquare* costs 10 + 1 * 50 = 60 gas while the arithmetic of *efficcientSquare* costs 5 gas.
 *inefficientSquare* 和 *eficcientSquare* 两个方法都把状态变量 x 改为 x 的平方。然而，*inefficientSquare* 的算术开销为 10 + 1 * 50 = 60 gas，而 *efficientSquare* 的算术开销为5 gas。
 
-For reasons in addition to the above cost of arithmetic, *inefficcientSquare* costs ~200 more gas than *efficcientSquare* on average*.*
+For reasons in addition to the above cost of arithmetic, *inefficcientSquare* costs 200 more gas than *efficcientSquare* on average*.*
 由于上述算术开销之外的原因，*inefficientSquare* 的 gas 费用平均比 *efficientSquare* 多 200 左右。
 
 ![5.png](https://img.learnblockchain.cn/attachments/2022/09/257Lojs26316af9026e6d.png)
@@ -186,7 +186,7 @@ It is best to minimize the number of smart contracts used when possible. This is
 **这是一个具体的例子：**
 
 Below is some code to create a “vault” using an object-oriented approach. Each vault contains a uint256, which is set in its constructor.
-下面是一段使用面向对象方法创建“保险库”的代码。每个保险库都包含一个 uint256 变量，并在构造函数中初始化。
+下面是一段使用面向对象方法创建“vault”的代码。每个“vault”都包含一个 uint256 变量，并在构造函数中初始化。
 
 ```
 contract Vault {
@@ -203,7 +203,7 @@ contract InefficcientVaults {
     function createVault(uint256 _x) external {
         address _vaultAddress = address(new Vault(_x)); 
         factory.push(_vaultAddress);
-}
+    }
     function getVaultValue(uint256 vaultId) external view returns (uint256) {
         address _vaultAddress = factory[vaultId];
         IVault _vault = IVault(_vaultAddress);
@@ -212,9 +212,11 @@ contract InefficcientVaults {
 } // end of InefficcientVaults
 ```
 
-Each time that *createVault()* is called, a new *Vault* smart contract is created. The value stored in the *Vault* is determined by the argument passed into *createVault().* The address of the new *Vault* contract is then stored in an array, *factory.*
+Each time that *createVault()* is called, a new *Vault* smart contract is created. The value stored in the *Vault* is determined by the argument passed into *createVault().* The address of the new ** contract is then stored in an array, *factory.*
+每次调用 *createVault()* 时，都会创建一个新的 *Vault* 智能合约。存储在 *Vault* 中的值由传递给 *createVault()* 的参数决定。然后将新合约的地址存储在数组 *factory* 中。
 
 Now here is some code that accomplishes the same goal but uses a mapping in place of creating a new smart contract:
+这是另一段实现相同功能的代码，但用映射代替了创建：
 
 ```
 contract EfficcientVaults {
@@ -233,59 +235,70 @@ function getVaultValue(uint256 vaultId) external view returns (uint256) {
 ```
 
 Each time that *createVault()* is called, its argument is stored in a mapping, and its ID is determined by the state variable, *nextVaultId,* which is incremented each time that *createVault()* is called.
+每次调用 *createVault()* 时，参数都存储在一个映射中， 映射的 ID 由状态变量 *nextVaultId* 确定，而 *nextVaultId* 在每次调用 *createVault()* 时递增。
 
 This difference in implementation leads to a dramatic reduction in gas costs.
+这种实现上的差异导致 gas 成本大幅降低。
 
 ![8.png](https://img.learnblockchain.cn/attachments/2022/09/1NyGnqci6316af9a31bba.png)
 
-EfficcientVaults’ *createVault()* is 61% more efficient and costs ~76,300 less gas than that of InefficcientVaults on average.
+EfficcientVaults' *createVault()* is 61% more efficient and costs 76,300 less gas than that of InefficcientVaults on average.
+EfficcientVaults 的 *createVault()* 与 IneficcientVaults 相比，效率提高了 61%，消耗的 gas 减少了约 76,300。
 
 It should be noted that there are certain times when creating a new contract from within a contract is desirable and is typically done for immutability and efficiency. *The transaction cost for all interactions with a contract will increase with the size of a contract*. Therefore, if you expect to store massive amounts of data on-chain, it’s likely better to separate this data via separate contracts. However, if this is not the case, creating new contracts should be avoided.
+应该注意的是，在某些情况下在合约中创建新合约是可取的，并且通常是为了不可变性和效率。*随着合约的大小增加，与合约的所有交互的交易成本也将增加。*因此，如果您希望在链上存储大量数据，最好通过多个单独的合约分离这些数据。除此之外，应避免创建新合同。
 
-**Storing Data: SSTORE**
+**存储数据：SSTORE**
 
 SSTORE is the EVM opcode to save data to storage. As a generalization, SSTORE costs 20,000 gas when setting a storage value to non-zero from zero and 5000 gas when a storage value is set to zero.
+SSTORE 是将数据保存到存储的 EVM 操作码。一般而言，当将存储值从零设置为非零时，SSTORE 花费 20,000 gas，当存储值设置为零时，SSTORE 花费 5000 gas。
 
 Due to this cost, storing data on-chain is highly inefficient and costly. It should be avoided whenever possible.
+由于这种成本的存在，在链上存储数据效率低下且成本高昂，应尽可能避免。
 
 This practice is most common with NFTs. Developers will store an NFT’s metadata (its image, attributes, etc.) on a decentralized storage network, like Arweave or IPFS, in place of storing it on-chain. The only data that is kept on-chain is a link to the metadata on the respective decentralized storage network. This link is queryable by the *tokenURI()* function found in all ERC721s that contain metadata.
+这种方法在 NFT 中最为常见。开发人员将 NFT 的元数据（图像、属性等）存储在去中心化存储网络（如 Arweave 或 IPFS）上，而不是将其存储在链上。唯一保存在链上的数据是一条指向元数据的链接。可通过所有 ERC721 合约内置的 *tokenURI()* 函数获得此链接。
 
 ![9.png](https://img.learnblockchain.cn/attachments/2022/09/mAjvW1Ku6316af9e93ae0.png)
 
-A standard implementation of a tokenURI( ) function. (Source: [OpenZeppelin](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC721/ERC721.sol))
+tokenURI() 函数的标准实现。 (来源：[OpenZeppelin](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC721/ERC721.sol))
 
-For example, take the [Bored Ape Yacht Club smart contract](https://etherscan.io/token/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d#readContract). Calling the *tokenURI( )* function with the tokenId, 0, returns the following link: *ipfs://QmeSjSinHpPnmXmspMjwiXyN6zS4E9zccariGR3jxcaWtq/0*
+例如无聊猿[Bored Ape Yacht Club smart contract](https://etherscan.io/token/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d#readContract)。 调用 *tokenURI( )* 函数，传入 tokenId： 0， 函数返回以下链接： *ipfs://QmeSjSinHpPnmXmspMjwiXyN6zS4E9zccariGR3jxcaWtq/0*
 
 ![10.png](https://img.learnblockchain.cn/attachments/2022/09/WmjqnrXF6316afa3478a4.png)
 
 If you go to this link, you will find the JSON file that contains the BAYC #0’s metadata:
+如果点击链接，您将看到 BAYC #0 元数据的 JSON 文件：
 
 ![11.png](https://img.learnblockchain.cn/attachments/2022/09/eBv6mhxk6316afa76f064.png)
 
-These attributes are easily verifiable on [OpenSea](https://opensea.io/assets/ethereum/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d/0):
+这些数据在OpenSea上很容易验证： [OpenSea](https://opensea.io/assets/ethereum/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d/0):
 
 ![12.png](https://img.learnblockchain.cn/attachments/2022/09/PWDKlpqu6316afabdf409.png)
 
 It should also be noted that certain data structures are simply unfeasible in the EVM due to the cost of storage. For example, representing [a graph using an adjacency matrix ](https://www.geeksforgeeks.org/graph-and-its-representations/)would be completely unfeasible due to its O(V²) space complexity.
+还应注意，由于存储成本，某些数据结构在 EVM 中根本不可行。例如，使用[邻接矩阵表示图（a graph using an adjacency matrix ](https://www.geeksforgeeks.org/graph-and-its-representations/)是完全不可行的，因为它的空间复杂度是 O(V²) 。
 
-*All of the above code can be found on my* [*Github*](https://github.com/tokyoDan67/evmOpcodeExamples)
+*以上所有代码都可以在我的[*Github*](https://github.com/tokyoDan67/evmOpcodeExamples)上找到*
 
 Thank you for reading, and I hope you enjoyed this article!
+感谢您阅读，希望您喜欢这篇文章！
 
 There are so many more gas optimizations and nuances that I did not have a chance to cover. To learn more, I suggest the following resources:
+如果有机会，我愿意介绍更多的 gas 优化和细微差别。要了解更多信息，我建议使用以下资源：
 
-- [*Tight Variable Packing*](https://fravoll.github.io/solidity-patterns/tight_variable_packing.html) and [*Memory Array Building*](https://fravoll.github.io/solidity-patterns/memory_array_building.html) by Franz Volland
-- [*Solidity gas optimization tips*](https://mudit.blog/solidity-gas-optimization-tips/) and [*Solidity tips and tricks to save gas and reduce bytecode size*](https://blog.polymath.network/solidity-tips-and-tricks-to-save-gas-and-reduce-bytecode-size-c44580b218e6) by Mudit Gupta
-- [*EVM: From Solidity to byte code, memory and storage*](https://www.youtube.com/watch?v=RxL_1AfV7N4&ab_channel=EthereumEngineeringGroup) by the Ethereum Engineering Group
-- [*The Ethereum Yellowpaper*](https://ethereum.github.io/yellowpaper/paper.pdf)
+- [*变量压缩打包大法*](https://fravoll.github.io/solidity-patterns/tight_variable_packing.html) 和 [*内存数组优化*](https://fravoll.github.io/solidity-patterns/memory_array_building.html) 作者： Franz Volland
+- [*Solidity gas 优化技巧*](https://mudit.blog/solidity-gas-optimization-tips/) 和 [*Solidity 节省 gas 和字节码大小的魔法*](https://blog.polymath.network/solidity-tips-and-tricks-to-save-gas-and-reduce-bytecode-size-c44580b218e6) 作者： Mudit Gupta
+- [*EVM: 从 Solidity 到字节码， 内存和存储*](https://www.youtube.com/watch?v=RxL_1AfV7N4&ab_channel=EthereumEngineeringGroup) 作者： Ethereum 工程小组
+- [*以太坊黄皮书*](https://ethereum.github.io/yellowpaper/paper.pdf)
 
-*Please reach out to me and my team at* [*Bloccelerate VC*](https://www.bloccelerate.vc/) *if you are building in Web3. We are always looking to back great founders.*
+*请联系我和我所在的团队：* [*Bloccelerate VC*](https://www.bloccelerate.vc/) *如果您正在 Web3 中创业，我们希望支持伟大的创始人*
 
-[Website](https://bloccelerate.vc/)
+[网站](https://bloccelerate.vc/)
 
-[LinkedIn](https://www.linkedin.com/in/daniel-yamagata/)
+[领英](https://www.linkedin.com/in/daniel-yamagata/)
 
-[Twitter](https://twitter.com/daniel_yamagata)
+[推特](https://twitter.com/daniel_yamagata)
 
-*Feel free to also drop me a note if you have any suggestions for any toolings or topics that I should cover in the future*
+*如果您对我将来应该涉及的工具或话题有任何建议，请随时给我留言*
 
