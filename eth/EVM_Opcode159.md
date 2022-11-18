@@ -2,11 +2,13 @@
 
 
 
-# Understand EVM Opcodes, Write Better Smart Contracts
+# 深入理解EVM操作码，才写出更好的智能合约。
 
 
 
 Your good developer habits are leading you to write inefficient smart contracts. For typical programming languages, the only costs associated with state changes and computation are time and the electricity used by the hardware. However, for EVM-compatible languages, such as Solidity and Vyper, these actions explicitly cost *money*. This cost is in the form of the blockchain’s native currency (ETH for Etheruem, AVAX for Avalanche, etc.), which can be thought of as a commodity used to pay for these actions.
+
+你的一些编程“好习惯”反而会让你写出低效的智能合约。对于普通编程语言而言，计算机做运算和改变程序的状态顶多只是费点电或者费点时间，但对于 EVM 兼容类的编程语言，显然执行这些操作都是*费钱*的！例如 Solidity 和 Vyper。这些花费的形式是区块链的原生货币（如以太坊的 ETH，Avalanche 的 AVAX 等等...），想象成你是在用原生货币买计算操作。
 
 The cost for computation, state transitions, and storage is called *gas*. Gas is used to prioritize transactions, as a [Sybil resistance](https://en.wikipedia.org/wiki/Sybil_attack) mechanism, and to prevent attacks stemming from the [halting problem](https://en.wikipedia.org/wiki/Halting_problem).
 
