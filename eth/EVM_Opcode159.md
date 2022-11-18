@@ -178,13 +178,15 @@ These efficiencies scale with the number of computations: *efficcientSum* is >30
 **避免使用面向对象编程：CREATE 操作码**
 
 The CREATE opcode is used when creating a new account with associated code (i.e. a smart contract). It costs *at least* 32,000 gas and is the most expensive opcode on the EVM.
-
+CREATE 操作码用于创建包含关联代码的新帐户（即智能合约）。它花费*至少*32,000 gas，是 EVM 上最昂贵的操作码。
 
 It is best to minimize the number of smart contracts used when possible. This is unlike typical object-oriented programming in which the separation of classes is encouraged for reusability and clarity.
+最好尽可能减少使用的智能合约数量。这与典型的面向对象编程不同，在典型的面向对象编程中，为了可复用性和清晰性，鼓励定义多个类。
 
-**Here is a concrete example:**
+**这是一个具体的例子：**
 
 Below is some code to create a “vault” using an object-oriented approach. Each vault contains a uint256, which is set in its constructor.
+下面是一段使用面向对象方法创建“保险库”的代码。每个保险库都包含一个 uint256 变量，并在构造函数中初始化。
 
 ```
 contract Vault {
