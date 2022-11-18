@@ -83,16 +83,21 @@ Understanding EVM opcodes is extremely important for minimizing gas consumption,
 ![4.png](https://img.learnblockchain.cn/attachments/2022/09/p1uzciT06316af8d1666d.png)
 
 Below are concrete examples of unintuitive design patterns stemming from the cost of EVM opcodes:
+下面是一些考虑了 EVM 操作码开销的反直觉设计模式的具体示例：
 
 **Using Multiplication over Exponetentiation: MUL vs EXP**
+**用乘法求乘方: MUL vs EXP**
 
 The MUL opcode costs 5 gas and is used to perform multiplication. For example, the arithmetic behind 10 * 10 would cost 5 gas.
+MUL 操作码花费 5 gas 用于执行乘法。例如，10 * 10 背后的算术将花费 5 gas。
 
 The EXP opcode is used to perform exponentiation, and its gas cost is determined by a formula: if the exponent is zero, the opcode costs 10 gas. However, if the exponent is greater than zero, it costs 10 gas plus 50 times the number of bytes in the exponent.
+EXP 操作码用于求幂，其 gas 消耗由公式决定：如果指数为零，则消耗10gas。但是，如果指数大于零，则需要 10 gas 加上指数字节数的 50 倍。
 
 Since a byte is 8 bits, a single byte is used to represent values between 0 and 2⁸-1, two bytes would be used to represent values between 2⁸ and 2¹⁶-1, etc. For example, 10¹⁸ would cost 10 + 50 * 1 = 60 gas, while 10³⁰⁰ would cost 10 + 50 * 2 = 160 gas, since it takes one byte to represent 18 and two bytes to represent 300.
+一个字节是 8 位，一个字节可以表示 0 到 2⁸-1 之间的值（即0-255），两个字节可以表示 2⁸ 到 2¹⁶-1 之间的值，以此类推。因此，例如求 10¹⁸ 将花费 10 + 50 * 1 = 60 gas，而求 10³⁰⁰ 将花费 10 + 50 * 2 = 160 gas，因为来表示 18 需要一个字节，表示 300 需要两个字节。
 
-From the above, it is clear that there are certain times in which you should use multiplication over exponentiation. Here is a concrete example:
+从上面可以清楚地看出，在某些时候您应该使用乘法而不是求幂。下面一个具体的例子：
 
 ```
 contract squareExample {
@@ -110,18 +115,24 @@ function efficcientSquare() external {
 ```
 
 Both *inefficcientSquare* and *efficcientSquare* set the state variable, *x*, to the square of itself. However, the arithmetic of *inefficcientSquare* costs 10 + 1 * 50 = 60 gas while the arithmetic of *efficcientSquare* costs 5 gas.
+*inefficientSquare* 和 *eficcientSquare* 两个方法都把状态变量 x 改为 x 的平方。然而，*inefficientSquare* 的算术开销为 10 + 1 * 50 = 60 gas，而 *efficientSquare* 的算术开销为5 gas。
 
 For reasons in addition to the above cost of arithmetic, *inefficcientSquare* costs ~200 more gas than *efficcientSquare* on average*.*
+由于上述算术开销之外的原因，*inefficientSquare* 的 gas 费用平均比 *efficientSquare* 多 200 左右。
 
 ![5.png](https://img.learnblockchain.cn/attachments/2022/09/257Lojs26316af9026e6d.png)
 
-**Caching data: SLOAD & MLOAD**
+**缓存数据：SLOAD & MLOAD**
+
 
 It is well known that caching data leads to far better performance at scale. However, caching data on the EVM is *extremely important* and will lead to dramatic gas savings even for a small number of operations.
+众所周知，缓存数据可以大规模地提升更好的性能。同样，在 EVM 上使用缓存也*极端重要*，即使只有少量操作，也会明显节省 gas。
 
 The SLOAD and MLOAD opcodes are used to load data from storage and memory. MLOAD always cost 3 gas, while SLOAD’s cost is determined by a formula: SLOAD costs 2100 gas to initially access a value during a transaction and costs 100 gas for each subsequent access. This means that it is ≥97% cheaper to load data from memory than from storage.
+SLOAD 和 MLOAD 两个操作码用于从存储和内存中加载数据。MLOAD 成本固定 3 gas，而 SLOAD 的成本由一个公式决定：SLOAD 在交易过程中第一次访问一个值需要花费 2100 gas，之后每次访问需要花费 100 gas。这意味着从内存加载数据比从存储加载数据便宜 97% 以上。
 
 Below is some sample code and the potential gas savings:
+下面是一些节省潜在 gas 的示例代码：
 
 ```
 contract storageExample {
@@ -143,24 +154,31 @@ function efficcientSum(uint256 [] memory _array) public {
 ```
 
 The contract, storageExample, has two functions: **inefficcientSum** and **efficcientSum**
+合约 storageExample 有两个函数： **inefficientSum** 和 **efficientSum**
 
 Both functions take *_array*, which is an array of unsigned integers, as an argument. They both set the contract’s state variable, *sumOfArray*, to the sum of the values in *_array*.
+这两个函数都将 *_array* 作为参数，这是一个无符号整型数组。他们都会把合约的状态变量 *sumOfArray* 设置为 *_array* 中所有元素的总和。
 
 **inefficcientSum** uses the state variable, itself, for its calculations. Remember that state variables, such as *sumOfArray*, are kept in storage*.*
+**inefficcientSum** 使用状态变量进行计算。请牢记，状态变量（例如 *sumOfArray*）保存在 *存储* 中。
 
 **efficcientSum** creates a temporary variable in memory, *tempVar*, that is used to calculate the sum of the values in *_array*. *sumOfArray* is then subsequently assigned to the value of *tempVar*.
+**efficcientSum** 在内存中创建一个临时变量 *tempVar*，用于计算 *_array* 中值的总和。然后将 *tempVar* 赋值给 *sumOfArray*。
 
 *efficcientSum* is >50% gas efficient than *inefficcientSum* when passing in array of **only 10 unsigned integers.**
+当传入的数组仅包含 **10 个无符号整数**时， *efficientSum*的 gas 效率比 inefficcientSum 高 50% 以上。
 
 ![6.png](https://img.learnblockchain.cn/attachments/2022/09/htSLDxPR6316af932c3d9.png)
 
 These efficiencies scale with the number of computations: *efficcientSum* is >300% more gas efficient than *inefficcientSum* when passing in an array of 100 unsigned integers.
+它们的效率随着计算次数的增加而增加：当传入 100 个无符号整数的数组时，*eficcientSum* 比 *inefficcientSum* 的 gas 效率高 300% 以上。
 
 ![7.png](https://img.learnblockchain.cn/attachments/2022/09/3cNHPYNU6316af975451d.png)
 
-**Avoid Object Oriented Programming: the CREATE Opcode**
+**避免使用面向对象编程：CREATE 操作码**
 
 The CREATE opcode is used when creating a new account with associated code (i.e. a smart contract). It costs *at least* 32,000 gas and is the most expensive opcode on the EVM.
+
 
 It is best to minimize the number of smart contracts used when possible. This is unlike typical object-oriented programming in which the separation of classes is encouraged for reusability and clarity.
 
