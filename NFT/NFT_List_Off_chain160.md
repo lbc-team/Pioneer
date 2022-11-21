@@ -1,24 +1,24 @@
 原文链接：https://betterprogramming.pub/handling-nft-presale-allow-lists-off-chain-47a3eb466e44
 
-# Handling NFT Presale — Allowing Lists Off-chain
+# 处理 NFT 预售——链下白名单
 
-## A novel approach to using signed coupons generated off-chain instead of an on-chain allow list.
+## 一种使用链下生成的签名优惠券而不是链上白名单的新方法。
 
 ![1.png](https://img.learnblockchain.cn/attachments/2022/09/IWCtpl086316b8c83ef55.png)
 
-The Humans Of NFT is a project that comprises 1500 truly unique characters who call the Ethereum Blockchain home. Each Human has a handwritten backstory contributed by a member of our community. In our [previous post](https://medium.com/@humansofnft/designing-an-nft-smart-contract-for-flexible-minting-and-claiming-5b420a9a2d82), we provide some context for why we needed such a variety of minting and claiming mechanisms in a single contract.
+The Humans Of NFT 是一个由1500个真正独特的角色组成的项目，他们将以太坊称为区块链家园。每个人类都有一个由我们社区成员提供的手写背景故事。在我们[之前的文章中](https://medium.com/@humansofnft/designing-an-nft-smart-contract-for-flexible-minting-and-claiming-5b420a9a2d82)，我们提供了一些背景信息，说明为什么我们需要在单个合约中使用如此多种铸造和认领机制。
 
-The verified contract is available for reference on Etherscan:
+在Etherscan已验证的合约可供参考:
 
 ```
 https://etherscan.io/address/0x8575B2Dbbd7608A1629aDAA952abA74Bcc53d22A#code
 ```
 
-## **The argument against on-chain presale/allow lists**
+## **反对链上预售/白名单的论点**
 
-There are a lot of different strategies for how to handle a *presale list* for an NFT drop. You’ll also hear it referred to as a *whitelist*, or *allow-list* amongst other names. It simply refers to a list of pre-approved addresses that are allowed to interact with the contract in a specified way, eg. minting during a presale window.
+对于如何处理 NFT 空投的*预售清单*，有很多不同的策略。你还会听到它被称为*白名单*或*允许名单*。 它只是指允许以指定方式与合约交互的预先批准的地址列表。例如， 在预售窗口期间铸造。
 
-A common approach is to simply include a data structure in the contract’s storage that maps each `address` to a `bool`, or each `address` to the number of mints that address is allowed, which might look something like:
+一种常见的方法是在合约的存储中简单地包含一个数据结构，将每个`地址`映射到一个`布尔值`，或者每个`地址`映射到该地址允许的铸币数量，这可能看起来像：
 
 ```
 mapping(address => uint8) _allowList;
@@ -33,19 +33,19 @@ uint8 numAllowedToMint
 }
 ```
 
-There’s absolutely nothing wrong this approach, but it can get a little costly on the contract owner’s side (the `onlyOwner `modifier indicates this function can only be called by the contract owner) when populating the address lists. If you need to add something like 1000 addresses to the presale list, that’s a lot of gas being spent on storage operations. Because The Humans contract had to account for several different “lists” (Authors, Honoraries, Presale, Genesis Claims), we came to the conclusion that this was probably not the best approach for us.
+这种方法绝对没有错，但是在填充地址列表时，对于合约所有者来说，它可能会付出一些代价(`onlyOwner`修饰符表示该函数只能由合约所有者调用)。如果你需要将1000个地址添加到预售列表中，那么储存操作将花费大量gas。因为Humans合约必须考虑几个不同的“列表”(Authors, Honoraries, Presale, Genesis Claims)，我们得出的结论是，这可能不是最适合我们的方法。
 
-## **The argument for Merkle Trees**
+## **默克尔树的论证**
 
-In our search for a more efficient method, the use of Merkle Trees came up a lot. After doing lots of research and learning the ins and outs of how they work, we decided to go the Merkle Tree route. There are many great articles and resources on Merkle Trees. There’s a really great Medium post [(1)](https://nftchance.medium.com/the-gas-efficient-way-of-building-and-launching-an-erc721-nft-project-for-2022-b3b1dac5f2e1) by the team that did the Nuclear Nerds smart contract, which is in itself really impressive, you should check it out! It links to some good resources on Merkle Trees, in addition to a wealth of additional information on gas optimization strategies — we’ll cover a few of these later too. Another great resource is a presentation from Openzeppelin [(2)](https://github.com/OpenZeppelin/workshops/blob/master/06-nft-merkle-drop/slides/20210506 - Lazy minting workshop.pdf) that covers their implementation and how to do the merkle-proof verifications.
+在我们寻找更有效的方法时，出现了很多使用 Merkle 树的情况。 在进行了大量研究并了解了它们的工作原理后，我们决定采用 Merkle Tree 路线。 有很多关于 Merkle Trees 的优秀文章和资源。有一篇非常棒的 Medium 帖子 [(1)](https://nftchance.medium.com/the-gas-efficient-way-of-building-and-launching-an-erc721-nft-project-for-2022- b3b1dac5f2e1) 由执行 Nuclear Nerds 智能合约的团队提供，这本身就非常令人印象深刻，你应该看看！ 除了有关gas优化策略的大量附加信息外，它还链接到 Merkle Trees 上的一些好的资源——我们稍后也会介绍其中的一些。 另一个很棒的资源是来自 Openzeppelin [(2)](https://github.com/OpenZeppelin/workshops/blob/master/06-nft-merkle-drop/slides/20210506 - Lazy minting Workshop.pdf) 的演示文稿，其中涵盖 他们的实现以及如何进行 merkle-proof 验证。
 
-I’m not going to use this article to explain how Merkle Trees work, as there are a number of resources, some of which I’ve already mentioned, that will do a much better job of it than I can. The gist is that a Merkle Tree is a hash tree (ie a tree with multiple branches that stores hashes). Every leaf in the tree contains the hash of its parent block of data. Every non-leaf (node) is made up of the hashes of its children and so on. We can then use the root (which we would’ve set in our contract) to verify the presence of any piece of data (in our case an address) in the tree. It’s a very efficient (and secure) way of verifying the contents of a large data structure (eg. a presale list of addresses).
+我不会用这篇文章来解释默克尔树是如何工作的，因为有很多资源，其中一些我已经提到过，它们会比我做得更好。 要点是默克尔树是一棵哈希树（即具有多个存储哈希的分支的树）。 树中的每个叶子都包含其父数据块的哈希值。 每个非叶子（节点）都由其子节点的哈希值等组成。 然后，我们可以使用根（我们将在合约中设置）来验证树中是否存在任何数据（在我们的例子中是地址）。 这是一种验证大型数据结构（例如预售地址列表）内容的非常有效（且安全）的方法。
 
 ![2.png](https://img.learnblockchain.cn/attachments/2022/09/UnUGUvyq6316b8a6b801b.png)
 
-Diagram of a Merkle Tree from the aforementioned Openzeppelin presentation.
+Openzeppelin 演示中的 Merkle 树图
 
-This is the approach we initially decided to take, and it included having three separate Merkle Trees ( Genesis, Honoraries, and Presale). It involved creating three separate Merkle Trees off-chain, and setting the merkle roots in the contract for each sale/claim event via dedicated `onlyOwner `function calls. While you won’t see this implementation in our final contract (for reasons we’ll discuss shortly), the implementation looked something like this (abbreviated for clarity):
+这是我们最初决定采用的方法，它包括拥有三个独立的 Merkle 树（Genesis、Honoraries 和 Presale）。 它涉及在链下创建三个独立的默克尔树，并调用合约中`onlyOwner`修饰的函数为每个出售/认领事件设置默克尔根。 虽然你不会在我们的最终合约中看到这个实现（原因我们稍后会讨论），但实现看起来像这样（为了清楚起见）：
 
 ```
 import '@openzeppelin/contracts/utils/cryptography/MerkleProof.sol';
@@ -95,7 +95,7 @@ function _verifyMerkleLeaf(
 }
 ```
 
-Every mint/claim function call would then require the generation and validation of a leaf node using the sender’s address. Eg when minting multiple tokens using `for loop` :
+然后，调用每个 mint/claim 函数都需要使用发送者的地址来生成和验证叶子节点。 例如，当使用 `for loop` 铸造多个代币时：
 
 ```
 require(     
@@ -108,17 +108,17 @@ require(
 ), "Invalid proof, you don't own that Token ID");
 ```
 
-## **But… the final contract doesn’t use Merkle Trees… What gives?**
+## **但是……最终的合约没有使用 Merkle Trees……那使用了什么？**
 
-That’s quite correct… We ended up scrapping the Merkle Tree implementation and rewrote the contract… but why? Upon presenting and discussing this implementation with an advisor, he pointed out that although the approach works, it neglects to take into account the real value proposition of a Merkle Tree. A user should be able to verify themselves against a publicly available tree, so by us having the ability to constantly change the tree kind of defeats the point. In addition, any time an address needs to be added or removed from a given list, a new Merkle Tree needs to be generated, and its new root needs to be set in the contract. Maintaining three separate Merkle trees starts to get messy, especially with constantly evolving/growing/changing lists.
+这是完全正确的……我们最终取消了 Merkle Tree 的实现并重写了合约……但是为什么呢？ 在与顾问介绍并讨论此实现时，他指出尽管该方法有效，但它忽略了考虑默克尔树的真正价值主张。 用户能够根据公开可用的树来验证自己，我们能够不断地改变树的类型就可以解决问题。 此外，任何时候从给定列表中添加或删除地址时，都需要生成新的 Merkle Tree，并且需要在合约中设置其新根。 维护三个独立的 Merkle 树开始变得混乱，尤其是在不断发展/增长/变化的列表中。
 
-An alternative approach, and the one we ended up deciding to go with, was by using signed Coupons generated off-chain that are passed to the contract functions as parameters. By using this approach, all of the mint/claim functions can be standardized to utilize the same logic, and it ends up being slightly more gas-efficient as there are fewer operations that need to be performed for the verification. It also becomes more cost-efficient from a deployment and admin contract interaction standpoint, as the Coupons are generated off-chain and changing/removing them doesn’t require any interaction with the contract itself.
+另一种方法，也是我们最终决定采用的方法，是使用在链下生成的已签名优惠券，这些优惠券作为参数传递给合约函数。 通过使用这种方法，所有铸币/认领功能都可以以使用相同的逻辑标准化，并且由于需要为验证执行的操作更少，因此最终会稍微更加节省gas。 从部署和管理合约交互的角度来看，它也变得更具成本效益，因为优惠券是在链下生成的，并且更改/删除它们不需要与合约本身进行任何交互。
 
-The idea behind a using a Coupon is relatively straight-forward. If you’ve been around crypto or NFTs for any amount of time, you‘ve probably heard the terms “asymmetric” or “public-key” cryptography before. After all, your Eth wallet address is the public key portion of your private-public keypair, where your private key is used to sign your transactions and verify that you’re the owner of the address.
+使用优惠券背后的想法相对简单。 如果你在任何时候都使用过加密或 NFT，那么你之前可能已经听说过“非对称”或“公钥”密码学这些术语。 毕竟，你的 Eth 钱包地址是你的私钥-公钥对的公钥部分，你的私钥用于签署你的交易并验证你是地址的所有者。
 
-If you haven’t heard these terms before, that’s okay, it’s essentially a cryptographic system that utilizes a private-public keypair — your private key should be kept secret and never shared with anyone, whereas your public key is available for anyone to see, ie. it’s “publicly” available. With respect to our Coupons, a piece of data is signed off-chain using a private (secret) key that’s only known to us, and the signature (or public key) can be recovered on-chain. This way, we can prove cryptographically that the data being received by the contract was sent from a known origin, ie. the coupon itself was signed by our (The Humans) private key. In our case, that data contains some combination of the user’s address (for example someone on the presale list) and a piece of data specific to that function call (ie. an integer that matches the presale event enum value).
+如果你以前没有听说过这些术语，那没关系，它本质上是一个使用私钥-公钥对的加密系统——你的私钥应该保密，永远不要与任何人共享，而你的公钥可供任何人查看， 它是“公开”可用的。 对于我们的优惠券，使用只有我们知道的私有（秘密）密钥在链下对一段数据进行签名，并且可以在链上恢复签名（或公钥）。 通过这种方式，我们可以通过密码证明合约接收的数据是从已知来源发送的，优惠券本身是由我们的私钥签署。 在我们的例子中，该数据包含用户地址（例如预售名单上的某人）和特定于该函数调用的一段数据（即与预售事件枚举值匹配的整数）的某种组合。
 
-Every mint/claim option (except for the public sale) in our contract requires a coupon. Before we get stuck in, let’s go over some of the necessary data types that are declared at the top of the contract. The `Coupon` struct defines the data generated by the signing process off-chain. The `CouponType` enum allows us to create event-specific coupons, so someone who’s verified to claim as an Author cannot automatically claim during the presale, for example. Finally, the `SalePhase` enum lets us (as the contract owner) control which event is active.
+我们合约中的每个铸币/认领选项（公开销售除外）都需要一张优惠券。 在我们陷入困境之前，让我们回顾一下合约顶部认领的一些必要数据类型。 `Coupon` 结构定义了链下签名过程生成的数据。 `CouponType` 枚举允许我们创建特定于事件的优惠券，例如，经过验证声称为作者的人不能在预售期间自动认领。 最后，`SalePhase` 枚举让我们（作为合约所有者）控制哪个事件处于活动状态。
 
 ```
 struct Coupon {
@@ -140,7 +140,7 @@ enum SalePhase {
 }
 ```
 
-Now that we’ve got some background info, let’s take a look at the function definition for the presale minting:
+现在我们已经有了一些背景信息，让我们看一下预售铸币的函数定义：
 
 ```
  /// Mint during presale
@@ -176,16 +176,16 @@ Now that we’ve got some background info, let’s take a look at the function d
 }
 ```
 
-Let’s break down what’s happening in the above function. You can see from the function’s definition that the second argument is of Type `Coupon` — which is the struct we declared earlier in the contract.
+让我们分解上述函数中发生的事情。 从函数的定义中可以看出，第二个参数的类型是“Coupon”——这是我们之前在合约中认领的结构。
 
 // 1
-The first `require` statement checks that the presale event is active (using a variable set earlier using the `SalePhase` enum).
+第一个 `require` 语句检查预售事件是否处于活动状态（使用之前使用 `SalePhase` 枚举设置的变量）。
 
 // 2
-The second `require` statement ensures that the function caller has not minted more than the allowed amount as dictated by the `MAX_PRESALE_MINTS_PER_ADDRESS` constant.
+第二个 `require` 语句确保函数调用者没有超过 `MAX_PRESALE_MINTS_PER_ADDRESS` 常量规定的允许数量。
 
 // 3
-Now we get to the juicy part — we create a 32 byte hash of the encoded `CouponType` (an integer) and the function caller’s address ( `msg.sender` ), which would look something like this if we were to expand it:
+现在我们进入了有趣的部分——我们通过编码 `CouponType`（一个整数）和函数调用者的地址（`msg.sender`）创建了一个 32 字节的哈希，如果我们扩展它看起来像这样：
 
 ```
 bytes32 digest = keccak256(
@@ -196,10 +196,10 @@ bytes32 digest = keccak256(
 );
 ```
 
-It’s important to point out here that we’re using `abi.encode` as opposed to `abi.encodePacked` . Using `abi.encode` is less ambiguous, and makes things a little cleaner when we’re generating the coupons, which we’ll go into later.
+需要指出的是，我们使用的是 `abi.encode` 而不是 `abi.encodePacked`。 使用 `abi.encode` 不那么模棱两可，并且在我们生成优惠券时让事情变得更简洁，我们稍后会介绍。
 
 // 4
-Before we allow the `_mint()` function to be called, we need to verify that the Coupon was signed by our private key, that it contains the function caller’s address (ie they’re “on” the presale list) and that they’re minting at the right time.
+在我们允许调用`_mint()`函数之前，我们需要验证优惠券是由我们的私钥签名的，它包含函数调用者的地址（即他们在预售列表中）和正确的铸造时间。
 
 ```
  /// @dev check that the coupon sent was signed by the admin signer
@@ -214,23 +214,23 @@ Before we allow the `_mint()` function to be called, we need to verify that the 
  }
 ```
 
-In the above snippet you can see that we “recover” the signer, ie. the public key from the keypair whose private key initially created the coupon. We get this public key ( the `signer`) using solidity’s built-in `ecrecover` function by passing in the digest ( ie. the 32 byte hash of the coupon type and the sender’s address) along with the Coupon itself. This [(3)](https://soliditydeveloper.com/ecrecover) article was really helpful in explaining the intricacies of how `ecrecover` works under the hood, if you’re interested in diving deeper. The final step in the `_isVerifiedCoupon()` method is checking that the signer actually matches the `_adminSigner` , which was set in the contract’s constructor when it was deployed. As a reminder, this `_adminSigner` is the public key that belongs to the private key that’s used to create the signature (ie the Coupons) off-chain in our development environment. The security afforded by this approach relies entirely on the developer, ie us, keeping the private key a secret.
+在上面的代码片段中，你可以看到我们“恢复”了签名者，即从其私钥最初创建优惠券的密钥对中的公钥。我们使用 solidity 的内置 `ecrecover` 函数通过以下方式获取此公钥（`signer`）将摘要（即优惠券类型和调用者地址的32字节哈希值）与优惠券本身一起传递。如果你有兴趣深入了解，这篇 [(3)](https://soliditydeveloper.com/ecrecover) 文章非常有助于解释 `ecrecover` 如何在后台工作的复杂性。 `_isVerifiedCoupon()` 方法的最后一步是检查签名者是否真正匹配 `_adminSigner` ，它在部署时在合约的构造函数中设置。提醒一下，这个 `_adminSigner` 是属于私钥的公钥，用于在我们的开发环境中链下创建签名（即优惠券）。这种方法提供的安全性完全依赖于开发人员将私钥保密。
 
-## **So where does the Coupon come from?**
+## 那么优惠券是从哪里来的呢？
 
-Great question! The Coupons are generated locally using a script inside our isolated development environment (where we can securely store our private key). The coupons are then synced to the Humans API, where they can be fetched by users who are accessing our mint site.
+好问题！ 优惠券是使用独立的开发环境（可以安全地存储我们的私钥）中的脚本在本地生成的。 然后将优惠券同步到 Humans API，访问我们的 铸币网站的用户可以在其中获取优惠券。
 
 ![3.png](https://img.learnblockchain.cn/attachments/2022/09/mZkaGEPG6316b8aa0fe58.png)
 
-A user validating their position on the list by fetching a coupon
+用户通过获取优惠券验证其在列表中的位置
 
-The private key used for signing/creating the coupons **should never be stored on a server,** hopefully for obvious reasons (you don’t want it to fall into a malicious actors hands). Once the coupons have been manually generated, they’re synced with the mint site’s backend ( The Humans API ). A user connects their wallet to the site, then when they attempt to access a certain mint/claim section of the site, the site attempts to fetch a coupon using the user’s address as a lookup. This allows a user to confirm their position on a specific list — ie. if they’re on the list, the API returns the coupon and the user is allowed to proceed to the mint section of the site. When they interact with the contract by calling the mint function, the coupon is passed in along with any other parameters that are required.
+用于签名/创建优惠券的私钥**不应该存储在服务器上，** 原因很明显（你不希望它落入恶意行为者手中）。 手动生成优惠券后，它们会与铸币网站的后端（The Humans API）同步。 用户将他们的钱包连接到该站点，然后当他们尝试访问该站点的某个铸币/认领部分时，该站点会尝试使用用户的地址作为查找来获取优惠券。 这允许用户确认他们在特定列表中的位置——如果他们在列表中，API 会返回优惠券，并且允许用户继续访问网站的铸币区。 当他们通过调用 mint 函数与合约进行交互时，优惠券与任何其他所需的参数一起传入。
 
 ![4.png](https://img.learnblockchain.cn/attachments/2022/09/iizER53y6316b8ad5a037.png)
 
-Coupon Lifecycle
+优惠券生命周期
 
-The coupons are stored by the API with the user’s address as the primary key:
+优惠券由 API 以用户地址作为主键存储：
 
 ```
 {
@@ -243,7 +243,7 @@ The coupons are stored by the API with the user’s address as the primary key:
 }
 ```
 
-Once the coupon has been fetched from the API, it’s passed to the respective mint function. The snippet below shows the implementation used for the presale by calling the contract’s `mintPresale` function from our front-end.
+一旦从 API 中获取优惠券，它就会被传递给相应的 mint 函数。 下面的代码片段显示了通过从我们的前端调用合约的`mintPresale` 函数用于预售的实现。
 
 ```
 mintPresale(
@@ -259,9 +259,9 @@ mintPresale(
 }
 ```
 
-**Creating the Coupons**
+**创建优惠券**
 
-We collected presale addresses via our custom Discord bot (we’ll do a separate post to cover how we did this). Then, in our local dev environment, after pulling the addresses from the DB, a coupon is generated for each and stored in an object with the users’ addresses as the key. We’re using utils from the `ethers` and `ethereumjs-utils` libraries to help generate the coupons. Take a look at the code below and we’ll step through the process of generating the coupon.
+我们通过自定义 Discord 机器人收集了预售地址（我们将单独发布一篇文章来介绍我们是如何做到这一点的）。 然后，在我们的本地开发环境中，从数据库中提取地址后，会为每个人生成一张优惠券，并将其存储在一个以用户地址为键的对象中。 我们使用来自 `ethers` 和 `ethereumjs-utils` 库的工具来帮助生成优惠券。 看看下面的代码，我们将逐步完成生成优惠券的过程。
 
 ```
 const {
@@ -310,7 +310,7 @@ function serializeCoupon(coupon) {
 }
 ```
 
-If you remember back to when we’re verifying the coupon in the contract, we get the digest by hashing the encoded `CouponType` enum and the user’s address using the `keccak256` algorithm. Perhaps this is a good time to focus in on the security aspects of this approach. Although we’re obviously going to do everything possible to prevent anyone from gaining access to our backend, even if a malicious actor does manage to get their hands on one (or even every) coupon, there’s still nothing they can do with it. The intended recipient of the coupon is encoded in the hash that gets signed. This is checked against the `msg.sender` on the contract side, so the only way to recover the correct signer is if the sender of the coupon is encoded in the coupon itself. Without access to our private key that matches the `_adminSigner` from the keypair, there’s no way for a malicious actor to generate his/her own valid coupons.
+如果你还记得我们在验证合约中的优惠券时，我们通过使用`keccak256 `算法对 `CouponType `枚举和用户地址进行哈希编码得到摘要。 也许现在是关注这种方法的安全方面的好时机。 尽管我们显然会尽一切可能阻止任何人访问我们的后端，即使恶意行为者确实设法获得了一张（甚至每张）优惠券，他们仍然无能为力。 优惠券的预期接收者被编码在签名的哈希中。 这是根据合约端的`msg.sender`检查的，因此恢复正确签名者的唯一方法是优惠券的发送者是否被编码在优惠券本身中。 如果无法访问与密钥对中的 `_adminSigner` 匹配的私钥，恶意行为者就无法生成他自己的有效优惠券。
 
 ```
 // [solidity] recreating the digest in the contract 
@@ -332,9 +332,9 @@ function generateHashBuffer(typesArray, valueArray) {
 }
 ```
 
-When generating the coupon, we’ve created a convenience function called `generateHashBuffer(typesArray, valueArray)` that makes use of the `keccack256` method from `ethereumjs-utils` , which takes a buffer as its only argument and returns a buffer containing the hashed data. In order to encode the data, before converting it to a buffer, we make use of the `ethers.utils.defaultAbiCoder.encode()` method to encode the data, which accepts two arrays, the first of which contains the Types `[“uint256”, “address”]` as strings, and the second with the values to encode `[CouponTypeEnum[“Presale”], userAddress]` .
+在生成优惠券时，我们创建了一个名为`generateHashBuffer(typesArray, valueArray)`的便捷函数，它使用了`ethereumjs-utils`中的`keccack256`方法，该方法接受一个buffer作为唯一参数，并返回一个包含哈希数据的buffer。为了编码数据，在将其转换为buffer之前，我们使用`ether .utils. defaultabicoder .encode()`方法来编码数据，该方法接受两个数组，第一个包含类型`[" uint256 "， " address "]`的字符串，第二个包含要编码的值`[CouponTypeEnum[" Presale "]， userAddress]`。 
 
-Now that we have the hash of the data we’ll be using to recover the signature from, we can create the coupon using the `ecsign` method from `ethereumjs-utils` .
+现在我们有了用于恢复签名的数据的哈希值，我们可以使用 `ethereumjs-utils` 中的 `ecsign` 方法创建优惠券。
 
 ```
 function createCoupon(hash, signerPvtKey) {
@@ -342,9 +342,9 @@ function createCoupon(hash, signerPvtKey) {
 }
 ```
 
-The `ecsign` method accepts the hashed data (Buffer) and the signers Private key (also a Buffer) and returns an `ECDSASignature` . The Elliptic Curve Digital Signature Algorithm (ECDSA) [(4)](https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm) is another example of asymmetrical cryptography, where user A creates a signature with their private key, and user B is able to apply a standard algorithm to recover the public key of the signer (user A). This Medium article [(5)](https://betterprogramming.pub/secure-and-test-the-contract-with-ecdsa-signature-3ff368a479a6) provides some good insight into how it’s used. It’s also noteworthy to point out that the `ecsign` method converts the signature format for the `eth_sign` RPC method, and not `personal_sign` which would prepend the `\x19Ethereum Signed Message:\n` string to the message, which we do not need for our use case. Once we’ve created our coupon, we call the `serializeCoupon()` convenience function and pass in the raw coupon. The function returns an object with the `r` and `s` buffers converted to hex strings for convenient storage. If you’re interested in learning more about the `{r,s,v}` components of the `ECDSASignature`, this practical guide on cryptography [(6)](https://cryptobook.nakov.com/digital-signatures/ecdsa-sign-verify-messages) offers some good insight.
+`ecsign` 方法接受哈希数据（Buffer）和签名者私钥（Buffer）并返回一个 `ECDSASignature`。 椭圆曲线数字签名算法 (ECDSA) [(4)](https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm) 是非对称加密的另一个示例，其中用户 A 使用其私钥创建签名，用户 B 能够应用标准算法来恢复签名者（用户 A）的公钥。 这篇 Medium 文章 [(5)](https://betterprogramming.pub/secure-and-test-the-contract-with-ecdsa-signature-3ff368a479a6) 很好地了解了它的使用方式。同样值得注意的是，`ecsign `方法转换的是`eth_sign'` RPC方法的签名格式，而不是`personal_sign`，后者会在`\x19Ethereum Signed Message:\n`字符串前面加上消息，在我们的用例中不需要。一旦我们创建了优惠券，我们调用` serializeCoupon()`函数并传入原始优惠券。该函数返回一个对象，其中 `r` 和 `s` 缓冲区转换为十六进制字符串以便于存储。 如果你有兴趣了解有关 `ECDSASignature` 的 `{r,s,v}` 组件的更多信息，请阅读本密码学实用指南 [(6)](https://cryptobook.nakov.com/digital-signatures /ecdsa-sign-verify-messages) 提供了一些很好的见解。
 
-If you remember a little earlier we mentioned that the private key parameter of `ecsign` expects a buffer, so we mustn’t forget to convert it from a string before using it to generate the coupons:
+如果你还记得早些时候我们提到过 `ecsign` 的私钥参数需要一个缓冲区，所以我们一定不要忘记在使用它来生成优惠券之前将其从字符串转换：
 
 ```
 const signerPvtKeyString = process.env.ADMIN_SIGNER_PRIVATE_KEY || "";
@@ -352,7 +352,7 @@ const signerPvtKeyString = process.env.ADMIN_SIGNER_PRIVATE_KEY || "";
 const signerPvtKey = Buffer.from(signerPvtKeyString, "hex");
 ```
 
-Something worth mentioning is that the private key does not have to be from an existing/active wallet, in fact it’s probably safer that it’s not. Instead, you can generate a single-purpose private key using `crypto.randomBytes(32)` and then derive the public key (signer) from that using :
+值得一提的是，私钥不必来自现有/活动的钱包，事实上它可能更安全。 相反，你可以使用 `crypto.randomBytes(32)` 生成一个单一用途的私钥，然后使用以下方法从中派生公钥（签名者）：
 
 ```
 const { privateToAddress } = require("ethereumjs-utils");
@@ -367,13 +367,15 @@ privateToAddress(pvtKey).toString("hex"));
 console.log({ signerAddress, pvtKeyString });
 ```
 
-In the above snippet, the `signerAddress` is the address we’d pass into the constructor to set the `_adminSigner` when deploying the contract.
+在上面的代码片段中，`signerAddress` 是我们在部署合约时传递给构造函数以设置 `_adminSigner` 的地址。
 
-## **What are the different use cases for the coupons in The Humans contract?**
+## **The Humans 合约中的优惠券有哪些不同的用例？**
 
-As we mentioned in the precursor to this post, we had a variety of mint / claim events, each with its own special circumstances and conditions. Using coupons allowed us to handle all of them using the same approach, without the need to repeat code or add any custom complex logic. I’ll expand on these below.
+正如我们在这篇文章的前言中提到的，我们有各种各样的铸币/认领事件，每一个都有自己的特殊情况和条件。 使用优惠券使我们能够使用相同的方法处理所有这些，而无需重复代码或添加任何自定义复杂逻辑。 我将在下面扩展这些。
 
-## **Authors** Our Authors earned free mints in exchange for submitting Bios for our Humans. Each Author earned a different number of Humans based on their own individual contributions and were entitled to claim their earned Humans for free (with the exception of paying the gas fee). Let’s take a look at the function definition and the coupon creation code.
+## **Authors** 
+
+我们的作者通过为我们的Humans提交Bios来换取免费铸币。 每位作者根据自己的个人贡献获得了不同数量的Humans，并有权免费认领他们获得的Humans（支付gas费除外）。 我们来看看函数定义和优惠券创建代码。
 
 ```
 // [solidity] function signature
@@ -414,7 +416,7 @@ for (const [address, qty] of Object.entries(authorAddressList)) {
 }
 ```
 
-As you can see from the snippet above, the `qty` (ie. number of Humans earned) varies by Author, so each Author’s coupon has their allotted number encoded into it. We pass the `qty` (total number they’re allowed to claim), along with the `count` (the number being claimed in this transaction), into the contracts `claimAuthorTokens()` function. I feel like this is a good time to point out that our Coupons do not contain a nonce, which’ll you see used in most implementations. Traditionally this would prevent someone from reusing a coupon, but in this instance we’re okay with the coupon being reused, because the contract keeps track of how many Humans have been claimed:
+正如你从上面的代码片段中看到的那样`qty`（即获得的Humans数量）因作者而异，因此每个作者的优惠券都有其分配的编号编码。 我们将`qty`（他们被允许认领的总数）和`count`（在此交易中认领的数字）一起传递给合约的“claimAuthorTokens()”函数。 我觉得现在是指出我们的优惠券不包含随机数的好时机，你会看到它在大多数实现中使用。 传统上，这会阻止某人重复使用优惠券，但在这种情况下，我们可以重新使用优惠券，因为合约会跟踪有多少人被认领：
 
 ```
 require( 
@@ -425,7 +427,7 @@ require(
 
 ## **Honorary Humans**
 
-We had a total of 35 Honorary Humans. These are 1-of-1 hand-drawn Humans created for specific individuals who’d helped support and/or inspire the project. We reserved Token IDs `230 — 264` for these individuals, so we needed to incorporate the designated IDs into the coupons. Let’s examine the function definition:
+我们共有 35 名Honorary Humans。 这些是 1-of-1 手绘Humans，是为帮助支持和激发项目的特定个人创建。 我们为这些人保留了 `230 — 264`的Token ID ，因此我们需要将指定的 ID 合并到优惠券中。 我们来看看函数定义：
 
 ```
 function claimReservedTokensByIds(
@@ -442,7 +444,7 @@ function claimReservedTokensByIds(
 }
 ```
 
-The `claimReservedTokensByIds()` function doubles as a method for us, as the project team, to airdrop specific IDs to given addresses if for whatever reason they’re not able to claim on their own. It uses the same mechanism of providing the recipient address ( `owner_` ), an array of the indices ( `idxsToClaim` ) for the `idsOfOwner` array that contains the IDs that belong to the `owner_` address. This sounds a bit confusing, but take a look at the missing part of the function definition:
+`claimReservedTokensByIds()` 函数兼作我们将特定 ID 空投到给定地址的一种方法，如果出于某种原因他们无法自行认领。 它使用相同的机制来提供接收地址（`owner_`），一个包含属于`owner_`地址的ID的`idsOfOwner`数组的索引数组（`idxsToClaim`）。 这听起来有点令人困惑，但请看一下函数定义中缺少的部分：
 
 ```
    ...
@@ -454,7 +456,7 @@ The `claimReservedTokensByIds()` function doubles as a method for us, as the pro
 }
 ```
 
-Let’s say a user owns Token IDs `[3,9,122,211]` , these will all be encoded in the Coupon. If, for whatever reason they only wanted to claim ids `9` and `211` , then as the `idxsToClaim` they’d pass in the array `[1,3]` because `idsOfOwner[1] = 9;` etc. This allows the user, or us airdropping tokens on their behalf, to claim a subset of all of their tokens in a single transaction.
+假设用户拥有 Token ID `[3,9,122,211]`，这些都将被编码在优惠券中。 如果出于某种原因他们只想认领 id `9` 和 `211` ，那么作为 `idxsToClaim` 他们会传入数组 `[1,3]` 因为 `idsOfOwner[1] = 9;` 我们代表他们空投代币，这允许用户在一次交易中认领他们所有代币的一个子集。
 
 ```
 const hashBuffer = generateHashBuffer(
@@ -472,15 +474,15 @@ const hashBuffer = generateHashBuffer(
 const coupon = createCoupon(hashBuffer, signerPvtKey);
 ```
 
-As you can see in the above snippet when we generate the Coupons, we’re including the `CouponType` enum for the Genesis Claim (which is for reserved token IDs), along with the array of IDs owned by the user.
+正如你在上面的代码片段中看到的，当我们生成优惠券时，我们包含了 Genesis Claim（用于保留的令牌 ID）的`CouponType`枚举，以及用户拥有的 ID 数组。
 
-## **Burn-to-claim Genesis Tokens**
+## 销毁认领 Genesis 代币
 
-In the preceding post, we mentioned that we have a genesis collection of 229 Humans that were minted on Opensea’s shared ERC1155 contract. We wanted to merge these into the new collection on our own contract, so we implemented a burn-to-replace mechanism. We’ll discuss the transfer mechanics in another post, but for now we’ll expand on how we used the coupons for this as we think it’s an interesting use-case.
+在上一篇文章中，我们提到我们有 229 个Humans 的创世集合，是在 Opensea 共享的ERC1155 合约上铸造的。 我们想根据我们自己的合约将这些合并到新的集合中，因此我们实施了一种销毁替换机制。 我们将在另一篇文章中讨论转移机制，但现在我们将扩展我们如何使用优惠券，因为我们认为这是一个有趣的用例。
 
 ![5.png](https://img.learnblockchain.cn/attachments/2022/09/TKpcmKpt6316b8b0bf022.png)
 
-In order to burn the token from the Opensea contract and claim its one-to-one replacement from our new contract, we need to know the Opensea Token ID for each token. If you’re not familiar with what token IDs from the ERC1155 standard look like, they’re stored as a `uint256` . When we created the original collection, we decided to “name” the Humans by their number in the collection (ie. an our own ID), eg. `HumansOfNFT #1 `. Opensea assigns it’s own token IDs (which are not sequential), so in order to map our IDs to their Opensea IDs, we created a script that pulled down our collection from Opensea’s API, parsed the metadata and extracted our IDs from the `name` property. Here’s an example of an entry from our API that maps our own token ID to the token ID that was assigned by Opensea’s shared contract:
+为了从 Opensea 合约中销毁代币并从我们的新合约中获得一对一的替换，我们需要知道每个代币的 Opensea 代币 ID。 如果你不熟悉 ERC1155 标准中的令牌 ID ，它们被存储为 `uint256`类型 。 当我们创建原始集合时，我们决定通过他们在集合中的编号（即我们自己的 ID）来“命名”Humans，如 `HumansOfNFT #1`。 Opensea 分配它自己的令牌 ID（不是连续的），因此为了将我们的 ID 映射到 Opensea ID，我们创建了一个脚本，从 Opensea 的 API 中提取我们的集合，解析元数据并从`name `属性中提取我们的id。 这是我们 API 中的一个条目示例，它将我们自己的令牌 ID 映射到 Opensea 的共享合约分配的令牌 ID： 
 
 ```
 {
@@ -491,9 +493,9 @@ In order to burn the token from the Opensea contract and claim its one-to-one re
 
 ![6.png](https://img.learnblockchain.cn/attachments/2022/09/6xxy36Mc6316b8b5035b4.png)
 
-Burn-to-claim replacement genesis tokens
+Burn-to-claim 替换 genesis 代币
 
-When a user clicked on our `genesis_claim.png` icon, we’d scan their wallet and check it for any tokens from Opensea’s shared contract. We then compared those token IDs against the ones stored for our original collection. If a match was found, the Coupon for that ID was retrieved from the API. Because the burn mechanism involves invoking the `safeTransferFrom()` method on the Opensea contract, the only way to pass the coupon is inside the additional `data` field. Take a look at how we initiate the transfer on the front-end:
+当用户点击我们的`genesis_claim.png`图标时，我们会扫描他们的钱包并检查它是否有来自 Opensea 共享合约的代币。 然后，我们将这些tokenId 与为我们的原始集合存储的那些进行比较。 如果找到匹配项，则从 API 中检索该 ID 的优惠券。 因为销毁机制涉及调用 Opensea 合约上的 `safeTransferFrom()` 方法，所以传递优惠券的唯一方法是在附加的 `data` 字段中。看看我们是如何在前端发起转账的：
 
 ```
 function burnOpenseaToken( 
@@ -525,13 +527,13 @@ function burnOpenseaToken(
 }
 ```
 
-In order to do this, we simply include the ABI from the standard ERC1155 contract implementation that allows us to call the function using `ethers `. Before we dive into the above snippet, let’s just take a quick look at the function signature for ERC1155’s `safeTransferFrom()` :
+为此，我们只需包含标准 ERC1155 合约实现中的 ABI，它允许我们使用 `ethers` 调用该函数。 在深入了解上述代码段之前，让我们快速看一下 ERC1155 的 `safeTransferFrom()` 的函数签名：
 
 ```
 safeTransferFrom(address from, address to, uint256 id, uint256 amount, bytes data)
 ```
 
-You’ll notice that the last parameter to be passed in ( `data`) is of type `bytes` . So, in order for us to pass the coupon, we need to encode it as a `tuple` :
+你会注意到要传入的最后一个参数（`data`）是`bytes`类型。 因此，为了传递优惠券，我们需要将其编码为tuple` :
 
 ```
 const data = utils.defaultAbiCoder.encode(
@@ -540,7 +542,7 @@ const data = utils.defaultAbiCoder.encode(
   );
 ```
 
-This way, we’re able to pass the coupon as a string of `bytes` , and decode it in the contract when the `onERC1155Received` callback fires when the transfer is initiated.
+这样，我们可以将优惠券作为 `bytes` 字符串传递，并在合约中发起转账时触发 `onERC1155Received` 回调对其进行解码。
 
 ```
 function onERC1155Received(
@@ -561,7 +563,7 @@ function onERC1155Received(
 }
 ```
 
-First things first, we make sure that only tokens from Opensea’s shared contract can be received by our contract — we don’t want people sending random tokens to our contract. Next, we extract the `genesisId` (the token ID in our new collection ) along with the coupon. In order to recover the signer, we need the `CouponType` , the `genesisId` (ie. the ID in the new collection), and the `id` ( the `uint256` token ID from the shared contract).
+首先，确保只有来自 Opensea 共享合约的代币可以被我们的合约接收——不希望人们向我们的合约发送随机代币。 接下来，我们提取 `genesisId`（我们新集合中的代币 ID）和优惠券。 为了恢复签名者，我们需要`CouponType`、`genesisId`（即新集合中的ID）和`id`（来自共享合约的`uint256`token ID）。
 
 ```
 bytes32 digest = keccak256(
@@ -569,15 +571,15 @@ bytes32 digest = keccak256(
 );
 ```
 
-Once we’ve created the digest and confirmed that the recovered signer matches our signer’s public key, the token transfer is allowed to complete.
+一旦我们创建了摘要并确认恢复的签名者与我们的签名者的公钥匹配，就可以完成token转移。
 
-## **Presale**
+## **预售**
 
-We used the presale coupons as the example for much of this post, so we won’t go over the implementation again as we’ve covered it in-depth.
+我们在这篇文章的大部分内容中都使用了预售优惠券作为示例，因此我们将不再详细介绍实现，因为我们已经深入介绍了它。
 
-## **So, how do we test the coupons before deploying them to mainnet?**
+## 那么，我们如何在将优惠券部署到主网之前对其进行测试？
 
-Test, test, and test again. I can’t emphasize enough how important it is (or at least it was for me) to test as many scenarios as possible. I use Hardhat as part of my workflow, so as part of my unit tests I’m able to generate coupons on the fly. Take a look at an excerpt from one of our unit tests below:
+测试，测试，再测试。 尽可能多地测试场景非常重要（或者至少对我而言），我怎么强调都不过分。 使用 Hardhat 作为工作流程的一部分，即时生成优惠券作为单元测试的一部分。 请看下面我们的单元测试之一的摘录：
 
 ```
 describe('presale minting', async function () {
@@ -615,17 +617,15 @@ describe('presale minting', async function () {
 })
 ```
 
-That about sums it up! If you have any questions, or notice any errors in the write up, please feel free to call them out in the comments!
+差不多就这么总结了！ 如果你有任何问题，或发现文章中有任何错误，请随时在评论中指出！
 
-Special thanks to [xtremetom](https://medium.com/u/f8fef5ff64a6?source=post_page-----47a3eb466e44--------------------------------) who was kind enough to answer my DMs and offer some pointers, and to 
-
-[Lawrence Forman](https://medium.com/u/6f41ae64d95?source=post_page-----47a3eb466e44--------------------------------) for his guidance and wisdom.
+特别感谢[xtremetom](https://xtremetom.medium.com/)，他很友好地回答了我的 DM 并提供了一些指导，并感谢[Lawrence Forman](https://medium.com/@merklejerk)的指导和智慧。
 
 ```
-Want to Connect?You can find us via our website: https://humansofnft.com. Or come and visit us on Discord: https://discord.gg/humansofnft
+想要联系吗？你可以通过我们的网站找到我们：https://humansofnft.com。 或者来访问我们的 Discord：https://discord.gg/humansofnft
 ```
 
-## **References**
+## **参考**
 
 (1) https://nftchance.medium.com/the-gas-efficient-way-of-building-and-launching-an-erc721-nft-project-for-2022-b3b1dac5f2e1
 
@@ -638,6 +638,3 @@ Want to Connect?You can find us via our website: https://humansofnft.com. Or com
 (5) https://betterprogramming.pub/secure-and-test-the-contract-with-ecdsa-signature-3ff368a479a6
 
 (6) https://cryptobook.nakov.com/digital-signatures/ecdsa-sign-verify-messages
-
-
-
