@@ -6,7 +6,7 @@
 
 用于购买计算、状态转移还有存储空间的开销被称做 *燃料（下文统称  gas ）*。 gas  的作用是确定交易的优先级, 同时形成一种能抵御【女巫攻击】（[Sybil resistance](https://en.wikipedia.org/wiki/Sybil_attack)）的机制 ，而且还能防止【停止问题】（[halting problem](https://en.wikipedia.org/wiki/Halting_problem)）引起的攻击。
 
-*欢迎阅读我的文章* [*Solidity 基础* ](https://medium.com/@danielyamagata/solidity-basics-your-first-smart-contract-f11f4f7853d0)*去了解 gas 的方方面面*
+*欢迎阅读我的文章* [*Solidity 基础* ](https://medium.com/@danielyamagata/solidity-basics-your-first-smart-contract-f11f4f7853d0)*去了解  gas 的方方面面*
 
 这些非典型的开销导致经典的软件设计模式在合约编程语言中看起来既低效又奇怪。如果想要识别这些模式并理解他们导致效率变高/低的原因，你必须首先对以太坊虚拟机（即 EVM）有一个基本的了解。
 
@@ -22,7 +22,7 @@
 
 EVM 负责区块链上所有交易的执行和处理。它是一个栈机器，栈上的每个元素长度都是 256 位或 32 字节。EVM 嵌在每个以太坊节点中，负责执行合约的字节码。
 
-EVM 把数据保存在*存储（Storage）* 和 *内存（Memory）*中。*存储（Storage）*用于永久存储数据，而*内存（Memory）*仅在函数调用期间保存数据。还有一个地方保存了函数参数，叫做*调用数据（calldata）*，这种存储方式有点像内存，不同的是不可以修改这类数据。
+EVM 把数据保存在 *存储（Storage）* 和 *内存（Memory）* 中。*存储（Storage）*用于永久存储数据，而*内存（Memory）*仅在函数调用期间保存数据。还有一个地方保存了函数参数，叫做*调用数据（calldata）*，这种存储方式有点像内存，不同的是不可以修改这类数据。
 
 *在 Preethi Kasireddy 的文章中了解有关以太坊和 EVM 的更多信息* [“Ethereum 是如何工作的？”](https://www.preethikasireddy.com/post/how-does-ethereum-work-anyway#:~:text=The Ethereum blockchain is essentially,transition to a new state.)。
 
