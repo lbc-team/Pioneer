@@ -24,7 +24,7 @@ EVM 负责区块链上所有交易的执行和处理。它是一个栈机器，�
 
 EVM 把数据保存在 *存储（Storage）* 和 *内存（Memory）* 中。*存储（Storage）*用于永久存储数据，而*内存（Memory）*仅在函数调用期间保存数据。还有一个地方保存了函数参数，叫做*调用数据（calldata）*，这种存储方式有点像内存，不同的是不可以修改这类数据。
 
-*在 Preethi Kasireddy 的文章中了解有关以太坊和 EVM 的更多信息* [“Ethereum 是如何工作的？”](https://www.preethikasireddy.com/post/how-does-ethereum-work-anyway)。
+*在 Preethi Kasireddy 的文章中了解有关以太坊和 EVM 的更多信息* [“Ethereum 是如何工作的？”](https://libraryguides.centennialcollege.ca/c.php?g=717548&p=5121840#:~:text=Properties%20of%20addition%20in%20modular,%2B%20d%20(%20mod%20N%20)%20.)。
 
 智能合约是用高级语言编写的，例如 Solidity、Vyper 或 Yul，随后通过编译器编译成 EVM 字节码。但是，有时直接在代码中使用字节码会更高效（省gas）。
 
