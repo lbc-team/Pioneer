@@ -50,7 +50,7 @@ Solidity 字节码示例
 
 每个操作码都占一个字节，并且操作成本有大有小。操作码的操作成本是固定的或由公式算出来。例如，ADD 操作码固定需要 3 个 gas。而将数据保存在存储中的操作码 SSTORE ，当把值从0设置为非0时消耗 20,000 gas，当把值改为0或保持为0不变时消耗 5000 gas。
 
-*SSTORE 的开销实际上会其他变化，具体取决于是否已访问过这个值。可以在这里找到有关 SSTORE 和 SLOAD 开销的完整详细信息* [*详见*](https://hackmd.io/@fvictorio/gas-costs-after-berlin)
+*SSTORE 的开销实际上会其他变化，具体取决于是否已访问过这个值。可以在这里找到有关 SSTORE 和 SLOAD 开销的完整详细信息：* [*链接*](https://hackmd.io/@fvictorio/gas-costs-after-berlin)
 
 **为什么了解 EVM 操作码很重要？**
 
