@@ -196,7 +196,7 @@ function getVaultValue(uint256 vaultId) external view returns (uint256) {
 
 EfficcientVaults 的 *createVault()* 与 IneficcientVaults 相比，效率提高了 61%，消耗的 gas 减少了约 76,300。
 
-应该注意的是，在某些情况下在合约中创建新合约是可取的，并且通常是为了不可变性和效率。*随着合约的大小增加，与合约的所有交互的交易成本也将增加。*因此，如果你希望在链上存储大量数据，最好通过多个单独的合约分离这些数据。除此之外，应避免创建新合同。
+应该注意的是，在某些情况下在合约中创建新合约是可取的，并且通常是为了不可变性和效率。*随着合约的大小增加，与合约的所有交互的交易成本也将增加。* 因此，如果你希望在链上存储大量数据，最好通过多个单独的合约分离这些数据。除此之外，应避免创建新合同。
 
 **存储数据：SSTORE**
 
@@ -222,7 +222,7 @@ tokenURI() 函数的标准实现。 (来源：[OpenZeppelin](https://github.com/
 
 ![12.png](https://img.learnblockchain.cn/attachments/2022/09/PWDKlpqu6316afabdf409.png)
 
-还应注意，由于存储成本，某些数据结构在 EVM 中根本不可行。例如，使用[邻接矩阵表示图（a graph using an adjacency matrix ](https://www.geeksforgeeks.org/graph-and-its-representations/)是完全不可行的，因为它的空间复杂度是 O(V²) 。
+还应注意，由于存储成本，某些数据结构在 EVM 中根本不可行。例如，使用[邻接矩阵表示图（a graph using an adjacency matrix） ](https://www.geeksforgeeks.org/graph-and-its-representations/)是完全不可行的，因为它的空间复杂度是 O(V²) 。
 
 *以上所有代码都可以在我的[*Github*](https://github.com/tokyoDan67/evmOpcodeExamples)上找到*
 
