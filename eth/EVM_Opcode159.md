@@ -42,7 +42,7 @@ Solidity 字节码示例
 
 所有以太坊字节码都可以分解为一系列操作数和操作码。操作码是一些预定义的操作指令，EVM 识别后能够执行这个操作。例如，ADD 操作码在 EVM 字节码中表示为 0x01。它从栈中删除两个元素并把结果压入栈中。
 
-从堆栈中移除和压入堆栈的元素数量取决于操作码。例如，PUSH 操作码有 32 个：PUSH1 到 PUSH32。 PUSH在栈上 *添加一个* 字节元素，元素的大小可以从 0 到 32 字节。它不会从栈中删除元素。作为对比, 操作码 ADDMOD 表示 [模加法运算](https://libraryguides.centennialcollege.ca/c.php?g=717548&p=5121840#:~:text=Properties of addition in modular,%2B d ( mod N ) .) ，它从栈中删除3个元素然后压入模加结果。请注意，PUSH 操作码是唯一带有操作数的操作码。
+从堆栈中移除和压入堆栈的元素数量取决于操作码。例如，PUSH 操作码有 32 个：PUSH1 到 PUSH32。 PUSH在栈上 *添加一个* 字节元素，元素的大小可以从 0 到 32 字节。它不会从栈中删除元素。作为对比, 操作码 ADDMOD 表示 [模加法运算]([https://libraryguides.centennialcollege.ca/c.php?g=717548&p=5121840#:~:text=Properties of addition in modular,%2B d ( mod N ) .](https://libraryguides.centennialcollege.ca/c.php?g=717548&p=5121840#:~:text=Properties%20of%20addition%20in%20modular,%2B%20d%20(%20mod%20N%20)%20.) ，它从栈中删除3个元素然后压入模加结果。请注意，PUSH 操作码是唯一带有操作数的操作码。
 
 ![3.png](https://img.learnblockchain.cn/attachments/2022/09/cuWOtV4M6316af89b9b6d.png)
 
