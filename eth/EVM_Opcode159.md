@@ -42,13 +42,13 @@ Solidity 字节码示例
 
 所有以太坊字节码都可以分解为一系列操作数和操作码。操作码是一些预定义的操作指令，EVM 识别后能够执行这个操作。例如，ADD 操作码在 EVM 字节码中表示为 0x01。它从栈中删除两个元素并把结果压入栈中。
 
-从堆栈中移除和压入堆栈的元素数量取决于操作码。例如，PUSH 操作码有 32 个：PUSH1 到 PUSH32。 PUSH在栈上 *添加一个* 字节元素，元素的大小可以从 0 到 32 字节。它不会从栈中删除元素。作为对比, 操作码 ADDMOD 表示 [模加法运算](https://libraryguides.centennialcollege.ca/c.php?g=717548&p=5121840#:~:text=Properties%20of%20addition%20in%20modular,%2B%20d%20(%20mod%20N%20)%20.) ，它从栈中删除3个元素然后压入模加结果。请注意，PUSH 操作码是唯一带有操作数的操作码。
+从堆栈中移除和压入堆栈的元素数量取决于操作码。例如，PUSH 操作码有 32 个：PUSH1 到 PUSH32。 PUSH 在栈上 *添加一个* 字节元素，元素的大小可以从 0 到 32 字节。它不会从栈中删除元素。作为对比, 操作码 ADDMOD 表示 [模加法运算](https://libraryguides.centennialcollege.ca/c.php?g=717548&p=5121840#:~:text=Properties%20of%20addition%20in%20modular,%2B%20d%20(%20mod%20N%20)%20.) ，它从栈中删除3个元素然后压入模加结果。请注意，PUSH 操作码是唯一带有操作数的操作码。
 
 ![3.png](https://img.learnblockchain.cn/attachments/2022/09/cuWOtV4M6316af89b9b6d.png)
 
 操作码示例
 
-每个操作码都占一个字节，并且操作成本有大有小。操作码的操作成本是固定的或由公式算出来。例如，ADD 操作码固定需要 3 个 gas。而将数据保存在存储中的操作码 SSTORE ，当把值从0设置为非0时消耗 20,000 gas，当把值改为0或保持为0不变时消耗 5000 gas。
+每个操作码都占一个字节，并且操作成本有大有小。操作码的操作成本是固定的或由公式算出来。例如，ADD 操作码固定需要3 gas。而将数据保存在存储中的操作码 SSTORE ，当把值从0设置为非0时消耗 20,000 gas，当把值改为0或保持为0不变时消耗 5000 gas。
 
 *SSTORE 的开销实际上会其他变化，具体取决于是否已访问过这个值。可以在这里找到有关 SSTORE 和 SLOAD 开销的完整详细信息：* [*链接*](https://hackmd.io/@fvictorio/gas-costs-after-berlin)
 
@@ -64,7 +64,7 @@ Solidity 字节码示例
 
 MUL 操作码花费 5 gas 用于执行乘法。例如，10 * 10 背后的算术将花费 5 gas。
 
-EXP 操作码用于求幂，其 gas 消耗由公式决定：如果指数为零，则消耗10gas。但是，如果指数大于零，则需要 10 gas 加上指数字节数的 50 倍。
+EXP 操作码用于求幂，其 gas 消耗由公式决定：如果指数为零，则消耗10 gas。但是，如果指数大于零，则需要 10 gas 加上指数字节数的 50 倍。
 
 一个字节是 8 位，一个字节可以表示 0 到 2⁸-1 之间的值（即0-255），两个字节可以表示 2⁸ 到 2¹⁶-1 之间的值，以此类推。因此，例如求 10¹⁸ 将花费 10 + 50 * 1 = 60 gas，而求 10³⁰⁰ 将花费 10 + 50 * 2 = 160 gas，因为来表示 18 需要一个字节，表示 300 需要两个字节。
 
@@ -85,7 +85,7 @@ function efficcientSquare() external {
 }
 ```
 
-*inefficientSquare* 和 *eficcientSquare* 两个方法都把状态变量 x 改为 x 的平方。然而，*inefficientSquare* 的算术开销为 10 + 1 * 50 = 60 gas，而 *efficientSquare* 的算术开销为5 gas。
+*inefficientSquare* 和 *eficcientSquare* 两个方法都把状态变量 x 改为 x 的平方。然而，*inefficientSquare* 的算术开销为 10 + 1 * 50 = 60 gas，而 *efficientSquare* 的算术开销为 5 gas。
 
 由于上述算术开销之外的原因，*inefficientSquare* 的 gas 费用平均比 *efficientSquare* 多 200 左右。
 
