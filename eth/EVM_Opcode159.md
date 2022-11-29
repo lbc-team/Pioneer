@@ -2,19 +2,19 @@
 
 
 
-# 深入理解EVM操作码，让你写出更好的智能合约。
+# 深入理解EVM操作码，让你写出更好的智能合约
 
 
 
 你的一些编程“好习惯”反而会让你写出低效的智能合约。对于普通编程语言而言，计算机做运算和改变程序的状态顶多只是费点电或者费点时间，但对于 EVM 兼容类的编程语言（例如 Solidity 和 Vyper），执行这些操作都是*费钱*的！这些花费的形式是区块链的原生货币（如以太坊的 ETH，Avalanche 的 AVAX 等等...），想象成你是在用原生货币购买计算资源。
 
-用于购买计算、状态转移还有存储空间的开销被称做 *燃料（下文统称  gas ）*。 gas  的作用是确定交易的优先级, 同时形成一种能抵御【女巫攻击】（[Sybil resistance](https://en.wikipedia.org/wiki/Sybil_attack)）的机制 ，而且还能防止【停止问题】（[halting problem](https://en.wikipedia.org/wiki/Halting_problem)）引起的攻击。
+用于购买计算、状态转移还有存储空间的开销被称做 *燃料（下文统称  gas ）*。 gas  的作用是确定交易的优先级, 同时形成一种能抵御【女巫攻击】（[Sybil resistance](https://en.wikipedia.org/wiki/Sybil_attack)）的机制 ，而且还能防止【停机问题】（[halting problem](https://en.wikipedia.org/wiki/Halting_problem)）引起的攻击。
 
 *欢迎阅读我的文章* [*Solidity 基础* ](https://medium.com/@danielyamagata/solidity-basics-your-first-smart-contract-f11f4f7853d0)*去了解  gas 的方方面面*
 
 这些非典型的开销导致经典的软件设计模式在合约编程语言中看起来既低效又奇怪。如果想要识别这些模式并理解他们导致效率变高/低的原因，你必须首先对以太坊虚拟机（即 EVM）有一个基本的了解。
 
-**什么是EVM？**
+##  什么是EVM？
 
 *如果你已经熟悉 EVM，请随时跳到下个部分：* ***什么是 EVM 操作码？***
 
@@ -28,21 +28,21 @@ EVM 负责区块链上所有交易的执行和处理。它是一个栈机器，�
 
 EVM 把数据保存在 *存储（Storage）* 和 *内存（Memory）* 中。*存储（Storage）*用于永久存储数据，而*内存（Memory）*仅在函数调用期间保存数据。还有一个地方保存了函数参数，叫做*调用数据（calldata）*，这种存储方式有点像内存，不同的是不可以修改这类数据。
 
-*在 Preethi Kasireddy 的文章中了解有关以太坊和 EVM 的更多信息* [“Ethereum 是如何工作的？”](https://libraryguides.centennialcollege.ca/c.php?g=717548&p=5121840#:~:text=Properties%20of%20addition%20in%20modular,%2B%20d%20(%20mod%20N%20)%20.)。
+*在 Preethi Kasireddy 的文章中了解有关以太坊和 EVM 的更多信息* [“Ethereum 是如何工作的？”](https://www.preethikasireddy.com/post/how-does-ethereum-work-anyway#:~:text=The%20Ethereum%20blockchain%20is%20essentially,transition%20to%20a%20new%20state.)。
 
 智能合约是用高级语言编写的，例如 Solidity、Vyper 或 Yul，随后通过编译器编译成 EVM 字节码。但是，有时直接在代码中使用字节码会更高效（省gas）。
 
 ![1.png](https://img.learnblockchain.cn/attachments/2022/09/3yW6IizY6316af8248ebd.png)
 
-[LooksRare 写的 TransferSelectorNFT 智能合约](https://github.com/LooksRare/contracts-exchange-v1/blob/master/contracts/TransferSelectorNFT.sol)
+>  [LooksRare 写的 TransferSelectorNFT 智能合约](https://github.com/LooksRare/contracts-exchange-v1/blob/master/contracts/TransferSelectorNFT.sol)
 
 EVM 字节码以十六进制编写。它是一种虚拟机能够解释的语言。这有点像 CPU 只能解释机器代码。
 
 ![2.png](https://img.learnblockchain.cn/attachments/2022/09/gUZSV7fM6316af85c8841.png)
 
-Solidity 字节码示例
+>  Solidity 字节码示例
 
-**什么是 EVM 操作码？**
+## **什么是 EVM 操作码？**
 
 所有以太坊字节码都可以分解为一系列操作数和操作码。操作码是一些预定义的操作指令，EVM 识别后能够执行这个操作。例如，ADD 操作码在 EVM 字节码中表示为 0x01。它从栈中删除两个元素并把结果压入栈中。
 
@@ -50,13 +50,13 @@ Solidity 字节码示例
 
 ![3.png](https://img.learnblockchain.cn/attachments/2022/09/cuWOtV4M6316af89b9b6d.png)
 
-操作码示例
+> 操作码示例
 
 每个操作码都占一个字节，并且操作成本有大有小。操作码的操作成本是固定的或由公式算出来。例如，ADD 操作码固定需要3 gas。而将数据保存在存储中的操作码 SSTORE ，当把值从0设置为非0时消耗 20,000 gas，当把值改为0或保持为0不变时消耗 5000 gas。
 
-*SSTORE 的开销实际上会其他变化，具体取决于是否已访问过这个值。可以在这里找到有关 SSTORE 和 SLOAD 开销的完整详细信息：* [*链接*](https://hackmd.io/@fvictorio/gas-costs-after-berlin)
+*SSTORE 的开销实际上会其他变化，具体取决于是否已访问过这个值。可以在[这里](https://hackmd.io/@fvictorio/gas-costs-after-berlin)找到有关 SSTORE 和 SLOAD 开销的完整详细信息：* 
 
-**为什么了解 EVM 操作码很重要？**
+## **为什么了解 EVM 操作码很重要？**
 
 想要降低 gas 开销，了解 EVM 操作码极其重要，这也会降低你的终端用户的成本。由于不同的 EVM 操作码的成本是不同的，因此虽然实现了相同结果，但不同的编码方式可能会导致更高的开销。了解哪些操作码是比较昂贵的，可以帮助你最大程度地减少甚至避免使用它们。你可以查看 [以太坊文档](https://ethereum.org/en/developers/docs/evm/opcodes/) 以获取 EVM 操作码及其相关 gas 开销的列表。
 
@@ -64,7 +64,7 @@ Solidity 字节码示例
 
 下面是一些考虑了 EVM 操作码开销的反直觉设计模式的具体示例：
 
-**用乘法求乘方: MUL vs EXP**
+###  用乘法而不是指数: MUL vs EXP
 
 MUL 操作码花费 5 gas 用于执行乘法。例如，10 * 10 背后的算术将花费 5 gas。
 
@@ -74,7 +74,7 @@ EXP 操作码用于求幂，其 gas 消耗由公式决定：如果指数为零�
 
 从上面可以清楚地看出，在某些时候你应该使用乘法而不是求幂。下面一个具体的例子：
 
-```
+```solidity
 contract squareExample {
 uint256 x;
 constructor (uint256 _x) {
@@ -95,7 +95,7 @@ function efficcientSquare() external {
 
 ![5.png](https://img.learnblockchain.cn/attachments/2022/09/257Lojs26316af9026e6d.png)
 
-**缓存数据：SLOAD & MLOAD**
+### 缓存数据：SLOAD & MLOAD
 
 众所周知，缓存数据可以大规模地提升更好的性能。同样，在 EVM 上使用缓存也*极端重要*，即使只有少量操作，也会明显节省 gas。
 
@@ -103,7 +103,7 @@ SLOAD 和 MLOAD 两个操作码用于从存储和内存中加载数据。MLOAD �
 
 下面是一些节省潜在 gas 的示例代码：
 
-```
+```solidity
 contract storageExample {
 uint256 sumOfArray;
 function inefficcientSum(uint256 [] memory _array) public {
@@ -138,7 +138,7 @@ function efficcientSum(uint256 [] memory _array) public {
 
 ![7.png](https://img.learnblockchain.cn/attachments/2022/09/3cNHPYNU6316af975451d.png)
 
-**避免使用面向对象编程：CREATE 操作码**
+##  避免使用面向对象编程模型：CREATE 操作码
 
 CREATE 操作码用于创建包含关联代码的新帐户（即智能合约）。它花费*至少*32,000 gas，是 EVM 上最昂贵的操作码。
 
@@ -146,24 +146,28 @@ CREATE 操作码用于创建包含关联代码的新帐户（即智能合约）�
 
 **这是一个具体的例子：**
 
-下面是一段使用面向对象方法创建“vault”的代码。每个“vault”都包含一个 uint256 变量，并在构造函数中初始化。
+下面是一段使用面向对象方法创建“vault”的代码。每个“vault”都包含一个 uint256 变量，并在构造函数中初始化： 
 
-```
+```solidity
 contract Vault {
     uint256 private x; 
     constructor(uint256 _x) { x = _x;}
     function getValue() external view returns (uint256) {return x;}
-} //  Vault 结束
+}
+//  Vault 结束
 interface IVault {
     function getValue() external view returns (uint256);
 } // IVault 结束
+
 contract InefficcientVaults {
     address[] public factory;
     constructor() {}
+    
     function createVault(uint256 _x) external {
         address _vaultAddress = address(new Vault(_x)); 
         factory.push(_vaultAddress);
     }
+    
     function getVaultValue(uint256 vaultId) external view returns (uint256) {
         address _vaultAddress = factory[vaultId];
         IVault _vault = IVault(_vaultAddress);
@@ -176,19 +180,22 @@ contract InefficcientVaults {
 
 这是另一段实现相同功能的代码，但用映射代替了创建：
 
-```
+```solidity
 contract EfficcientVaults {
-// 映射：vaultId => vaultValue
-mapping (uint256 => uint256) public vaultIdToVaultValue;
-// 下一个 vault 的 id
-uint256 nextVaultId;
-function createVault(uint256 _x) external {
-    vaultIdToVaultValue[nextVaultId] = _x;
-    nextVaultId++;
-}
-function getVaultValue(uint256 vaultId) external view returns (uint256) {
-    return vaultIdToVaultValue[vaultId];
-}
+  // 映射：vaultId => vaultValue
+  mapping (uint256 => uint256) public vaultIdToVaultValue;
+  
+  // 下一个 vault 的 id
+  uint256 nextVaultId;
+  
+  function createVault(uint256 _x) external {
+      vaultIdToVaultValue[nextVaultId] = _x;
+      nextVaultId++;
+  }
+  
+  function getVaultValue(uint256 vaultId) external view returns (uint256) {
+      return vaultIdToVaultValue[vaultId];
+  }
 } // EfficcientVaults 结束
 ```
 
@@ -200,9 +207,9 @@ function getVaultValue(uint256 vaultId) external view returns (uint256) {
 
 EfficcientVaults 的 *createVault()* 与 IneficcientVaults 相比，效率提高了 61%，消耗的 gas 减少了约 76,300。
 
-应该注意的是，在某些情况下在合约中创建新合约是可取的，并且通常是为了不可变性和效率。*随着合约的大小增加，与合约的所有交互的交易成本也将增加。* 因此，如果你希望在链上存储大量数据，最好通过多个单独的合约分离这些数据。除此之外，应避免创建新合同。
+应该注意的是，在某些情况下在合约中创建新合约是可取的，并且通常是为了不可变性和效率。*随着合约的大小增加，与合约的所有交互的交易成本也将增加。* 因此，如果你希望在链上存储大量数据，最好通过多个单独的合约分离这些数据。除此之外，应避免创建新合约。
 
-**存储数据：SSTORE**
+### **存储数据：SSTORE**
 
 SSTORE 是将数据保存到存储的 EVM 操作码。一般而言，当将存储值从零设置为非零时，SSTORE 花费 20,000 gas，当存储值设置为零时，SSTORE 花费 5000 gas。
 
@@ -235,17 +242,9 @@ tokenURI() 函数的标准实现。 (来源：[OpenZeppelin](https://github.com/
 如果有机会，我愿意介绍更多的 gas 优化和细微差别。要了解更多信息，我建议使用以下资源：
 
 - [*变量压缩打包大法*](https://fravoll.github.io/solidity-patterns/tight_variable_packing.html) 和 [*内存数组优化*](https://fravoll.github.io/solidity-patterns/memory_array_building.html) 作者： Franz Volland
-- [*Solidity gas 优化技巧*](https://mudit.blog/solidity-gas-optimization-tips/) 和 [*Solidity 节省 gas 和字节码大小的魔法*](https://blog.polymath.network/solidity-tips-and-tricks-to-save-gas-and-reduce-bytecode-size-c44580b218e6) 作者： Mudit Gupta
+- [*Solidity gas 优化技巧*](https://mudit.blog/solidity-gas-optimization-tips/) 和 [*Solidity 节省 gas 和字节码大小的魔法*](https://learnblockchain.cn/article/1848) 作者： Mudit Gupta
 - [*EVM: 从 Solidity 到字节码， 内存和存储*](https://www.youtube.com/watch?v=RxL_1AfV7N4&ab_channel=EthereumEngineeringGroup) 作者： Ethereum 工程小组
 - [*以太坊黄皮书*](https://ethereum.github.io/yellowpaper/paper.pdf)
 
-*请联系我和我所在的团队：* [*Bloccelerate VC*](https://www.bloccelerate.vc/) *如果你正在 Web3 中创业，我们希望支持伟大的创始人*
-
-[网站](https://bloccelerate.vc/)
-
-[领英](https://www.linkedin.com/in/daniel-yamagata/)
-
-[推特](https://twitter.com/daniel_yamagata)
-
-*如果你对我将来应该涉及的工具或话题有任何建议，请随时给我留言*
+ 
 
