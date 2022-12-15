@@ -43,7 +43,8 @@ Image source: https://uniswap.org/blog/uniswap-v3/
 在深入之前，我们首先回顾一下与传统的订单簿交易所相比，Uniswap具有的独特之处。
 
 Uniswap v1 & v2 are a kind of AMMs (automated market marker) that follow the constant product equation **`x * y = k`**, with `x` & `y` stand for the **amount** of two tokens X and Y in a pool and `k` as a **constant**.
-Uniswap v1 和v2 都属于自动做市商的某种变体（AMM)。 它们使用**`x * y = k`** 的固定乘积等式，其中`x` 和 `y` 分别代表同一个池中 代币X 和代币Y 的** 数量 **， 而 k则代表一个 ** 常数**。
+
+Uniswap v1 和v2 都属于自动做市商的某种变体（AMM)。 它们使用 `x * y = k` 的固定乘积等式，其中`x` 和 `y` 分别代表同一个池中 代币X 和代币Y 的数量， 而`k`则代表一个 常数。
 
 
 Comparing to order book exchanges, AMMs, such as the previous versions of Uniswap, offer quite a distinct user experience:
