@@ -1,7 +1,7 @@
 原文链接：https://medium.com/taipei-ethereum-meetup/uniswap-v3-features-explained-in-depth-178cfe45f223
 
 # Uniswap v3 Features Explained in Depth
-# 深入理解 Uniswap v3 
+# 深入解读 Uniswap v3 新特性
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/khrn9Nwd628da1da1f812.png)
 
@@ -23,17 +23,17 @@ Image source: https://uniswap.org/blog/uniswap-v3/
 
 # 0. 序言
 
-The [announcement of Uniswap v3](https://uniswap.org/blog/uniswap-v3/) is no doubt one of the most exciting news in the DeFi place recently 🔥🔥🔥
+最近， [Uniswap V3的发布](https://uniswap.org/blog/uniswap-v3/)无疑是DeFi世界中，最令人激动的新闻。🔥🔥🔥
 
-[Uniswap V3的发布](https://uniswap.org/blog/uniswap-v3/)无疑是最近DeFi世界最令人激动的新闻。🔥🔥🔥
+当大多数人的谈论聚焦在v3带给市场的潜在冲击时， 如何使用精妙技术实现那些令人惊叹特性的讨论，却极为罕见。 那些特性包含了集中流动性，类似限价单的范围订单等。
 
-While most have talked about the impact v3 can potentially bring on the market, seldom explain the delicate implementation techniques to realize all those amazing features, such as concentrated liquidity, limit-order-like range orders, etc.
+既然之前我已经解读过了Uniswap v1 & v2 (如果你能读中文，链接在此[v1](https://medium.com/taipei-ethereum-meetup/uniswap-explanation-constant-product-market-maker-model-in-vyper-dff80b8467a1) & [v2](https://medium.com/taipei-ethereum-meetup/uniswap-v2-implementation-and-combination-with-compound-262ff338efa)), 因此我也责无旁贷，继续为大家解读v3!
 
-Since I’ve covered Uniswap v1 & v2 (if you happen to know Mandarin, here are [v1](https://medium.com/taipei-ethereum-meetup/uniswap-explanation-constant-product-market-maker-model-in-vyper-dff80b8467a1) & [v2](https://medium.com/taipei-ethereum-meetup/uniswap-v2-implementation-and-combination-with-compound-262ff338efa)), there’s no reason for me to not cover v3 as well!
+本文将基于[官方白皮书](https://uniswap.org/whitepaper-v3.pdf)和网站上的例子，带领各位读者走上理解Uniswap v3的旅程。 我们不会涉及太多代码，因此无需您有工程师背景； 文章中的数学仅仅限于高中程度，也无需你是数学背景出身。因此您可以完全理解接下来的内容。😊
 
-Thus, this article aims to guide readers through Uniswap v3, based on their [official whitepaper](https://uniswap.org/whitepaper-v3.pdf) and examples made on the announcement page. However, one needs not to be an engineer, as **not many codes are involved**, nor a math major, as **the math involved is definitely taught in your high school**, to fully understand the following content 😊
 
-If you really make it through but still don’t get shxt, feedbacks are welcomed! 🙏
+If you really make it through but still don’t get shxt, feedbacks are welcomed!
+如果您读完全文却依然不得要领， 欢迎随时给我回复🙏 ！
 
 There should be another article focusing on the codebase, so stay tuned and let’s get started with some background noise!
 
