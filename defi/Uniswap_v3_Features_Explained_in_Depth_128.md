@@ -1,6 +1,7 @@
 原文链接：https://medium.com/taipei-ethereum-meetup/uniswap-v3-features-explained-in-depth-178cfe45f223
 
 # Uniswap v3 Features Explained in Depth
+# 深入理解 Uniswap v3 
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/khrn9Nwd628da1da1f812.png)
 
@@ -8,19 +9,23 @@ Image source: https://uniswap.org/blog/uniswap-v3/
 
 # Outline
 
+
 ```
-0. Intro
-1. Uniswap & AMM recap
-2. Ticks   
-3. Concentrated liquidity
-4. Range orders: reversible limit orders
-5. Impacts of v3
-6. Conclusion
+0. 序言
+1. Uniswap & AMM 概览
+2. 瞬间标记 Ticks    
+3. 集中了的流动性
+4. 范围订单: 可反转的限价单
+5. v3的影响
+6. 结论
 ```
 
-# 0. Intro
+
+# 0. 序言
 
 The [announcement of Uniswap v3](https://uniswap.org/blog/uniswap-v3/) is no doubt one of the most exciting news in the DeFi place recently 🔥🔥🔥
+
+[Uniswap V3的发布](https://uniswap.org/blog/uniswap-v3/)无疑是最近DeFi世界最令人激动的新闻。🔥🔥🔥
 
 While most have talked about the impact v3 can potentially bring on the market, seldom explain the delicate implementation techniques to realize all those amazing features, such as concentrated liquidity, limit-order-like range orders, etc.
 
