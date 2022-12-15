@@ -42,16 +42,22 @@ Image source: https://uniswap.org/blog/uniswap-v3/
 
 在深入之前，我们首先回顾一下与传统的订单簿交易所相比，Uniswap具有的独特之处。
 
-Uniswap v1 & v2 are a kind of AMMs (automated market marker) that follow the constant product equation **`x * y = k`**, with `x` & `y` stand for the **amount** of two tokens X and Y in a pool and `k` as a **constant**.
-
 Uniswap v1 和v2 都属于自动做市商(AMM)的某种应用。 它们使用 **`x * y = k`** 的固定乘积等式，其中`x` 和 `y` 分别代表同一个池中代币 X 和代币 Y 的**数量**， 而`k`则代表一个**常数**。
 
 
 Comparing to order book exchanges, AMMs, such as the previous versions of Uniswap, offer quite a distinct user experience:
 
+与订单簿交易所相比， 使用了AMM机制的Uniswap v1 & v2， 为使用者提供了独特的体验:
+
 - AMMs have pricing functions that offer the price for the two tokens, which make their users always price takers, while users of order book exchanges can be both makers or takers.
-- Uniswap as well as most AMMs have infinite liquidity¹, while order book exchanges don’t. The liquidity of Uniswap v1 & v2 is provided throughout the price range [0,∞]².
+
+- AMM能为两种代币之间的相互兑换提供报价，所以AMM的用户始终是价格的接受者，而订单簿交易所的用户既可以是价格提供者，也可以是价格接受者。
+
+- Uniswap 和大多数 AMM一样，能提供无限的流动性¹，而订单簿交易所则无法做到这一点。 事实上，Uniswap v1 和 v2 在[0,∞]²的价格范围内，都能提供了流动性。
+
 - Uniswap as well as most AMMs have price slippage³ and it’s due to the pricing function, while there isn’t always price slippage on order book exchanges as long as an order is fulfilled within one tick.
+
+- Uniswap 和大多数 AMM一样， 都有价格滑点³，这是由于AMM的定价机制导致的。但是对于订单簿交易所，如果订单在接受报价后的瞬间就完成，成交价格并不一定会有滑点。
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/G4YoRmdv628da4de53891.png)
 
