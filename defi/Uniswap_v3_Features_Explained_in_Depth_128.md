@@ -29,19 +29,18 @@ Image source: https://uniswap.org/blog/uniswap-v3/
 
 既然之前我已经解读过了Uniswap v1 & v2 (如果你能读中文，链接在此[v1](https://medium.com/taipei-ethereum-meetup/uniswap-explanation-constant-product-market-maker-model-in-vyper-dff80b8467a1) & [v2](https://medium.com/taipei-ethereum-meetup/uniswap-v2-implementation-and-combination-with-compound-262ff338efa)), 因此我也责无旁贷，继续为大家解读v3!
 
-本文将基于[官方白皮书](https://uniswap.org/whitepaper-v3.pdf)和网站上的例子，带领各位读者走上理解Uniswap v3的旅程。 我们不会涉及太多代码，因此无需您有工程师背景； 文章中的数学仅仅限于高中程度，也无需你是数学背景出身。因此您可以完全理解接下来的内容。😊
+本文将基于[官方白皮书](https://uniswap.org/whitepaper-v3.pdf)和网站上的例子，带领各位读者走上理解Uniswap v3的旅程。 我们不会涉及太多代码，因此无需您有工程师背景； 文章中的数学仅仅限于高中程度，因而也无需您是数学出身。所以您可以完全理解接下来的内容。😊
 
-
-If you really make it through but still don’t get shxt, feedbacks are welcomed!
 如果您读完全文却依然不得要领， 欢迎随时给我回复🙏 ！
 
-There should be another article focusing on the codebase, so stay tuned and let’s get started with some background noise!
 
-视频链接：https://www.youtube.com/watch?v=051C0FiNX5U
+以后将会有另一篇文章聚焦于代码库。 不过现在先让我们准备好背景音乐，开始这段旅程。
 
-# 1. Uniswap & AMM recap
+背景音乐视频链接：https://www.youtube.com/watch?v=051C0FiNX5U
 
-Before diving in, we have to first recap the uniqueness of Uniswap and compare it to traditional order book exchanges.
+# 1. Uniswap & AMM 概述
+
+在深入之前，我们首先回顾一下与传统的订单簿交易所相比，Uniswap具有的独特之处。
 
 Uniswap v1 & v2 are a kind of AMMs (automated market marker) that follow the constant product equation **`x * y = k`**, with `x` & `y` stand for the **amount** of two tokens X and Y in a pool and `k` as a **constant**.
 
