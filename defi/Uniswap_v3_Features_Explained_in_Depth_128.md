@@ -55,13 +55,11 @@ Comparing to order book exchanges, AMMs, such as the previous versions of Uniswa
 
 - Uniswap 和大多数 AMM一样，能提供无限的流动性¹，而订单簿交易所则无法做到这一点。 事实上，Uniswap v1 和 v2 在[0,∞]²的价格范围内，都能提供了流动性。
 
-- Uniswap as well as most AMMs have price slippage³ and it’s due to the pricing function, while there isn’t always price slippage on order book exchanges as long as an order is fulfilled within one tick.
-
-- Uniswap 和大多数 AMM一样， 都有价格滑点³，这是由于AMM的定价机制导致的。但是对于订单簿交易所，如果订单在接受报价后的瞬间就完成，成交价格并不一定会有滑点。
+- Uniswap 和大多数 AMM一样， 都有价格滑点³，这是由于AMM的定价机制导致的。但是对于订单簿交易所，如果交易订单能在一个tick的时间内完成，那么成交价格并不一定会有滑点。
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/G4YoRmdv628da4de53891.png)
 
-In an order book, each price (whether in green or red) is a tick. Image source: https://ftx.com/trade/BTC-PERP
+在订单簿中,  每个价格(无论是红色还是绿色)都是一个tick,Image source: https://ftx.com/trade/BTC-PERP
 
 *¹ though the price gets worse over time; AMM of constant sum such as mStable does not have infinite liquidity*
 
