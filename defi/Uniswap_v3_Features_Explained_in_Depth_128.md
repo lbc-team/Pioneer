@@ -93,13 +93,18 @@ v3通过**将价格范围 [0,∞]** **分成无数个细粒度的ticks**，使�
 
 ## 那么，一个tick对应的价格区间是如何决定的呢？
 
-This question is actually somewhat related to the tick explanation above: *the minimum tick size for stocks trading above 1$ is one cent*.
-这个问题实际上与上面关于tick的解释有些联系：*交易价格高于 1 美元的股票的最小报价大小是一美分*。
+事实上, 这个问题与上面关于tick的解释,有一些联系：*交易价格高于 1 美元的股票的最小报价(tick)大小是一美分*。
+
 The underlying meaning of a tick size traditionally being one cent is that one cent (1% of 1$) is the **basis point** of price changes between ticks, ex: `1.02 — 1.01 = 0.1`.
 
-Uniswap v3 employs a similar idea: compared to the previous/next price, the price change should always be **0.01% = 1 basis point**.
+传统上1个tick被看做等于1美分, 其潜在含义是1美分（1 美元的 1%）是报价变化的1个**基点**，例如：`1.02 — 1.01 = 0.01`。(译者注: 此处原为0.1,应为0.01)
 
-However, notice the difference is that the traditional basis point is in **absolute value** 0.1, which means the price change is defined with **subtraction**, while here in v3 the basis point is in **percentage** 0.1**%**, which is defined with **division**.
+Uniswap v3 也采用了类似的想法：与上个/下个价格相比，价格变化应该总被当做 **0.01% = 1 个基点**。
+
+但是请注意,这里不同之处是，传统上的基点是**绝对值** 0.01，这意味着价格变化是用**减法**定义的，而在v3中，基点是**百分比** 0.01 **%**，用**除法**定义。
+
+
+如何设置tick的价格范围⁴,请看：
 
 This is how price ranges of ticks are decided⁴:
 
