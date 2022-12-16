@@ -127,17 +127,15 @@ Image source: https://tenor.com/view/coin-master-cool-gif-19748052
 
 ## **价格范围: 最大值 & 最小值**
 
-To know if an extremely small price is covered or not, we have to figure out the max & min price range of v3 by looking into the spec: there is a `int24 tick` state variable in `UniswapV3Pool.sol`.
-
-要知道v3的tick是否涵盖了非常小的价格，我们必须通过查看技术规范,来确定v3的最大和最小价格范围：在'UniswapV3Pool.sol' 中有一个'int24 tick'状态变量。
+要了解v3的tick是否涵盖了非常小的价格，我们必须通过查看技术说明书,来确定v3的最大和最小价格范围：在 `UniswapV3Pool.sol`中有一个`int24 tick`状态变量。
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/3AWCesIB628da5dd1314f.png)
 
 Image source: https://uniswap.org/whitepaper-v3.pdf
 
-The reason for a signed integer `int` instead of an `uint` is that negative power represents **prices less than 1 but greater than 0.**
+使用带符号整数 `int` 而不是 `uint` 的原因是:负幂表示 **价格小于1 但大于0。**
 
-24 bits can cover the range between `1.0001 ^ (2²³ — 1)` and `1.0001 ^ -(2)²³`. Even Google cannot calculate such numbers, so allow me to offer smaller values to have a rough idea of the whole price range:
+24位覆盖了 `1.0001 ^ (2²³ — 1)` 和 `1.0001 ^ -(2)²³` 之间的价格范围。即使是谷歌也无法计算出这些数字，所以请允许我提供较小的值,用以大致了解整个价格范围:
 
 ```
 1.0001 ^ (2¹⁸) = 242,214,459,604.341
@@ -145,7 +143,6 @@ The reason for a signed integer `int` instead of an `uint` is that negative powe
 ```
 1.0001 ^ -(2¹⁷) = 0.000002031888943
 ```
-
 
 I think it’s safe to say that with a `int24` the range can cover > 99.99% of the prices of all assets in the universe 👌
 
