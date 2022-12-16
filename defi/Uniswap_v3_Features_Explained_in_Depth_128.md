@@ -61,11 +61,14 @@ Comparing to order book exchanges, AMMs, such as the previous versions of Uniswa
 
 在订单簿中,  每个价格(无论是红色还是绿色)都是一个tick,Image source: https://ftx.com/trade/BTC-PERP
 
-*¹ though the price gets worse over time; AMM of constant sum such as mStable does not have infinite liquidity*
+*¹ 尽管价格随着时间的推移会变得更差,mStable等常数和的AMM并不具有无限的流动性*  
+(译者注:mStable 是一个AMM,参见 https://mstable.app/#/musd/swap)
 
 *² the range is in fact [-∞,∞], while a price in most cases won’t be negative*
+*² 价格范围事实上可以扩展到[-∞,∞],  不过大多数情况下价格不可能为负值.* 
+(译者注: 事实上WTI原油期权价格就曾经短暂为负值)
+³ *常数和AMM不会产生价格滑点*
 
-³ *AMM of constant sum does not have price slippage*
 
 # 2. Tick
 
