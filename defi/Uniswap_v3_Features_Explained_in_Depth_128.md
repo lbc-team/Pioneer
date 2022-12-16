@@ -89,12 +89,12 @@ v3通过**将价格范围 [0,∞]** **分成无数个细粒度的ticks**，使�
 
 - 落在价格范围内的不同订单,成交价可以是范围内任意一个价格，而不像在订单簿交易所那样,只能以相同价格成交。
 
-With the tick design, Uniswap v3 possesses most of the merits of both AMM and an order book exchange! 💯💯💯
+通过对tick的这个设计，Uniswap v3拥有了AMM 和订单簿交易所的大部分优点！ 💯💯💯
 
-## So, how is the price range of a tick decided?
+## 那么，一个tick对应的价格区间是如何决定的呢？
 
 This question is actually somewhat related to the tick explanation above: *the minimum tick size for stocks trading above 1$ is one cent*.
-
+这个问题实际上与上面关于tick的解释有些联系：*交易价格高于 1 美元的股票的最小报价大小是一美分*。
 The underlying meaning of a tick size traditionally being one cent is that one cent (1% of 1$) is the **basis point** of price changes between ticks, ex: `1.02 — 1.01 = 0.1`.
 
 Uniswap v3 employs a similar idea: compared to the previous/next price, the price change should always be **0.01% = 1 basis point**.
