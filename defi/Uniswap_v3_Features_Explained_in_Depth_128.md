@@ -67,24 +67,27 @@ Comparing to order book exchanges, AMMs, such as the previous versions of Uniswa
 *² the range is in fact [-∞,∞], while a price in most cases won’t be negative*
 *² 价格范围事实上可以扩展到[-∞,∞],  不过大多数情况下价格不可能为负值.* 
 (译者注: 事实上WTI原油期权价格就曾经短暂为负值)
+
 ³ *常数和AMM不会产生价格滑点*
 
 
 # 2. Tick
 
-> The whole innovation of Uniswap v3 starts from ticks.
+> Uniswap v3所有的创新都始于Tick
 
-For those unfamiliar with what is a tick:
+不熟悉tick的朋友请看
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/W8yUrLrW628da50d21dfc.png)
 
-Source: https://www.investopedia.com/terms/t/tick.asp
+来源: https://www.investopedia.com/terms/t/tick.asp
 
-By **slicing the price range [0,∞]** **into numerous granular ticks**, trading on v3 is highly similar to trading on order book exchanges, with only three differences:
+v3通过**将价格范围 [0,∞]** **分成无数个细粒度的ticks**，使得在v3上发生的交易极其类似于与在订单簿交易所发生的交易. 它们只有三个不同之处:
 
-- The **price range of each tick is predefined** by the system instead of being proposed by users.
-- Trades that happen within a tick **still follows the pricing function of the AMM**, while the equation has to be updated once the price crosses the tick.
-- Orders can be executed with any price within the price range, instead of being fulfilled at the same one price on order book exchanges.
+- **每个tick的价格范围由系统预定义**，而非由用户决定。
+
+- 在一个tick区间内发生的交易**仍然遵循 AMM 的定价等式**.  一旦价格跨越了该tick, 就需要更新定价等式的值。
+
+- 落在价格范围内的不同订单,成交价可以是范围内任意一个价格，而不像在订单簿交易所那样,只能以相同价格成交。
 
 With the tick design, Uniswap v3 possesses most of the merits of both AMM and an order book exchange! 💯💯💯
 
