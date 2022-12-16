@@ -13,7 +13,7 @@ Image source: https://uniswap.org/blog/uniswap-v3/
 ```
 0. 序言
 1. Uniswap & AMM 概览
-2. 瞬间标记 Ticks    
+2. 报价区间Ticks    
 3. 集中了的流动性
 4. 范围订单: 可反转的限价单
 5. v3的影响
