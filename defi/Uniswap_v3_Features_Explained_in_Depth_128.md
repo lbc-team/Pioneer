@@ -95,8 +95,6 @@ v3通过**将价格范围 [0,∞]** **分成无数个细粒度的ticks**，使�
 
 事实上, 这个问题与上面关于tick的解释,有一些联系：*交易价格高于 1 美元的股票的最小报价(tick)大小是一美分*。
 
-The underlying meaning of a tick size traditionally being one cent is that one cent (1% of 1$) is the **basis point** of price changes between ticks, ex: `1.02 — 1.01 = 0.1`.
-
 传统上1个tick被看做等于1美分, 其潜在含义是1美分（1 美元的 1%）是报价变化的1个**基点**，例如：`1.02 — 1.01 = 0.01`。(译者注: 此处原为0.1,应为0.01)
 
 Uniswap v3 也采用了类似的想法：与上个/下个价格相比，价格变化应该总被当做 **0.01% = 1 个基点**。
@@ -106,33 +104,32 @@ Uniswap v3 也采用了类似的想法：与上个/下个价格相比，价格�
 
 如何设置tick的价格范围⁴,请看：
 
-This is how price ranges of ticks are decided⁴:
-
 ![img](https://img.learnblockchain.cn/attachments/2022/05/6SQrc0NI628da5738cf1f.png)
 
 Image source: https://uniswap.org/whitepaper-v3.pdf
 
-With the above equation, the tick/price range can be recorded in the **index** form [i, i+1], instead of some crazy numbers such as `1.0001¹⁰⁰ = 1.0100496621`.
+根据如上等式，可以用 **索引** [i, i+1]的形式来记录 tick/价格范围，而不是一些疯狂的数字，例如 `1.0001¹⁰⁰ = 1.0100496621`。
 
-As each price is the multiplication of 1.0001 of the previous price, the price change is always `1.0001 — 1 = 0.0001 = 0.01%`.
+由于每个价格都是序列中前一个价格的 1.0001倍，因此价格变化比率始终为“1.0001 — 1 = 0.0001 = 0.01%”。
 
-For example, when i=1, `p(1) = 1.0001`; when i=2, `p(2) = 1.00020001`.
+例如, 当i=1, `p(1) = 1.0001`; 当i=2, `p(2) = 1.00020001`.
 
 ```
 p(2) / p(1) = 1.00020001 / 1.0001 = 1.0001
 ```
-
-See the connection between the traditional basis point 1 cent (=1% of 1$) and Uniswap v3’s basis point 0.01%?
+大家看到 传统基点是1美分（=1美元的1%）与 Uniswap v3基点是0.01%之间的联系了吗？
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/W06dvua4628da5b8c516e.gif)
 
 Image source: https://tenor.com/view/coin-master-cool-gif-19748052
 
-*But sir, are prices really granular enough? There are many shitcoins with prices less than 0.000001$. Will such prices be covered as well?*
+*但是，先生，价格真的足够细分吗？有许多价格低于 0.000001 美元的垃圾币。这样的价格也会被涵盖吗？*
 
-## **Price range: max & min**
+## **价格范围: 最大值 & 最小值**
 
 To know if an extremely small price is covered or not, we have to figure out the max & min price range of v3 by looking into the spec: there is a `int24 tick` state variable in `UniswapV3Pool.sol`.
+
+要知道v3的tick是否涵盖了非常小的价格，我们必须通过查看技术规范,来确定v3的最大和最小价格范围：在'UniswapV3Pool.sol' 中有一个'int24 tick'状态变量。
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/3AWCesIB628da5dd1314f.png)
 
