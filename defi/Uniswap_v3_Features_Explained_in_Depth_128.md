@@ -144,31 +144,32 @@ Image source: https://uniswap.org/whitepaper-v3.pdf
 1.0001 ^ -(2¹⁷) = 0.000002031888943
 ```
 
-I think it’s safe to say that with a `int24` the range can cover > 99.99% of the prices of all assets in the universe 👌
-
-*⁴ For implementation concern, however, a square root is added to both sides of the equation.*
-
+可以确定地说，使用 `int24` 类型定义的价格范围, 可以涵盖这个世界中超过99.9%的资产价格 👌
+*⁴ 基于技术实现的考虑, 等式两边都添加了一个平方根.*
 How about finding out which tick does a price belong to?
 
-## Tick index from price
+那么,如何找出一个价格对应的那个tick呢？
 
-The answer to this question is rather easy, as we know that `p(i) = 1.0001^i`, simply takes a log with base 1.0001 on both sides of the equation⁴:
+## 从价格反推Tick索引
+
+问题的答案很简单，既然我们知道 `p(i) = 1.0001^i`，因此只需在等式两边各取一个底数为 1.0001 的对数⁴:
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/eWXrzsvS628da6a06b4d3.png)
 
-Image source: https://www.codecogs.com/latex/eqneditor.php
+图片来源: https://www.codecogs.com/latex/eqneditor.php
 
-Let’s try this out, say we wanna find out the tick index of *1000000.*
+让我们来试一试，假设我们想找出 *1000000 的tick索引*
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/Pm9jqfXT628da6cc00697.png)
 
-Image source: https://ncalculators.com/number-conversion/log-logarithm-calculator.htm
+图片来源: https://ncalculators.com/number-conversion/log-logarithm-calculator.htm
 
-Now, `1.0001¹³⁸¹⁶² = 999,998.678087146`. Voila!
+此时, `1.0001¹³⁸¹⁶² = 999,998.678087146`. 哈哈!
 
 *⁵ This formula is also slightly modified to fit the real implementation usage.*
+*⁵ 这个公式也略有修改,以便适应实际的技术实现。
 
-# 3. Concentrated liquidity
+# 3. 集中流动性
 
 Now that we know how ticks and price ranges are decided, let’s talk about how orders are executed in a tick, what is concentrated liquidity and how it enables v3 to compete with stablecoin-specialized DEXs (decentralized exchange), such as [Curve](https://curve.fi/), by improving the **capital efficiency**.
 
