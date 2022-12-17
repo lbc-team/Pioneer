@@ -207,7 +207,7 @@ p(2) / p(1) = 1.00020001 / 1.0001 = 1.0001
 
 图片来源: https://uniswap.org/blog/uniswap-v3/
 
-值得注意的是，在 Uniswap 之前，**Kyper**也提出并实施了集中流动性的概念，他们称之为[**自动价格储备**](https://blog.kyber.network/introducing- the-automated-price-reserve-77d41ed1aa70）。⁵
+值得注意的是，在 Uniswap 之前，**Kyper**也提出并实施了集中流动性的概念，他们称之为[**自动价格储备**](https://blog.kyber.network/introducing-the-automated-price-reserve-77d41ed1aa70）。⁵
 
 *⁶ 感谢* [*Yenwen Feng*](https://medium.com/u/1c7a5eea11a8?source=post_page-----178cfe45f223--------------------------------) *提供了此信息.*
 
@@ -276,11 +276,14 @@ What if the price stays in the range? It’s exactly what LPs would love to see,
 
 请记住，如果LP在[15.625, 17.313]价格范围中提供了`4`个X，那么只有当X的价格**从15.625上升**到17.313时，`4`个X才会逐渐被兑换成价值较低的Y！
 
-This is the reason why in Cases 2 & 3 only one of the two tokens is required/allowed when providing liquidity: in fact, LPs providing liquidity is essentially **providing a token for others to exchange when that token becomes more valuable**!
+这就是为什么在场景2和3中，LP在提供流动性时, 只需要/被允许提供两种代币中的一种的原因. 事实上，LP 提供流动性本质上是**提供一种代币,使得其他人在该代币变得更有价值时,进行兑换**！
 
-What if the price of X drops back to 15.625 immediately after reaching 17.313? As X becomes less valuable, others are going to exchange Y for X, which can eventually make the `65.798` Y (previously swapped from `4` X) be swapped back into `4` X.
+如果X的价格在达到17.313后立即回落至15.625怎么办？当X变得不那么有价值，其他人将反过来用Y换取X，这最终会使`65.798`个 Y（之前从 `4`个X 交换得到的Y）被兑换回 `4`个X。
 
 The below image illustrates the scenario of DAI/USDC pair with a price range of [1.001, 1.002] well: the pool is always composed **entirely of one token on both sides** of the tick, while in the middle 1.001499⁷ is of both tokens.
+
+下图很好地说明了,当价格范围为 [1.001, 1.002]时, 代币对 DAI/USDC上发生的事情：
+矿池始终*在价格范围两侧端点上完全只有一种代币储备**，而中间的 1.001499⁷价位上则有两种代币储备。
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/rPPdTC0A628da7c916a09.png)
 
