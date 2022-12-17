@@ -225,31 +225,32 @@ p(2) / p(1) = 1.00020001 / 1.0001 = 1.0001
 2. 当前价格 < 目标价格范围
 3. 当前价格 > 目标价格范围
 
-These three scenarios have disparities in whether **both or only one of the two tokens** and also **the number of (which) tokens** is required/**allowed** when providing liquidity.
+在提供流动性时, LP面临这三种场景, 在是否需要提供**两种代币或仅一种代币** 以及 **需要/被允许（哪个)代币多少数量** 上, 会存在不同之处。
 
-## Case 1: current price belongs to the targeted price range
+## 场景1：当前价格属于目标价格范围
 
-Case 1 can be further divided into even two more cases: the current price is **central** to the targeted price range, or not.
+情况 1 可以进一步分为两种情况：当前价格是或者不是目标价格范围的**中心**。
 
-If the current price happens to be central to the targeted price range (current price = 10 when the price range is [8, 12]), it’s the exact same liquidity providing mechanism as the previous versions: LPs provide liquidity in **both tokens of the same value** (`= amount * price`).
+如果当前价格恰好位于目标价格范围的中心（例如当价格范围为[8, 12] 时，当前价格 = 10），则它与之前uniswap版本(译者注:v1,v2)的流动性提供机制完全相同： 此时LP提供 **具有等同价值的两种代币数量**（`价值= 数量 * 价格`）。
 
-If the current price is not central to the price range, LPs still have to provide liquidity in both tokens, while the **amount** of each token depends on the distance between the current price and the price range, which will be explained in the next section (though not explicitly).
+如果当前价格不是价格区间的中心，那么LP 仍然需要分别提供两种代币的流动性，而每个代币的**数量**将取决于当前价格与价格范围端点的距离，这将在下一节进行解释（虽然没有明确说明）。
 
-There’s a similar product to the case: **grid trading**, a very powerful investment tool for a time of **consolidation**. Dunno what’s grid trading? Check out [Binance’s explanation](https://www.binance.com/en/support/faq/f4c453bab89648beb722aa26634120c3) on this, as this topic won’t be covered!
+对应这种情况, 坊间有一个类似的产品: **网格交易**，这是一个非常强大的投资工具，适用于**整合**。如果你不知道什么是网格交易？看[Binance的解释](https://www.binance.com/en/support/faq/f4c453bab89648beb722aa26634120c3).关于这个主题(译者注:网格交易),我们不会再多做涉及.
 
-In fact, LPs of Uniswap v1 & v2 **are grid trading** with a range of [0,∞] and the **entry price** as the baseline.
+事实上，Uniswap v1和v2 的 LP就是在做**网格交易**，只不过交易的范围为 [0,∞]，基准价格是**提供流动性时的价格**。
 
-## Case 2 & 3: current price does not belong to the targeted price range
 
-Unlike Case 1 where **both tokens** are required for providing liquidity, in Cases 2 and 3 **only one** of the two tokens is required/**allowed**.
+## 场景2 & 3：当前价格不属于目标价格范围内
 
-To understand the reason for the above statement, we’d have to first revisit how price is discovered on Uniswap with the equation `x * y = k`, for `x` & `y` stand for the **amount** of two tokens X and Y and `k` as a **constant**.
+与场景1中,LP需要为**两种代币** 都提供流动性不同. 在场景2 和场景 3 中, LP **只需要/被允许[提供]/**两种代币中的一种**。
 
-The price of X compared to Y is `y / x`, which means how many Y one can get for 1 unit of X, and vice versa the price of Y compared to X is `x / y`.
+要理解上述做法的原因，我们首先回顾一下 Uniswap 是如何通过等式`x * y = k`定价的，此时`\x`和`y`代表的是X和Y代币各自的**数量**,`k`表示**常量**。
 
-For the price of X to go up, `y` has to increase and `x` decrease.
+X相对于Y 的价格是 `y / x`，这意味着 1 单位 X可以得到多少Y.反之亦然,Y 相对于 X 的价格是 `x / y`。
 
-With this pricing mechanism in mind, it’s example time!
+要使 X 的价格上涨，`y` 必须增加, 而 `x` 相应地必须减少。
+
+了解了定价机制，现在是栗子时间！
 
 Say an LP plans to place liquidity in the price range [15.625, 17.313], higher than the current price of X `10`, when `100(x) * 1000(y) = 100000(k)`, which is **Case 2**.
 
