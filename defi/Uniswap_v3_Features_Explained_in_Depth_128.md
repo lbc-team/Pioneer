@@ -328,31 +328,37 @@ As price ranges follow the equation `p(i) = 1.0001 ^ i`, the range can be quite 
 
 # 5. v3的影响
 
-Higher capital efficiency, LPs become arbitrageurs… as v3 has made tons of radical changes, I’d like to summarize my personal takes of the impacts of v3:
+更高的资本效率，LP成为套利者……随着 v3 做出了大量根本性的改变，我想总结一下个人对 v3 影响的看法：
 
-1. Higher capital efficiency makes one of the most frequently considered indices in DeFi: **TVL**, total value locked, becomes **less meaningful**, as 1$ on Uniswap v3 might have the same effect as 100$ or even 2000$ on v2.
-2. **The ease of spot exchanging** between spot exchanges used to be a huge advantage of spot markets over derivative markets. As LPs will take up the role of arbitrageurs and arbitraging is more likely to happen on v3 itself other than between DEXs, this gap is narrowed … to what extent? No idea though.
-3. **LP strategies** and **the aggregation of NFT** of Uniswap v3 liquidity token are becoming the blue ocean for new DeFi startups: see [Visor](https://www.visor.finance/) and [Lixir](https://lixir.finance/). In fact, this might be the **turning point for both DeFi and NFT**: the two main reasons of blockchain going mainstream now come to the alignment of interest: solving the $$ problem.
-4. In the right venue, which means a place where transaction fees are low enough, such as Optimism, we might see **Algo trading firms** coming in to share the market of designing LP strategies on Uniswap v3, as I believe Algo trading is way stronger than on-chain strategies or DAO voting to add liquidity that sort of thing.
-5. After reading this article by [Parsec.finance](http://parsec.finance/): [**The Dex to Rule Them All**](https://research.parsec.finance/posts/uniswap-v3-vs-LOB), I cannot help but wonder: maybe there is going to be centralized crypto exchanges adopting v3’s approach. The reason is that since orders of LPs in the same tick are executed **pro-rata**, the endless front-running speeding-competition issue in the Algo trading world, to some degree, is… solved? 🤔
-
-Anyway, personal opinions can be biased and seriously wrong. I’m merely throwing out a sprat to catch a whale. Having a different voice? Leave your comment down below!
-
-# 6. Conclusion
-
-That was kinda tough, isn’t it? Glad you make it through here 🥂
-
-There are actually many more details and also a huge section of Oracle yet to be covered. However, since this article is more about features and targeting normal DeFi users, I’ll leave those to the next one; hope there is one :)
-
-If you have any doubt or find any mistake, please feel free to reach out to me and I’d try to reply AFAP.
-
-Stay tuned and in the meantime let’s wait and see how Uniswap v3 is again pioneering the innovation of DeFi!
-
-Thanks toShao
+1. 更高的资本效率使得 DeFi中最常考虑的指标之一：**TVL**，总锁定价值，变得**意义不大**. 因为 Uniswap v3 上的1美元可能与v2上的100美元甚至2000美元上有同等的效果。
 
 
+2. 现货交易所之间的**现货交易的便利性**曾经是现货市场相对于衍生品市场的巨大优势。由于LP将承担套利者的角色，并且套利更有可能发生在v3内部而不是DEX之间，因此这种差距缩小了……  至于缩小到什么程度？并不知道。
 
-nks toShao
+3. Uniswap v3 流动性代币 引发的**LP 策略**和**聚合NFT**正在成为新的 DeFi 创业公司的蓝海：参见 [Visor](https://www.visor.finance/) 和 [ Lixir](https://lixir.finance/)。事实上，这可能是 DeFi 和 NFT的**转折点**: 区块链走向主流的两个主要原因,如今汇聚到了一个共同利益点：解决$$问题 (译者注:$$问题应该是是指流动性问题)。
+(译者注: LP代币不再是FT, 而是NFT)
+
+4. 在适合的链，即交易费用足够低的地方，比如 Optimism，我们可能会看到 **算法交易公司** 进入Uniswap v3上的LP策略市场，我相信在提升流动性方面, Algo交易会比链上策略或DAO投票更为强大.
+ 
+5. 阅读 [Parsec.finance](http://parsec.finance/) 的这篇文章后：[**The Dex to Rule Them All**](https://research.parsec.finance/posts/uniswap- v3-vs-LOB），我不禁想知道: 也许会有采用 v3 方法的中心化加密货币交易所。原因在于，由于LP在同一tick的订单是**按比例**执行的，Algo交易中无休止的抢先交易问题，某种程度上是不是……解决了？ 🤔
+
+无论如何，个人意见可能有失偏颇，或者存在严重错误。我只是抛砖引玉。有不同的声音？在下方留下您的评论！
+
+
+# 6. 总结
+
+
+读下来有点难理解是不是？很高兴你能看到这里🥂
+
+实际上还有更多细节,以及预言机的很大一部分尚未被涵盖。然而，由于这篇文章更多的是关于功能介绍,并且是针对普通 DeFi 用户的，所以我将把这些留给下一篇；希望存在下一篇:)
+
+如果您有任何疑问或发现任何错误，请随时与我联系，我会尽力回复 AFAP。
+
+敬请期待，同时让我们拭目以待Uniswap v3又将如何引领DeFi创新！
+
+
+感谢 toShao
+
 
 
 
