@@ -1,14 +1,17 @@
 原文链接：https://kushgoyal.com/uniswap-v3-expalined-concentrated-liquidity/
 
-# Uniswap_V3_Explained_Concentrated_Liquidity_Impermanent_Loss_Slippage_129
+# Uniswap V3 释疑: 集中流动性, 无常损失和滑点_129
 
-Uniswap protocol is an ETH native smart contract system which enables swapping of pairs of ERC20<>ERC20 and ERC20<>ETH.
+Uniswap 协议是一组原生的ETH的智能合约，它可以实现 ERC20代币与ERC20代币的交换, 以及ERC20代币与ETH之间的的交换。
 
 Uniswap uses automated market maker (AMM) algorithm to execute trades. Users provide liquidity in pairs of tokens to create a liquidity pool. Trades are executed by depositing the offered token in the pool and withdrawing the asked token from the pool. A swap fee is applied to the amount of ask token which is distributed to the liquidity providers (LPs).
 
-[Uniswap V3](https://uniswap.org/blog/uniswap-v3/) is the latest version of the protocol which has introduced concentrated liquidity and many other concepts. In V3 there are several fee tiers available based on the risk of providing liquidity. The fees is collected in the 2 tokens of the pool and is not invested back into the pool.
+Uniswap 使用自动做市商 (AMM) 算法来执行交易。用户以代币对的形式创建流动性池子,并在其中提供流动性。执行交易就是将所提供的代币存入池中,并从池中提取所请求的代币。
+交易费则以被请求代币的形式, 分配给流动性提供者 (LP)。
 
-UNI is a governance token for the Uniswap protocol. UNI token holders might be eligible for [protocol fee](https://docs.uniswap.org/concepts/V3-overview/fees#protocol-fees) in future. The current protocol fee is 0%. UNI token holders can change the protocol fee.
+[Uniswap V3](https://uniswap.org/blog/uniswap-v3/)是该协议的最新版本，引入了集中流动性等诸多概念。在 V3 中，根据提供流动性的风险，存在几个可用的费用等级。费用在池中的2种代币上收取，而不会重新投资到池中。
+
+UNI 是 Uniswap 协议的治理代币。 将来,UNI 代币持有者可能有资格获得[协议费用](https://docs.uniswap.org/concepts/V3-overview/fees#protocol-fees)。当前的协议费率为 0%。 UNI 代币持有者可以更改协议费率。
 
 ## Concentrated Liquidity
 
