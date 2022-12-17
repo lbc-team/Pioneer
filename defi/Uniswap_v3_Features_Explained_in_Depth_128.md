@@ -252,7 +252,7 @@ X相对于Y 的价格是 `y / x`，这意味着 1 单位 X可以得到多少Y.�
 
 了解了定价机制，现在是栗子时间！
 
-Say an LP plans to place liquidity in the price range [15.625, 17.313], higher than the current price of X `10`, when `100(x) * 1000(y) = 100000(k)`, which is **Case 2**.
+
 
 例如场景2中, LP计划将流动性置于价格区间 [15.625, 17.313]，高于X当前的价格 `10` 对应等式`100(x) * 1000(y) = 100000(k)`成立.
 
@@ -287,7 +287,6 @@ Say an LP plans to place liquidity in the price range [15.625, 17.313], higher t
 
 图片来源: https://uniswap.org/blog/uniswap-v3/
 
-Similarly, to provide liquidity in a price range < current price, which is **Case 3**, an LP has to prepare **a certain amount of Y** for others to exchange Y for X within the range.
 
 同样，如果LP在低于当前价格的价格范围内提供流动性，例如**情景3**，LP就必须准备**一定数量的Y**，供其他人在该范围内用Y换X。(译者注:X相对Y此时过于便宜了,所以外部交易者纷纷用Y换取便宜的X)
 
@@ -300,33 +299,34 @@ Similarly, to provide liquidity in a price range < current price, which is **Cas
 我将在 **5. v3 的影响** 的段落中聊更多这方面的影响
 
 
-*⁷* `1.001499988 = √(1.0001 * 1.0002)` *is the geometric mean of* `1.0001` *and* `1.0002`*. The implication is that the geometric mean of two prices is the average execution price within the range of the two prices.*
+*⁷* `1.001499988 = √(1.0001 * 1.0002)` 是 `1.0001` 和 `1.0002`的*几何平均值*. *也就是说，两个价格的几何平均数,就是该价格范围内的平均执行价格。*
 
-## Reversible limit orders
+## 可逆的限价单
 
-As the example in the last section demonstrates, if there is `4` X in range [15.625, 17.313], the `4` X will be completely converted into `65.798` Y when the price goes over 17.313.
+如上一节示例，如果在[15.625, 17.313] 中存在 `4`个X，当价格超过 17.313 时，这`4` 个X 将被完全转换为 `65.798`个 Y。
 
-We all know that a price can stay in a wide range such as [10, 12] for quite some time, while it’s unlikely so in a narrow range such as [15.6, 15.7].
+我们都知道,价格可以在 [10, 12] 这样的宽范围内停留相当长的一段时间，而在 [15.6, 15.7] 这样的窄范围内则不太可能停留太久。
 
-Thus, if an LP provides liquidity in [15.6, 15.7], we can expect that once the price of X goes over 15.6 and immediately also 15.67, and does not drop back, all X are then forever converted into Y.
+因此，如果一个LP在[15.6, 15.7]中提供了流动性，那么我们可以预期，一旦 X 的价格超过 15.6 并立即超过 15.7 且不回落到范围内，那么LP注入的所有X将永远地被兑换为 Y。
 
-The concept of **having a targeted price and the order will be executed after the price is crossed** is exactly the concept of **limit orders**! The only difference is that if the range of a range order is not narrow enough, it’s highly possible that the conversion of tokens will be **reverted** once the price falls back to the range.
+而限价单的定义正是**给定目标价，跨过该价格订单才成交**！唯一不同的是，如果v3的范围订单不够窄，一旦价格回落到该范围内，极有可能**逆转**代币的兑换。
 
-Thus, providing liquidity on v3, namely range orders, are essentially **fee-earning reversible limit orders**.
+因此，LP通过提交范围订单在 v3 上提供流动性，本质上就是提交了**收交易费的可逆限价订单**。
 
-> **Update on May 8**
-> The following explanation for the range of range orders is far from the real implementation constraint. As the narrowness of a range is designed to be depenedent on the transaction fee ratio, range orders on Uniswap v3 can be quite wide.
+> **May 8更新**
+> 下面对范围订单的生效区间的解释, 并非代码的真实效果。由于范围的宽度被设计为与交易费率相关，因此 Uniswap v3 上的范围订单可能非常宽。
 
 As price ranges follow the equation `p(i) = 1.0001 ^ i`, the range can be quite narrow and a range order can thus effectively serve as a limit order:
+基于价格范围将遵循等式 `p(i) = 1.0001 ^ i`， 因此当范围非常窄时， 可以被当做是限价单：
 
-- When `i = 27490`, `1.0001²⁷⁴⁹⁰ = 15.6248`.⁸
-- When `i = 27491`, `1.0001²⁷⁴⁹¹ = 15.6264`.⁸
+- 当 `i = 27490`, `1.0001²⁷⁴⁹⁰ = 15.6248`.⁸
+- 当 `i = 27491`, `1.0001²⁷⁴⁹¹ = 15.6264`.⁸
 
-A range of `0.0016` is not THAT narrow but can certainly satisfy most limit order use cases!
+虽然`0.0016` 的范围看上去并没有那么窄，但肯定可以满足大多数情况下的限价单使用场景！
 
-*⁸ As mentioned previously in note #4, there is a square root in the equation of the price and index, thus the numbers here are for explanation only.*
+*⁸ 正如前面注释 #4 中提到的，价格和索引的关系等式中有一个平方根，因此这里的数字仅供说明之用*。 
 
-# 5. Impacts of v3
+# 5. v3的影响
 
 Higher capital efficiency, LPs become arbitrageurs… as v3 has made tons of radical changes, I’d like to summarize my personal takes of the impacts of v3:
 
