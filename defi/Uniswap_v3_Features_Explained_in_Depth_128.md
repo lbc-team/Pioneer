@@ -266,7 +266,6 @@ Say an LP plans to place liquidity in the price range [15.625, 17.313], higher t
 因此，为了提供 [15.625, 17.313] 范围内的流动性，LP **只需要准备** `80 - 76 = 4` 数量的 **X**。(译者注:80和76是上述场景中15.625和17.713对应的X数量) 
 如果价格超过 17.313，LP的所有 `4`个X 都被换成 `1315.789 — 1250 = 65.798`个**Y** (译者注:见上述等式)，此后LP由于X流动性被抽干,因此与流动性池子不再有任何关系.
 
-What if the price stays in the range? It’s exactly what LPs would love to see, as they can earn **swapping fees** for all transactions in the range! Also, the balance of X will swing between [76, 80] and the balance of Y between [1250, 1315.789].
 
 如果价格保持在该价格范围内怎么办？这正是LP希望看到的. 因为他们可以从范围内的所有交易中赚取**交易费**！此时，X的余额将在[76, 80] 之间摆动，Y的余额将在 [1250, 1315.789] 之间摆动。
 
@@ -280,23 +279,26 @@ What if the price stays in the range? It’s exactly what LPs would love to see,
 
 如果X的价格在达到17.313后立即回落至15.625怎么办？当X变得不那么有价值，其他人将反过来用Y换取X，这最终会使`65.798`个 Y（之前从 `4`个X 交换得到的Y）被兑换回 `4`个X。
 
-The below image illustrates the scenario of DAI/USDC pair with a price range of [1.001, 1.002] well: the pool is always composed **entirely of one token on both sides** of the tick, while in the middle 1.001499⁷ is of both tokens.
 
 下图很好地说明了,当价格范围为 [1.001, 1.002]时, 代币对 DAI/USDC上发生的事情：
 矿池始终*在价格范围两侧端点上完全只有一种代币储备**，而中间的 1.001499⁷价位上则有两种代币储备。
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/rPPdTC0A628da7c916a09.png)
 
-Image source: https://uniswap.org/blog/uniswap-v3/
+图片来源: https://uniswap.org/blog/uniswap-v3/
 
 Similarly, to provide liquidity in a price range < current price, which is **Case 3**, an LP has to prepare **a certain amount of Y** for others to exchange Y for X within the range.
 
-To wrap up such an interesting feature, we know that:
+同样，如果LP在低于当前价格的价格范围内提供流动性，例如**情景3**，LP就必须准备**一定数量的Y**，供其他人在该范围内用Y换X。(译者注:X相对Y此时过于便宜了,所以外部交易者纷纷用Y换取便宜的X)
 
-1. Only one token is required for Cases 2 & 3, while both tokens are required for Case 1.
-2. Only when the current price is within the range of the range order can LP earn trading fees. This is the main reason why most people believe LPs of v3 have to **monitor the price** **more actively** to maximize their income, which also means that **LPs of v3 have become arbitrageurs** 🤯
+总结一下，我们此时知道了：
 
-I will be discussing more the impacts of v3 in **5. Impacts of v3**.
+1. 情景2和3只需要一种代币，而情景1需要两种代币。
+
+2.只有当前价格在价格范围内时，LP才能赚取交易手续费。这就是为什么大多数人认为 v3 的 LPs 必须要**更积极主动地监控价格** ,从而以最大化做市收入. 这也意味着 **v3的LPs已经成为套利者** 🤯
+
+我将在 **5. v3 的影响** 的段落中聊更多这方面的影响
+
 
 *⁷* `1.001499988 = √(1.0001 * 1.0002)` *is the geometric mean of* `1.0001` *and* `1.0002`*. The implication is that the geometric mean of two prices is the average execution price within the range of the two prices.*
 
