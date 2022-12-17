@@ -57,7 +57,8 @@ Comparing to order book exchanges, AMMs, such as the previous versions of Uniswa
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/G4YoRmdv628da4de53891.png)
 
-在订单簿中,  每个价格(无论是红色还是绿色)都是一个tick,Image source: https://ftx.com/trade/BTC-PERP
+在订单簿中,  每个价格(无论是红色还是绿色)都是一个tick.
+图片来源: https://ftx.com/trade/BTC-PERP
 
 *¹ 尽管价格随着时间的推移会变得更差,mStable等常数和的AMM并不具有无限的流动性*  
 (译者注:mStable 是一个AMM,参见 https://mstable.app/#/musd/swap)
@@ -178,20 +179,27 @@ p(2) / p(1) = 1.00020001 / 1.0001 = 1.0001
 
 嗯... 描述一个抽象的事物时,举个栗子特有用!
 
-Say the original pricing function is `100(x) * 1000(y) = 100000(k)`, with the price of X token `1000 / 100 = 10` and we’re now in an arbitrary price range [9.08, 11.08].
+假设最初的定价函数等式为`100(x) * 1000(y) = 100000(k)`, X代币的价格因此为`1000 / 100 = 10`，并且我们位于一个任意的价格范围 [9.08, 11.08 ].
 
-If the liquidity of the price range [11.08, 13.08] is the same as [9.08, 11.08], we don’t have to modify the pricing function if the price goes from 10 to 11.08, which is the boundary between two ticks.
+如果价格范围 [11.08, 13.08] 的流动性深度与 [9.08, 11.08] 相同，则当价格从10变为11.08（两个刻度之间的边界时，我们无需修改定价函数。
 
-The price of X is `1052.63 / 95 = 11.08` when the equation is `1052.63 * 95 = 100000`.
+此时新tick(译者注 :即价格范围[11.08,13.08]) 的定价等式是`1052.63 * 95 = 100000`, 因此X的价格变成了 `1052.63 / 95 = 11.08` 
 
-However, if the liquidity of the price range [11.08, 13.08] is **two times** that of the current range [9.08, 11.08], balances of `x` and `y` should be **doubled**, which makes the equation become `2105.26 * 190 = 400000`, which is `(1052.63 * 2) * (95 * 2) = (100000 * 2 * 2)`.
+但是，如果新价格范围 [11.08, 13.08] 的流动性是当前[9.08, 11.08] 的**两倍**，则`x`和`y`的余额应该**翻倍**，等式变为`2105.26 * 190 = 400000`，即 `(1052.63 * 2) * (95 * 2) = (100000 * 2 * 2)`。
 
-We can observe the following two points from the above example:
 
-- Trades always follow the pricing function x * y = k, while once the price crosses the current price range/tick, the liquidity/equation has to be updated.
+从上面的例子中,我们可以有以下两点观察:
+
+
+- 交易始终遵循定价等式 x * y = k. 一旦价格超过当前的价格范围/tick，流动性/等式 都必须更新。
+
 - `√(x * y) = √k = L` is how we represent the **liquidity**, as I say the liquidity of `x * y = 400000` is two times the liquidity of `x * y = 100000`, as `√(400000 / 100000) = 2`.
+- 
+- `√(x * y) = √k = L` 是我们对**流动性**的定义. 如上述, `x * y = 400000` 的流动性是 `x * y = 100000 的两倍`，即`√(400000 / 100000) = 2`
 
 What’s more, compared to liquidity on v1 & v2 is always spread across [0,∞], liquidity on v3 can be concentrated within certain price ranges and thus results in **higher** **capital efficiency** from traders’ swapping fees**!**
+
+更重要的是， v1 和 v2 上的流动性总是分布在 [0,∞] , 而v3 上的流动性可以集中在特定的价格范围内，从而让[流动性提供者]可以**更高** **资本效率** 获得交易费分成**！**
 
 Let’s say if I provide liquidity in the range [1200, 2800], the capital efficiency will then be 4.24x higher than v2 with the range [0,∞] 😮 There’s a [capital efficiency comparison calculator](https://uniswap.org/blog/uniswap-v3/), make sure to try it out!
 
