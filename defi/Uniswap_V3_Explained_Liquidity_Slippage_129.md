@@ -47,12 +47,11 @@ sqrt(P) = 1.0001^(i/2)
 i = log(sqrt(P)) * 2 / log(1.0001)
 ```
 
-每个tick与相邻tick的距离为0.1%。（译者注：应为0.01%）
+每个tick与相邻tick的距离为0.1%。
 如果一笔交易导致的价格变动超出了该tick对应的价格范围，则交易按照顺序跨越过一个个tick, 每达到一个tick就进行交换，直到交易请求中的所有代币都被交换完成。
 
 当价格处于两个tick之间的价格范围内时， CLMM遵循常数乘积公式。 因此CLMM可以被看做是常数乘积公式的变体。
 
-Below is a script I wrote to emulate a swap using concentrated liquidity formula. I have ignored applying fee in the swap. Only the swap for token1 to token0 is implemented.
 下面是我编写的python脚本，模拟了使用CLMM进行交易的过程。我忽略了交易手续费，只实现了从token1 到token0 的交换。
 
 ```python
@@ -114,8 +113,6 @@ if __name__ == '__main__':
 
 在 V3 中，流动性池被表示为NFT， 这是因为每个池都彼此不同。由于交易对于价格的影响， 单个交易可能需要跨越多个流动性池。
 
-Concentrated liquidity is highly efficient when compared to the standard constant product algorithm. CLMM uses the full liquidity in the pool within the price range of the pool. But CPMM spreads the liquidity over 0 to infinity. This is because CLMM has different formulas to calculate the new state of the pool.
-
 与标准常数乘积算法相比，集中流动性的效率更高。 CLMM在每个池子的价格范围内使用池子中的全部流动性。而CPMM将流动性分布在 0 到无穷大之间。 CLMM能做到这一点，是因为有不同的公式来计算池子的新状态（译者注：状态包含流动性，tick值，价格等）。
 
 
@@ -123,7 +120,9 @@ Concentrated liquidity is highly efficient when compared to the standard constan
 
 When a swap is made agains a pool the ratio of the tokens in the pool changes. The ratio of tokens in the pool is the price (P) of the token0 in terms of token1.
 
-At the at the beginning of the swap the ratio of the poll is 100UNI : 1ETH. But you will not get 100UNI when swapping with 1ETH because the ratio of the pool changes. This is called the [price impact](https://docs.uniswap.org/concepts/introduction/swaps#price-impact) on the swap.
+当一笔交易再次与池子进行代币交换时，池中代币的比例会发生变化。池中代币的比例是代币 0 相对于代币 1 的价格（P）。
+
+在交换开始时，池子中的代币比例是 100UNI : 1ETH。但是直接用1ETH兑换是不会得到100UNI的，这是因为随着交换的进行，池子中的代币比例发生了变化。这称为交易的[价格冲击](https://docs.uniswap.org/concepts/introduction/swaps#price-impact)。
 
 Let us take an example of UNI<>ETH liquidity pool. With current ratio 100UNI per 1 ETH. We will be using V2 formula of CPMM because the calculations are much easy but the concept still the same for V3.
 
