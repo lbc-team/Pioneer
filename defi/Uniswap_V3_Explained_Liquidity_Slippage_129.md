@@ -143,11 +143,9 @@ receive = 99.0099
 
 流动性提供者通过提供流动性来承担风险。池中的代币比例将根据当前市场价格不断变化。套利者与流动性池进行交易，使得代币比率（就是价格）与其他更大市场中的代币比率（价格）相匹配。这种代币的再平衡对LP 来说是有风险的。 因为当他们决定从池中撤回资金时，池中会有更多已经相对贬值的代币。
 
-Lets us take an example to see this. The below example uses V2 CPMM because it has a simple formula but the concept is same for V3 as well.
 
 举个例子，下面的示例使用 V2的CPMM，因为它有一个简单的公式，但 V3 的概念也相同。
 
-Alice and Bob decide the fund the BTC<>ETH pool. We will see the state of the liquidity pool at different times. The state of the pool is calculated using 2 equations.
 Alice 和 Bob 决定了 BTC<>ETH 池的资金。我们将看到不同时间点，流动池的状态。 为了计算池的状态，我们需要使用两个方程。
 
 ```
