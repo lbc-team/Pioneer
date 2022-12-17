@@ -14,7 +14,7 @@
 1. Uniswap & AMM 概览
 2. 报价区间Ticks    
 3. 集中了的流动性
-4. 范围订单: 可反转的限价单
+4. 范围订单: 可逆的限价单
 5. v3的影响
 6. 结论
 ```
@@ -194,36 +194,36 @@ p(2) / p(1) = 1.00020001 / 1.0001 = 1.0001
 - 交易始终遵循定价等式 x * y = k. 一旦价格超过当前的价格范围/tick，流动性/等式 都必须更新。
 
 - `√(x * y) = √k = L` is how we represent the **liquidity**, as I say the liquidity of `x * y = 400000` is two times the liquidity of `x * y = 100000`, as `√(400000 / 100000) = 2`.
-- 
+
 - `√(x * y) = √k = L` 是我们对**流动性**的定义. 如上述, `x * y = 400000` 的流动性是 `x * y = 100000 的两倍`，即`√(400000 / 100000) = 2`
 
-What’s more, compared to liquidity on v1 & v2 is always spread across [0,∞], liquidity on v3 can be concentrated within certain price ranges and thus results in **higher** **capital efficiency** from traders’ swapping fees**!**
 
-更重要的是， v1 和 v2 上的流动性总是分布在 [0,∞] , 而v3 上的流动性可以集中在特定的价格范围内，从而让[流动性提供者]可以**更高** **资本效率** 获得交易费分成**！**
+更重要的是， v1 和 v2 上的流动性总是分布在 [0,∞] , 而v3 上的流动性可以集中在特定的价格范围内，从而让[流动性提供者]可以**更高的资本效率** 获得交易费分成**！**
 
-Let’s say if I provide liquidity in the range [1200, 2800], the capital efficiency will then be 4.24x higher than v2 with the range [0,∞] 😮 There’s a [capital efficiency comparison calculator](https://uniswap.org/blog/uniswap-v3/), make sure to try it out!
+假设我提供了[1200, 2800] 范围内的流动性，那么我的资本效率将比范围 [0,∞] 的 v2 高 4.24 倍 😮 
+这里有一个 [资本效率比较计算器](https://uniswap. org/blog/uniswap-v3/)，你一定要试试看！
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/7vSJycrU628da7346b4d8.png)
 
-Image source: https://uniswap.org/blog/uniswap-v3/
+图片来源: https://uniswap.org/blog/uniswap-v3/
 
-It’s worth noticing that the concept of concentrated liquidity was proposed and already implemented by **Kyper**, prior to Uniswap, which is called [**Automated Price Reserve**](https://blog.kyber.network/introducing-the-automated-price-reserve-77d41ed1aa70) in their case.⁵
+值得注意的是，在 Uniswap 之前，**Kyper**也提出并实施了集中流动性的概念，他们称之为[**自动价格储备**](https://blog.kyber.network/introducing- the-automated-price-reserve-77d41ed1aa70）。⁵
 
-*⁶ Thanks to* [*Yenwen Feng*](https://medium.com/u/1c7a5eea11a8?source=post_page-----178cfe45f223--------------------------------) *for the information.*
+*⁶ 感谢* [*Yenwen Feng*](https://medium.com/u/1c7a5eea11a8?source=post_page-----178cfe45f223--------------------------------) *提供了此信息.*
 
 
 
-# 4. Range orders: reversible limit orders
+# 4.范围订单: 可逆的限价单
 
-*(The content of this section is updated on May 8; the previous description of excluding the last scenario of the three of being also range orders was wrong.)*
+*（本节内容更新于5月8日，之前描述的内容中,排除了最后三种也是范围订单情景的做法是错误的。）*
 
-As explained in the above section, LPs of v3 can provide liquidity to any price range/tick at their wish. The behaviour of **LPs providing liquidity** on v3 is called (creating) **range orders**.
+如上一节所述，v3的LP可以根据自己的意愿为任何价格范围/tick提供流动性。 **LP在v3上提供流动性**的行为就被称为（创建）**范围订单**。
 
-Depending on the **current price** and the **targeted price range**, there are three scenarios:
+根据**当前价格**和**目标价格范围**的不同关系，存在三种情况：
 
-1. current price belongs to the targeted price range
-2. current price < the targeted price range
-3. current price > the targeted price range
+1. 当前价格属于目标价格范围
+2. 当前价格 < 目标价格范围
+3. 当前价格 > 目标价格范围
 
 These three scenarios have disparities in whether **both or only one of the two tokens** and also **the number of (which) tokens** is required/**allowed** when providing liquidity.
 
