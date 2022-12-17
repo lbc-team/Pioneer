@@ -23,22 +23,23 @@ Uniswap V3 使用[集中流动性](https://docs.uniswap.org/concepts/V3-overview
 
 以下公式定义了代币数量、价格和流动性之间的关系。
 ```
-# x is the amount of token0, y is the amount of token1
-# price of token0 in terms of token1
+# x 表示token0的数量, y 表示token1的数量
+# 以token1为单位 计算出的token0的价格
 P = y / x
 
-# liquidity is the geometric mean of the amount of tokens
+# 流动性是代币数量的几何平方数
 L = sqrt(x*y)
 ```
-
-In V3 the liquidity is defined as the change in amount of token1 for a given change in square root P. Based on this concept the below V3 formulas are used to calculate the amount of tokens you can get.
+在 V3 中，流动性被定义为:给定平方根P的变化值，token1 数量的变化值。
+基于此概念，下面的公式可用于计算你请求的代币数量。
 
 ```
 Δy = Δ(√P) * L 
 Δx = Δ(1/√P) * L
 ```
 
-The above formulas is used for movement of price per adjacent tick. A tick is an integer which represents the price using the below formula.
+上述公式用于计算相邻tick的价格变动。
+其中tick是一个整数，可用于计算价格。 tick计算价格的公式如下
 
 ```
 P = 1.0001^i
@@ -46,18 +47,17 @@ sqrt(P) = 1.0001^(i/2)
 i = log(sqrt(P)) * 2 / log(1.0001)
 ```
 
-Each tick is 0.1% away from the adjacent one. If the price movement for the complete swap is beyond the adjacent tick then swap is performed in step functions moving from one tick to another until all the tokens are swapped.
+每个tick与相邻tick的距离为0.1%。（译者注：应为0.01%）
+如果一笔交易导致的价格变动超出了该tick对应的价格范围，则交易按照顺序跨越过一个个tick, 每达到一个tick就进行交换，直到交易请求中的所有代币都被交换完成。
 
-CLMM follows the constant product formula for the price movement within 2 adjacent ticks. CLMM is a variation of the constant product formula.
+当价格处于两个tick之间的价格范围内时， CLMM遵循常数乘积公式。 因此CLMM可以被看做是常数乘积公式的变体。
 
 Below is a script I wrote to emulate a swap using concentrated liquidity formula. I have ignored applying fee in the swap. Only the swap for token1 to token0 is implemented.
+下面是我编写的python脚本，模拟了使用CLMM进行交易的过程。我忽略了交易手续费，只实现了从token1 到token0 的交换。
 
 ```python
 
-
 import math
-
-
 
 
 def calc_tick(rp):
@@ -65,7 +65,6 @@ def calc_tick(rp):
     # sqrt(P) = 1.0001 ^ (i / 2)
     # i = log(sqrt(P)) * 2 / log(1.0001)
     return (math.log(rp) * 2) / math.log(1.0001)
-
 
 
 
@@ -108,19 +107,19 @@ def swap(offered_y, x, y):
 
 
 
-
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     print(swap(1, 10000000, 100000))
 ```
 
-
-
-In V3 the liquidity pools are represented as NFTs since each pool is distinct from each other. A single swap might move from pool to pool based on the price impact of the swap.
+在 V3 中，流动性池被表示为NFT， 这是因为每个池都彼此不同。由于交易对于价格的影响， 单个交易可能需要跨越多个流动性池。
 
 Concentrated liquidity is highly efficient when compared to the standard constant product algorithm. CLMM uses the full liquidity in the pool within the price range of the pool. But CPMM spreads the liquidity over 0 to infinity. This is because CLMM has different formulas to calculate the new state of the pool.
 
-### Price Impact
+与标准常数乘积算法相比，集中流动性的效率更高。 CLMM在每个池子的价格范围内使用池子中的全部流动性。而CPMM将流动性分布在 0 到无穷大之间。 CLMM能做到这一点，是因为有不同的公式来计算池子的新状态（译者注：状态包含流动性，tick值，价格等）。
+
+
+### 价格冲击
 
 When a swap is made agains a pool the ratio of the tokens in the pool changes. The ratio of tokens in the pool is the price (P) of the token0 in terms of token1.
 
