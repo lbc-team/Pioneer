@@ -4,8 +4,6 @@
 
 Uniswap 协议是一组原生的ETH的智能合约，它可以实现 ERC20代币与ERC20代币的交换, 以及ERC20代币与ETH之间的的交换。
 
-Uniswap uses automated market maker (AMM) algorithm to execute trades. Users provide liquidity in pairs of tokens to create a liquidity pool. Trades are executed by depositing the offered token in the pool and withdrawing the asked token from the pool. A swap fee is applied to the amount of ask token which is distributed to the liquidity providers (LPs).
-
 Uniswap 使用自动做市商 (AMM) 算法来执行交易。用户以代币对的形式创建流动性池子,并在其中提供流动性。执行交易就是将所提供的代币存入池中,并从池中提取所请求的代币。
 交易费则以被请求代币的形式, 分配给流动性提供者 (LP)。
 
