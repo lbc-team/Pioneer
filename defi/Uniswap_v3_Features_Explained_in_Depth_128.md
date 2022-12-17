@@ -49,7 +49,6 @@ Comparing to order book exchanges, AMMs, such as the previous versions of Uniswa
 
 与订单簿交易所相比， 使用了AMM机制的Uniswap v1 & v2， 为使用者提供了独特的体验:
 
-- AMMs have pricing functions that offer the price for the two tokens, which make their users always price takers, while users of order book exchanges can be both makers or takers.
 
 - AMM能为两种代币之间的相互兑换提供报价，所以AMM的用户始终是价格的接受者，而订单簿交易所的用户既可以是价格提供者，也可以是价格接受者。
 
@@ -64,7 +63,6 @@ Comparing to order book exchanges, AMMs, such as the previous versions of Uniswa
 *¹ 尽管价格随着时间的推移会变得更差,mStable等常数和的AMM并不具有无限的流动性*  
 (译者注:mStable 是一个AMM,参见 https://mstable.app/#/musd/swap)
 
-*² the range is in fact [-∞,∞], while a price in most cases won’t be negative*
 *² 价格范围事实上可以扩展到[-∞,∞],  不过大多数情况下价格不可能为负值.* 
 (译者注: 事实上WTI原油期权价格就曾经短暂为负值)
 
@@ -106,7 +104,7 @@ Uniswap v3 也采用了类似的想法：与上个/下个价格相比，价格�
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/6SQrc0NI628da5738cf1f.png)
 
-Image source: https://uniswap.org/whitepaper-v3.pdf
+图片来源: https://uniswap.org/whitepaper-v3.pdf
 
 根据如上等式，可以用 **索引** [i, i+1]的形式来记录 tick/价格范围，而不是一些疯狂的数字，例如 `1.0001¹⁰⁰ = 1.0100496621`。
 
@@ -121,7 +119,7 @@ p(2) / p(1) = 1.00020001 / 1.0001 = 1.0001
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/W06dvua4628da5b8c516e.gif)
 
-Image source: https://tenor.com/view/coin-master-cool-gif-19748052
+图片来源: https://tenor.com/view/coin-master-cool-gif-19748052
 
 *但是，先生，价格真的足够细分吗？有许多价格低于 0.000001 美元的垃圾币。这样的价格也会被涵盖吗？*
 
@@ -131,7 +129,7 @@ Image source: https://tenor.com/view/coin-master-cool-gif-19748052
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/3AWCesIB628da5dd1314f.png)
 
-Image source: https://uniswap.org/whitepaper-v3.pdf
+图片来源: https://uniswap.org/whitepaper-v3.pdf
 
 使用带符号整数 `int` 而不是 `uint` 的原因是:负幂表示 **价格小于1 但大于0。**
 
@@ -146,7 +144,6 @@ Image source: https://uniswap.org/whitepaper-v3.pdf
 
 可以确定地说，使用 `int24` 类型定义的价格范围, 可以涵盖这个世界中超过99.9%的资产价格 👌
 *⁴ 基于技术实现的考虑, 等式两边都添加了一个平方根.*
-How about finding out which tick does a price belong to?
 
 那么,如何找出一个价格对应的那个tick呢？
 
@@ -166,22 +163,21 @@ How about finding out which tick does a price belong to?
 
 此时, `1.0001¹³⁸¹⁶² = 999,998.678087146`. 哈哈!
 
-*⁵ This formula is also slightly modified to fit the real implementation usage.*
 *⁵ 这个公式也略有修改,以便适应实际的技术实现。
 
 # 3. 集中流动性
 
-Now that we know how ticks and price ranges are decided, let’s talk about how orders are executed in a tick, what is concentrated liquidity and how it enables v3 to compete with stablecoin-specialized DEXs (decentralized exchange), such as [Curve](https://curve.fi/), by improving the **capital efficiency**.
+既然我们知道了tick和价格范围是如何计算的，那么接下来看看如何在一个tick定义的价格区间内执行订单，什么是集中流动性, 以及它如何**提高了资本效率**, 使得v3竟能与专为稳定币设计的DEX（去中心化交易所)竞争，例如 [Curve]( https://curve.fi/).
 
-Concentrated liquidity means LPs (liquidity providers) can provide liquidity to **any price range/tick** at their wish, which causes the liquidity to be imbalanced in ticks.
+集中流动性,意味着LP（流动性提供者）可以按照自己的意愿,向**任意价格范围/tick**提供流动性. 无疑这将导致:流动性在ticks中的分配变得不再平衡。
 
-As each tick has a different liquidity depth, the corresponding pricing function `x * y = k` also won’t be the same!
+由于每个tick拥有的流动性深度(译者注:即流动性值L)不同，相应的定价等式 `x * y = k` 也不再相同！
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/oaZpCR7I628da6fbc1f01.png)
 
-Each tick has its own liquidity depth. Image source: https://uniswap.org/blog/uniswap-v3/
+每个tick将拥有它自己的流动性深度. 图片来源: https://uniswap.org/blog/uniswap-v3/
 
-Mmm… examples are always helpful for abstract descriptions!
+嗯... 描述一个抽象的事物时,举个栗子特有用!
 
 Say the original pricing function is `100(x) * 1000(y) = 100000(k)`, with the price of X token `1000 / 100 = 10` and we’re now in an arbitrary price range [9.08, 11.08].
 
