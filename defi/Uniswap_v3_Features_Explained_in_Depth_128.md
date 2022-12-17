@@ -254,20 +254,27 @@ X相对于Y 的价格是 `y / x`，这意味着 1 单位 X可以得到多少Y.�
 
 Say an LP plans to place liquidity in the price range [15.625, 17.313], higher than the current price of X `10`, when `100(x) * 1000(y) = 100000(k)`, which is **Case 2**.
 
-- The price of X is `1250 / 80 = 15.625` when the equation is `80 * 1250 = 100000`.
-- The price of X is `1315.789 / 76 = 17.313` when the equation is `76 * 1315.789 = 100000`.
+例如场景2中, LP计划将流动性置于价格区间 [15.625, 17.313]，高于X当前的价格 `10` 对应等式`100(x) * 1000(y) = 100000(k)`成立.
 
-If now the price of X reaches 15.625, the only way for the price of X to go even higher is to further increase `y` and decrease `x`, which means **exchanging a certain amount of X for Y**.
+- X的价格为`1250 / 80 = 15.625`, 对应等式`80 * 1250 = 100000`成立
 
-Thus, to provide liquidity in the range [15.625, 17.313], an LP needs **only to** **prepare** `80 — 76 = 4` of **X**. If the price exceeds 17.313, all `4` X of the LP is swapped into `1315.789 — 1250 = 65.798` **Y**, and then the LP has nothing more to do with the pool, as his/her liquidity is drained.
+- X的价格为`1315.789 / 76 = 17.313`, 对应等式 `76 * 1315.789 = 100000`成立
+
+
+如果现在 X 的价格达到 15.625，那么X 的价格进一步上涨的唯一途径, 就是进一步增加 `y` 并减少 `x`，这意味着需要**用一定数量的 X 换取 Y**。
+
+因此，为了提供 [15.625, 17.313] 范围内的流动性，LP **只需要准备** `80 - 76 = 4` 数量的 **X**。(译者注:80和76是上述场景中15.625和17.713对应的X数量) 
+如果价格超过 17.313，LP的所有 `4`个X 都被换成 `1315.789 — 1250 = 65.798`个**Y** (译者注:见上述等式)，此后LP由于X流动性被抽干,因此与流动性池子不再有任何关系.
 
 What if the price stays in the range? It’s exactly what LPs would love to see, as they can earn **swapping fees** for all transactions in the range! Also, the balance of X will swing between [76, 80] and the balance of Y between [1250, 1315.789].
 
-This might not be obvious, but the example above shows an interesting insight: if the liquidity of one token is provided, **only when the token becomes more valuable will it be exchanged for the less valuable one**.
+如果价格保持在该价格范围内怎么办？这正是LP希望看到的. 因为他们可以从范围内的所有交易中赚取**交易费**！此时，X的余额将在[76, 80] 之间摆动，Y的余额将在 [1250, 1315.789] 之间摆动。
 
-…wut?
+可能并不显而易见,但是上述例子确实展现了一个有趣的事实：当你提供一种代币的流动性时，**只有当该代币变得更有价值时，该代币才会被[外部套利者]兑换为价值更低的其他代币**。
 
-Remember that if `4` X is provided within [15.625, 17.313], only when the price of X **goes up** from 15.625 to 17.313 is `4` X gradually swapped into Y, the less valuable one!
+……唔？
+
+请记住，如果LP在[15.625, 17.313]价格范围中提供了`4`个X，那么只有当X的价格**从15.625上升**到17.313时，`4`个X才会逐渐被兑换成价值较低的Y！
 
 This is the reason why in Cases 2 & 3 only one of the two tokens is required/allowed when providing liquidity: in fact, LPs providing liquidity is essentially **providing a token for others to exchange when that token becomes more valuable**!
 
