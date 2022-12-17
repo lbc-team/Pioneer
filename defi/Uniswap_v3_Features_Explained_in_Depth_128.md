@@ -1,13 +1,12 @@
 原文链接：https://medium.com/taipei-ethereum-meetup/uniswap-v3-features-explained-in-depth-178cfe45f223
 
-# Uniswap v3 Features Explained in Depth
 # 深入解读 Uniswap v3 新特性
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/khrn9Nwd628da1da1f812.png)
 
-Image source: https://uniswap.org/blog/uniswap-v3/
+图片来源: https://uniswap.org/blog/uniswap-v3/
 
-# Outline
+# 提纲
 
 
 ```
