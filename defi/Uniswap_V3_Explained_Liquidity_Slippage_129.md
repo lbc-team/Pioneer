@@ -118,13 +118,11 @@ if __name__ == '__main__':
 
 ### 价格冲击
 
-When a swap is made agains a pool the ratio of the tokens in the pool changes. The ratio of tokens in the pool is the price (P) of the token0 in terms of token1.
-
 当一笔交易再次与池子进行代币交换时，池中代币的比例会发生变化。池中代币的比例是代币 0 相对于代币 1 的价格（P）。
 
 在交换开始时，池子中的代币比例是 100UNI : 1ETH。但是直接用1ETH兑换是不会得到100UNI的，这是因为随着交换的进行，池子中的代币比例发生了变化。这称为交易的[价格冲击](https://docs.uniswap.org/concepts/introduction/swaps#price-impact)。
 
-Let us take an example of UNI<>ETH liquidity pool. With current ratio 100UNI per 1 ETH. We will be using V2 formula of CPMM because the calculations are much easy but the concept still the same for V3.
+让我们以 UNI<>ETH 池子为例。当前比率为每1个ETH兑换100个UNI。我们将使用V2中的CPMM公式，因为计算起来相对容易，但是依然适用于V3。
 
 ```
 # x and y are number of tokens
@@ -135,27 +133,30 @@ x_uni * y_eth = k
 receive = 10000 - (10000 * 100 / 101)
 receive = 99.0099
 ```
+在上面的计算中，可以看到付出1 ETH， 可以获得99.0099 UNI 代币。虽然池中代币的比例发生了变化，但代币数量的乘积仍然相同。
 
-In the above calculation you see that for 1 ETH you get 99.0099 UNI tokens. The ratio of tokens in the pool has changed but the product of the amount of tokens is still the same.
+### 滑点
+一笔交易如果提供了更高的gas， 那么该笔交易先于其他较低gas的交易执行。 但是我们无法预测交易执行的具体时间点。在交易广播和交易执行之间的时间间隙中，可能池子已经发生了变化。池子状态的改变可能导致交易价格与预期的价格大相径庭。这种价格变化被认为是[滑点]
+(https://docs.uniswap.org/concepts/introduction/swaps#slippage).
 
-### Slippage
+### 无常损失
 
-Transactions with higher gas can be executed before transactions with lower fee. It is not possible to predict at which point in time will the transaction execute. The state of the pool might have changed between the transaction broadcast and execution. The changed state of the pool might result in a very different price for the swap than predicted. This change in price is considered as [slippage](https://docs.uniswap.org/concepts/introduction/swaps#slippage).
-
-### Impermanent loss
-
-Liquidity providers are taking risk by providing liquidity. The ratio of tokens in the pool will keep on changing based on the current market price. Arbitrageurs will trade with pool to match the pool token ratio (price) with that of the larger market. This rebalancing of the portfolio is risky for the LPs because when they decide to withdraw the funds the ratio might be very skewed in the direction of token which has lost value.
+流动性提供者通过提供流动性来承担风险。池中的代币比例将根据当前市场价格不断变化。套利者与流动性池进行交易，使得代币比率（就是价格）与其他更大市场中的代币比率（价格）相匹配。这种代币的再平衡对LP 来说是有风险的。 因为当他们决定从池中撤回资金时，池中会有更多已经相对贬值的代币。
 
 Lets us take an example to see this. The below example uses V2 CPMM because it has a simple formula but the concept is same for V3 as well.
 
+举个例子，下面的示例使用 V2的CPMM，因为它有一个简单的公式，但 V3 的概念也相同。
+
 Alice and Bob decide the fund the BTC<>ETH pool. We will see the state of the liquidity pool at different times. The state of the pool is calculated using 2 equations.
+Alice 和 Bob 决定了 BTC<>ETH 池的资金。我们将看到不同时间点，流动池的状态。 为了计算池的状态，我们需要使用两个方程。
 
 ```
-# token_x and token_y are number of tokens
-# k is the constant product and r is the ratio of tokens
+# token_x and token_y 分别是代币的数量
+# k 是常数乘积，r是代币的比率
 token_x * token_y = k
 token_x / token_y = r
 # substituting the value of token_y
+# 替换方程中的token_y，计算得到
 token_x^2 / r = k
 token_x = √(k*r)
 token_y = √(k/r)
@@ -165,38 +166,41 @@ token_x = BTC, token_y = ETH
 
 **At T0**
 r = 1/10
-Initial pool state = 900 BTC + 9000 ETH
-Alice deposits 100 BTC + 1000 ETH
-Final pool state = 1000 BTC + 10000 ETH
-Alice is 10% owner of the pool
+初始池中状态 = 900 BTC + 9000 ETH
+Alice 存入 100 BTC + 1000 ETH
+最终池中状态 = 1000 BTC + 10000 ETH
+Alice 拥有10% 的池子份额
 
 **At T1**
 r = 1/8
-Initial pool state = 1118 BTC + 8944 ETH
-Bob deposits 80 BTC + 640 ETH
-Final pool state = 1198 BTC + 9584 ETH
-Bob owns 6.67% of the total pool
-Alice now owns 9.33% of the pool
+初始池中状态 = 1118 BTC + 8944 ETH
+Bob 存入 80 BTC + 640 ETH
+最终池中状态 = 1198 BTC + 9584 ETH
+Bob 拥有 6.67% 的池子份额
+Alice 如今拥有9.33%的池子份额
 
 **At T2**
 r = 1/5
-Initial pool state = 1515.36 BTC + 7576.8 ETH
+初始池中状态 = 1515.36 BTC + 7576.8 ETH
 
-Alice decides to withdraw from the pool
-Alice will get 9.33% of the pool which is 141.38 BTC + 706.91 ETH. Which at current rate is worth 282.76 BTC.
-If Alice would have held the tokens instead of adding then to the pool she would have 100 BTC + 1000 ETH which is worth 300 BTC at current rates. So Alice lost 17.24 worth BTC in her holding.
+Alice 决定提取资金
+Alice 将获得整个池代币的9.33%么，计算得到为141.38 BTC + 706.91 ETH. 按当前价格计算，折合为208.76 BTC.
+如果Alice选择直接持有代币而非提供流动性，那么她将拥有100 BTC + 1000 ETH, 按照当前价格计算，折合为300 BTC. 
+所以Alice因为做市，实际损失了17.24个BTC
 
-Final pool state = 1373.98 BTC + 6869.89 ETH
+最终池中状态 = 1373.98 BTC + 6869.89 ETH
 
-Bob now owns 7.356% of the pool and decides to keep his funds in the pool.
+Bob 拥有了7.356%的池中份额，并且决定继续保留资金在池子中.
 
 **At T3**
 r = 1:8
-Initial pool state = 1086.22 BTC + 8689.76 ETH
-Bob decides to withdraw his funds from the pool
-Bob will get 7.356% of the pool which is 79.9 BTC + 639.218 ETH. Which at the current rate is worth 159.8 BTC (consider this 160 because of decimal errors it is coming 159.8). If Bob would have not deposited in the pool he would have 80 BTC + 640 ETH which at the current rate is worth 160 BTC.
-Here we see that Bob did not lose any value because the ratio of the pool is same as when he deposited his tokens.
+初始池中状态 = 1086.22 BTC + 8689.76 ETH
+Bob 决定提取资金
+Bob 将获得整个池代币的7.356% ，计算得到为 79.9 BTC + 639.218 ETH.
+按照当前价格， 折合为159.8 BTC.  (由于进位错误，我们直接看做160 而不是159.8）
+如果Bob没有注入流动性，那么 他将拥有80 BTC + 640 ETH。 按照当前价格计算，折合为160 BTC.
+我们看到Bob并没有损失， 这是因为此时池中的代币比率相对他的存入时刻的比率， 并没有发生变化。
 
-This is the reason it is called impermanent loss. If the ratio of the pool is same as when you deposited the token there is no loss.
+这就是它被称为无常损失的原因。如果池中的代币比率与你存入代币时的比率相同，将不会有任何损失。
 
-LPs get trading fees for every trade. If the trading fees collected by the LP is greater than the impermanent loss then the LP can withdraw the funds from the pool with a profit.
+LP从每笔交易中收取交易费。如果 LP收取的交易费用大于无常损失，则 LP可以从池中提取资金，获得正收益。
