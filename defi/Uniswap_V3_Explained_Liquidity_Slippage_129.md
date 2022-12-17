@@ -11,18 +11,17 @@ Uniswap 使用自动做市商 (AMM) 算法来执行交易。用户以代币对�
 
 UNI 是 Uniswap 协议的治理代币。 将来,UNI 代币持有者可能有资格获得[协议费用](https://docs.uniswap.org/concepts/V3-overview/fees#protocol-fees)。当前的协议费率为 0%。 UNI 代币持有者可以更改协议费率。
 
-## Concentrated Liquidity
+## 集中流动性
 
-Uniswap V3 uses [concentrated liquidity](https://docs.uniswap.org/concepts/V3-overview/concentrated-liquidity) market maker (CLMM) which is much efficient market marking algorithm than standard constant product market maker (CPMM) algorithm.
+Uniswap V3 使用[集中流动性](https://docs.uniswap.org/concepts/V3-overview/concentrated-liquidity) 做市算法 (CLMM)，这是比标准的常数乘积做市 (CPMM) 算法更有效的算法.
 
-There are 2 tokens in a pool token0 and token1. The price (P) of token0 is expressed in terms of token1. For example 100UNI per 1ETH in a pool of UNI<>ETH.
+每个池中有两种代币，分别是token0 和 token1。token0 的价格 (P) 以 token1 表示。例如，UNI<>ETH 池中，每 1个ETH 可以兑换100个UNI。
 
-In CLMM the LPs have to choose a range of price between which they are providing liquidity. If the price P moves outside the range of a pool, it gets inactive and the swap is performed using the next available pool in the changed price range.
+在 CLMM（ 集中流动性做市算法）中，LP必须选择合适的价格范围以提供流动性。如果价格P移到某个池的范围之外，该池的流动性将变为非活跃状态。交易将在下一个可用的池中进行。
 
-In CLMM the pool tracks the [square root of the price](https://uniswap.org/whitepaper-v3.pdf) (P) and the liquidity (L) in the pool. The amount of the tokens in the pool are not needed to calculate the amount of tokens received in a swap.
+在 CLMM 中，池子跟踪[价格的平方根](https://uniswap.org/whitepaper-v3.pdf) (P) 和池中的流动性 (L)。 此时已不再需要池中的已有代币数量用来计算兑换结果。
 
-Below are the formulas which define the relationship between amount of tokens, price and liquidity.
-
+以下公式定义了代币数量、价格和流动性之间的关系。
 ```
 # x is the amount of token0, y is the amount of token1
 # price of token0 in terms of token1
