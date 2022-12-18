@@ -53,17 +53,15 @@ LP头寸的价值将如何受到标的物价格的影响？具体来说，我们
 
 **LP头寸的Delta.** 当标的资产价格变动 1 美元时，LP 头寸的价值会变化多少？
 
-我们看图,并将ΔE的值进行归一化，会容易理解该表达式。由于函数在某个点上的导数就是该点的斜率，所以delta的值就是与价格曲线V(P)相切的直线的斜率：
-
-It is much easier to understand this expression if we look at it graphically and normalize by the value of the position ∆E. Since the derivative of a function is its instantaneous slope, the value of delta is simply the slope of a line that is tangential to the price curve V(P):
+我们看图,并将ΔE的值进行标准化，会容易理解该表达式。由于函数在某个点上的导数就是该点的斜率，所以delta的值就是与价格曲线V(P)相切的直线的斜率：
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/kCcm5WMh62849ea7c4b2b.png)
 
-**Delta as a slope.** The slope of the red curve represents the value of delta for the normalized LP position 1*sqrtV(P). The slope changes from 100% to 0% as the price changes between the lower tick tL and the upper tick tH. [Download GIF version](https://cdn-images-1.medium.com/max/2400/1JDTDeS1htEIp9kHzyyG-EA.gif).
+**Delta即斜率** 红色曲线的斜率表示标准化了的LP头寸 1*sqrtV(P) 的 delta 值。随着价格在下限 tL 和上限 tH 之间变化，斜率从 100% 变为 0%。 [下载 GIF 版本](https://cdn-images-1.medium.com/max/2400/1JDTDeS1htEIp9kHzyyG-EA.gif)。
 
-What this figure represents is how much the value of a LP token tracks the price of the underlying. Delta goes from 1 to 0 as the price increases, meaning that the value will match the price of the underlying with 100% correlation at low prices and 0% above the upper tick.
+delta代表的是 LP头寸的价值跟随标的物价格的变化幅度。随着标的价格上涨，Delta从1变为0，这意味着当价格较低时,LP的头寸价值将与标的物价格同幅度变化;当高于上限价格时, LP的头寸价值将不再变化(即为0%)。
 
-More concretely, let’s consider a LP position deployed between (2000, 3000) that accrues 30% APR from the collected fees. You can think of delta as the slope of the blue line divided by the slope of the red line. Since the value of δ(P) is always less than or equal to 1, the return of a LP position will also be less than or equal to a holding strategy.
+具体的说，当我们考虑在 (2000, 3000) 之间部署LP头寸，该头寸可以收取交易费用,并实现30%的APR(年化收益率)。您可以将delta视为蓝线的斜率除以红线的斜率。由于 δ(P) 的值总是小于或等于 1，因此 LP头寸的收益也将小于或等于直接持有代币的策略。
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/81xHUvgd62849ead13aef.png)
 
