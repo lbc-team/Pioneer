@@ -41,7 +41,7 @@ Uniswap v3[白皮书](https://uniswap.org/whitepaper-v3.pdf)中, 描述了LP在�
 当值介于 tL 和 tH 之间时，表达式会稍微复杂一些，并将取决于价格P的平方根。从图形上看，净头寸价值Net Liq值V(P)如下图所示：
 ![img](https://img.learnblockchain.cn/attachments/2022/05/lXd6ZcEj62849e9cf0ac2.png)
 
-改变范围(tL, tH),就会改变收益曲线V(P)的“锐度”。当(tL,tH)区间只有一个tick那么大时，V(P)曲线将收敛于上图中的虚线。同样，1个tick大小的LP头寸收益, 恰好等于一个到期时不考虑交易费的[covered call备兑期权]的收益（https://lambert-guillaume.medium.com/uniswap-v3-lp-tokens-as-perpetual-put-and-call -options-5b66219db827?source=friends_link&sk=43c071fa2796639a60fce6c9abd5aa76)
+改变范围(tL, tH),就会改变收益曲线V(P)的“锐度”。当(tL,tH)区间只有一个tick那么大时，V(P)曲线将收敛于上图中的虚线。同样，1个tick大小的LP头寸收益, 恰好等于一个到期时不考虑交易费的[covered call备兑期权]的收益（https://lambert-guillaume.medium.com/uniswap-v3-lp-tokens-as-perpetual-put-and-call-options-5b66219db827?source=friends_link&sk=43c071fa2796639a60fce6c9abd5aa76)
 
 # 计算Delta,净头寸价值的变化率
 
