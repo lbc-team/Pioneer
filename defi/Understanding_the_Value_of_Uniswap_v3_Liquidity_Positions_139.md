@@ -32,15 +32,13 @@ Uniswap v3[白皮书](https://uniswap.org/whitepaper-v3.pdf)中, 描述了LP在�
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/wfNjHK1B62849e919f29d.png)
 
-Once the position is established, we can compute its **Net Liquidity Value** by adding the amount of token1 to the amount of token0 times the price P:
-头寸一旦建立,我们就可以通过计算token1数量加上token0数量乘以价格P,得到的和就是**净头寸价值**
+头寸一旦建立,我们就可以让token1数量加上token0数量乘以价格P,两者之和就是**净头寸价值**
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/oRMiktNw62849e95b2982.png)
 
-If the price is above the upper tick tH, the Net Liq value of the LP token will converge to the geometric mean √(tL*tH). When the price is below the lower tick tL, the value of the LP token will simply be P times the size of the position.
+如果价格高于上限tH，则LP代币的净头寸价值Net Liq将收敛于几何平均值√(tL*tH)。当价格低于下限 tL时，LP代币的净头寸价值就是价格P乘以头寸大小.
 
-When the value is between ticks tL and tH, the expression is a bit more complicated and depends on a function of the square root of the price P. Graphically, here’s what the Net Liq value V(P) looks like:
-
+当值介于 tL 和 tH 之间时，表达式会稍微复杂一些，并将取决于价格P的平方根。从图形上看，净头寸价值Net Liq值V(P)如下图所示：
 ![img](https://img.learnblockchain.cn/attachments/2022/05/lXd6ZcEj62849e9cf0ac2.png)
 
 Changing the range (tL, tH) changes the “sharpness” of the payoff curve V(P). The curve V(P) will converge to the dashed line in the figure above when (tL,tH) is a single tick wide. Again, a 1–tick wide LP position is exactly the return function of a [covered call](https://lambert-guillaume.medium.com/uniswap-v3-lp-tokens-as-perpetual-put-and-call-options-5b66219db827?source=friends_link&sk=43c071fa2796639a60fce6c9abd5aa76) at expiration, without considering the collected fees.
