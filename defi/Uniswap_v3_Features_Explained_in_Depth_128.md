@@ -1,124 +1,139 @@
 原文链接：https://medium.com/taipei-ethereum-meetup/uniswap-v3-features-explained-in-depth-178cfe45f223
 
-# Uniswap v3 Features Explained in Depth
+# 深入解读 Uniswap v3 新特性
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/khrn9Nwd628da1da1f812.png)
 
-Image source: https://uniswap.org/blog/uniswap-v3/
+图片来源: https://uniswap.org/blog/uniswap-v3/
 
-# Outline
+# 提纲
+
 
 ```
-0. Intro
-1. Uniswap & AMM recap
-2. Ticks   
-3. Concentrated liquidity
-4. Range orders: reversible limit orders
-5. Impacts of v3
-6. Conclusion
+0. 序言
+1. Uniswap & AMM 概览
+2. 报价区间Ticks    
+3. 集中了的流动性
+4. 范围订单: 可逆的限价单
+5. v3的影响
+6. 结论
 ```
 
-# 0. Intro
 
-The [announcement of Uniswap v3](https://uniswap.org/blog/uniswap-v3/) is no doubt one of the most exciting news in the DeFi place recently 🔥🔥🔥
+# 0. 序言
 
-While most have talked about the impact v3 can potentially bring on the market, seldom explain the delicate implementation techniques to realize all those amazing features, such as concentrated liquidity, limit-order-like range orders, etc.
+最近， [Uniswap V3的发布](https://uniswap.org/blog/uniswap-v3/)无疑是DeFi世界中，最令人激动的新闻。🔥🔥🔥
 
-Since I’ve covered Uniswap v1 & v2 (if you happen to know Mandarin, here are [v1](https://medium.com/taipei-ethereum-meetup/uniswap-explanation-constant-product-market-maker-model-in-vyper-dff80b8467a1) & [v2](https://medium.com/taipei-ethereum-meetup/uniswap-v2-implementation-and-combination-with-compound-262ff338efa)), there’s no reason for me to not cover v3 as well!
+当大多数人的谈论聚焦在v3带给市场的潜在冲击时， 如何使用精妙技术实现那些令人惊叹特性的讨论，却极为罕见。 那些特性包含了集中流动性，类似限价单的范围订单等。
 
-Thus, this article aims to guide readers through Uniswap v3, based on their [official whitepaper](https://uniswap.org/whitepaper-v3.pdf) and examples made on the announcement page. However, one needs not to be an engineer, as **not many codes are involved**, nor a math major, as **the math involved is definitely taught in your high school**, to fully understand the following content 😊
+既然之前我已经解读过了Uniswap v1 & v2 (如果你能读中文，链接在此[v1](https://medium.com/taipei-ethereum-meetup/uniswap-explanation-constant-product-market-maker-model-in-vyper-dff80b8467a1) & [v2](https://medium.com/taipei-ethereum-meetup/uniswap-v2-implementation-and-combination-with-compound-262ff338efa)), 因此我也责无旁贷，继续为大家解读v3!
 
-If you really make it through but still don’t get shxt, feedbacks are welcomed! 🙏
+本文将基于[官方白皮书](https://uniswap.org/whitepaper-v3.pdf)和网站上的例子，带领各位读者走上理解Uniswap v3的旅程。 我们不会涉及太多代码，因此无需您有工程师背景； 文章中的数学仅仅限于高中程度，因而也无需您是数学出身。所以您可以完全理解接下来的内容。😊
 
-There should be another article focusing on the codebase, so stay tuned and let’s get started with some background noise!
+如果您读完全文却依然不得要领， 欢迎随时给我回复🙏 ！
 
-视频链接：https://www.youtube.com/watch?v=051C0FiNX5U
 
-# 1. Uniswap & AMM recap
+以后将会有另一篇文章聚焦于代码库。 不过现在先让我们准备好背景音乐，开始这段旅程。
 
-Before diving in, we have to first recap the uniqueness of Uniswap and compare it to traditional order book exchanges.
+背景音乐视频链接：https://www.youtube.com/watch?v=051C0FiNX5U
 
-Uniswap v1 & v2 are a kind of AMMs (automated market marker) that follow the constant product equation **`x * y = k`**, with `x` & `y` stand for the **amount** of two tokens X and Y in a pool and `k` as a **constant**.
+# 1. Uniswap & AMM 概述
+
+在深入之前，我们首先回顾一下与传统的订单簿交易所相比，Uniswap具有的独特之处。
+
+Uniswap v1 和v2 都属于自动做市商(AMM)的某种应用。 它们使用 **`x * y = k`** 的固定乘积等式，其中`x` 和 `y` 分别代表同一个池中代币 X 和代币 Y 的**数量**， 而`k`则代表一个**常数**。
+
 
 Comparing to order book exchanges, AMMs, such as the previous versions of Uniswap, offer quite a distinct user experience:
 
-- AMMs have pricing functions that offer the price for the two tokens, which make their users always price takers, while users of order book exchanges can be both makers or takers.
-- Uniswap as well as most AMMs have infinite liquidity¹, while order book exchanges don’t. The liquidity of Uniswap v1 & v2 is provided throughout the price range [0,∞]².
-- Uniswap as well as most AMMs have price slippage³ and it’s due to the pricing function, while there isn’t always price slippage on order book exchanges as long as an order is fulfilled within one tick.
+与订单簿交易所相比， 使用了AMM机制的Uniswap v1 & v2， 为使用者提供了独特的体验:
+
+
+- AMM能为两种代币之间的相互兑换提供报价，所以AMM的用户始终是价格的接受者，而订单簿交易所的用户既可以是价格提供者，也可以是价格接受者。
+
+- Uniswap 和大多数 AMM一样，能提供无限的流动性¹，而订单簿交易所则无法做到这一点。 事实上，Uniswap v1 和 v2 在[0,∞]²的价格范围内，都能提供了流动性。
+
+- Uniswap 和大多数 AMM一样， 都有价格滑点³，这是由于AMM的定价机制导致的。但是对于订单簿交易所，如果交易订单能在一个tick的时间内完成，那么成交价格并不一定会有滑点。
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/G4YoRmdv628da4de53891.png)
 
-In an order book, each price (whether in green or red) is a tick. Image source: https://ftx.com/trade/BTC-PERP
+在订单簿中,  每个价格(无论是红色还是绿色)都是一个tick.
+图片来源: https://ftx.com/trade/BTC-PERP
 
-*¹ though the price gets worse over time; AMM of constant sum such as mStable does not have infinite liquidity*
+*¹ 尽管价格随着时间的推移会变得更差,mStable等常数和的AMM并不具有无限的流动性*  
+(译者注:mStable 是一个AMM,参见 https://mstable.app/#/musd/swap)
 
-*² the range is in fact [-∞,∞], while a price in most cases won’t be negative*
+*² 价格范围事实上可以扩展到[-∞,∞],  不过大多数情况下价格不可能为负值.* 
+(译者注: 事实上WTI原油期权价格就曾经短暂为负值)
 
-³ *AMM of constant sum does not have price slippage*
+³ *常数和AMM不会产生价格滑点*
+
 
 # 2. Tick
 
-> The whole innovation of Uniswap v3 starts from ticks.
+> Uniswap v3所有的创新都始于Tick
 
-For those unfamiliar with what is a tick:
+不熟悉tick的朋友请看
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/W8yUrLrW628da50d21dfc.png)
 
-Source: https://www.investopedia.com/terms/t/tick.asp
+来源: https://www.investopedia.com/terms/t/tick.asp
 
-By **slicing the price range [0,∞]** **into numerous granular ticks**, trading on v3 is highly similar to trading on order book exchanges, with only three differences:
+v3通过**将价格范围 [0,∞]** **分成无数个细粒度的ticks**，使得在v3上发生的交易极其类似于与在订单簿交易所发生的交易. 它们只有三个不同之处:
 
-- The **price range of each tick is predefined** by the system instead of being proposed by users.
-- Trades that happen within a tick **still follows the pricing function of the AMM**, while the equation has to be updated once the price crosses the tick.
-- Orders can be executed with any price within the price range, instead of being fulfilled at the same one price on order book exchanges.
+- **每个tick的价格范围由系统预定义**，而非由用户决定。
 
-With the tick design, Uniswap v3 possesses most of the merits of both AMM and an order book exchange! 💯💯💯
+- 在一个tick区间内发生的交易**仍然遵循 AMM 的定价等式**.  一旦价格跨越了该tick, 就需要更新定价等式的值。
 
-## So, how is the price range of a tick decided?
+- 落在价格范围内的不同订单,成交价可以是范围内任意一个价格，而不像在订单簿交易所那样,只能以相同价格成交。
 
-This question is actually somewhat related to the tick explanation above: *the minimum tick size for stocks trading above 1$ is one cent*.
+通过对tick的这个设计，Uniswap v3拥有了AMM 和订单簿交易所的大部分优点！ 💯💯💯
 
-The underlying meaning of a tick size traditionally being one cent is that one cent (1% of 1$) is the **basis point** of price changes between ticks, ex: `1.02 — 1.01 = 0.1`.
+## 那么，一个tick对应的价格区间是如何决定的呢？
 
-Uniswap v3 employs a similar idea: compared to the previous/next price, the price change should always be **0.01% = 1 basis point**.
+事实上, 这个问题与上面关于tick的解释,有一些联系：*交易价格高于 1 美元的股票的最小报价(tick)大小是一美分*。
 
-However, notice the difference is that the traditional basis point is in **absolute value** 0.1, which means the price change is defined with **subtraction**, while here in v3 the basis point is in **percentage** 0.1**%**, which is defined with **division**.
+传统上1个tick被看做等于1美分, 其潜在含义是1美分（1 美元的 1%）是报价变化的1个**基点**，例如：`1.02 — 1.01 = 0.01`。(译者注: 此处原为0.1,应为0.01)
 
-This is how price ranges of ticks are decided⁴:
+Uniswap v3 也采用了类似的想法：与上个/下个价格相比，价格变化应该总被当做 **0.01% = 1 个基点**。
+
+但是请注意,这里不同之处是，传统上的基点是**绝对值** 0.01，这意味着价格变化是用**减法**定义的，而在v3中，基点是**百分比** 0.01 **%**，用**除法**定义。
+
+
+如何设置tick的价格范围⁴,请看：
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/6SQrc0NI628da5738cf1f.png)
 
-Image source: https://uniswap.org/whitepaper-v3.pdf
+图片来源: https://uniswap.org/whitepaper-v3.pdf
 
-With the above equation, the tick/price range can be recorded in the **index** form [i, i+1], instead of some crazy numbers such as `1.0001¹⁰⁰ = 1.0100496621`.
+根据如上等式，可以用 **索引** [i, i+1]的形式来记录 tick/价格范围，而不是一些疯狂的数字，例如 `1.0001¹⁰⁰ = 1.0100496621`。
 
-As each price is the multiplication of 1.0001 of the previous price, the price change is always `1.0001 — 1 = 0.0001 = 0.01%`.
+由于每个价格都是序列中前一个价格的 1.0001倍，因此价格变化比率始终为“1.0001 — 1 = 0.0001 = 0.01%”。
 
-For example, when i=1, `p(1) = 1.0001`; when i=2, `p(2) = 1.00020001`.
+例如, 当i=1, `p(1) = 1.0001`; 当i=2, `p(2) = 1.00020001`.
 
 ```
 p(2) / p(1) = 1.00020001 / 1.0001 = 1.0001
 ```
-
-See the connection between the traditional basis point 1 cent (=1% of 1$) and Uniswap v3’s basis point 0.01%?
+大家看到 传统基点是1美分（=1美元的1%）与 Uniswap v3基点是0.01%之间的联系了吗？
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/W06dvua4628da5b8c516e.gif)
 
-Image source: https://tenor.com/view/coin-master-cool-gif-19748052
+图片来源: https://tenor.com/view/coin-master-cool-gif-19748052
 
-*But sir, are prices really granular enough? There are many shitcoins with prices less than 0.000001$. Will such prices be covered as well?*
+*但是，先生，价格真的足够细分吗？有许多价格低于 0.000001 美元的垃圾币。这样的价格也会被涵盖吗？*
 
-## **Price range: max & min**
+## **价格范围: 最大值 & 最小值**
 
-To know if an extremely small price is covered or not, we have to figure out the max & min price range of v3 by looking into the spec: there is a `int24 tick` state variable in `UniswapV3Pool.sol`.
+要了解v3的tick是否涵盖了非常小的价格，我们必须通过查看技术说明书,来确定v3的最大和最小价格范围：在 `UniswapV3Pool.sol`中有一个`int24 tick`状态变量。
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/3AWCesIB628da5dd1314f.png)
 
-Image source: https://uniswap.org/whitepaper-v3.pdf
+图片来源: https://uniswap.org/whitepaper-v3.pdf
 
-The reason for a signed integer `int` instead of an `uint` is that negative power represents **prices less than 1 but greater than 0.**
+使用带符号整数 `int` 而不是 `uint` 的原因是:负幂表示 **价格小于1 但大于0。**
 
-24 bits can cover the range between `1.0001 ^ (2²³ — 1)` and `1.0001 ^ -(2)²³`. Even Google cannot calculate such numbers, so allow me to offer smaller values to have a rough idea of the whole price range:
+24位覆盖了 `1.0001 ^ (2²³ — 1)` 和 `1.0001 ^ -(2)²³` 之间的价格范围。即使是谷歌也无法计算出这些数字，所以请允许我提供较小的值,用以大致了解整个价格范围:
 
 ```
 1.0001 ^ (2¹⁸) = 242,214,459,604.341
@@ -127,199 +142,224 @@ The reason for a signed integer `int` instead of an `uint` is that negative powe
 1.0001 ^ -(2¹⁷) = 0.000002031888943
 ```
 
+可以确定地说，使用 `int24` 类型定义的价格范围, 可以涵盖这个世界中超过99.9%的资产价格 👌
+*⁴ 基于技术实现的考虑, 等式两边都添加了一个平方根.*
 
-I think it’s safe to say that with a `int24` the range can cover > 99.99% of the prices of all assets in the universe 👌
+那么,如何找出一个价格对应的那个tick呢？
 
-*⁴ For implementation concern, however, a square root is added to both sides of the equation.*
+## 从价格反推Tick索引
 
-How about finding out which tick does a price belong to?
-
-## Tick index from price
-
-The answer to this question is rather easy, as we know that `p(i) = 1.0001^i`, simply takes a log with base 1.0001 on both sides of the equation⁴:
+问题的答案很简单，既然我们知道 `p(i) = 1.0001^i`，因此只需在等式两边各取一个底数为 1.0001 的对数⁴:
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/eWXrzsvS628da6a06b4d3.png)
 
-Image source: https://www.codecogs.com/latex/eqneditor.php
+图片来源: https://www.codecogs.com/latex/eqneditor.php
 
-Let’s try this out, say we wanna find out the tick index of *1000000.*
+让我们来试一试，假设我们想找出 *1000000 的tick索引*
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/Pm9jqfXT628da6cc00697.png)
 
-Image source: https://ncalculators.com/number-conversion/log-logarithm-calculator.htm
+图片来源: https://ncalculators.com/number-conversion/log-logarithm-calculator.htm
 
-Now, `1.0001¹³⁸¹⁶² = 999,998.678087146`. Voila!
+此时, `1.0001¹³⁸¹⁶² = 999,998.678087146`. 哈哈!
 
-*⁵ This formula is also slightly modified to fit the real implementation usage.*
+*⁵ 这个公式也略有修改,以便适应实际的技术实现。
 
-# 3. Concentrated liquidity
+# 3. 集中流动性
 
-Now that we know how ticks and price ranges are decided, let’s talk about how orders are executed in a tick, what is concentrated liquidity and how it enables v3 to compete with stablecoin-specialized DEXs (decentralized exchange), such as [Curve](https://curve.fi/), by improving the **capital efficiency**.
+既然我们知道了tick和价格范围是如何计算的，那么接下来看看如何在一个tick定义的价格区间内执行订单，什么是集中流动性, 以及它如何**提高了资本效率**, 使得v3竟能与专为稳定币设计的DEX（去中心化交易所)竞争，例如 [Curve]( https://curve.fi/).
 
-Concentrated liquidity means LPs (liquidity providers) can provide liquidity to **any price range/tick** at their wish, which causes the liquidity to be imbalanced in ticks.
+集中流动性,意味着LP（流动性提供者）可以按照自己的意愿,向**任意价格范围/tick**提供流动性. 无疑这将导致:流动性在ticks中的分配变得不再平衡。
 
-As each tick has a different liquidity depth, the corresponding pricing function `x * y = k` also won’t be the same!
+由于每个tick拥有的流动性深度(译者注:即流动性值L)不同，相应的定价等式 `x * y = k` 也不再相同！
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/oaZpCR7I628da6fbc1f01.png)
 
-Each tick has its own liquidity depth. Image source: https://uniswap.org/blog/uniswap-v3/
+每个tick将拥有它自己的流动性深度. 图片来源: https://uniswap.org/blog/uniswap-v3/
 
-Mmm… examples are always helpful for abstract descriptions!
+嗯... 描述一个抽象的事物时,举个栗子特有用!
 
-Say the original pricing function is `100(x) * 1000(y) = 100000(k)`, with the price of X token `1000 / 100 = 10` and we’re now in an arbitrary price range [9.08, 11.08].
+假设最初的定价函数等式为`100(x) * 1000(y) = 100000(k)`, X代币的价格因此为`1000 / 100 = 10`，并且我们位于一个任意的价格范围 [9.08, 11.08 ].
 
-If the liquidity of the price range [11.08, 13.08] is the same as [9.08, 11.08], we don’t have to modify the pricing function if the price goes from 10 to 11.08, which is the boundary between two ticks.
+如果价格范围 [11.08, 13.08] 的流动性深度与 [9.08, 11.08] 相同，则当价格从10变为11.08（两个刻度之间的边界时，我们无需修改定价函数。
 
-The price of X is `1052.63 / 95 = 11.08` when the equation is `1052.63 * 95 = 100000`.
+此时新tick(译者注 :即价格范围[11.08,13.08]) 的定价等式是`1052.63 * 95 = 100000`, 因此X的价格变成了 `1052.63 / 95 = 11.08` 
 
-However, if the liquidity of the price range [11.08, 13.08] is **two times** that of the current range [9.08, 11.08], balances of `x` and `y` should be **doubled**, which makes the equation become `2105.26 * 190 = 400000`, which is `(1052.63 * 2) * (95 * 2) = (100000 * 2 * 2)`.
+但是，如果新价格范围 [11.08, 13.08] 的流动性是当前[9.08, 11.08] 的**两倍**，则`x`和`y`的余额应该**翻倍**，等式变为`2105.26 * 190 = 400000`，即 `(1052.63 * 2) * (95 * 2) = (100000 * 2 * 2)`。
 
-We can observe the following two points from the above example:
 
-- Trades always follow the pricing function x * y = k, while once the price crosses the current price range/tick, the liquidity/equation has to be updated.
+从上面的例子中,我们可以有以下两点观察:
+
+
+- 交易始终遵循定价等式 x * y = k. 一旦价格超过当前的价格范围/tick，流动性/等式 都必须更新。
+
 - `√(x * y) = √k = L` is how we represent the **liquidity**, as I say the liquidity of `x * y = 400000` is two times the liquidity of `x * y = 100000`, as `√(400000 / 100000) = 2`.
 
-What’s more, compared to liquidity on v1 & v2 is always spread across [0,∞], liquidity on v3 can be concentrated within certain price ranges and thus results in **higher** **capital efficiency** from traders’ swapping fees**!**
+- `√(x * y) = √k = L` 是我们对**流动性**的定义. 如上述, `x * y = 400000` 的流动性是 `x * y = 100000 的两倍`，即`√(400000 / 100000) = 2`
 
-Let’s say if I provide liquidity in the range [1200, 2800], the capital efficiency will then be 4.24x higher than v2 with the range [0,∞] 😮 There’s a [capital efficiency comparison calculator](https://uniswap.org/blog/uniswap-v3/), make sure to try it out!
+
+更重要的是， v1 和 v2 上的流动性总是分布在 [0,∞] , 而v3 上的流动性可以集中在特定的价格范围内，从而让[流动性提供者]可以**更高的资本效率** 获得交易费分成**！**
+
+假设我提供了[1200, 2800] 范围内的流动性，那么我的资本效率将比范围 [0,∞] 的 v2 高 4.24 倍 😮 
+这里有一个 [资本效率比较计算器](https://uniswap. org/blog/uniswap-v3/)，你一定要试试看！
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/7vSJycrU628da7346b4d8.png)
 
-Image source: https://uniswap.org/blog/uniswap-v3/
+图片来源: https://uniswap.org/blog/uniswap-v3/
 
-It’s worth noticing that the concept of concentrated liquidity was proposed and already implemented by **Kyper**, prior to Uniswap, which is called [**Automated Price Reserve**](https://blog.kyber.network/introducing-the-automated-price-reserve-77d41ed1aa70) in their case.⁵
+值得注意的是，在 Uniswap 之前，**Kyper**也提出并实施了集中流动性的概念，他们称之为[**自动价格储备**](https://blog.kyber.network/introducing-the-automated-price-reserve-77d41ed1aa70）。⁵
 
-*⁶ Thanks to* [*Yenwen Feng*](https://medium.com/u/1c7a5eea11a8?source=post_page-----178cfe45f223--------------------------------) *for the information.*
+*⁶ 感谢* [*Yenwen Feng*](https://medium.com/u/1c7a5eea11a8?source=post_page-----178cfe45f223--------------------------------) *提供了此信息.*
 
 
 
-# 4. Range orders: reversible limit orders
+# 4.范围订单: 可逆的限价单
 
-*(The content of this section is updated on May 8; the previous description of excluding the last scenario of the three of being also range orders was wrong.)*
+*（本节内容更新于5月8日，之前描述的内容中,排除了最后三种也是范围订单情景的做法是错误的。）*
 
-As explained in the above section, LPs of v3 can provide liquidity to any price range/tick at their wish. The behaviour of **LPs providing liquidity** on v3 is called (creating) **range orders**.
+如上一节所述，v3的LP可以根据自己的意愿为任何价格范围/tick提供流动性。 **LP在v3上提供流动性**的行为就被称为（创建）**范围订单**。
 
-Depending on the **current price** and the **targeted price range**, there are three scenarios:
+根据**当前价格**和**目标价格范围**的不同关系，存在三种情况：
 
-1. current price belongs to the targeted price range
-2. current price < the targeted price range
-3. current price > the targeted price range
+1. 当前价格属于目标价格范围
+2. 当前价格 < 目标价格范围
+3. 当前价格 > 目标价格范围
 
-These three scenarios have disparities in whether **both or only one of the two tokens** and also **the number of (which) tokens** is required/**allowed** when providing liquidity.
+在提供流动性时, LP面临这三种场景, 在是否需要提供**两种代币或仅一种代币** 以及 **需要/被允许（哪个)代币多少数量** 上, 会存在不同之处。
 
-## Case 1: current price belongs to the targeted price range
+## 场景1：当前价格属于目标价格范围
 
-Case 1 can be further divided into even two more cases: the current price is **central** to the targeted price range, or not.
+情况 1 可以进一步分为两种情况：当前价格是或者不是目标价格范围的**中心**。
 
-If the current price happens to be central to the targeted price range (current price = 10 when the price range is [8, 12]), it’s the exact same liquidity providing mechanism as the previous versions: LPs provide liquidity in **both tokens of the same value** (`= amount * price`).
+如果当前价格恰好位于目标价格范围的中心（例如当价格范围为[8, 12] 时，当前价格 = 10），则它与之前uniswap版本(译者注:v1,v2)的流动性提供机制完全相同： 此时LP提供 **具有等同价值的两种代币数量**（`价值= 数量 * 价格`）。
 
-If the current price is not central to the price range, LPs still have to provide liquidity in both tokens, while the **amount** of each token depends on the distance between the current price and the price range, which will be explained in the next section (though not explicitly).
+如果当前价格不是价格区间的中心，那么LP 仍然需要分别提供两种代币的流动性，而每个代币的**数量**将取决于当前价格与价格范围端点的距离，这将在下一节进行解释（虽然没有明确说明）。
 
-There’s a similar product to the case: **grid trading**, a very powerful investment tool for a time of **consolidation**. Dunno what’s grid trading? Check out [Binance’s explanation](https://www.binance.com/en/support/faq/f4c453bab89648beb722aa26634120c3) on this, as this topic won’t be covered!
+对应这种情况, 坊间有一个类似的产品: **网格交易**，这是一个非常强大的投资工具，适用于**整合**。如果你不知道什么是网格交易？看[Binance的解释](https://www.binance.com/en/support/faq/f4c453bab89648beb722aa26634120c3).关于这个主题(译者注:网格交易),我们不会再多做涉及.
 
-In fact, LPs of Uniswap v1 & v2 **are grid trading** with a range of [0,∞] and the **entry price** as the baseline.
+事实上，Uniswap v1和v2 的 LP就是在做**网格交易**，只不过交易的范围为 [0,∞]，基准价格是**提供流动性时的价格**。
 
-## Case 2 & 3: current price does not belong to the targeted price range
 
-Unlike Case 1 where **both tokens** are required for providing liquidity, in Cases 2 and 3 **only one** of the two tokens is required/**allowed**.
+## 场景2 & 3：当前价格不属于目标价格范围内
 
-To understand the reason for the above statement, we’d have to first revisit how price is discovered on Uniswap with the equation `x * y = k`, for `x` & `y` stand for the **amount** of two tokens X and Y and `k` as a **constant**.
+与场景1中,LP需要为**两种代币** 都提供流动性不同. 在场景2 和场景 3 中, LP **只需要/被允许[提供]/**两种代币中的一种**。
 
-The price of X compared to Y is `y / x`, which means how many Y one can get for 1 unit of X, and vice versa the price of Y compared to X is `x / y`.
+要理解上述做法的原因，我们首先回顾一下 Uniswap 是如何通过等式`x * y = k`定价的，此时`\x`和`y`代表的是X和Y代币各自的**数量**,`k`表示**常量**。
 
-For the price of X to go up, `y` has to increase and `x` decrease.
+X相对于Y 的价格是 `y / x`，这意味着 1 单位 X可以得到多少Y.反之亦然,Y 相对于 X 的价格是 `x / y`。
 
-With this pricing mechanism in mind, it’s example time!
+要使 X 的价格上涨，`y` 必须增加, 而 `x` 相应地必须减少。
 
-Say an LP plans to place liquidity in the price range [15.625, 17.313], higher than the current price of X `10`, when `100(x) * 1000(y) = 100000(k)`, which is **Case 2**.
+了解了定价机制，现在是栗子时间！
 
-- The price of X is `1250 / 80 = 15.625` when the equation is `80 * 1250 = 100000`.
-- The price of X is `1315.789 / 76 = 17.313` when the equation is `76 * 1315.789 = 100000`.
 
-If now the price of X reaches 15.625, the only way for the price of X to go even higher is to further increase `y` and decrease `x`, which means **exchanging a certain amount of X for Y**.
 
-Thus, to provide liquidity in the range [15.625, 17.313], an LP needs **only to** **prepare** `80 — 76 = 4` of **X**. If the price exceeds 17.313, all `4` X of the LP is swapped into `1315.789 — 1250 = 65.798` **Y**, and then the LP has nothing more to do with the pool, as his/her liquidity is drained.
+例如场景2中, LP计划将流动性置于价格区间 [15.625, 17.313]，高于X当前的价格 `10` 对应等式`100(x) * 1000(y) = 100000(k)`成立.
 
-What if the price stays in the range? It’s exactly what LPs would love to see, as they can earn **swapping fees** for all transactions in the range! Also, the balance of X will swing between [76, 80] and the balance of Y between [1250, 1315.789].
+- X的价格为`1250 / 80 = 15.625`, 对应等式`80 * 1250 = 100000`成立
 
-This might not be obvious, but the example above shows an interesting insight: if the liquidity of one token is provided, **only when the token becomes more valuable will it be exchanged for the less valuable one**.
+- X的价格为`1315.789 / 76 = 17.313`, 对应等式 `76 * 1315.789 = 100000`成立
 
-…wut?
 
-Remember that if `4` X is provided within [15.625, 17.313], only when the price of X **goes up** from 15.625 to 17.313 is `4` X gradually swapped into Y, the less valuable one!
+如果现在 X 的价格达到 15.625，那么X 的价格进一步上涨的唯一途径, 就是进一步增加 `y` 并减少 `x`，这意味着需要**用一定数量的 X 换取 Y**。
 
-This is the reason why in Cases 2 & 3 only one of the two tokens is required/allowed when providing liquidity: in fact, LPs providing liquidity is essentially **providing a token for others to exchange when that token becomes more valuable**!
+因此，为了提供 [15.625, 17.313] 范围内的流动性，LP **只需要准备** `80 - 76 = 4` 数量的 **X**。(译者注:80和76是上述场景中15.625和17.713对应的X数量) 
+如果价格超过 17.313，LP的所有 `4`个X 都被换成 `1315.789 — 1250 = 65.798`个**Y** (译者注:见上述等式)，此后LP由于X流动性被抽干,因此与流动性池子不再有任何关系.
 
-What if the price of X drops back to 15.625 immediately after reaching 17.313? As X becomes less valuable, others are going to exchange Y for X, which can eventually make the `65.798` Y (previously swapped from `4` X) be swapped back into `4` X.
 
-The below image illustrates the scenario of DAI/USDC pair with a price range of [1.001, 1.002] well: the pool is always composed **entirely of one token on both sides** of the tick, while in the middle 1.001499⁷ is of both tokens.
+如果价格保持在该价格范围内怎么办？这正是LP希望看到的. 因为他们可以从范围内的所有交易中赚取**交易费**！此时，X的余额将在[76, 80] 之间摆动，Y的余额将在 [1250, 1315.789] 之间摆动。
+
+可能并不显而易见,但是上述例子确实展现了一个有趣的事实：当你提供一种代币的流动性时，**只有当该代币变得更有价值时，该代币才会被[外部套利者]兑换为价值更低的其他代币**。
+
+……唔？
+
+请记住，如果LP在[15.625, 17.313]价格范围中提供了`4`个X，那么只有当X的价格**从15.625上升**到17.313时，`4`个X才会逐渐被兑换成价值较低的Y！
+
+这就是为什么在场景2和3中，LP在提供流动性时, 只需要/被允许提供两种代币中的一种的原因. 事实上，LP 提供流动性本质上是**提供一种代币,使得其他人在该代币变得更有价值时,进行兑换**！
+
+如果X的价格在达到17.313后立即回落至15.625怎么办？当X变得不那么有价值，其他人将反过来用Y换取X，这最终会使`65.798`个 Y（之前从 `4`个X 交换得到的Y）被兑换回 `4`个X。
+
+
+下图很好地说明了,当价格范围为 [1.001, 1.002]时, 代币对 DAI/USDC上发生的事情：
+矿池始终*在价格范围两侧端点上完全只有一种代币储备**，而中间的 1.001499⁷价位上则有两种代币储备。
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/rPPdTC0A628da7c916a09.png)
 
-Image source: https://uniswap.org/blog/uniswap-v3/
+图片来源: https://uniswap.org/blog/uniswap-v3/
 
-Similarly, to provide liquidity in a price range < current price, which is **Case 3**, an LP has to prepare **a certain amount of Y** for others to exchange Y for X within the range.
 
-To wrap up such an interesting feature, we know that:
+同样，如果LP在低于当前价格的价格范围内提供流动性，例如**情景3**，LP就必须准备**一定数量的Y**，供其他人在该范围内用Y换X。(译者注:X相对Y此时过于便宜了,所以外部交易者纷纷用Y换取便宜的X)
 
-1. Only one token is required for Cases 2 & 3, while both tokens are required for Case 1.
-2. Only when the current price is within the range of the range order can LP earn trading fees. This is the main reason why most people believe LPs of v3 have to **monitor the price** **more actively** to maximize their income, which also means that **LPs of v3 have become arbitrageurs** 🤯
+总结一下，我们此时知道了：
 
-I will be discussing more the impacts of v3 in **5. Impacts of v3**.
+1. 情景2和3只需要一种代币，而情景1需要两种代币。
 
-*⁷* `1.001499988 = √(1.0001 * 1.0002)` *is the geometric mean of* `1.0001` *and* `1.0002`*. The implication is that the geometric mean of two prices is the average execution price within the range of the two prices.*
+2.只有当前价格在价格范围内时，LP才能赚取交易手续费。这就是为什么大多数人认为 v3 的 LPs 必须要**更积极主动地监控价格** ,从而以最大化做市收入. 这也意味着 **v3的LPs已经成为套利者** 🤯
 
-## Reversible limit orders
+我将在 **5. v3 的影响** 的段落中聊更多这方面的影响
 
-As the example in the last section demonstrates, if there is `4` X in range [15.625, 17.313], the `4` X will be completely converted into `65.798` Y when the price goes over 17.313.
 
-We all know that a price can stay in a wide range such as [10, 12] for quite some time, while it’s unlikely so in a narrow range such as [15.6, 15.7].
+*⁷* `1.001499988 = √(1.0001 * 1.0002)` 是 `1.0001` 和 `1.0002`的*几何平均值*. *也就是说，两个价格的几何平均数,就是该价格范围内的平均执行价格。*
 
-Thus, if an LP provides liquidity in [15.6, 15.7], we can expect that once the price of X goes over 15.6 and immediately also 15.67, and does not drop back, all X are then forever converted into Y.
+## 可逆的限价单
 
-The concept of **having a targeted price and the order will be executed after the price is crossed** is exactly the concept of **limit orders**! The only difference is that if the range of a range order is not narrow enough, it’s highly possible that the conversion of tokens will be **reverted** once the price falls back to the range.
+如上一节示例，如果在[15.625, 17.313] 中存在 `4`个X，当价格超过 17.313 时，这`4` 个X 将被完全转换为 `65.798`个 Y。
 
-Thus, providing liquidity on v3, namely range orders, are essentially **fee-earning reversible limit orders**.
+我们都知道,价格可以在 [10, 12] 这样的宽范围内停留相当长的一段时间，而在 [15.6, 15.7] 这样的窄范围内则不太可能停留太久。
 
-> **Update on May 8**
-> The following explanation for the range of range orders is far from the real implementation constraint. As the narrowness of a range is designed to be depenedent on the transaction fee ratio, range orders on Uniswap v3 can be quite wide.
+因此，如果一个LP在[15.6, 15.7]中提供了流动性，那么我们可以预期，一旦 X 的价格超过 15.6 并立即超过 15.7 且不回落到范围内，那么LP注入的所有X将永远地被兑换为 Y。
+
+而限价单的定义正是**给定目标价，跨过该价格订单才成交**！唯一不同的是，如果v3的范围订单不够窄，一旦价格回落到该范围内，极有可能**逆转**代币的兑换。
+
+因此，LP通过提交范围订单在 v3 上提供流动性，本质上就是提交了**收交易费的可逆限价订单**。
+
+> **May 8更新**
+> 
+> 下面对范围订单的生效区间的解释, 并非代码的真实效果。由于范围的宽度被设计为与交易费率相关，因此 Uniswap v3 上的范围订单可能非常宽。
 
 As price ranges follow the equation `p(i) = 1.0001 ^ i`, the range can be quite narrow and a range order can thus effectively serve as a limit order:
+基于价格范围将遵循等式 `p(i) = 1.0001 ^ i`， 因此当范围非常窄时， 可以被当做是限价单：
 
-- When `i = 27490`, `1.0001²⁷⁴⁹⁰ = 15.6248`.⁸
-- When `i = 27491`, `1.0001²⁷⁴⁹¹ = 15.6264`.⁸
+- 当 `i = 27490`, `1.0001²⁷⁴⁹⁰ = 15.6248`.⁸
+- 当 `i = 27491`, `1.0001²⁷⁴⁹¹ = 15.6264`.⁸
 
-A range of `0.0016` is not THAT narrow but can certainly satisfy most limit order use cases!
+虽然`0.0016` 的范围看上去并没有那么窄，但肯定可以满足大多数情况下的限价单使用场景！
 
-*⁸ As mentioned previously in note #4, there is a square root in the equation of the price and index, thus the numbers here are for explanation only.*
+*⁸ 正如前面注释 #4 中提到的，价格和索引的关系等式中有一个平方根，因此这里的数字仅供说明之用*。 
 
-# 5. Impacts of v3
+# 5. v3的影响
 
-Higher capital efficiency, LPs become arbitrageurs… as v3 has made tons of radical changes, I’d like to summarize my personal takes of the impacts of v3:
+更高的资本效率，LP成为套利者……随着 v3 做出了大量根本性的改变，我想总结一下个人对 v3 影响的看法：
 
-1. Higher capital efficiency makes one of the most frequently considered indices in DeFi: **TVL**, total value locked, becomes **less meaningful**, as 1$ on Uniswap v3 might have the same effect as 100$ or even 2000$ on v2.
-2. **The ease of spot exchanging** between spot exchanges used to be a huge advantage of spot markets over derivative markets. As LPs will take up the role of arbitrageurs and arbitraging is more likely to happen on v3 itself other than between DEXs, this gap is narrowed … to what extent? No idea though.
-3. **LP strategies** and **the aggregation of NFT** of Uniswap v3 liquidity token are becoming the blue ocean for new DeFi startups: see [Visor](https://www.visor.finance/) and [Lixir](https://lixir.finance/). In fact, this might be the **turning point for both DeFi and NFT**: the two main reasons of blockchain going mainstream now come to the alignment of interest: solving the $$ problem.
-4. In the right venue, which means a place where transaction fees are low enough, such as Optimism, we might see **Algo trading firms** coming in to share the market of designing LP strategies on Uniswap v3, as I believe Algo trading is way stronger than on-chain strategies or DAO voting to add liquidity that sort of thing.
-5. After reading this article by [Parsec.finance](http://parsec.finance/): [**The Dex to Rule Them All**](https://research.parsec.finance/posts/uniswap-v3-vs-LOB), I cannot help but wonder: maybe there is going to be centralized crypto exchanges adopting v3’s approach. The reason is that since orders of LPs in the same tick are executed **pro-rata**, the endless front-running speeding-competition issue in the Algo trading world, to some degree, is… solved? 🤔
-
-Anyway, personal opinions can be biased and seriously wrong. I’m merely throwing out a sprat to catch a whale. Having a different voice? Leave your comment down below!
-
-# 6. Conclusion
-
-That was kinda tough, isn’t it? Glad you make it through here 🥂
-
-There are actually many more details and also a huge section of Oracle yet to be covered. However, since this article is more about features and targeting normal DeFi users, I’ll leave those to the next one; hope there is one :)
-
-If you have any doubt or find any mistake, please feel free to reach out to me and I’d try to reply AFAP.
-
-Stay tuned and in the meantime let’s wait and see how Uniswap v3 is again pioneering the innovation of DeFi!
-
-Thanks toShao
+1. 更高的资本效率使得 DeFi中最常考虑的指标之一：**TVL**，总锁定价值，变得**意义不大**. 因为 Uniswap v3 上的1美元可能与v2上的100美元甚至2000美元上有同等的效果。
 
 
+2. 现货交易所之间的**现货交易的便利性**曾经是现货市场相对于衍生品市场的巨大优势。由于LP将承担套利者的角色，并且套利更有可能发生在v3内部而不是DEX之间，因此这种差距缩小了……  至于缩小到什么程度？并不知道。
 
-nks toShao
+3. Uniswap v3 流动性代币 引发的**LP 策略**和**聚合NFT**正在成为新的 DeFi 创业公司的蓝海：参见 [Visor](https://www.visor.finance/) 和 [ Lixir](https://lixir.finance/)。事实上，这可能是 DeFi 和 NFT的**转折点**: 区块链走向主流的两个主要原因,如今汇聚到了一个共同利益点：解决$$问题 (译者注:$$问题应该是是指流动性问题)。
+(译者注: LP代币不再是FT, 而是NFT)
+
+4. 在适合的链，即交易费用足够低的地方，比如 Optimism，我们可能会看到 **算法交易公司** 进入Uniswap v3上的LP策略市场，我相信在提升流动性方面, Algo交易会比链上策略或DAO投票更为强大.
+ 
+5. 阅读 [Parsec.finance](http://parsec.finance/) 的这篇文章后：[**The Dex to Rule Them All**](https://research.parsec.finance/posts/uniswap- v3-vs-LOB），我不禁想知道: 也许会有采用 v3 方法的中心化加密货币交易所。原因在于，由于LP在同一tick的订单是**按比例**执行的，Algo交易中无休止的抢先交易问题，某种程度上是不是……解决了？ 🤔
+
+无论如何，个人意见可能有失偏颇，或者存在严重错误。我只是抛砖引玉。有不同的声音？在下方留下您的评论！
+
+
+# 6. 结论
+
+
+读下来有点难理解是不是？很高兴你能看到这里🥂
+
+实际上还有更多细节,以及预言机的很大一部分尚未被涵盖。然而，由于这篇文章更多的是关于功能介绍,并且是针对普通 DeFi 用户的，所以我将把这些留给下一篇；希望存在下一篇:)
+
+如果您有任何疑问或发现任何错误，请随时与我联系，我会尽力回复 AFAP。
+
+敬请期待，同时让我们拭目以待Uniswap v3又将如何引领DeFi创新！
+
+
+感谢 toShao
+
 
 
 

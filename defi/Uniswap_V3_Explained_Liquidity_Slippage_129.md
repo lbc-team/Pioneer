@@ -1,44 +1,45 @@
 原文链接：https://kushgoyal.com/uniswap-v3-expalined-concentrated-liquidity/
 
-# Uniswap_V3_Explained_Concentrated_Liquidity_Impermanent_Loss_Slippage_129
+# Uniswap V3 释疑: 集中流动性, 无常损失和滑点_129
 
-Uniswap protocol is an ETH native smart contract system which enables swapping of pairs of ERC20<>ERC20 and ERC20<>ETH.
+Uniswap 协议是一组原生的ETH的智能合约，它可以实现 ERC20代币与ERC20代币的交换, 以及ERC20代币与ETH之间的的交换。
 
-Uniswap uses automated market maker (AMM) algorithm to execute trades. Users provide liquidity in pairs of tokens to create a liquidity pool. Trades are executed by depositing the offered token in the pool and withdrawing the asked token from the pool. A swap fee is applied to the amount of ask token which is distributed to the liquidity providers (LPs).
+Uniswap 使用自动做市商 (AMM) 算法来执行交易。用户以代币对的形式创建流动性池子,并在其中提供流动性。执行交易就是将所提供的代币存入池中,并从池中提取所请求的代币。
+交易费则以被请求代币的形式, 分配给流动性提供者 (LP)。
 
-[Uniswap V3](https://uniswap.org/blog/uniswap-v3/) is the latest version of the protocol which has introduced concentrated liquidity and many other concepts. In V3 there are several fee tiers available based on the risk of providing liquidity. The fees is collected in the 2 tokens of the pool and is not invested back into the pool.
+[Uniswap V3](https://uniswap.org/blog/uniswap-v3/)是该协议的最新版本，引入了集中流动性等诸多概念。在 V3 中，根据提供流动性的风险，存在几个可用的费用等级。费用在池中的2种代币上收取，而不会重新投资到池中。
 
-UNI is a governance token for the Uniswap protocol. UNI token holders might be eligible for [protocol fee](https://docs.uniswap.org/concepts/V3-overview/fees#protocol-fees) in future. The current protocol fee is 0%. UNI token holders can change the protocol fee.
+UNI 是 Uniswap 协议的治理代币。 将来,UNI 代币持有者可能有资格获得[协议费用](https://docs.uniswap.org/concepts/V3-overview/fees#protocol-fees)。当前的协议费率为 0%。 UNI 代币持有者可以更改协议费率。
 
-## Concentrated Liquidity
+## 集中流动性
 
-Uniswap V3 uses [concentrated liquidity](https://docs.uniswap.org/concepts/V3-overview/concentrated-liquidity) market maker (CLMM) which is much efficient market marking algorithm than standard constant product market maker (CPMM) algorithm.
+Uniswap V3 使用[集中流动性](https://docs.uniswap.org/concepts/V3-overview/concentrated-liquidity) 做市算法 (CLMM)，这是比标准的常数乘积做市 (CPMM) 算法更有效的算法.
 
-There are 2 tokens in a pool token0 and token1. The price (P) of token0 is expressed in terms of token1. For example 100UNI per 1ETH in a pool of UNI<>ETH.
+每个池中有两种代币，分别是token0 和 token1。token0 的价格 (P) 以 token1 表示。例如，UNI<>ETH 池中，每 1个ETH 可以兑换100个UNI。
 
-In CLMM the LPs have to choose a range of price between which they are providing liquidity. If the price P moves outside the range of a pool, it gets inactive and the swap is performed using the next available pool in the changed price range.
+在 CLMM（ 集中流动性做市算法）中，LP必须选择合适的价格范围以提供流动性。如果价格P移到某个池的范围之外，该池的流动性将变为非活跃状态。交易将在下一个可用的池中进行。
 
-In CLMM the pool tracks the [square root of the price](https://uniswap.org/whitepaper-v3.pdf) (P) and the liquidity (L) in the pool. The amount of the tokens in the pool are not needed to calculate the amount of tokens received in a swap.
+在 CLMM 中，池子跟踪[价格的平方根](https://uniswap.org/whitepaper-v3.pdf) (P) 和池中的流动性 (L)。 此时已不再需要池中的已有代币数量用来计算兑换结果。
 
-Below are the formulas which define the relationship between amount of tokens, price and liquidity.
-
+以下公式定义了代币数量、价格和流动性之间的关系。
 ```
-# x is the amount of token0, y is the amount of token1
-# price of token0 in terms of token1
+# x 表示token0的数量, y 表示token1的数量
+# 以token1为单位 计算出的token0的价格
 P = y / x
 
-# liquidity is the geometric mean of the amount of tokens
+# 流动性是代币数量的几何平方数
 L = sqrt(x*y)
 ```
-
-In V3 the liquidity is defined as the change in amount of token1 for a given change in square root P. Based on this concept the below V3 formulas are used to calculate the amount of tokens you can get.
+在 V3 中，流动性被定义为:给定平方根P的变化值，token1 数量的变化值。
+基于此概念，下面的公式可用于计算你请求的代币数量。
 
 ```
 Δy = Δ(√P) * L 
 Δx = Δ(1/√P) * L
 ```
 
-The above formulas is used for movement of price per adjacent tick. A tick is an integer which represents the price using the below formula.
+上述公式用于计算相邻tick的价格变动。
+其中tick是一个整数，可用于计算价格。 tick计算价格的公式如下
 
 ```
 P = 1.0001^i
@@ -46,18 +47,16 @@ sqrt(P) = 1.0001^(i/2)
 i = log(sqrt(P)) * 2 / log(1.0001)
 ```
 
-Each tick is 0.1% away from the adjacent one. If the price movement for the complete swap is beyond the adjacent tick then swap is performed in step functions moving from one tick to another until all the tokens are swapped.
+每个tick与相邻tick的距离为0.1%。
+如果一笔交易导致的价格变动超出了该tick对应的价格范围，则交易按照顺序跨越过一个个tick, 每达到一个tick就进行交换，直到交易请求中的所有代币都被交换完成。
 
-CLMM follows the constant product formula for the price movement within 2 adjacent ticks. CLMM is a variation of the constant product formula.
+当价格处于两个tick之间的价格范围内时， CLMM遵循常数乘积公式。 因此CLMM可以被看做是常数乘积公式的变体。
 
-Below is a script I wrote to emulate a swap using concentrated liquidity formula. I have ignored applying fee in the swap. Only the swap for token1 to token0 is implemented.
+下面是我编写的python脚本，模拟了使用CLMM进行交易的过程。我忽略了交易手续费，只实现了从token1 到token0 的交换。
 
 ```python
 
-
 import math
-
-
 
 
 def calc_tick(rp):
@@ -65,7 +64,6 @@ def calc_tick(rp):
     # sqrt(P) = 1.0001 ^ (i / 2)
     # i = log(sqrt(P)) * 2 / log(1.0001)
     return (math.log(rp) * 2) / math.log(1.0001)
-
 
 
 
@@ -108,25 +106,23 @@ def swap(offered_y, x, y):
 
 
 
-
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     print(swap(1, 10000000, 100000))
 ```
 
+在 V3 中，流动性池被表示为NFT， 这是因为每个池都彼此不同。由于交易对于价格的影响， 单个交易可能需要跨越多个流动性池。
+
+与标准常数乘积算法相比，集中流动性的效率更高。 CLMM在每个池子的价格范围内使用池子中的全部流动性。而CPMM将流动性分布在 0 到无穷大之间。 CLMM能做到这一点，是因为有不同的公式来计算池子的新状态（译者注：状态包含流动性，tick值，价格等）。
 
 
-In V3 the liquidity pools are represented as NFTs since each pool is distinct from each other. A single swap might move from pool to pool based on the price impact of the swap.
+### 价格冲击
 
-Concentrated liquidity is highly efficient when compared to the standard constant product algorithm. CLMM uses the full liquidity in the pool within the price range of the pool. But CPMM spreads the liquidity over 0 to infinity. This is because CLMM has different formulas to calculate the new state of the pool.
+当一笔交易再次与池子进行代币交换时，池中代币的比例会发生变化。池中代币的比例是代币 0 相对于代币 1 的价格（P）。
 
-### Price Impact
+在交换开始时，池子中的代币比例是 100UNI : 1ETH。但是直接用1ETH兑换是不会得到100UNI的，这是因为随着交换的进行，池子中的代币比例发生了变化。这称为交易的[价格冲击](https://docs.uniswap.org/concepts/introduction/swaps#price-impact)。
 
-When a swap is made agains a pool the ratio of the tokens in the pool changes. The ratio of tokens in the pool is the price (P) of the token0 in terms of token1.
-
-At the at the beginning of the swap the ratio of the poll is 100UNI : 1ETH. But you will not get 100UNI when swapping with 1ETH because the ratio of the pool changes. This is called the [price impact](https://docs.uniswap.org/concepts/introduction/swaps#price-impact) on the swap.
-
-Let us take an example of UNI<>ETH liquidity pool. With current ratio 100UNI per 1 ETH. We will be using V2 formula of CPMM because the calculations are much easy but the concept still the same for V3.
+让我们以 UNI<>ETH 池子为例。当前比率为每1个ETH兑换100个UNI。我们将使用V2中的CPMM公式，因为计算起来相对容易，但是依然适用于V3。
 
 ```
 # x and y are number of tokens
@@ -137,27 +133,28 @@ x_uni * y_eth = k
 receive = 10000 - (10000 * 100 / 101)
 receive = 99.0099
 ```
+在上面的计算中，可以看到付出1 ETH， 可以获得99.0099 UNI 代币。虽然池中代币的比例发生了变化，但代币数量的乘积仍然相同。
 
-In the above calculation you see that for 1 ETH you get 99.0099 UNI tokens. The ratio of tokens in the pool has changed but the product of the amount of tokens is still the same.
+### 滑点
+一笔交易如果提供了更高的gas， 那么该笔交易先于其他较低gas的交易执行。 但是我们无法预测交易执行的具体时间点。在交易广播和交易执行之间的时间间隙中，可能池子已经发生了变化。池子状态的改变可能导致交易价格与预期的价格大相径庭。这种价格变化被认为是[滑点]
+(https://docs.uniswap.org/concepts/introduction/swaps#slippage).
 
-### Slippage
+### 无常损失
 
-Transactions with higher gas can be executed before transactions with lower fee. It is not possible to predict at which point in time will the transaction execute. The state of the pool might have changed between the transaction broadcast and execution. The changed state of the pool might result in a very different price for the swap than predicted. This change in price is considered as [slippage](https://docs.uniswap.org/concepts/introduction/swaps#slippage).
+流动性提供者通过提供流动性来承担风险。池中的代币比例将根据当前市场价格不断变化。套利者与流动性池进行交易，使得代币比率（就是价格）与其他更大市场中的代币比率（价格）相匹配。这种代币的再平衡对LP 来说是有风险的。 因为当他们决定从池中撤回资金时，池中会有更多已经相对贬值的代币。
 
-### Impermanent loss
 
-Liquidity providers are taking risk by providing liquidity. The ratio of tokens in the pool will keep on changing based on the current market price. Arbitrageurs will trade with pool to match the pool token ratio (price) with that of the larger market. This rebalancing of the portfolio is risky for the LPs because when they decide to withdraw the funds the ratio might be very skewed in the direction of token which has lost value.
+举个例子，下面的示例使用 V2的CPMM，因为它有一个简单的公式，但 V3 的概念也相同。
 
-Lets us take an example to see this. The below example uses V2 CPMM because it has a simple formula but the concept is same for V3 as well.
-
-Alice and Bob decide the fund the BTC<>ETH pool. We will see the state of the liquidity pool at different times. The state of the pool is calculated using 2 equations.
+Alice 和 Bob 决定了 BTC<>ETH 池的资金。我们将看到不同时间点，流动池的状态。 为了计算池的状态，我们需要使用两个方程。
 
 ```
-# token_x and token_y are number of tokens
-# k is the constant product and r is the ratio of tokens
+# token_x and token_y 分别是代币的数量
+# k 是常数乘积，r是代币的比率
 token_x * token_y = k
 token_x / token_y = r
 # substituting the value of token_y
+# 替换方程中的token_y，计算得到
 token_x^2 / r = k
 token_x = √(k*r)
 token_y = √(k/r)
@@ -167,38 +164,41 @@ token_x = BTC, token_y = ETH
 
 **At T0**
 r = 1/10
-Initial pool state = 900 BTC + 9000 ETH
-Alice deposits 100 BTC + 1000 ETH
-Final pool state = 1000 BTC + 10000 ETH
-Alice is 10% owner of the pool
+初始池中状态 = 900 BTC + 9000 ETH
+Alice 存入 100 BTC + 1000 ETH
+最终池中状态 = 1000 BTC + 10000 ETH
+Alice 拥有10% 的池子份额
 
 **At T1**
 r = 1/8
-Initial pool state = 1118 BTC + 8944 ETH
-Bob deposits 80 BTC + 640 ETH
-Final pool state = 1198 BTC + 9584 ETH
-Bob owns 6.67% of the total pool
-Alice now owns 9.33% of the pool
+初始池中状态 = 1118 BTC + 8944 ETH
+Bob 存入 80 BTC + 640 ETH
+最终池中状态 = 1198 BTC + 9584 ETH
+Bob 拥有 6.67% 的池子份额
+Alice 如今拥有9.33%的池子份额
 
 **At T2**
 r = 1/5
-Initial pool state = 1515.36 BTC + 7576.8 ETH
+初始池中状态 = 1515.36 BTC + 7576.8 ETH
 
-Alice decides to withdraw from the pool
-Alice will get 9.33% of the pool which is 141.38 BTC + 706.91 ETH. Which at current rate is worth 282.76 BTC.
-If Alice would have held the tokens instead of adding then to the pool she would have 100 BTC + 1000 ETH which is worth 300 BTC at current rates. So Alice lost 17.24 worth BTC in her holding.
+Alice 决定提取资金
+Alice 将获得整个池代币的9.33%么，计算得到为141.38 BTC + 706.91 ETH. 按当前价格计算，折合为208.76 BTC.
+如果Alice选择直接持有代币而非提供流动性，那么她将拥有100 BTC + 1000 ETH, 按照当前价格计算，折合为300 BTC. 
+所以Alice因为做市，实际损失了17.24个BTC
 
-Final pool state = 1373.98 BTC + 6869.89 ETH
+最终池中状态 = 1373.98 BTC + 6869.89 ETH
 
-Bob now owns 7.356% of the pool and decides to keep his funds in the pool.
+Bob 拥有了7.356%的池中份额，并且决定继续保留资金在池子中.
 
 **At T3**
 r = 1:8
-Initial pool state = 1086.22 BTC + 8689.76 ETH
-Bob decides to withdraw his funds from the pool
-Bob will get 7.356% of the pool which is 79.9 BTC + 639.218 ETH. Which at the current rate is worth 159.8 BTC (consider this 160 because of decimal errors it is coming 159.8). If Bob would have not deposited in the pool he would have 80 BTC + 640 ETH which at the current rate is worth 160 BTC.
-Here we see that Bob did not lose any value because the ratio of the pool is same as when he deposited his tokens.
+初始池中状态 = 1086.22 BTC + 8689.76 ETH
+Bob 决定提取资金
+Bob 将获得整个池代币的7.356% ，计算得到为 79.9 BTC + 639.218 ETH.
+按照当前价格， 折合为159.8 BTC.  (由于进位错误，我们直接看做160 而不是159.8）
+如果Bob没有注入流动性，那么 他将拥有80 BTC + 640 ETH。 按照当前价格计算，折合为160 BTC.
+我们看到Bob并没有损失， 这是因为此时池中的代币比率相对他的存入时刻的比率， 并没有发生变化。
 
-This is the reason it is called impermanent loss. If the ratio of the pool is same as when you deposited the token there is no loss.
+这就是它被称为无常损失的原因。如果池中的代币比率与你存入代币时的比率相同，将不会有任何损失。
 
-LPs get trading fees for every trade. If the trading fees collected by the LP is greater than the impermanent loss then the LP can withdraw the funds from the pool with a profit.
+LP从每笔交易中收取交易费。如果 LP收取的交易费用大于无常损失，则 LP可以从池中提取资金，获得正收益。
