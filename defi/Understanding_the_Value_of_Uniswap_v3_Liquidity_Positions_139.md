@@ -14,7 +14,11 @@ Uniswap 在第3版协议中,改进了流动性头寸的创建和管理方法。�
 
 ## Uniswap v3 LP代币有何价值?
 
-Uniswap v3[白皮书](https://uniswap.org/whitepaper-v3.pdf)中, 描述了LP在建立新头寸时,必须添加的每种代币的数量。在一个新建的LP头寸中 **token0** 和 **token1** 的数量将取决于由代表较低价格端点的tick **tL**、代表较高价格端点的tick **tH** 和建立头寸时的价格 **P0**联合确立的价格范围。
+Uniswap v3[白皮书](https://uniswap.org/whitepaper-v3.pdf)中, 描述了LP在建立新头寸时,必须添加的每种代币的数量。在一个新建的LP头寸中 **token0** 和 **token1** 的数量将取决于:
+由代表较低价格端点的tick **tL**、
+代表较高价格端点的tick **tH** 
+建立头寸时的价格 **P0**
+联合确立的价格范围。
 
 I am reprinting equations (6.29) and (6.30) from the whitepaper in a slightly different notation to show how tL and tH are related to P0:
 
