@@ -28,11 +28,12 @@ Uniswap v3[白皮书](https://uniswap.org/whitepaper-v3.pdf)中, 描述了LP在�
 
 **一个LP头寸的代币组合**描述了该头寸中有多少token0和token1。
 
-这里，ΔE的值由建立头寸时,LP注入头寸的token0（记为x0）和token1（记为y0）的初始数量决定：
+这里，ΔE的值由建立头寸时,头寸中锁定的token0（记为x0）和token1（记为y0）的初始数量决定：
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/wfNjHK1B62849e919f29d.png)
 
 Once the position is established, we can compute its **Net Liquidity Value** by adding the amount of token1 to the amount of token0 times the price P:
+头寸一旦建立,我们就可以通过计算token1数量加上token0数量乘以价格P,得到的和就是**净头寸价值**
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/oRMiktNw62849e95b2982.png)
 
