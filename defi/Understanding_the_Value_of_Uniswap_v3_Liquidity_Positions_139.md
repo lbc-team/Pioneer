@@ -41,17 +41,17 @@ Uniswap v3[白皮书](https://uniswap.org/whitepaper-v3.pdf)中, 描述了LP在�
 当值介于 tL 和 tH 之间时，表达式会稍微复杂一些，并将取决于价格P的平方根。从图形上看，净头寸价值Net Liq值V(P)如下图所示：
 ![img](https://img.learnblockchain.cn/attachments/2022/05/lXd6ZcEj62849e9cf0ac2.png)
 
-Changing the range (tL, tH) changes the “sharpness” of the payoff curve V(P). The curve V(P) will converge to the dashed line in the figure above when (tL,tH) is a single tick wide. Again, a 1–tick wide LP position is exactly the return function of a [covered call](https://lambert-guillaume.medium.com/uniswap-v3-lp-tokens-as-perpetual-put-and-call-options-5b66219db827?source=friends_link&sk=43c071fa2796639a60fce6c9abd5aa76) at expiration, without considering the collected fees.
+改变范围(tL, tH),就会改变收益曲线V(P)的“锐度”。当(tL,tH)区间只有一个tick那么大时，V(P)曲线将收敛于上图中的虚线。同样，1个tick大小的LP头寸收益, 恰好等于一个到期时不考虑交易费的[covered call备兑期权]的收益（https://lambert-guillaume.medium.com/uniswap-v3-lp-tokens-as-perpetual-put-and-call -options-5b66219db827?source=friends_link&sk=43c071fa2796639a60fce6c9abd5aa76)
 
-# Computing Delta, the rate of change in Net Liq Value
+# 计算Delta,净头寸价值的变化率
 
-How will the value of a LP position be affected by the price of the underlyings? Specifically, we’d like to know how much would the Net Liq change if the value of token0 changes by $1. This quantity is called “delta” and represents the price sensitivity of an option.
+LP头寸的价值将如何受到标的物价格的影响？具体来说，我们想知道如果token0的值改变1美元，净头寸价值会改变多少。这个改变的值称为“delta”，代表期权的对于标的价格的敏感性。
 
-We can obtain δ(P) by taking the partial derivative of the Net Liq value function V(P) with respect to the price P to get the following expression:
+我们通过求V(p)对价格P的偏导数,得到 变化率δ(P)，表达式如下：
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/o9epzvJU62849ea338dfd.png)
 
-**Delta of a LP position.** How much does the value of a LP position changes when the price of the underlying asset changes by $1?
+**LP头寸的Delta.** 当标的资产价格变动 1 美元时，LP 头寸的价值会变化多少？
 
 It is much easier to understand this expression if we look at it graphically and normalize by the value of the position ∆E. Since the derivative of a function is its instantaneous slope, the value of delta is simply the slope of a line that is tangential to the price curve V(P):
 
