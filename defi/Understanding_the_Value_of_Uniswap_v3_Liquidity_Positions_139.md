@@ -16,20 +16,19 @@ Uniswap 在第3版协议中,改进了流动性头寸的创建和管理方法。�
 
 Uniswap v3[白皮书](https://uniswap.org/whitepaper-v3.pdf)中, 描述了LP在建立新头寸时,必须添加的每种代币的数量。在一个新建的LP头寸中 **token0** 和 **token1** 的数量将取决于以下三个变量联合确立的价格范围:
 
-由代表较低价格端点的tick **tL**,
+代表较低价格端点的tick **tL**,
 
 代表较高价格端点的tick **tH**,
 
 建立头寸时的价格 **P0**
 
-
-I am reprinting equations (6.29) and (6.30) from the whitepaper in a slightly different notation to show how tL and tH are related to P0:
+我以略有不同的符号重印了白皮书中的等式 (6.29) 和 (6.30)，以显示 tL , tH 与 P0 的关系：
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/C0FyUmCv62849e86a8e2e.png)
 
-**Token composition of a LP position.** Describes how much of token0 and token1 are in a LP position.
+**一个LP头寸的代币组合**描述了该头寸中有多少token0和token1。
 
-Here, the value of ∆E is determined by the initial amount token0 (denoted by x0) and token1 (denoted by y0) that is locked into the position when it is established:
+这里，ΔE的值由建立头寸时,LP注入头寸的token0（记为x0）和token1（记为y0）的初始数量决定：
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/wfNjHK1B62849e919f29d.png)
 
