@@ -1,8 +1,10 @@
 原文链接：https://lambert-guillaume.medium.com/understanding-the-value-of-uniswap-v3-liquidity-positions-cdaaee127fe7
 
-# Understanding the Value of Uniswap v3 Liquidity Positions
+# 如何理解Uniswap v3 流动性头寸的价值
 
-*See* [*part 1*](https://lambert-guillaume.medium.com/uniswap-v3-lp-tokens-as-perpetual-put-and-call-options-5b66219db827?source=friends_link&sk=43c071fa2796639a60fce6c9abd5aa76) *and* [*part 2*](https://lambert-guillaume.medium.com/synthetic-options-and-short-calls-in-uniswap-v3-a3aea5e4e273?source=friends_link&sk=9fa4cdb12aab88ca9ecdc4d767a4ee1e) *of this series to learn about how Uniswap v3 LP tokens effectively behave like short puts and short calls.*
+*请跳到*此系列文章的[*part 1*](https://lambert-guillaume.medium.com/uniswap-v3-lp-tokens-as-perpetual-put-and-call-options-5b66219db827?source=friends_link&sk=43c071fa2796639a60fce6c9abd5aa76) *和* [*part 2*](https://lambert-guillaume.medium.com/synthetic-options-and-short-calls-in-uniswap-v3-a3aea5e4e273?source=friends_link&sk=9fa4cdb12aab88ca9ecdc4d767a4ee1e) *, 您可以学习到为何Uniswap v3 流动性代币[译者注:即头寸]为何类似于看涨期权空头和看跌期权空头[的组合,译者注]*
+
+
 
 Uniswap has revamped the way liquidity positions are created and managed in version 3 of their protocol. Compared with Uniswap v2, the process to establish a new position is fairly complex. If you’re like me, you may simply click the ***+ New Position\*** button and adjust the range and parameters until you get something that looks good enough. What’s the best way to choose the parameters of a LP position?
 
