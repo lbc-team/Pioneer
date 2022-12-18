@@ -53,6 +53,8 @@ LP头寸的价值将如何受到标的物价格的影响？具体来说，我们
 
 **LP头寸的Delta.** 当标的资产价格变动 1 美元时，LP 头寸的价值会变化多少？
 
+我们看图,并将ΔE的值进行归一化，会容易理解该表达式。由于函数在某个点上的导数就是该点的斜率，所以delta的值就是与价格曲线V(P)相切的直线的斜率：
+
 It is much easier to understand this expression if we look at it graphically and normalize by the value of the position ∆E. Since the derivative of a function is its instantaneous slope, the value of delta is simply the slope of a line that is tangential to the price curve V(P):
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/kCcm5WMh62849ea7c4b2b.png)
