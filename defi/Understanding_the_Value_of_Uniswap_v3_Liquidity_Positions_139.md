@@ -4,19 +4,17 @@
 
 *请跳到*此系列文章的[*part 1*](https://lambert-guillaume.medium.com/uniswap-v3-lp-tokens-as-perpetual-put-and-call-options-5b66219db827?source=friends_link&sk=43c071fa2796639a60fce6c9abd5aa76) *和* [*part 2*](https://lambert-guillaume.medium.com/synthetic-options-and-short-calls-in-uniswap-v3-a3aea5e4e273?source=friends_link&sk=9fa4cdb12aab88ca9ecdc4d767a4ee1e) *, 您可以学习到为何Uniswap v3 流动性代币[译者注:即头寸]为何类似于看涨期权空头和看跌期权空头[的组合,译者注]*
 
-
-
-Uniswap has revamped the way liquidity positions are created and managed in version 3 of their protocol. Compared with Uniswap v2, the process to establish a new position is fairly complex. If you’re like me, you may simply click the ***+ New Position\*** button and adjust the range and parameters until you get something that looks good enough. What’s the best way to choose the parameters of a LP position?
+Uniswap 在第3版协议中,改进了流动性头寸的创建和管理方法。与Uniswap v2相比，v3建立新头寸的过程是相当复杂。如果您像我一样[通过UI操作,译者注]，那么只需单击 ***+ New Position\*** 按钮,并调整范围和参数，直到获得一个看上去不错的头寸。那么选择 LP头寸参数的最佳方法是什么呢？
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/rMq5TjRI62849e8083c93.png)
 
-Looking for guidance in picking a Uniswap v3 liquidity range. Seeking help leads nowhere.
+[如果您试图]寻找一个Uniswap v3 流动性价格范围的选择攻略, 那么结果就是啥都没有。
 
-In this article, we will describe what happens under the hood when a LP position is created. We will also derive a set of simple set of relationships that may help in choosing the optimal range of Uniswap v3 LP positions across many underlyings.
+在本文中，我们将描述当你创建 LP 头寸时,那些隐藏在UI后的代码所做的事。我们还将推导出一组简单的公式，也许可以帮到您在许多底层资产标的中找到一个最佳的价格范围,用以设置Uniswap v3 LP头寸.
 
-## What is the value of a Uniswap v3 LP token?
+## Uniswap v3 LP代币有何价值?
 
-The Uniswap v3 [whitepaper](https://uniswap.org/whitepaper-v3.pdf) describes how much of each asset has to be added when establishing a new position. The number of **token0** and **token1** in a new LP position will depend on the range determined by the lower tick **tL**, the upper tick **tH** and the price at entry **P0**.
+Uniswap v3[白皮书](https://uniswap.org/whitepaper-v3.pdf)中, 描述了LP在建立新头寸时,必须添加的每种代币的数量。在一个新建的LP头寸中 **token0** 和 **token1** 的数量将取决于由代表较低价格端点的tick **tL**、代表较高价格端点的tick **tH** 和建立头寸时的价格 **P0**联合确立的价格范围。
 
 I am reprinting equations (6.29) and (6.30) from the whitepaper in a slightly different notation to show how tL and tH are related to P0:
 
