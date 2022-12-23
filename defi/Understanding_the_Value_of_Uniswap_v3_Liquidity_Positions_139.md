@@ -1,112 +1,119 @@
 原文链接：https://lambert-guillaume.medium.com/understanding-the-value-of-uniswap-v3-liquidity-positions-cdaaee127fe7
 
-# Understanding the Value of Uniswap v3 Liquidity Positions
+# 如何理解Uniswap v3 流动性头寸的价值
 
-*See* [*part 1*](https://lambert-guillaume.medium.com/uniswap-v3-lp-tokens-as-perpetual-put-and-call-options-5b66219db827?source=friends_link&sk=43c071fa2796639a60fce6c9abd5aa76) *and* [*part 2*](https://lambert-guillaume.medium.com/synthetic-options-and-short-calls-in-uniswap-v3-a3aea5e4e273?source=friends_link&sk=9fa4cdb12aab88ca9ecdc4d767a4ee1e) *of this series to learn about how Uniswap v3 LP tokens effectively behave like short puts and short calls.*
+*请跳到*此系列文章的[*part 1*](https://lambert-guillaume.medium.com/uniswap-v3-lp-tokens-as-perpetual-put-and-call-options-5b66219db827?source=friends_link&sk=43c071fa2796639a60fce6c9abd5aa76) *和* [*part 2*](https://lambert-guillaume.medium.com/synthetic-options-and-short-calls-in-uniswap-v3-a3aea5e4e273?source=friends_link&sk=9fa4cdb12aab88ca9ecdc4d767a4ee1e) *, 您可以学习到为何Uniswap v3 流动性代币[译者注:即头寸]为何类似于看涨期权空头和看跌期权空头[的组合,译者注]*
 
-Uniswap has revamped the way liquidity positions are created and managed in version 3 of their protocol. Compared with Uniswap v2, the process to establish a new position is fairly complex. If you’re like me, you may simply click the ***+ New Position\*** button and adjust the range and parameters until you get something that looks good enough. What’s the best way to choose the parameters of a LP position?
+Uniswap 在第3版协议中,改进了流动性头寸的创建和管理方法。与Uniswap v2相比，v3建立新头寸的过程是相当复杂。如果您像我一样[通过UI操作,译者注]，那么只需单击 ***+ New Position\*** 按钮,并调整范围和参数，直到获得一个看上去不错的头寸。那么选择 LP头寸参数的最佳方法是什么呢？
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/rMq5TjRI62849e8083c93.png)
 
-Looking for guidance in picking a Uniswap v3 liquidity range. Seeking help leads nowhere.
+[如果您试图]寻找一个Uniswap v3 流动性价格范围的选择攻略, 那么结果就是啥都没有。
 
-In this article, we will describe what happens under the hood when a LP position is created. We will also derive a set of simple set of relationships that may help in choosing the optimal range of Uniswap v3 LP positions across many underlyings.
+在本文中，我们将描述当你创建 LP 头寸时,那些隐藏在UI后的代码所做的事。我们还将推导出一组简单的公式，也许可以帮到您在许多底层资产标的中找到一个最佳的价格范围,用以设置Uniswap v3 LP头寸.
 
-## What is the value of a Uniswap v3 LP token?
+## Uniswap v3 LP代币有何价值?
 
-The Uniswap v3 [whitepaper](https://uniswap.org/whitepaper-v3.pdf) describes how much of each asset has to be added when establishing a new position. The number of **token0** and **token1** in a new LP position will depend on the range determined by the lower tick **tL**, the upper tick **tH** and the price at entry **P0**.
+Uniswap v3[白皮书](https://uniswap.org/whitepaper-v3.pdf)中, 描述了LP在建立新头寸时,必须添加的每种代币的数量。在一个新建的LP头寸中 **token0** 和 **token1** 的数量将取决于以下三个变量联合确立的价格范围:
 
-I am reprinting equations (6.29) and (6.30) from the whitepaper in a slightly different notation to show how tL and tH are related to P0:
+代表较低价格端点的tick **tL**,
+
+代表较高价格端点的tick **tH**,
+
+建立头寸时的价格 **P0**
+
+我以略有不同的符号重印了白皮书中的等式 (6.29) 和 (6.30)，以显示 tL , tH 与 P0 的关系：
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/C0FyUmCv62849e86a8e2e.png)
 
-**Token composition of a LP position.** Describes how much of token0 and token1 are in a LP position.
+**一个LP头寸的代币组合**描述了该头寸中有多少token0和token1。
 
-Here, the value of ∆E is determined by the initial amount token0 (denoted by x0) and token1 (denoted by y0) that is locked into the position when it is established:
+这里，ΔE的值由建立头寸时,头寸中锁定的token0（记为x0）和token1（记为y0）的初始数量决定：
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/wfNjHK1B62849e919f29d.png)
 
-Once the position is established, we can compute its **Net Liquidity Value** by adding the amount of token1 to the amount of token0 times the price P:
+头寸一旦建立,我们就可以让token1数量加上token0数量乘以价格P,两者之和就是**净头寸价值**
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/oRMiktNw62849e95b2982.png)
 
-If the price is above the upper tick tH, the Net Liq value of the LP token will converge to the geometric mean √(tL*tH). When the price is below the lower tick tL, the value of the LP token will simply be P times the size of the position.
+如果价格高于上限tH，则LP代币的净头寸价值Net Liq将收敛于几何平均值√(tL*tH)。当价格低于下限 tL时，LP代币的净头寸价值就是价格P乘以头寸大小.
 
-When the value is between ticks tL and tH, the expression is a bit more complicated and depends on a function of the square root of the price P. Graphically, here’s what the Net Liq value V(P) looks like:
-
+当值介于 tL 和 tH 之间时，表达式会稍微复杂一些，并将取决于价格P的平方根。从图形上看，净头寸价值Net Liq值V(P)如下图所示：
 ![img](https://img.learnblockchain.cn/attachments/2022/05/lXd6ZcEj62849e9cf0ac2.png)
 
-Changing the range (tL, tH) changes the “sharpness” of the payoff curve V(P). The curve V(P) will converge to the dashed line in the figure above when (tL,tH) is a single tick wide. Again, a 1–tick wide LP position is exactly the return function of a [covered call](https://lambert-guillaume.medium.com/uniswap-v3-lp-tokens-as-perpetual-put-and-call-options-5b66219db827?source=friends_link&sk=43c071fa2796639a60fce6c9abd5aa76) at expiration, without considering the collected fees.
+改变范围(tL, tH),就会改变收益曲线V(P)的“锐度”。当(tL,tH)区间只有一个tick那么大时，V(P)曲线将收敛于上图中的虚线。同样，1个tick大小的LP头寸收益, 恰好等于一个到期时不考虑交易费的[covered call备兑期权]的收益（https://lambert-guillaume.medium.com/uniswap-v3-lp-tokens-as-perpetual-put-and-call-options-5b66219db827?source=friends_link&sk=43c071fa2796639a60fce6c9abd5aa76)
 
-# Computing Delta, the rate of change in Net Liq Value
+# 计算Delta,净头寸价值的变化率
 
-How will the value of a LP position be affected by the price of the underlyings? Specifically, we’d like to know how much would the Net Liq change if the value of token0 changes by $1. This quantity is called “delta” and represents the price sensitivity of an option.
+LP头寸的价值将如何受到标的物价格的影响？具体来说，我们想知道如果token0的值改变1美元，净头寸价值会改变多少。这个改变的值称为“delta”，代表期权的对于标的价格的敏感性。
 
-We can obtain δ(P) by taking the partial derivative of the Net Liq value function V(P) with respect to the price P to get the following expression:
+我们通过求V(p)对价格P的偏导数,得到 变化率δ(P)，表达式如下：
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/o9epzvJU62849ea338dfd.png)
 
-**Delta of a LP position.** How much does the value of a LP position changes when the price of the underlying asset changes by $1?
+**LP头寸的Delta.** 当标的资产价格变动 1 美元时，LP 头寸的价值会变化多少？
 
-It is much easier to understand this expression if we look at it graphically and normalize by the value of the position ∆E. Since the derivative of a function is its instantaneous slope, the value of delta is simply the slope of a line that is tangential to the price curve V(P):
+我们看图,并将ΔE的值进行标准化，会容易理解该表达式。由于函数在某个点上的导数就是该点的斜率，所以delta的值就是与价格曲线V(P)相切的直线的斜率：
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/kCcm5WMh62849ea7c4b2b.png)
 
-**Delta as a slope.** The slope of the red curve represents the value of delta for the normalized LP position 1*sqrtV(P). The slope changes from 100% to 0% as the price changes between the lower tick tL and the upper tick tH. [Download GIF version](https://cdn-images-1.medium.com/max/2400/1JDTDeS1htEIp9kHzyyG-EA.gif).
+**Delta即斜率** 红色曲线的斜率表示标准化了的LP头寸 1*sqrtV(P) 的 delta 值。随着价格在下限 tL 和上限 tH 之间变化，斜率从 100% 变为 0%。 [下载 GIF 版本](https://cdn-images-1.medium.com/max/2400/1JDTDeS1htEIp9kHzyyG-EA.gif)。
 
-What this figure represents is how much the value of a LP token tracks the price of the underlying. Delta goes from 1 to 0 as the price increases, meaning that the value will match the price of the underlying with 100% correlation at low prices and 0% above the upper tick.
+delta代表的是 LP头寸的价值跟随标的物价格的变化幅度。随着标的价格上涨，Delta从1变为0，这意味着当价格较低时,LP的头寸价值将与标的物价格同幅度变化;当高于上限价格时, LP的头寸价值将不再变化(即为0%)。
 
-More concretely, let’s consider a LP position deployed between (2000, 3000) that accrues 30% APR from the collected fees. You can think of delta as the slope of the blue line divided by the slope of the red line. Since the value of δ(P) is always less than or equal to 1, the return of a LP position will also be less than or equal to a holding strategy.
+具体的说，当我们考虑在 (2000, 3000) 之间部署LP头寸，该头寸可以收取交易费用,并实现30%的APR(年化收益率)。您可以将delta视为蓝线的斜率除以红线的斜率。由于 δ(P) 的值总是小于或等于 1，因此 LP头寸的收益也将小于或等于直接持有代币的策略。
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/81xHUvgd62849ead13aef.png)
 
-**Ranged Covered Call.** Return of a LP position defined by an ETH price between 2000 and 3000. The LP position’s value will track the price of ETH below the lower tick tL and will remain unchanged when the price of ETH is above the upper tick 3000. Returns from fees are approximately 8%.
+**范围备兑期权.** 
+LP头寸的收益来自于ETH在2000到3000之间的价格波动。当ETH价格低于下限tL,LP头寸的价值将跟随ETH价格; 当 ETH 的价格高于上限 3000 时,LP头寸价值将保持不变。交易费的收益率大概是8%。
 
-Notice the rather large discrepancy between the ETH price and the LP position when the price is above 3000. The area between the red and blue curve is referred to as the [impermanent loss](https://uniswap.org/docs/v2/advanced-topics/understanding-returns/) (IL). Some will see IL as “missing a great opportunity for profits” and many are extremely worried about it.
+请注意，当价格高于 3000 时，ETH价格与 LP 头寸之间存在相当大的差异。红色和蓝色曲线之间的区域称为[无常损失]（https://uniswap.org/docs/v2/advanced-topics/understanding-returns/) (IL)。有些人会认为 IL表示 “错失了获利的大好机会”，甚至会为此痛心疾首.
 
-Impermanent loss doesn’t worry me at all because I understand that this “missed opportunity” is a *feature* of covered call positions. As I described in a [recent series of tweets](https://twitter.com/guil_lambert/status/1412608674380632067?s=20), while LP positions do suffer from impermanent loss, LP positions actually decreases the volatility of portfolio returns:
+我倒一点也不担心无常损失，因为我知道这种“错失的机会”是备兑期权的*特点*。正如我在[最近的一系列推文](https://twitter.com/guil_lambert/status/1412608674380632067?s=20) 中所述，虽然 LP 头寸确实遭受无常损失，但 LP 头寸实际上降低了投资组合回报的波动性：
 
 链接：https://twitter.com/guil_lambert/status/1412608696778203138?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1412608696778203138%7Ctwgr%5E%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fcdn.embedly.com%2Fwidgets%2Fmedia.html%3Ftype%3Dtext2Fhtmlkey%3Da19fcc184b9711e1b4764040d3dc5c07schema%3Dtwitterurl%3Dhttps3A%2F%2Ftwitter.com%2Fguil_lambert%2Fstatus%2F1412608696778203138image%3Dhttps3A%2F%2Fi.embed.ly%2F1%2Fimage3Furl3Dhttps253A252F252Fabs.twimg.com252Ferrors252Flogo46x38.png26key3Da19fcc184b9711e1b4764040d3dc5c07
 
-# Understanding the impact of Net Delta on returns
+# 理解净Delta收益的影响
 
-Why do we care about delta? Understanding a portfolio’s delta can help manage risks and reduce returns volatility. Hedge funds typically need to compute the delta of their financial instruments to create a portfolio containing many assets structured in way that is [delta neutral](https://en.wikipedia.org/wiki/Delta_neutral) — ie. whose total value will remain constant despite market swings.
+为什么我们关心delta？了解投资组合的 delta 有助于管理风险并降低回报的波动性。对冲基金通常需要计算其金融工具的delta，以创建一个许多资产构成的投资组合,并保持总体上的[delta 中性](https://en.wikipedia.org/wiki/Delta_neutral) ——尽管市场波动，其总价值仍将保持不变。
 
-The short strangle and short straddles I created in my [previous post](https://lambert-guillaume.medium.com/synthetic-options-and-short-calls-in-uniswap-v3-a3aea5e4e273?source=friends_link&sk=9fa4cdb12aab88ca9ecdc4d767a4ee1e) are two examples of strategies that limit exposure to price fluctuations (delta=0). My hope is that these positions will maintain their value by limiting “impermanent loss” and turn in a profit by accumulating fees. (*update: they’re still profitable with 7 days to go until “expiration”!*)
+我在 [上一篇文章](https://lambert-guillaume.medium.com/synthetic-options-and-short-calls-in-uniswap-v3-a3aea5e4e273?source=friends_link&sk=9fa4cdb12aab88ca9ecdc4d767a4ee1e ) 构建了勒式策略和跨式策略. 它们是限制价格波动风险 (delta=0) 的两个例子。我希望这些头寸能够通过限制“无常损失”来保持其价值，并通过累积费用来获利。 （*更新：距离“到期”还有 7 天，他们仍然盈利！*）
 
-Or, it may be beneficial to have a *negative* delta so that the value of a portfolio increases when the price of the underlying decreases. This is true especially when considering a LP position that is established between ETH and another token. Many DeFi tokens have underperformed ETH in the past 6 months even though their value increased when denominated in stablecoin. An investor may wish to hedge against underperforming assets by creating a [short call](https://lambert-guillaume.medium.com/synthetic-options-and-short-calls-in-uniswap-v3-a3aea5e4e273?source=friends_link&sk=9fa4cdb12aab88ca9ecdc4d767a4ee1e) position.
+或者，*负* delta 可能也有收益，这样当标的价格下跌时，投资组合的价值就会增加。当考虑建立ETH 和其他代币之间的LP 头寸时,情况尤其如此。许多 DeFi代币在过去 6 个月中表现不及 ETH，尽管它们的价值在以稳定币计价时有所增加。投资者可能希望通过创建[看涨期权空头]对冲那些表现不佳的代币资产(https://lambert-guillaume.medium.com/synthetic-options-and-short-calls-in-uniswap-v3-a3aea5e4e273?source=friends_link&sk=9fa4cdb12aab88ca9ecdc4d767a4ee1e) 
 
-Therefore, to understand how the value of a portfolio will fare against both upward and downward moves across many assets, we need to know what is the **Net Delta** of a portfolio. We’ll illustrate how to do this with a hypothetical portfolio consisting of 3 LP positions: ETH/Dai, ETH/UNI, and ETH/WBTC. The parameters of each LP position are summarized below.
+
+因此，如果要了解投资组合的总价值如何随着组成资产的上涨和下跌而变化，我们需要知道投资组合的 **净Delta**。我们将通过一个由 3 个 LP 头寸组成的假想投资组合来说明如何做到这一点：这三个头寸分别是ETH/Dai、ETH/UNI 和 ETH/WBTC。每个 LP 头寸的参数如下。
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/Hjb9B5kH62849eb21226f.png)
 
-**LP portfolio.** Details of a portfolio consisting of ETH/Dai, ETH/WBTC and ETH/UNI LP positions. The total value and the delta have been converted into ETH to simplify the net delta calculation.
+**LP组合**由 ETH/Dai、ETH/WBTC 和 ETH/UNI LP 头寸组成的投资组合的详细信息。总价值和delta已转换为ETH, 以简化净delta 计算。
 
-Here, we introduce beta (β), a quantity that tracks the[ correlation](https://en.wikipedia.org/wiki/Beta_(finance)) to a reference asset. Using beta, we can calculate the portfolio’s N**et Delta** according to the delta of each asset weighted by beta (here I express delta in terms of ETH to simplify the calculation):
+在这里，我们引入了 beta (β)，这是一个跟踪参考资产的[相关性](https://en.wikipedia.org/wiki/Beta_(finance)) 的变量。使用 beta，我们可以用beta 加权每个资产的 delta 来计算投资组合的 **净Delta**（这里我用 ETH 表示 delta 以简化计算）：
+
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/Z0eLsJJH62849eb75b343.png)
 
-Using the information from the table above, we get that the net delta of our portfolio is 1.126. This means that the value of our portfolio — which contains a rather complex mix of ETH, Uni, and WBTC LP positions — will change by $1.126 for every $1 change in the value of ETH.
+使用上表中的信息，可以得到我们的投资组合的净delta为 1.126。这意味着ETH价格每变化 1 美元，我们的组合(包含相当复杂的 ETH、Uni 和 WBTC LP 头寸)就会变化 1.126 美元。
 
-One way to look at it is that while combined Net Liq value of the portfolio is 2.69 ETH, the relative change in expected returns following the change in the price of ETH will only be equivalent to a holding with 1.126 ETH, about 60% smaller. While this means smaller returns, it also means lower portfolio volatility.
+整个投资组合的净头寸价值为 2.69 ETH，但 ETH 价格变化后,预期收益的变化等同于持有 1.126 ETH的收益变化. 与2.69相比,减少了约60%。虽然意味着较小的回报，但也意味着较低的投资组合波动性。
 
-Another way to use the net delta of a portfolio would be to use it to determine the size of a short position that would neutralize delta and bring it to zero to hedge against small changes in ETH price and help maintain portfolio value. Here’s what the P/L of the position above would look like for different amounts of shorted ETH.
+投资组合的净delta的另一种用法,是确定空头头寸的规模. 空头头寸将抵消这些delta, 以对冲 ETH 价格的小幅变化并帮助维持投资组合价值。对于不同数量的ETH空头，上述头寸的盈亏如下所示。
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/BKuePlOq62849ec3c54a1.png)
 
-**Net delta of a ETH/Dai, ETH/WBTC, and ETH/UNI portfolio.** The beta-weighted expected return of the portfolio will change according to the amount of ETH shorted to balancer the delta of the position. Tuning the amount of shorted ETH shifts the position’s break-even points. We assumed an initial 100 Dai in fees were collected to compute the beta-weighted P/L for this position. [Download GIF version.](https://cdn-images-1.medium.com/max/2400/1*X6f_q944yYMqqVlfGgQCLA.gif)
 
-# Future work
+**ETH/Dai、ETH/WBTC 和 ETH/UNI 投资组合的净delta**投资组合的beta加权预期收益,会根据做空的 ETH 数量而变化，目的是平衡组合头寸的增量。调整做空ETH的数量,也会改变头寸的盈亏平衡点。我们假设最初收取 100 Dai 的费用来,计算该头寸的 beta 加权损益。 [下载 GIF 版本。](https://cdn-images-1.medium.com/max/2400/1*X6f_q944yYMqqVlfGgQCLA.gif)
 
-In this post, we derived an expression for the total value of a Uniswap v3 LP position. We found that the price sensitivity of a Uniswap v3 LP option can help understand future returns, and we described a procedure for calculating the delta of a portfolio composed of many Uniswap v3 LP pairs.
+# 未来的工作
 
-The discussion above may have been familiar for those that know about the Black-Scholes model and “the Greeks” for options derivatives. Beyond delta, other relevant quantities to consider are gamma = dδ/dS, theta=dV/dt, and vega=dV/dσ.
+在这篇文章中，我们推导出了 Uniswap v3 LP 头寸总价值的表达式。我们探讨了Uniswap v3 LP 期权的价格敏感性, 这将有助于理解未来的收益. 并且,我们描述了如何计算多个 Uniswap v3 LP头寸组合的净delta。
 
-Each has their role to play in determining the returns of a portfolio, and we will expand the use of these parameters in the next post to derive the expected return on investment for Uniswap v3 options using “Black-Scholes”-like pricing models based on Geometric Brownian Motion.
+对于那些了解 Black-Scholes 模型和期权衍生品“希腊字母”的人来说，上面的讨论可能非常熟悉。除了 delta 之外，其他需要考虑的相关量是 gamma = dδ/dS、theta=dV/dt 和 vega=dV/dσ。
 
-Stay tuned!
+每个人在确定投资组合的收益方面都有自己的思虑，我们将在下一篇文章中扩展这些参数的使用，,以基于几何布朗运动模型的“Black-Scholes”的定价模型推导出 Uniswap v3 期权的预期投资收益。
 
-*If you’re interested in these ideas and would like to contribute to the development of a UI interface for trading Uni v3 options, please DM me on twitter @guil_lambert or send an email to guil.lambert @ protonmail.com*
+请继续关注我!
 
-
+*如果您对这些想法感兴趣并想为交易 Uni v3 期权的 UI 界面的开发做出贡献，请在推特上私信我 @guil_lambert 或发送电子邮件至 guil.lambert @protonmail.com*
 
