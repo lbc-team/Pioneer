@@ -1,10 +1,16 @@
-https://dev.to/ltmenezes/automated-dapps-scrapping-with-selenium-and-metamask-2ae9
+> * 原文：https://dev.to/ltmenezes/automated-dapps-scrapping-with-selenium-and-metamask-2ae9 作者：Leonardo Teixeira Menezes
+> * 译文出自：[登链翻译计划](https://github.com/lbc-team/Pioneer)
+> * 译者：[翻译小组](https://learnblockchain.cn/people/1381)
+> * 校对：[Tiny 熊](https://learnblockchain.cn/people/15)
+> * 本文永久链接：[learnblockchain.cn/article…](https://learnblockchain.cn/article/3277)
 
-作者：[Leonardo Teixeira Menezes](https://dev.to/ltmenezes)
 
 
 
-# Automated Dapps Scrapping with Selenium and Metamask
+
+# 使用Selenium和Metamask 与 Dapps 自动化交互
+
+
 
 
 

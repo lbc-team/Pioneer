@@ -1,10 +1,15 @@
-原文链接：https://lambert-guillaume.medium.com/understanding-the-value-of-uniswap-v3-liquidity-positions-cdaaee127fe7
+> - 原文链接：https://lambert-guillaume.medium.com/understanding-the-value-of-uniswap-v3-liquidity-positions-cdaaee127fe7
+> - 译文出自：[登链翻译计划](https://github.com/lbc-team/Pioneer)
+> - 译者：[songmint](https://learnblockchain.cn/people/13263) 校对：[Tiny 熊](https://learnblockchain.cn/people/15)
+> - 本文永久链接：[learnblockchain.cn/article…](https://learnblockchain.cn/article/5202)
+
+
 
 # 如何理解Uniswap v3 流动性头寸的价值
 
 *请跳到*此系列文章的[*part 1*](https://lambert-guillaume.medium.com/uniswap-v3-lp-tokens-as-perpetual-put-and-call-options-5b66219db827?source=friends_link&sk=43c071fa2796639a60fce6c9abd5aa76) *和* [*part 2*](https://lambert-guillaume.medium.com/synthetic-options-and-short-calls-in-uniswap-v3-a3aea5e4e273?source=friends_link&sk=9fa4cdb12aab88ca9ecdc4d767a4ee1e) *, 您可以学习到为何Uniswap v3 流动性代币[译者注:即头寸]为何类似于看涨期权空头和看跌期权空头[的组合,译者注]*
 
-Uniswap 在第3版协议中,改进了流动性头寸的创建和管理方法。与Uniswap v2相比，v3建立新头寸的过程是相当复杂。如果您像我一样[通过UI操作,译者注]，那么只需单击 ***+ New Position\*** 按钮,并调整范围和参数，直到获得一个看上去不错的头寸。那么选择 LP头寸参数的最佳方法是什么呢？
+Uniswap 在第3版协议中,改进了流动性头寸的创建和管理方法。与Uniswap v2相比，v3建立新头寸的过程是相当复杂。如果您像我一样[通过UI操作,译者注]，那么只需单击 **+ New Position ** 按钮,并调整范围和参数，直到获得一个看上去不错的头寸。那么选择 LP头寸参数的最佳方法是什么呢？
 
 ![img](https://img.learnblockchain.cn/attachments/2022/05/rMq5TjRI62849e8083c93.png)
 
@@ -41,9 +46,9 @@ Uniswap v3[白皮书](https://uniswap.org/whitepaper-v3.pdf)中, 描述了LP在�
 当值介于 tL 和 tH 之间时，表达式会稍微复杂一些，并将取决于价格P的平方根。从图形上看，净头寸价值Net Liq值V(P)如下图所示：
 ![img](https://img.learnblockchain.cn/attachments/2022/05/lXd6ZcEj62849e9cf0ac2.png)
 
-改变范围(tL, tH),就会改变收益曲线V(P)的“锐度”。当(tL,tH)区间只有一个tick那么大时，V(P)曲线将收敛于上图中的虚线。同样，1个tick大小的LP头寸收益, 恰好等于一个到期时不考虑交易费的[covered call备兑期权]的收益（https://lambert-guillaume.medium.com/uniswap-v3-lp-tokens-as-perpetual-put-and-call-options-5b66219db827?source=friends_link&sk=43c071fa2796639a60fce6c9abd5aa76)
+改变范围(tL, tH),就会改变收益曲线V(P)的“锐度”。当(tL,tH)区间只有一个tick那么大时，V(P)曲线将收敛于上图中的虚线。同样，1个tick大小的LP头寸收益, 恰好等于一个到期时不考虑交易费的[covered call备兑期权](https://lambert-guillaume.medium.com/uniswap-v3-lp-tokens-as-perpetual-put-and-call-options-5b66219db827?source=friends_link&sk=43c071fa2796639a60fce6c9abd5aa76) 的收益
 
-# 计算Delta,净头寸价值的变化率
+## 计算Delta,净头寸价值的变化率
 
 LP头寸的价值将如何受到标的物价格的影响？具体来说，我们想知道如果token0的值改变1美元，净头寸价值会改变多少。这个改变的值称为“delta”，代表期权的对于标的价格的敏感性。
 
@@ -68,19 +73,21 @@ delta代表的是 LP头寸的价值跟随标的物价格的变化幅度。随着
 **范围备兑期权.** 
 LP头寸的收益来自于ETH在2000到3000之间的价格波动。当ETH价格低于下限tL,LP头寸的价值将跟随ETH价格; 当 ETH 的价格高于上限 3000 时,LP头寸价值将保持不变。交易费的收益率大概是8%。
 
-请注意，当价格高于 3000 时，ETH价格与 LP 头寸之间存在相当大的差异。红色和蓝色曲线之间的区域称为[无常损失]（https://uniswap.org/docs/v2/advanced-topics/understanding-returns/) (IL)。有些人会认为 IL表示 “错失了获利的大好机会”，甚至会为此痛心疾首.
+请注意，当价格高于 3000 时，ETH价格与 LP 头寸之间存在相当大的差异。红色和蓝色曲线之间的区域称为[无常损失](https://uniswap.org/docs/v2/advanced-topics/understanding-returns/) (IL)。有些人会认为 IL表示 “错失了获利的大好机会”，甚至会为此痛心疾首.
 
 我倒一点也不担心无常损失，因为我知道这种“错失的机会”是备兑期权的*特点*。正如我在[最近的一系列推文](https://twitter.com/guil_lambert/status/1412608674380632067?s=20) 中所述，虽然 LP 头寸确实遭受无常损失，但 LP 头寸实际上降低了投资组合回报的波动性：
 
-链接：https://twitter.com/guil_lambert/status/1412608696778203138?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1412608696778203138%7Ctwgr%5E%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fcdn.embedly.com%2Fwidgets%2Fmedia.html%3Ftype%3Dtext2Fhtmlkey%3Da19fcc184b9711e1b4764040d3dc5c07schema%3Dtwitterurl%3Dhttps3A%2F%2Ftwitter.com%2Fguil_lambert%2Fstatus%2F1412608696778203138image%3Dhttps3A%2F%2Fi.embed.ly%2F1%2Fimage3Furl3Dhttps253A252F252Fabs.twimg.com252Ferrors252Flogo46x38.png26key3Da19fcc184b9711e1b4764040d3dc5c07
+链接：https://twitter.com/guil_lambert/status/1412608696778203138
 
-# 理解净Delta收益的影响
+![image-20221223145035610](https://img.learnblockchain.cn/pics/20221223145036.png)
+
+## 理解净Delta收益的影响
 
 为什么我们关心delta？了解投资组合的 delta 有助于管理风险并降低回报的波动性。对冲基金通常需要计算其金融工具的delta，以创建一个许多资产构成的投资组合,并保持总体上的[delta 中性](https://en.wikipedia.org/wiki/Delta_neutral) ——尽管市场波动，其总价值仍将保持不变。
 
 我在 [上一篇文章](https://lambert-guillaume.medium.com/synthetic-options-and-short-calls-in-uniswap-v3-a3aea5e4e273?source=friends_link&sk=9fa4cdb12aab88ca9ecdc4d767a4ee1e ) 构建了勒式策略和跨式策略. 它们是限制价格波动风险 (delta=0) 的两个例子。我希望这些头寸能够通过限制“无常损失”来保持其价值，并通过累积费用来获利。 （*更新：距离“到期”还有 7 天，他们仍然盈利！*）
 
-或者，*负* delta 可能也有收益，这样当标的价格下跌时，投资组合的价值就会增加。当考虑建立ETH 和其他代币之间的LP 头寸时,情况尤其如此。许多 DeFi代币在过去 6 个月中表现不及 ETH，尽管它们的价值在以稳定币计价时有所增加。投资者可能希望通过创建[看涨期权空头]对冲那些表现不佳的代币资产(https://lambert-guillaume.medium.com/synthetic-options-and-short-calls-in-uniswap-v3-a3aea5e4e273?source=friends_link&sk=9fa4cdb12aab88ca9ecdc4d767a4ee1e) 
+或者，*负* delta 可能也有收益，这样当标的价格下跌时，投资组合的价值就会增加。当考虑建立ETH 和其他代币之间的LP 头寸时,情况尤其如此。许多 DeFi代币在过去 6 个月中表现不及 ETH，尽管它们的价值在以稳定币计价时有所增加。投资者可能希望通过创建[看涨期权空头](https://lambert-guillaume.medium.com/synthetic-options-and-short-calls-in-uniswap-v3-a3aea5e4e273)  对冲那些表现不佳的代币资产
 
 
 因此，如果要了解投资组合的总价值如何随着组成资产的上涨和下跌而变化，我们需要知道投资组合的 **净Delta**。我们将通过一个由 3 个 LP 头寸组成的假想投资组合来说明如何做到这一点：这三个头寸分别是ETH/Dai、ETH/UNI 和 ETH/WBTC。每个 LP 头寸的参数如下。
@@ -100,12 +107,13 @@ LP头寸的收益来自于ETH在2000到3000之间的价格波动。当ETH价格�
 
 投资组合的净delta的另一种用法,是确定空头头寸的规模. 空头头寸将抵消这些delta, 以对冲 ETH 价格的小幅变化并帮助维持投资组合价值。对于不同数量的ETH空头，上述头寸的盈亏如下所示。
 
-![img](https://img.learnblockchain.cn/attachments/2022/05/BKuePlOq62849ec3c54a1.png)
+![img](https://img.learnblockchain.cn/pics/20221223144832.png)
 
+**ETH/Dai、ETH/WBTC 和 ETH/UNI 投资组合的净delta**投资组合的beta加权预期收益,会根据做空的 ETH 数量而变化，目的是平衡组合头寸的增量。调整做空ETH的数量,也会改变头寸的盈亏平衡点。我们假设最初收取 100 Dai 的费用来,计算该头寸的 beta 加权损益。Gif 演示：
 
-**ETH/Dai、ETH/WBTC 和 ETH/UNI 投资组合的净delta**投资组合的beta加权预期收益,会根据做空的 ETH 数量而变化，目的是平衡组合头寸的增量。调整做空ETH的数量,也会改变头寸的盈亏平衡点。我们假设最初收取 100 Dai 的费用来,计算该头寸的 beta 加权损益。 [下载 GIF 版本。](https://cdn-images-1.medium.com/max/2400/1*X6f_q944yYMqqVlfGgQCLA.gif)
+![ GIF 版本](https://img.learnblockchain.cn/pics/20221223145409.gif)
 
-# 未来的工作
+## 未来的工作
 
 在这篇文章中，我们推导出了 Uniswap v3 LP 头寸总价值的表达式。我们探讨了Uniswap v3 LP 期权的价格敏感性, 这将有助于理解未来的收益. 并且,我们描述了如何计算多个 Uniswap v3 LP头寸组合的净delta。
 
