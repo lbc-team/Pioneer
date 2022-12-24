@@ -5,14 +5,14 @@
 [Uniswap V2 发布了许多新特性](https://uniswap.org/blog/launch-uniswap-v2/), 包括:
 
 - 代币：代币流动性对（不再需要ETH/DAI和ETH/MKR这种方式接力， Uniswap V2可以原生支持 MKR/DAI了）
-- Built-in multi-hop routing (ETH->DAI->MKR->USDT, if that’s the price for ETH->USDT)
 - 内建对多跳兑换路由的支持（例如可以通过 ETH->DAI->MKR->USDT, 获取ETH->USDT的价格）
 - 兼容ERC777
-- **Price Accumulation Oracle**
+- **价格累积预言机**
 
-In this article, we are going to discuss this “Price Accumulation Oracle”, how it works, how it can be used, and introduce a Solidity library that can be used to integrate this Oracle into your own Ethereum project. This article will assume a deep understanding of constant product markets, such as Uniswap. If the pricing mechanisms discussed below are unclear, start with [the [excellent\] Uniswap docs](https://uniswap.org/docs/v2/#how-it-all-works).
+在本文中，我们将讨论“价格累积预言机”的工作原理和使用方法。 并且我们将介绍一个可将预言机集成到你自己以太坊项目中的Solidity库。本文将假设你对Uniswap此类恒定乘积市场有深入的了解。如果你不清楚下面即将讨论的定价机制，请从这篇[[优秀\]的Uniswap 文档](https://uniswap.org/docs/v2/#how-it-all-works)开始。
 
-*If you already know exactly where this article is heading, code samples and a solidity library are available here:* [*https://github.com/Keydonix/uniswap-oracle*](https://github.com/Keydonix/uniswap-oracle)*. If you’d like to learn more, read on!*
+*如果您已经了解本文的主旨所在，可以在此处获得代码示例和solidity库：* [*https://github.com/Keydonix/uniswap-oracle*](https://github.com/Keydonix/uniswap-orcale)
+*如果您想了解更多信息，请继续阅读！*
 
 While we normally consider an oracle to be a system which feeds off-chain information into the blockchain via transactions from trusted/bonded parties (e.g. Maker Price Feed, ChainLink), the Uniswap V2 oracle does not require any specific interaction to provide this data. Instead, every swap transaction contributes information to this oracle.
 
