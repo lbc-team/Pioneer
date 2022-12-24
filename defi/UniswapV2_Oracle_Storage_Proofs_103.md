@@ -1,12 +1,13 @@
 原文链接：https://medium.com/@epheph/using-uniswap-v2-oracle-with-storage-proofs-3530e699e1d3
 
-# Using Uniswap V2 Oracle With Storage Proofs
+# 使用带有存储证明的Uniswap V2 预言机
 
-[Uniswap V2 released with many new features](https://uniswap.org/blog/launch-uniswap-v2/), including:
+[Uniswap V2 发布了许多新特性](https://uniswap.org/blog/launch-uniswap-v2/), 包括:
 
-- Token:Token liquidity pairs (instead of ETH/DAI and ETH/MKR, Uniswap V2 now supports MKR/DAI natively)
+- 代币：代币流动性对（不再需要ETH/DAI和ETH/MKR这种方式接力， Uniswap V2可以原生支持 MKR/DAI了）
 - Built-in multi-hop routing (ETH->DAI->MKR->USDT, if that’s the price for ETH->USDT)
-- ERC777 compatibility
+- 内建对多跳兑换路由的支持（例如可以通过 ETH->DAI->MKR->USDT, 获取ETH->USDT的价格）
+- 兼容ERC777
 - **Price Accumulation Oracle**
 
 In this article, we are going to discuss this “Price Accumulation Oracle”, how it works, how it can be used, and introduce a Solidity library that can be used to integrate this Oracle into your own Ethereum project. This article will assume a deep understanding of constant product markets, such as Uniswap. If the pricing mechanisms discussed below are unclear, start with [the [excellent\] Uniswap docs](https://uniswap.org/docs/v2/#how-it-all-works).
