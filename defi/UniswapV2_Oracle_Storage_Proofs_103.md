@@ -16,19 +16,20 @@
 
 我们通常认为, 预言机可以看做一个(译者注:信息转移系统), 它从可信的/被绑定的市场参与者(例如Maker Price Feed、ChainLink）的多笔交易中获取链下信息, 然后将这些信息公布到区块链上. 但是Uniswap V2预言机提供这些有用的信息时, 不需要任何特定的(译者注:和可信外部参与者的)交易。相反，每个(译者注:uniswap上的)兑换交易都会为这个预言机贡献信息。
 
-To illustrate the problem Uniswap V2 has solved with this new Oracle functionality, let’s first explore the problem with Uniswap V1.
-
-为了说明带有新预言机的Uniswap V2解决了什么问题，我们首先看看Uniswap V1 的问题所在
+为了说明带有新预言机的Uniswap V2解决了什么问题，我们首先看看Uniswap V1 的问题所在.
 
 ![img](https://img.learnblockchain.cn/attachments/2022/06/7opSP92C62b3d943b5411.jpeg)
 
-# Don’t Use Uniswap V1 as an Oracle.
+#  别把Uniswap V1用作预言机
 
-The Uniswap team has never promoted Uniswap V1 as a viable on-chain Oracle. It is only due to Uniswap’s simple, permissionless, on-chain, market-oriented functionality that creative minds are enticed into using it as one. The Siren’s song of the Uniswap V1 oracle is simply:
+Uniswap团队从未将 Uniswap V1 宣传为可行的链上预言机。正是由于 Uniswap 简单、无需许可、链上且面向市场的功能，才吸引了富有创造力的人将其作为一个整体使用。 Uniswap V1 预言机的代码很简单:
 
 ```
 uint256 tokenPrice = token.balanceOf(uniswapMarket) / address(uniswapMarket).balance
 ```
+
+由于 Uniswap V1 市场的当前“价格”只是代币余额和以太币余额的比率，因此计算这些项目非常简单高效。然而，问题在于它非常不安全。已经有了许多与使用 Uniswap V1 作为预言机导致的相关攻击，但最引人注目的攻击可能是 [bZx/Fulcrum/Compound 攻击，该攻击在 24 小时内净赚了近 100 万美元。](https://cointelegraph.com /news/are-the-bzx-flash-loan-attacks-signaling-the-end-of-defi）
+
 
 As the current “price” of a Uniswap V1 market is simply the ratio of token and ether balances, calculating these items is incredibly gas efficient and straight-forward. The problem, however, is that it is incredibly insecure. There are numerous attacks related to projects using Uniswap V1 as an Oracle, but perhaps the highest profile attack is the [bZx/Fulcrum/Compound attack which, over 24 hours, netted nearly $1M USD.](https://cointelegraph.com/news/are-the-bzx-flash-loan-attacks-signaling-the-end-of-defi)
 
