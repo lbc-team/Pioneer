@@ -114,16 +114,13 @@ contract UniswapV2Pair {
 以太坊合约的状态被存储在“Merkle Trie”中. 这是一种特殊的数据结构，允许一个32字节哈希值代表每个以太坊合约中存储的值（交易数据和接受方会单独分开）。这个 32 字节的值被称为为“stateRoot”，是每个以太坊区块都会包含的属性（还有你可能更熟悉的那些，比如区块号、区块哈希和时间戳）
 
 
-(Note:以太坊使用一种被称为[“Merkle Patricia Trie” 的变量, 你可以阅读之后的文章](https://medium.com/codechain/modified-merkle-patricia-trie-how-ethereum-saves-a-state-e6d7555078dd)).
+(Note:以太坊使用一种被称为[“Merkle Patricia Trie” 的变量, 点击链接你可以了解更多](https://medium.com/codechain/modified-merkle-patricia-trie-how-ethereum-saves-a-state-e6d7555078dd)).
 
 使用以太坊节点的JSON-RPC 接口，您可以调用 `eth_getProof` 来检索有效负载，当结合此 `stateRoot` 值时，可以证明位于存储槽B的地址A的值是C。
 使用链上逻辑，可以结合 stateRoot 和存储证明来验证存储槽的值。如果我们以 Uniswap V2 市场和 `price0CumulativeLast` 的存储槽为目标，我们就可以实现基于证明的历史查找。
 
-但是，“stateRoot”的查找操作并没有EVM 操作码；唯一相关的操作码是“BLOCKHASH”，它接受一个块号并返回 32 字节的块哈希。区块的区块哈希是其所有各种属性的简单 Keccak256 哈希，[rlp-encoded](https://eth.wiki/en/fundamentals/rlp)。通过提供区块的所有属性，包括“stateRoot”，我们可以通过散列和与链上 blockHash 查找进行比较来验证原始区块数据是否有效。一旦验证通过，我们就可以使用块所需的属性（时间戳和 `stateRoot`）。
+但是，“stateRoot”的查找操作并没有EVM 操作码；唯一相关的操作码是“BLOCKHASH”，它接受一个块号并返回 32 字节的块哈希值。一个区块的块哈希值是其所有属性的 Keccak256 哈希值，[rlp-encoded](https://eth.wiki/en/fundamentals/rlp)。通过提供区块的所有属性，包括“stateRoot”，我们先hash, 然后与链上 blockHash 查找进行比较来验证原始区块数据是否有效。一旦验证通过，我们就可以使用块所需的属性（时间戳和 `stateRoot`）。
 
-Using on-chain logic, it is possible to combine a stateRoot and storage proof to verify a storage slot’s value. If we target a Uniswap V2 Market and the storage slot for `price0CumulativeLast`, we can achieve the proof-based historic lookups we need.
-
-However, `stateRoot` lookup is NOT available as an EVM opcode; the only relevant opcode is `BLOCKHASH`, which takes a blockNumber and returns the 32-byte block hash. The blockhash of a block is a simple Keccak256 hash of all of its various attributes, [rlp-encoded](https://eth.wiki/en/fundamentals/rlp). By providing ALL attributes of a block, including `stateRoot`, we can verify that the raw block data is valid, by hashing and comparing to the on-chain blockHash lookup. Once verified, we can then use the required attributes of the block (timestamp & `stateRoot`).
 
 ```
 // NOTE: Non-functional pseudo code
@@ -133,6 +130,11 @@ function verifyBlock(parentBlock, stateRoot, blockNumber, timestamp, ...) return
   return _proposedBlockHash == _realBlockHash;
 }
 ```
+
+1. 像上面的函数可以验证一个完整块的详细信息,并确认该块的所有字段都是正确的
+2. 使用 `stateRoot`（已在上面验证）提供的证明（来自 JSON-RPC `getProof` 调用）,以从该块中检索历史存储值
+3. 从 Uniswap 市场获取当前的 `price0CumulativeLast` 值
+4. 通过将 `price0CumulativeLast` 的增加除以自验证时间戳以来的秒数，计算提供的块（来自验证时间戳）与现在之间的平均价格。
 
 1. A function like the one above can verify a full-block’s details and confirm all fields are correct for that block
 2. Using the `stateRoot` (verified above) parse the provided proof (from a JSON-RPC `getProof` call) to retrieve the historic storage values from that block
