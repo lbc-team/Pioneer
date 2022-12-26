@@ -74,6 +74,7 @@ contract UniswapV2Pair {
 
 - `price0CumulativeLast` is “the price of `token0` denominated in `token1`”
 - `price1CumulativeLast` is “the price of `token1` denominated in `token0`”
+```
 
 *由于执行加法时的数学运算方法，* `price0CumulativeLast` * 不是 * `price1CumulativeLast`* 的倒数。对于本文档的其余部分，我们将仅参考* `price0CumulativeLast`*，但同样适用于这两个值。此外，* `price0CumulativeLast` *不一定在每个区块上都是最新的，因此您要么需要* [*在市场上运行 sync()*](https://github.com/Uniswap/uniswap-v2-core/blob/4dd59067c76dea4a0e8e4bfdda41877a6b16dedc/contracts/UniswapV2Pair.sol#L198-L200)*，或* [*自己调整值*](https://github.com/Keydonix/uniswap-oracle/blob/1c739f0ea575b15c1a52b15c1a525/contracts/source/UniswapOracle.sol#L84-L92)*.*
 
