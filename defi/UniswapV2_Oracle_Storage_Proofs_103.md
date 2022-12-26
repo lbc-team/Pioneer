@@ -141,6 +141,10 @@ function verifyBlock(parentBlock, stateRoot, blockNumber, timestamp, ...) return
 3. Fetch the current `price0CumulativeLast` value from Uniswap market
 4. Calculate average price between the provided block (from verified timestamp) and right now by dividing the increase in `price0CumulativeLast` by the number of seconds since the verified timestamp.
 
+在这一点上，您的记忆中的价格是某个可配置时间段内的平均价格，来自完全基于市场动态的完全去中心化系统。为了操纵这种喂价，攻击者不仅需要将价格推向一个方向，他们还需要在区块之间长时间保持价格，让任何买家都有机会购买价格过低的资产，这将反过来纠正喂价。
+
+注意：链上 `BLOCKHASH` 查找仅适用于过去的 256 个区块，您可以用于存储证明的最旧区块必须在 **在交易登陆** 链上时的最后 256 个区块内。
+
 At this point, you have your price in memory, an average over some configurable period of time, from a fully decentralized system based purely on market dynamics. For this price feed to be manipulated, the attacker would not only need to push this price in one direction, they would need to keep it there for long periods of time, between blocks, giving any buyer the chance to buy under-priced assets, which would in turn correct the price feed.
 
 Note: on-chain `BLOCKHASH` lookups only work for the past 256 blocks, the oldest block you can use for your storage proof must be **within the last 256 blocks at the time the transaction lands** on chain.
@@ -172,4 +176,4 @@ The Uniswap-Oracle library is **unaudited**. Any application that is responsible
 
 Stop by the [Keydonix Discord](https://discord.gg/VybAU4) to ask questions and get help with integration and [follow us on Twitter](https://twitter.com/keydonix) for updates and new projects!
 
-Thanks to Micah Zoltu
+感谢 Micah Zoltu
