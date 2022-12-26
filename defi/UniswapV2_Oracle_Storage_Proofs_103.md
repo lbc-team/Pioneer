@@ -28,24 +28,24 @@ Uniswap团队从未将 Uniswap V1 宣传为可行的链上预言机。正是由�
 uint256 tokenPrice = token.balanceOf(uniswapMarket) / address(uniswapMarket).balance
 ```
 
-由于 Uniswap V1 市场的当前“价格”只是代币余额和以太币余额的比率，因此计算这些项目非常简单高效。然而，问题在于它非常不安全。已经有了许多与使用 Uniswap V1 作为预言机导致的相关攻击，但最引人注目的攻击可能是 [bZx/Fulcrum/Compound 攻击，该攻击在 24 小时内净赚了近 100 万美元。](https://cointelegraph.com /news/are-the-bzx-flash-loan-attacks-signaling-the-end-of-defi）
+由于 Uniswap V1 市场的当前“价格”只是代币余额和以太币余额的比率，因此计算简单且节省燃料。然而，问题在于它非常地不安全。事实已经有许多因使用 Uniswap V1 作为预言机而导致的相关攻击，但最引人注目的攻击可能是 [bZx/Fulcrum/Compound 攻击，该攻击在 24 小时内净赚了近 100 万美元。](https://cointelegraph.com/news/are-the-bzx-flash-loan-attacks-signaling-the-end-of-defi）
 
-
-As the current “price” of a Uniswap V1 market is simply the ratio of token and ether balances, calculating these items is incredibly gas efficient and straight-forward. The problem, however, is that it is incredibly insecure. There are numerous attacks related to projects using Uniswap V1 as an Oracle, but perhaps the highest profile attack is the [bZx/Fulcrum/Compound attack which, over 24 hours, netted nearly $1M USD.](https://cointelegraph.com/news/are-the-bzx-flash-loan-attacks-signaling-the-end-of-defi)
-
-The problem with Uniswap V1 is that the price feed is instantaneous, and is *easily manipulated over small periods of time, including instantaneously*. Let’s look at the following psuedo-code example:
+Uniswap V1 的问题在于,其价格流是瞬间的，并且*很容易在短时间内(包括瞬间)被操纵*。让我们看看下面的伪代码示例：
 
 ```
-// send 100 ether and receive some number of tokens
-uniswapMarket.ethToTokenSwapInput.value(100 ether)(100 ether);exploitTarget.doSomethingThatUsesUniswapV1AsOracle();// send all the tokens we received above back
+//  发送100个 ether, 接受一些token
+uniswapMarket.ethToTokenSwapInput.value(100 ether)(100 ether);exploitTarget.doSomethingThatUsesUniswapV1AsOracle();
+
+// 返还上一步我们接收到的token
 uniswapMarket.tokenToEthSwapInput(token.balanceOf(address(this));
 ```
 
-In the attack above, you will pay a very small fee in ether, about 0.6 ETH, to the liquidity providers (0.3% both ways). However, when calling the `exploitTarget`, it will perceive the token as significantly more valuable than it actually is. If the `exploitTarget` was using the Uniswap V1 oracle to ensure the collateral you deposited was worth enough to withdraw some other token, that system would let you withdraw significantly more loaned tokens than your deposit warrants.
+在上述攻击中，你将向流动性提供者支付非常小的以太币费用，大约 0.6 ETH（双向 0.3%）。然而，当调用 exploitTarget 时，它会认为代币比实际更有价值。如果 exploitTarget 使用 Uniswap V1预言机 来确保你存入的抵押品的价值足以提取其他一些代币，那么该系统将允许你提取比存款凭证多得多的借出代币。
 
-# How Uniswap V2 Acts Like an Oracle
+# Uniswap V2 如何扮演预言机
 
-In the above example, Uniswap V1 price reads were problematic because they were instantaneous. V2 was deployed with a clever system for keeping price-time data recorded on-chain in a way that is expensive to manipulate over small periods of time, and *impossible to manipulate within a single transaction*. Through the use of “cumulative” price-time values, how long a price is available is weighted into a special value, with every token swap spending a small amount of gas to keep these values in sync.
+
+在上面的例子中，Uniswap V1 读取的价格瞬间就会发生变化, 因此存在问题。 V2部署了一个聪明的(译者注:预言机)系统，它把价格-时间数据流记录在链上. 因而(译者注:攻击者)在短时间内操纵价格的成本很高，而且*不可能在单个交易中进行价格操纵*。通过使用“累积”的价格-时间值，价格的可用时间被加权到一个特殊的值中，每次代币交换都会花费少量燃料来同步这些值。
 
 Here is a snippet from the Uniswap market code:
 
