@@ -47,9 +47,9 @@ uniswapMarket.tokenToEthSwapInput(token.balanceOf(address(this));
 
 在上面的例子中，Uniswap V1 读取的价格瞬间就会发生变化, 因此存在问题。 V2部署了一个聪明的(译者注:预言机)系统，它把价格-时间数据流记录在链上. 因而(译者注:攻击者)在短时间内操纵价格的成本很高，而且*不可能在单个交易中进行价格操纵*。通过使用“累积”的价格-时间值，价格的可用时间被加权到一个特殊的值中，每次代币交换都会花费少量燃料来同步这些值。
 
-Here is a snippet from the Uniswap market code:
+这是 Uniswap market代码的一个片段：
 
-*Note: Unlike V1, V2 is a market between two tokens. Internally, one of these tokens needs to be represented as* `token0` *and the other* `token1`*. Their balances are tracked by the corresponding* `reserve0` *and* `reserve1`*.* [*Uniswap Docs have more info about token-ordering*](https://uniswap.org/docs/v2/technical-considerations/pair-addresses/)*.*
+*注意：与 V1 不同，V2是两个代币之间的市场。在内部，一对代币中的两个代币被分别表示为* `token0` *和* `token1`*。它们的余额是* `reserve0` *和* `reserve1`*.* [*Uniswap Docs 有更多关于代币排序的信息*](https://uniswap.org/docs/v2/technical-considerations/pair-addresses/)*.*
 
 ```
 contract UniswapV2Pair {
@@ -69,27 +69,29 @@ contract UniswapV2Pair {
 }
 ```
 
-`price(0|1)CumulativeLast` are independent storage variables which accumulate “price-time”. The `UQ112x112` makes the code a little hard to read, but is not important conceptually; it only acts as a wrapper for high-precision division. The only difference between the “0” and “1” version of these cumulativeLast values is the direction of the price.
+`price(0|1)CumulativeLast` 是累积“价格-时间”的独立存储变量。 `UQ112x112` 使代码有点难以阅读，但在概念上并不重要；它仅作为高精度除法的包装器。这些 cumulativeLast 值的“0”和“1”版本之间的唯一区别是价格的方向。
+```
 
 - `price0CumulativeLast` is “the price of `token0` denominated in `token1`”
 - `price1CumulativeLast` is “the price of `token1` denominated in `token0`”
 
-*Due to the way the math works out when performing this accumulation,* `price0CumulativeLast` *is NOT the inverse of* `price1CumulativeLast`*. For the rest of this document, we will refer only to* `price0CumulativeLast`*, but applies similarly to both values. Additionally,* `price0CumulativeLast` *will not necessarily be up-to-date on every block, so you either need to* [*run sync() on the market*](https://github.com/Uniswap/uniswap-v2-core/blob/4dd59067c76dea4a0e8e4bfdda41877a6b16dedc/contracts/UniswapV2Pair.sol#L198-L200)*, or* [*true-up the value yourself*](https://github.com/Keydonix/uniswap-oracle/blob/1c739f0ea572b1c1a55f5a9558b4822b111acb0a/contracts/source/UniswapOracle.sol#L84-L92)*.*
+*由于执行加法时的数学运算方法，* `price0CumulativeLast` * 不是 * `price1CumulativeLast`* 的倒数。对于本文档的其余部分，我们将仅参考* `price0CumulativeLast`*，但同样适用于这两个值。此外，* `price0CumulativeLast` *不一定在每个区块上都是最新的，因此您要么需要* [*在市场上运行 sync()*](https://github.com/Uniswap/uniswap-v2-core/blob/4dd59067c76dea4a0e8e4bfdda41877a6b16dedc/contracts/UniswapV2Pair.sol#L198-L200)*，或* [*自己调整值*](https://github.com/Keydonix/uniswap-oracle/blob/1c739f0ea575b15c1a52b15c1a525/contracts/source/UniswapOracle.sol#L84-L92)*.*
 
-`price0CumulativeLast` is a value that only updates with the FIRST transaction on a block, taking the last known `reserve0` and reserve1 values (token balances for `token0` and `token1`), calculates their ratio (price), and scales it by the number of seconds since `price0CumulativeLast` was last updated. `price0CumulativeLast` is a value that *increases every second by the ratio of the two reserves*. To turn this value back into a price, one needs two point-in-time values of `price0CumulativeLast`, using the formula:
+`price0CumulativeLast` 的值仅在块上的第一笔交易发生时进行更新. 方法是采用上一个已知的 `reserve0` 和 reserve1 值（`token0` 和 `token1` 的代币余额），计算它们的比率（价格），并对其进行缩放,缩放比例来自于上次更新“price0CumulativeLast”后历经的秒数。 `price0CumulativeLast` 会不断累加*每秒reserve值的比率*。因此要将此变量重新转换为价格，需要 `price0CumulativeLast` 在两个时间点上的值，然后使用以下公式：
+
 
 ```
 (price0CumulativeLATEST — price0CumulativeFIRST) / (timestampOfLATEST — timestampOfFIRST)
 ```
 
-By dividing the *difference* in `price0CumulativeLast` in two samples by the number of seconds between those two samples, the process is reversed and the result is the time-weighted price for that period of time. The window you choose is an important security consideration:
+通过将两个时间点中“price0CumulativeLast”的*差值*除以这两个样本之间的秒数，得到了该时间段的时间加权价格。 在这个计算的过程中,选择的时间窗口会是一个重要的安全因素：
 
-- The fewer seconds between the two samples, the more up-to-date, but easier to manipulate
-- The more seconds between the two samples, the less up-to-date but more difficult to manipulate
 
-Finding the right balance between tamper-resistant and up-to-date should be carefully considered for your project.
+- 样板时间点的间隔越小, 价格越新, 但也越容易被操纵
+- 样板时间点的间隔越大, 价格越不那么新,但也更加难以操纵
 
-Now that we have the formula for calculating this price, one problem remains: how does one retrieve the historical price cumulative information on-chain?
+您需要为自己项目仔细考虑这个值, 在防篡改和价格及时之间找到适当的平衡。
+有了这个价格的计算公式，还剩一个问题：如何在链上获取历史价格累计信息？
 
 # Retrieving historic cumulative values using a smart contract
 
