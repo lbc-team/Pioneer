@@ -14,9 +14,11 @@
 *如果您已经了解本文的主旨所在，可以在此处获得代码示例和solidity库：* [*https://github.com/Keydonix/uniswap-oracle*](https://github.com/Keydonix/uniswap-orcale)
 *如果您想了解更多信息，请继续阅读！*
 
-While we normally consider an oracle to be a system which feeds off-chain information into the blockchain via transactions from trusted/bonded parties (e.g. Maker Price Feed, ChainLink), the Uniswap V2 oracle does not require any specific interaction to provide this data. Instead, every swap transaction contributes information to this oracle.
+我们通常认为, 预言机可以看做一个(译者注:信息转移系统), 它从可信的/被绑定的市场参与者(例如Maker Price Feed、ChainLink）的多笔交易中获取链下信息, 然后将这些信息公布到区块链上. 但是Uniswap V2预言机提供这些有用的信息时, 不需要任何特定的(译者注:和可信外部参与者的)交易。相反，每个(译者注:uniswap上的)兑换交易都会为这个预言机贡献信息。
 
 To illustrate the problem Uniswap V2 has solved with this new Oracle functionality, let’s first explore the problem with Uniswap V1.
+
+为了说明带有新预言机的Uniswap V2解决了什么问题，我们首先看看Uniswap V1 的问题所在
 
 ![img](https://img.learnblockchain.cn/attachments/2022/06/7opSP92C62b3d943b5411.jpeg)
 
