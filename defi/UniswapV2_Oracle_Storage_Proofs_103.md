@@ -111,11 +111,15 @@ contract UniswapV2Pair {
 
 # 使用存储证明检索历史累积值
 
-Ethereum contract state storage is stored in a “Merkle Trie”, a special data structure which allows a single 32 byte hash value to represent every storage values in every Ethereum contract (with separate tries for receipts and transaction data). This 32-byte value, named `stateRoot, `is an attribute of every Ethereum block (alongside ones you might be more familiar with, like block number, block hash, and timestamp)
+以太坊合约的状态被存储在“Merkle Trie”中. 这是一种特殊的数据结构，允许一个32字节哈希值代表每个以太坊合约中存储的值（交易数据和接受方会单独分开）。这个 32 字节的值被称为为“stateRoot”，是每个以太坊区块都会包含的属性（还有你可能更熟悉的那些，比如区块号、区块哈希和时间戳）
 
-(Note: Ethereum uses a variant called a [“Merkle Patricia Trie” which you can read about here](https://medium.com/codechain/modified-merkle-patricia-trie-how-ethereum-saves-a-state-e6d7555078dd)).
 
-Using the JSON-RPC interface of an Ethereum node, you can call `eth_getProof` to retrieve a payload which, when combined with this `stateRoot` value, can prove that for address A at storage slot B, the value C.
+(Note:以太坊使用一种被称为[“Merkle Patricia Trie” 的变量, 你可以阅读之后的文章](https://medium.com/codechain/modified-merkle-patricia-trie-how-ethereum-saves-a-state-e6d7555078dd)).
+
+使用以太坊节点的JSON-RPC 接口，您可以调用 `eth_getProof` 来检索有效负载，当结合此 `stateRoot` 值时，可以证明位于存储槽B的地址A的值是C。
+使用链上逻辑，可以结合 stateRoot 和存储证明来验证存储槽的值。如果我们以 Uniswap V2 市场和 `price0CumulativeLast` 的存储槽为目标，我们就可以实现基于证明的历史查找。
+
+但是，“stateRoot”的查找操作并没有EVM 操作码；唯一相关的操作码是“BLOCKHASH”，它接受一个块号并返回 32 字节的块哈希。区块的区块哈希是其所有各种属性的简单 Keccak256 哈希，[rlp-encoded](https://eth.wiki/en/fundamentals/rlp)。通过提供区块的所有属性，包括“stateRoot”，我们可以通过散列和与链上 blockHash 查找进行比较来验证原始区块数据是否有效。一旦验证通过，我们就可以使用块所需的属性（时间戳和 `stateRoot`）。
 
 Using on-chain logic, it is possible to combine a stateRoot and storage proof to verify a storage slot’s value. If we target a Uniswap V2 Market and the storage slot for `price0CumulativeLast`, we can achieve the proof-based historic lookups we need.
 
