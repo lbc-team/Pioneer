@@ -94,21 +94,22 @@ contract UniswapV2Pair {
 您需要为自己项目仔细考虑这个值, 在防篡改和价格及时之间找到适当的平衡。
 有了这个价格的计算公式，还剩一个问题：如何在链上获取历史价格累计信息？
 
-# Retrieving historic cumulative values using a smart contract
 
-Leveraging V2 as an on-chain oracle requires “proving” a prior value of:
-`price0CumulativeLast` and its corresponding block timestamp
+# 使用智能合约检索历史累积值
 
-Retrieving current values for each of these is trivial (`block.timstamp` & `uniswapMarket.price0CumulativeLast()`) but how do you retrieve the old one? The most straightforward approach is to deploy a smart contract which records the current value of `price0CumulativeLast` and timestamp into its own storage, to be recalled later as the historical value. While this would work, it has some drawbacks:
+利用 V2 作为链上预言机需要“证明”以下先验值：
+`price0CumulativeLast` 及其对应的块时间戳
 
-- Must be called periodically to store snapshot values, if you want that price feed constantly available in the future
-- If not called periodically, you must plan your transaction ahead, first to store the current value, waiting some period of time, then firing the transaction that uses that historical value
+检索以上先验值的当前值是非常简单的（`block.timstamp` & `uniswapMarket.price0CumulativeLast()`）但是你如何检索旧值？最直接的方法是部署一个智能合约，将 `price0CumulativeLast` 的当前值和时间戳记录到自己的存储中，以便稍后作为历史值调用。虽然这是可行的，但它有一些缺点：
 
-You are stuck between somehow incentivizing bots to continually update the stored value (with bot fees coming from profits elsewhere in the system), or requiring users to send two transactions, one to snapshot the cumulative value, delaying the transaction they want to execute by some non-trivial amount of time in order to reach the number of seconds desired for the price feed average.
+- 如果希望价格源持续可用, 那么你必须定期调用以存储快照值
+- 如果是不定期调用，您必须提前计划好您的交易,首先存储当前值，等待一段时间，然后触发使用该历史值的交易
 
-If you are not interested in designing an economic system for bots and you doubt users will want to wait to send two transaction, there is a better way to leverage Uniswap V2 as a price feed: Merkle Patricia Proofs!
+您需要被激励使用机器人去不断更新存储值（机器人的使用费来自系统其他地方的利润）; 或者您要求用户发送两笔交易，其中一笔用于快照当下的累积值，并且这种做法需要用户延迟一定秒数再执行交易,使得延迟的秒数能够满足平均价格所需要求.
 
-# Retrieving historic cumulative value using storage proofs
+如果您对为机器人设计经济系统不感兴趣，或者您怀疑用户会愿意等待发送两笔交易，那么有一种更好的方法可以利用 Uniswap V2 作为价格源：Merkle Patricia Proofs！
+
+# 使用存储证明检索历史累积值
 
 Ethereum contract state storage is stored in a “Merkle Trie”, a special data structure which allows a single 32 byte hash value to represent every storage values in every Ethereum contract (with separate tries for receipts and transaction data). This 32-byte value, named `stateRoot, `is an attribute of every Ethereum block (alongside ones you might be more familiar with, like block number, block hash, and timestamp)
 
