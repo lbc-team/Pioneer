@@ -142,12 +142,11 @@ function verifyBlock(parentBlock, stateRoot, blockNumber, timestamp, ...) return
 注意：链上 `BLOCKHASH`查找操作仅适用于最近的 256 个区块，您用于存储证明的最早的区块必须包含在 **交易上链** 时的最近256 个区块内。
 
 
+# 介绍 Uniswap-Oracle 库
 
-# Introducing Uniswap-Oracle Library
+上述策略包括少量客户端代码（用于处理证明）和大量相当复杂的 Solidity，包括 YUL/assembly 和 Merkle Trie 验证。 [Micah Zoltu](https://medium.com/u/9e15b5664ca?source=post_page-----3530e699e1d3------------------------ ------) 和我，作为 [Keydonix] 的一部分(https://medium.com/u/f605e3324ca4?source=post_page-----3530e699e1d3-------- ----------------------)开发团队，开发并发布了[Uniswap-Oracle](https://github.com/Keydonix/uniswap-oracle /)，一个 Solidity 库，它使其他智能合约能够利用此 oracle 功能。
 
-The above strategy consists of a small bit of client side code (for handling proofs) and a larger amount of fairly complex Solidity, including YUL/assembly and Merkle Trie verification. [Micah Zoltu](https://medium.com/u/9e15b5664ca?source=post_page-----3530e699e1d3--------------------------------) and I, as part of the [Keydonix](https://medium.com/u/f605e3324ca4?source=post_page-----3530e699e1d3--------------------------------) development team, have developed and published [Uniswap-Oracle](https://github.com/Keydonix/uniswap-oracle/), a Solidity library which enables other smart contracts to leverage this oracle functionality.
-
-To integrate with your own contract, simple inherit from the base contract [UniswapOracle.sol](https://github.com/Keydonix/uniswap-oracle/blob/master/contracts/source/UniswapOracle.sol) ( `contract HelloWorld is UniswapOracle`), your contract will inherit the `getPrice` function:
+要与您自己的合约集成，您只需继承基础合约 [UniswapOracle.sol](https://github.com/Keydonix/uniswap-oracle/blob/master/contracts/source/UniswapOracle.sol)（`contract HelloWorld is UniswapOracle），你的合约将继承 getPrice 函数：
 
 ```
 function getPrice(
