@@ -163,10 +163,9 @@ function getPrice(
     uint256 blockNumber
   )
 ```
-Your own function which requires access to this Uniswap price will need to receive this proof data as an argument to be passed along to this internal `getPrice` function call. Please see the [Uniswap-Oracle README.me](https://github.com/Keydonix/uniswap-oracle/blob/master/README.md) for integration documentation.
+若您需要访问Uniswap价格， 则需将proofData作为参数传递给内部“getPrice”函数调用。请参阅 [Uniswap-Oracle README.me](https://github.com/Keydonix/uniswap-oracle/blob/master/README.md) 以获取集成文档。
 
-The Uniswap-Oracle library is **unaudited**. Any application that is responsible for value on mainnet should be fully audited; please ensure your application’s audit covers the Uniswap-Oracle code as well.
+Uniswap-Oracle 库是**未经审计**的。任何对主网上的价值负责的应用都应该被全面审计；请确保您的应用程序的审核也涵盖 Uniswap-Oracle 代码。
 
-Stop by the [Keydonix Discord](https://discord.gg/VybAU4) to ask questions and get help with integration and [follow us on Twitter](https://twitter.com/keydonix) for updates and new projects!
-
+通过 [Keydonix Discord](https://discord.gg/VybAU4) 提出问题并获得集成帮助，并[在 Twitter 上关注我们](https://twitter.com/keydonix) 以获取更新和新项目！
 感谢 Micah Zoltu
