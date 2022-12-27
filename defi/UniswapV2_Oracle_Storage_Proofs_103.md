@@ -146,7 +146,7 @@ function verifyBlock(parentBlock, stateRoot, blockNumber, timestamp, ...) return
 
 上述策略包括少量客户端代码（用于处理证明）和大量相当复杂的 Solidity，包括 YUL/assembly 和 Merkle Trie 验证。 [Micah Zoltu](https://medium.com/u/9e15b5664ca?source=post_page-----3530e699e1d3------------------------ ------) 和我，作为 [Keydonix] 的一部分(https://medium.com/u/f605e3324ca4?source=post_page-----3530e699e1d3-------- ----------------------)开发团队，开发并发布了[Uniswap-Oracle](https://github.com/Keydonix/uniswap-oracle /)，一个 Solidity 库，它使其他智能合约能够利用此 oracle 功能。
 
-要与您自己的合约集成，您只需继承基础合约 [UniswapOracle.sol](https://github.com/Keydonix/uniswap-oracle/blob/master/contracts/source/UniswapOracle.sol)（`contract HelloWorld is UniswapOracle），你的合约将继承 getPrice 函数：
+要与您自己的合约集成，您只需继承基础合约 [UniswapOracle.sol](https://github.com/Keydonix/uniswap-oracle/blob/master/contracts/source/UniswapOracle.sol)（`contract HelloWorld is UniswapOracle`），你的合约将继承 getPrice 函数：
 
 ```
 function getPrice(
