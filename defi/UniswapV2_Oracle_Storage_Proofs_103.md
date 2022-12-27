@@ -134,20 +134,14 @@ function verifyBlock(parentBlock, stateRoot, blockNumber, timestamp, ...) return
 1. 像上面的函数可以验证一个完整块的详细信息,并确认该块的所有字段都是正确的
 2. 使用 `stateRoot`（已在上面验证）提供的证明（来自 JSON-RPC `getProof` 调用）,以从该块中检索历史存储值
 3. 从 Uniswap 市场获取当前的 `price0CumulativeLast` 值
-4. 通过将 `price0CumulativeLast` 的增加除以自验证时间戳以来的秒数，计算提供的块（来自验证时间戳）与现在之间的平均价格。
+4. 计算所提供区块与当前区块之间的平均价格，做法是`price0CumulativeLast` 的增量除以区块时间戳的差异（秒数）  
 
-1. A function like the one above can verify a full-block’s details and confirm all fields are correct for that block
-2. Using the `stateRoot` (verified above) parse the provided proof (from a JSON-RPC `getProof` call) to retrieve the historic storage values from that block
-3. Fetch the current `price0CumulativeLast` value from Uniswap market
-4. Calculate average price between the provided block (from verified timestamp) and right now by dividing the increase in `price0CumulativeLast` by the number of seconds since the verified timestamp.
+此时，内存中的价格是某个可配置时间段内的平均价格，它来自于一个完全去中心化的系统。为了操纵这个价格，攻击者不仅需要将价格推向一个方向，他们还需要在区块之间长时间保持价格。 这反而让其他买家都有机会购买价格过低的资产，从而纠正错误的价格。
 
-在这一点上，您的记忆中的价格是某个可配置时间段内的平均价格，来自完全基于市场动态的完全去中心化系统。为了操纵这种喂价，攻击者不仅需要将价格推向一个方向，他们还需要在区块之间长时间保持价格，让任何买家都有机会购买价格过低的资产，这将反过来纠正喂价。
 
-注意：链上 `BLOCKHASH` 查找仅适用于过去的 256 个区块，您可以用于存储证明的最旧区块必须在 **在交易登陆** 链上时的最后 256 个区块内。
+注意：链上 `BLOCKHASH`查找操作仅适用于最近的 256 个区块，您用于存储证明的最早的区块必须包含在 **交易上链** 时的最近256 个区块内。
 
-At this point, you have your price in memory, an average over some configurable period of time, from a fully decentralized system based purely on market dynamics. For this price feed to be manipulated, the attacker would not only need to push this price in one direction, they would need to keep it there for long periods of time, between blocks, giving any buyer the chance to buy under-priced assets, which would in turn correct the price feed.
 
-Note: on-chain `BLOCKHASH` lookups only work for the past 256 blocks, the oldest block you can use for your storage proof must be **within the last 256 blocks at the time the transaction lands** on chain.
 
 # Introducing Uniswap-Oracle Library
 
