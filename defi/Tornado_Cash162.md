@@ -34,11 +34,7 @@
 默认情况下，智能合约是不可变的，这意味着它们一旦部署就不能被任何人删除或更新。智能合约的开发人员也可以（在合约代码中）支持可更新性（*例如*这个*人为控制*的地址可以在未来重写合约）。但是，此类更新操作必须在部署（*发布到以太坊上*）之前， 就包含在智能合约的代码中。如果在部署时，代码不包含可更新性，那么任何人都无法修改智能合约。开发人员也可以将更新权限转移到没有相应私钥的以太坊地址，从而撤销合约的更新能力。这个特殊的地址被称为“零地址”。一旦更新能力被撤销，它就不能被重新获取，且合约不能再被改变。
 
 
-
-Unlike traditional finance, Ethereum’s records are completely transparent: anyone can download and view the balances and transaction history of its user accounts. Although user addresses are pseudonymous, if a real-world identity is linked to a user address, it becomes possible to trace that user’s complete financial history. Ethereum’s transparency is important for auditability (*e.g.* verifying that updates to records are valid). However, this transparency also makes it difficult for users to protect their personal information. By default, a record of a casual transaction today (*e.g.* paying for Wi-Fi at the airport) leads directly to records of earlier transactions, which may include any intimate, revealing, or sensitive transactions made by the same user long ago.
-
-Among the many different applications smart contracts may support, they may also provide an avenue for users to regain the privacy they expect when interacting with financial systems. Central to that privacy is the use of smart contracts to break the public chain of records that would otherwise link your transaction today to every transaction you’ve ever made in the past. Enter Tornado Cash.
-
+与传统金融不同，以太坊的记录是完全透明的：任何人都可以下载和查看其用户账户的余额和交易历史。尽管用户地址是假名的，但如果将真实世界的身份链接到用户地址，就可以追踪该用户的完整财务历史。以太坊的透明度对于可审计性很重要（*例如*验证记录更新是否有效）。然而，这种透明度也让用户难以保护自己的个人信息。默认情况下，今天的偶然交易记录（*例如*在机场支付 Wi-Fi 费用）直接通向早期的交易记录，其中可能包括同一用户很久以前进行的任何私密、泄露或敏感交易。
 
 在智能合约可能支持的许多不同应用中，它们还可以为用户提供一种方法，使得用户在与金融系统交互时重新获得他们期望的隐私。这种隐私的核心是使用智能合约来打破公共链。 否则这些记录会将您今天的交易与您过去进行的每笔交易联系起来。
 
