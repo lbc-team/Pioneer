@@ -12,23 +12,22 @@
 
 ## 2. 背景知识:什么是以太坊,谁在使用以太坊, 智能合约又是什么?
 
-Ethereum is a cooperatively-run, global, transparent database. Through mutual effort, participants from all over the world maintain Ethereum’s public record of addresses, which reference both user accounts and smart contract applications. These records work together much like the user accounts and software of a modern desktop computer, except that Ethereum is:
-
 以太坊是一个合作运行的、全球的、透明的数据库。来自世界各地的参与者共同维护着以太坊地址的公共记录.这些记录指向了用户帐户信息和智能合约。当这些记录指向的内容(在以太坊上)运作时,很像现代台式计算机上用户帐户(译者注:类似以太坊用户地址)和软件(译者注:类似智能合约)的运行模式. 但是以太坊也有自己的不同之处, 包含如下：
 
-- Cooperatively-run: Ethereum’s fundamental operation comes from the collective effort of its participants worldwide. No single party can make changes to how Ethereum works.
-- Publicly-accessible: Anyone anywhere in the world can interact with Ethereum, its users, and its applications.
-- Transparent: Anyone anywhere in the world can download and view all the information in Ethereum’s database.
+- 合作运行：以太坊的基本运作来自于全球参与者的集体努力。任何一方都无法改变以太坊的运作方式。
+- 公开访问：世界上任何地方的任何人都可以与以太坊、以太坊的用户及以太坊上的应用程序进行交互。
+- 透明：世界上任何地方的任何人,都可以下载和查看以太坊数据库中的所有信息。
 
-Anyone can be a user of Ethereum. Creating an account is simple, and does not require a phone number, email, or physical address. Instead, users install an application called a “wallet,” which generates a unique identifier for that user called an “address” and a password-like number for authentication called a “private key.” Much like a person with multiple email addresses, Ethereum’s users can create and use as many addresses as they want. Unlike with email, however, Ethereum’s users are not “customers” in the traditional sense. They are participants in a global computing system running on open-source software, which functions without third-party oversight. It is also important to note that Ethereum addresses controlled by the same user are not necessarily publicly linked to one another; they are simply unique identifiers that belong to the user who has the corresponding private key.
+任何人都可以成为以太坊的用户。创建帐户很简单，你不需要电话号码、电子邮件或实际地址。相反，用户安装一个称为“钱包”的应用程序，它为该用户生成一个称为“地址”的唯一标识符和一个类似密码的数字，这个数字用于身份验证,被称为“私钥”。就像拥有多个电子邮件地址的人一样，以太坊的用户可以根据需要创建和使用任意数量的地址。然而，与电子邮件不同，以太坊的用户不是传统意义上的“客户”。他们是在开源软件上运行的全球计算系统的参与者，该系统在没有第三方监督的情况下运行。同样重要的是,由同一用户控制的以太坊地址不一定彼此公开关联,它们只是一组唯一的标识符,属于拥有相应私钥的用户。
 
-By sharing an address, users are able to receive tokens (*e.g.* crypto-assets like Ether) from anyone, anywhere in the world. Unlike a traditional payment service, sending and receiving tokens on Ethereum does not require an intermediary. Instead, the sender broadcasts their intent to transfer tokens, signs their message mathematically using the corresponding private key, and Ethereum’s network collectively updates the global records of the sender and receiver addresses with the new balances. At no point in this process does a third party take custody of the tokens being transferred.
+通过共享地址，用户可以从世界上任何地方的任何人那里接收代币（*例如*加密资产，如 Ether）。与传统的支付服务不同，在以太坊上发送和接收代币不需要中介。相反，发送方广播他们转移代币的意图，使用相应的私钥对他们的消息进行数学签名，然后以太坊网络使用新余额共同更新发送方和接收方地址的全局记录。在此过程中，任何时候第三方都不会保管正在转移的代币。
 
-In addition to sending and receiving tokens, user accounts can interact with smart contracts, which are applications that extend the functionality of Ethereum. When developers program smart contracts, they decide what operations the smart contract will support and what rules those operations must follow. These rules and operations are written using code that is broadcast to Ethereum’s network, just like the token transactions described above. Once a smart contract’s code is added to Ethereum’s records, it receives a unique address and can be interacted with by any user to automatically carry out the rules and operations it supports.
 
-In essence, smart contracts are open-source applications that anyone can deploy to Ethereum. Just like the rest of Ethereum, smart contracts can be viewed and used by anyone, anywhere, and without relying on an intermediary.
+除了发送和接收代币外，用户帐户还可以与智能合约进行交互，这些类似应用程序的智能合约扩展了以太坊的功能。当开发人员编写智能合约时，他们决定智能合约将支持哪些操作,以及这些操作必须遵循哪些规则。这些规则和操作使用特定代码编写，就如同上面描述的代币交易一样(被广播到整个以太坊上)。一旦将智能合约的代码添加到以太坊的记录中，合约就会获得一个唯一的地址(表示合约自身)，任何用户都可以与合约交互，以自动执行合约支持的规则和操作。
 
-Both people and smart contracts can have Ethereum addresses; the key difference is that when a person has an address they have the private key that controls any tokens sent to that address. That person will ultimately decide if and when any transactions are made with those tokens. When a smart contract has an address, the rules and operations written in the smart contract code control the tokens. They could be simple rules (*e.g.* automatically send the tokens back), or more complicated rules. There could be rules that include human operations and human decisions (*e.g.* send the tokens back if 3 out of 5 of these human-controlled addresses send a signed message saying they agree). The rules could also, however, be fully and permanently outside of any human being’s control. In that case, so too are any tokens sent to that address until and unless the contract sends them back to some human according to the rules.
+本质上，智能合约是任何人都可以部署到以太坊的开源应用程序。就像以太坊的其他部分一样，任何人都可以在任何地方查看和使用智能合约，而无需依赖中介。
+
+人和智能合约都可以有自己的以太坊地址；关键区别在于，当一个人拥有地址时，他们拥有私钥可以控制发送到该地址的任何代币。他/她将最终决定是否以及何时使用这些代币进行何种交易。当智能合约有地址时，智能合约代码中编写的规则和操作将控制代币。它们可以是简单的规则（*例如*自动发回代币），也可以是更复杂的规则。可能会有包括人为操作和人为决定的规则（*例如*如果这些人为控制的地址中有五分之三发送签名消息表示他们同意，则发回代币）。然而，这些规则也可以完全和永久地不受任何人的控制。在这种情况下，发送到该地址的任何代币也将不受任何人控制, 除非合同根据规则又将代币发回给某个人。
 
 ![1.png](https://img.learnblockchain.cn/attachments/2022/09/Os7gFlId63184e742f01e.png)
 
