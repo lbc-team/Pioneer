@@ -46,9 +46,9 @@ Tornado Cash 是一个为以太坊用户提供隐私保护的开源软件项目�
 
 正如我们将解释的那样，其中一些智能合约已获得 OFAC 的批准。然而，Tornado Cash 隐私工具的核心构成了 OFAC 批准的地址的一个子集：Tornado Cash“池”。每个 Tornado 现金池都是部署到以太坊的智能合约。与其他智能合约一样，池合约通过特定操作扩展了以太坊的功能，以太坊的任何用户都可以根据 Tornado Cash 合约代码中定义的规则执行特定的操作。
 
-This section will describe how these pools work. In particular, it will describe the key innovation that enables these pools to function autonomously: an application of privacy-preserving mathematics known as “zero-knowledge cryptography.”
+本节将介绍这些池的工作原理。我们将描述使这些池能够自主运行的关键创新：应用了被称为“零知识密码学”的隐私保护数学。
 
-Subsequent sections will describe the specific addresses sanctioned by OFAC, and what they do. An appendix at the end will list all of the sanctioned contracts and their salient features.
+随后的部分将描述 OFAC 批准的具体地址，以及它们的作用。最后的附录将列出所有被批准的合同及其显着特征。
 
 ### Tornado Cash Core Contracts: Pools
 
