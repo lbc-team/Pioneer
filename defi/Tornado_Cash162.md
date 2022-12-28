@@ -2,13 +2,13 @@
 
 
 
-# How does Tornado Cash work?
+# Tornado Cash 是如何工作的?
 
-## 1. Introduction
+## 1. 引论
 
-In August 2022, the US Treasury’s Office of Foreign Assets Control (OFAC) sanctioned Tornado Cash, adding 45 Ethereum addresses to the Specially Designated Nationals (SDN) List of sanctioned persons.
+2022 年 8 月，美国财政部外国资产控制办公室 (OFAC) 对 Tornado Cash 进行了制裁，将 45 个以太坊地址添加到特别指定国民 (SDN) 受制裁人员名单中。
 
-This document aims to help the reader understand what Tornado Cash is, how it works, and what, exactly, was sanctioned. But before we jump into Tornado Cash, let’s review a few key concepts around Ethereum, smart contracts, and decentralization.
+本文档旨在帮助读者了解 Tornado Cash 是什么、它是如何工作的，以及究竟是什么受到了制裁。但在我们深入介绍Tornado Cash 之前，让我们回顾一下围绕以太坊、智能合约和去中心化的几个关键概念。
 
 ## 2. Background: What is Ethereum, who are its users, what is a smart contract?
 
