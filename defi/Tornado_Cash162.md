@@ -41,9 +41,10 @@
 
 ## 3. Tornado Cash: A smart contract application
 
-Tornado Cash is an open source software project that provides privacy protection for Ethereum’s users. Like many such projects, the name does not refer to a legal entity, but to several open source software libraries that have been developed over many years by a diverse group of contributors. These contributors have published and made Tornado Cash available for general use as a collection of smart contracts on the Ethereum blockchain.
+Tornado Cash 是一个为以太坊用户提供隐私保护的开源软件项目。与许多此类项目一样，该名称不是指法律实体，而是指由不同的贡献者团体开发多年的几个开源软件库。这些贡献者发布了Tornado Cash。 作为以太坊区块链上的智能合约集合，Tornado Cash是通用的。
 
-As we will explain, some of these smart contracts have been sanctioned by OFAC. The core of Tornado Cash’s privacy tools, however, make up a subset of the addresses sanctioned by OFAC: the Tornado Cash “pools.” Each Tornado Cash pool is a smart contract deployed to Ethereum. Like other smart contracts, the pool contracts extend the functionality of Ethereum with specific operations that can be executed by any user of Ethereum according to the rules defined in the Tornado Cash contracts’ code.
+
+正如我们将解释的那样，其中一些智能合约已获得 OFAC 的批准。然而，Tornado Cash 隐私工具的核心构成了 OFAC 批准的地址的一个子集：Tornado Cash“池”。每个 Tornado 现金池都是部署到以太坊的智能合约。与其他智能合约一样，池合约通过特定操作扩展了以太坊的功能，以太坊的任何用户都可以根据 Tornado Cash 合约代码中定义的规则执行特定的操作。
 
 This section will describe how these pools work. In particular, it will describe the key innovation that enables these pools to function autonomously: an application of privacy-preserving mathematics known as “zero-knowledge cryptography.”
 
