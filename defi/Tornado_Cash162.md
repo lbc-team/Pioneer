@@ -10,9 +10,11 @@
 
 本文档旨在帮助读者了解 Tornado Cash 是什么、它是如何工作的，以及究竟是什么受到了制裁。但在我们深入介绍Tornado Cash 之前，让我们回顾一下围绕以太坊、智能合约和去中心化的几个关键概念。
 
-## 2. Background: What is Ethereum, who are its users, what is a smart contract?
+## 2. 背景知识:什么是以太坊,谁在使用以太坊, 智能合约又是什么?
 
 Ethereum is a cooperatively-run, global, transparent database. Through mutual effort, participants from all over the world maintain Ethereum’s public record of addresses, which reference both user accounts and smart contract applications. These records work together much like the user accounts and software of a modern desktop computer, except that Ethereum is:
+
+以太坊是一个合作运行的、全球的、透明的数据库。来自世界各地的参与者共同维护着以太坊地址的公共记录.这些记录指向了用户帐户信息和智能合约。当这些记录指向的内容(在以太坊上)运作时,很像现代台式计算机上用户帐户(译者注:类似以太坊用户地址)和软件(译者注:类似智能合约)的运行模式. 但是以太坊也有自己的不同之处, 包含如下：
 
 - Cooperatively-run: Ethereum’s fundamental operation comes from the collective effort of its participants worldwide. No single party can make changes to how Ethereum works.
 - Publicly-accessible: Anyone anywhere in the world can interact with Ethereum, its users, and its applications.
