@@ -52,6 +52,11 @@ Tornado Cash 是一个为以太坊用户提供隐私保护的开源软件项目�
 
 ### Tornado Cash Core Contracts: Pools
 
+Tornado Cash池是一组智能合约，用户使用它，就能在以太坊上进行私下交易。当用户调用合约时，池将自动执行“存款”或“取款”。用户因此可以从一个地址存入代币，然后将这些相同的代币提取到不同的地址。至关重要的是，即使这些存款和取款在以太坊上公开发生，存款地址和取款地址之间的任何公开的联系都会被切断。用户因此提取和使用他们的资金，不用担心他们的整个交易历史会被暴露给第三方。
+
+为了支持存款和取款操作，这些智能合约编码了严格的规则。这些规则自动应用于存款和取款操作，以维护所有 Tornado Cash 池都有的一个非常重要的属性：**用户只能提取他们最初存入的特定代币。**
+
+
 Tornado Cash pools are smart contracts that enable users to transact privately on Ethereum. When prompted by a user, pools will automatically carry out one of two supported operations: “deposit” or “withdraw.” Together, these operations allow a user to deposit tokens from one address and later withdraw those same tokens to a different address. Crucially, even though these deposit and withdrawal events occur publicly on Ethereum’s transparent ledger, any public link between the deposit and withdrawal addresses is severed. The user is able to withdraw and use their funds without fear of exposing their entire financial history to third parties.
 
 In support of the deposit and withdrawal operations, these smart contracts encode strict rules that further define its functionality. These rules are automatically applied to the deposit and withdrawal operations to maintain a very important property shared by all Tornado Cash pools: **users can only withdraw the specific tokens they originally deposited.**
