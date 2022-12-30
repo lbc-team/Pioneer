@@ -2,63 +2,70 @@
 
 
 
-# How does Tornado Cash work?
+# Tornado Cash 是如何工作的?
 
-## 1. Introduction
+## 1. 引论
 
-In August 2022, the US Treasury’s Office of Foreign Assets Control (OFAC) sanctioned Tornado Cash, adding 45 Ethereum addresses to the Specially Designated Nationals (SDN) List of sanctioned persons.
+2022 年 8 月，美国财政部外国资产控制办公室 (OFAC) 对 Tornado Cash 进行了制裁，将 45 个以太坊地址添加到特别指定国民 (SDN) 受制裁人员名单中。
 
-This document aims to help the reader understand what Tornado Cash is, how it works, and what, exactly, was sanctioned. But before we jump into Tornado Cash, let’s review a few key concepts around Ethereum, smart contracts, and decentralization.
+本文档旨在帮助读者了解 Tornado Cash 是什么、它是如何工作的，以及究竟是什么受到了制裁。但在我们深入介绍Tornado Cash 之前，让我们回顾一下围绕以太坊、智能合约和去中心化的几个关键概念。
 
-## 2. Background: What is Ethereum, who are its users, what is a smart contract?
+## 2. 背景知识:什么是以太坊,谁在使用以太坊, 智能合约又是什么?
 
-Ethereum is a cooperatively-run, global, transparent database. Through mutual effort, participants from all over the world maintain Ethereum’s public record of addresses, which reference both user accounts and smart contract applications. These records work together much like the user accounts and software of a modern desktop computer, except that Ethereum is:
+以太坊是一个合作运行的、全球的、透明的数据库。来自世界各地的参与者共同维护着以太坊地址的公共记录.这些记录指向了用户帐户信息和智能合约。当这些记录指向的内容(在以太坊上)运作时,很像现代台式计算机上用户帐户(译者注:类似以太坊用户地址)和软件(译者注:类似智能合约)的运行模式. 但是以太坊也有自己的不同之处, 包含如下：
 
-- Cooperatively-run: Ethereum’s fundamental operation comes from the collective effort of its participants worldwide. No single party can make changes to how Ethereum works.
-- Publicly-accessible: Anyone anywhere in the world can interact with Ethereum, its users, and its applications.
-- Transparent: Anyone anywhere in the world can download and view all the information in Ethereum’s database.
+- 合作运行：以太坊的基本运作来自于全球参与者的集体努力。任何一方都无法改变以太坊的运作方式。
+- 公开访问：世界上任何地方的任何人都可以与以太坊、以太坊的用户及以太坊上的应用程序进行交互。
+- 透明：世界上任何地方的任何人,都可以下载和查看以太坊数据库中的所有信息。
 
-Anyone can be a user of Ethereum. Creating an account is simple, and does not require a phone number, email, or physical address. Instead, users install an application called a “wallet,” which generates a unique identifier for that user called an “address” and a password-like number for authentication called a “private key.” Much like a person with multiple email addresses, Ethereum’s users can create and use as many addresses as they want. Unlike with email, however, Ethereum’s users are not “customers” in the traditional sense. They are participants in a global computing system running on open-source software, which functions without third-party oversight. It is also important to note that Ethereum addresses controlled by the same user are not necessarily publicly linked to one another; they are simply unique identifiers that belong to the user who has the corresponding private key.
+任何人都可以成为以太坊的用户。创建帐户很简单，你不需要电话号码、电子邮件或实际地址。相反，用户安装一个称为“钱包”的应用程序，它为该用户生成一个称为“地址”的唯一标识符和一个类似密码的数字，这个数字用于身份验证,被称为“私钥”。就像拥有多个电子邮件地址的人一样，以太坊的用户可以根据需要创建和使用任意数量的地址。然而，与电子邮件不同，以太坊的用户不是传统意义上的“客户”。他们是在开源软件上运行的全球计算系统的参与者，该系统在没有第三方监督的情况下运行。同样重要的是,由同一用户控制的以太坊地址不一定彼此公开关联,它们只是一组唯一的标识符,属于拥有相应私钥的用户。
 
-By sharing an address, users are able to receive tokens (*e.g.* crypto-assets like Ether) from anyone, anywhere in the world. Unlike a traditional payment service, sending and receiving tokens on Ethereum does not require an intermediary. Instead, the sender broadcasts their intent to transfer tokens, signs their message mathematically using the corresponding private key, and Ethereum’s network collectively updates the global records of the sender and receiver addresses with the new balances. At no point in this process does a third party take custody of the tokens being transferred.
+通过共享地址，用户可以从世界上任何地方的任何人那里接收代币（*例如*加密资产，如 Ether）。与传统的支付服务不同，在以太坊上发送和接收代币不需要中介。相反，发送方广播他们转移代币的意图，使用相应的私钥对他们的消息进行数学签名，然后以太坊网络使用新余额共同更新发送方和接收方地址的全局记录。在此过程中，任何时候第三方都不会保管正在转移的代币。
 
-In addition to sending and receiving tokens, user accounts can interact with smart contracts, which are applications that extend the functionality of Ethereum. When developers program smart contracts, they decide what operations the smart contract will support and what rules those operations must follow. These rules and operations are written using code that is broadcast to Ethereum’s network, just like the token transactions described above. Once a smart contract’s code is added to Ethereum’s records, it receives a unique address and can be interacted with by any user to automatically carry out the rules and operations it supports.
 
-In essence, smart contracts are open-source applications that anyone can deploy to Ethereum. Just like the rest of Ethereum, smart contracts can be viewed and used by anyone, anywhere, and without relying on an intermediary.
+除了发送和接收代币外，用户帐户还可以与智能合约进行交互，这些类似应用程序的智能合约扩展了以太坊的功能。当开发人员编写智能合约时，他们决定智能合约将支持哪些操作,以及这些操作必须遵循哪些规则。这些规则和操作使用特定代码编写，就如同上面描述的代币交易一样(被广播到整个以太坊上)。一旦将智能合约的代码添加到以太坊的记录中，合约就会获得一个唯一的地址(表示合约自身)，任何用户都可以与合约交互，以自动执行合约支持的规则和操作。
 
-Both people and smart contracts can have Ethereum addresses; the key difference is that when a person has an address they have the private key that controls any tokens sent to that address. That person will ultimately decide if and when any transactions are made with those tokens. When a smart contract has an address, the rules and operations written in the smart contract code control the tokens. They could be simple rules (*e.g.* automatically send the tokens back), or more complicated rules. There could be rules that include human operations and human decisions (*e.g.* send the tokens back if 3 out of 5 of these human-controlled addresses send a signed message saying they agree). The rules could also, however, be fully and permanently outside of any human being’s control. In that case, so too are any tokens sent to that address until and unless the contract sends them back to some human according to the rules.
+本质上，智能合约是任何人都可以部署到以太坊的开源应用程序。就像以太坊的其他部分一样，任何人都可以在任何地方查看和使用智能合约，而无需依赖中介。
+
+人和智能合约都可以有自己的以太坊地址；关键区别在于，当一个人拥有地址时，他们拥有私钥可以控制发送到该地址的任何代币。他/她将最终决定是否以及何时使用这些代币进行何种交易。当智能合约有地址时，智能合约代码中编写的规则和操作将控制代币。它们可以是简单的规则（*例如*自动发回代币），也可以是更复杂的规则。可能会有包括人为操作和人为决定的规则（*例如*如果这些人为控制的地址中有五分之三发送签名消息表示他们同意，则发回代币）。然而，这些规则也可以完全和永久地不受任何人的控制。在这种情况下，发送到该地址的任何代币也将不受任何人控制, 除非合同根据规则又将代币发回给某个人。
 
 ![1.png](https://img.learnblockchain.cn/attachments/2022/09/Os7gFlId63184e742f01e.png)
 
-By default, smart contracts are immutable, which means they cannot be removed or updated by anyone once deployed. It is possible for the smart contract’s developers to include (in the contract code) the ability to update functionality as a supported operation (*e.g.* this *human-controlled* address can rewrite the contract in the future)*.* However, such an operation must be included in the smart contract’s code prior to the smart contract’s deployment (*i.e.* publication to the Ethereum network). Without the inclusion of updatability prior to deployment, a smart contract cannot be modified by anyone. It is also possible to revoke the ability to update functionality by transferring the permissions for this ability to a placeholder Ethereum address for which there is no corresponding private key. This placeholder is known as “the zero address.” Once the ability to update a contract has been revoked, it cannot be reclaimed and the contract can no longer be changed.
+默认情况下，智能合约是不可变的，这意味着它们一旦部署就不能被任何人删除或更新。智能合约的开发人员也可以（在合约代码中）支持可更新性（*例如*这个*人为控制*的地址可以在未来重写合约）。但是，此类更新操作必须在部署（*发布到以太坊上*）之前， 就包含在智能合约的代码中。如果在部署时，代码不包含可更新性，那么任何人都无法修改智能合约。开发人员也可以将更新权限转移到没有相应私钥的以太坊地址，从而撤销合约的更新能力。这个特殊的地址被称为“零地址”。一旦更新能力被撤销，它就不能被重新获取，且合约不能再被改变。
 
-Unlike traditional finance, Ethereum’s records are completely transparent: anyone can download and view the balances and transaction history of its user accounts. Although user addresses are pseudonymous, if a real-world identity is linked to a user address, it becomes possible to trace that user’s complete financial history. Ethereum’s transparency is important for auditability (*e.g.* verifying that updates to records are valid). However, this transparency also makes it difficult for users to protect their personal information. By default, a record of a casual transaction today (*e.g.* paying for Wi-Fi at the airport) leads directly to records of earlier transactions, which may include any intimate, revealing, or sensitive transactions made by the same user long ago.
 
-Among the many different applications smart contracts may support, they may also provide an avenue for users to regain the privacy they expect when interacting with financial systems. Central to that privacy is the use of smart contracts to break the public chain of records that would otherwise link your transaction today to every transaction you’ve ever made in the past. Enter Tornado Cash.
+与传统金融不同，以太坊的记录是完全透明的：任何人都可以下载和查看其用户账户的余额和交易历史。尽管用户地址是假名的，但如果将真实世界的身份链接到用户地址，就可以追踪该用户的完整财务历史。以太坊的透明度对于可审计性很重要（*例如*验证记录更新是否有效）。然而，这种透明度也让用户难以保护自己的个人信息。默认情况下，今天的偶然交易记录（*例如*在机场支付 Wi-Fi 费用）直接通向早期的交易记录，其中可能包括同一用户很久以前进行的任何私密、泄露或敏感交易。
+
+在智能合约可能支持的许多不同应用中，它们还可以为用户提供一种方法，使得用户在与金融系统交互时重新获得他们期望的隐私。这种隐私的核心是使用智能合约来打破公共链。 否则这些记录会将您今天的交易与您过去进行的每笔交易联系起来。
+
 
 ## 3. Tornado Cash: A smart contract application
 
-Tornado Cash is an open source software project that provides privacy protection for Ethereum’s users. Like many such projects, the name does not refer to a legal entity, but to several open source software libraries that have been developed over many years by a diverse group of contributors. These contributors have published and made Tornado Cash available for general use as a collection of smart contracts on the Ethereum blockchain.
+Tornado Cash 是一个为以太坊用户提供隐私保护的开源软件项目。与许多此类项目一样，该名称不是指法律实体，而是指由不同的贡献者团体开发多年的几个开源软件库。这些贡献者发布了Tornado Cash。 作为以太坊区块链上的智能合约集合，Tornado Cash是通用的。
 
-As we will explain, some of these smart contracts have been sanctioned by OFAC. The core of Tornado Cash’s privacy tools, however, make up a subset of the addresses sanctioned by OFAC: the Tornado Cash “pools.” Each Tornado Cash pool is a smart contract deployed to Ethereum. Like other smart contracts, the pool contracts extend the functionality of Ethereum with specific operations that can be executed by any user of Ethereum according to the rules defined in the Tornado Cash contracts’ code.
 
-This section will describe how these pools work. In particular, it will describe the key innovation that enables these pools to function autonomously: an application of privacy-preserving mathematics known as “zero-knowledge cryptography.”
+正如我们将解释的那样，其中一些智能合约已获得 OFAC 的批准。然而，Tornado Cash 隐私工具的核心构成了 OFAC 批准的地址的一个子集：Tornado Cash“池”。每个 Tornado 现金池都是部署到以太坊的智能合约。与其他智能合约一样，池合约通过特定操作扩展了以太坊的功能，以太坊的任何用户都可以根据 Tornado Cash 合约代码中定义的规则执行特定的操作。
 
-Subsequent sections will describe the specific addresses sanctioned by OFAC, and what they do. An appendix at the end will list all of the sanctioned contracts and their salient features.
+本节将介绍这些池的工作原理。我们将描述使这些池能够自主运行的关键创新：应用了被称为“零知识密码学”的隐私保护数学。
+
+随后的部分将描述 OFAC 批准的具体地址，以及它们的作用。最后的附录将列出所有被批准的合同及其显着特征。
 
 ### Tornado Cash Core Contracts: Pools
 
-Tornado Cash pools are smart contracts that enable users to transact privately on Ethereum. When prompted by a user, pools will automatically carry out one of two supported operations: “deposit” or “withdraw.” Together, these operations allow a user to deposit tokens from one address and later withdraw those same tokens to a different address. Crucially, even though these deposit and withdrawal events occur publicly on Ethereum’s transparent ledger, any public link between the deposit and withdrawal addresses is severed. The user is able to withdraw and use their funds without fear of exposing their entire financial history to third parties.
+Tornado Cash池是一组智能合约，用户使用它，就能在以太坊上进行私下交易。当用户调用合约时，池将自动执行“存款”或“取款”。用户因此可以从一个地址存入代币，然后将这些相同的代币提取到不同的地址。至关重要的是，即使这些存款和取款在以太坊上公开发生，存款地址和取款地址之间的任何公开的联系都会被切断。用户因此提取和使用他们的资金，不用担心他们的整个交易历史会被暴露给第三方。
 
-In support of the deposit and withdrawal operations, these smart contracts encode strict rules that further define its functionality. These rules are automatically applied to the deposit and withdrawal operations to maintain a very important property shared by all Tornado Cash pools: **users can only withdraw the specific tokens they originally deposited.**
+为了支持存款和取款操作，这些智能合约编码了严格的规则。这些规则自动应用于存款和取款操作，以维护所有 Tornado Cash 池都有的一个非常重要的属性：**用户只能提取他们最初存入的特定(数量)的代币。**
 
-This property is enforced automatically for all the pool’s operations, and ensures that Tornado Cash pools are entirely *non-custodial*. That is, a user who deposits and later withdraws tokens maintains total ownership and control over their tokens, even as they pass through the pool. At no point is the user required to relinquish control of their tokens to anyone.
+此属性会自动在所有池上强制执行，并且该属性确保 Tornado Cash 池完全*非托管*。也就是说，即使操作需要通过池进行， 存入并随后提取代币的用户保持对代币的完全所有权和控制权。在任何时候，用户都不需要将其代币的控制权交给其他人。
 
-A key principle of Tornado Cash pools is that a user’s privacy is derived in large part from the simultaneous usage of the pool by many other users. If the pool had only a single user, it wouldn’t matter that the link between the user’s deposit and withdrawal addresses was severed: simple inference would make it obvious where the withdrawn tokens came from. Instead, pools are used by many users simultaneously. Think of it like a bank’s safe deposit box room. Anyone can go and store valuables in a locked box in that room, and, assuming the locks are good, only the person with the key can ever get those valuables back. Security aside, however, this may or may not be privacy enhancing. If only one person is ever seen going into and out of the room, then we know any valuables in that room are theirs. If, on the other hand, many people frequently go into and out of the room, then we have no way of knowing who controls which valuables in which boxes. By guaranteeing the property that users can only withdraw tokens they originally deposited, many users can simultaneously use these pools with the assurance that no-one else will receive their tokens.
+Tornado Cash池的一个关键原则是，用户的隐私性在很大程度上来自于许多其他用户同时使用该池。如果池子只有一个用户，那么用户的存款地址和提款地址之间的链接即使被切断，也很明显：简单的推理后，我们就可以清楚地知道提取的代币来自哪里。相反，池被许多用户同时使用。多人使用的池可以想象成是银行的保管箱室。任何人都可以去保管箱房间，选择一个带锁的盒子里存放贵重物品。 假设锁是正常的，那么只有拿着钥匙的人才能取回这些贵重物品。
 
-Traditionally, these assurances would be provided by a *custodial* service: a bank in the safe deposit box example, or a group of people running a “mixing service” in other common cryptocurrency arrangements. Mixing services like Blender.io directly accept tokens from their clients, aggregate and mix them, and then return the funds to their clients (often taking some fee in the process). During the intermediate aggregation and mixing stage, the funds in question are completely in the control of the operators of the mixing service and are commingled. At the final stage of the mixing process, a user would receive funds sourced directly from the myriad other users that also used the service.
+当然，这么做可能会也可能不会增强隐私。如果只看到一个人进出房间，那么我们就知道那个房间里的任何贵重物品都是他们的。另一方面，如果很多人经常进出房间，那么我们就无法知道谁控制了哪些箱子里的哪些贵重物品。通过保证用户只能提取他们最初存入的代币这一特性，许多用户可以同时使用这些池，并确保没有其他人会拿到他们的代币。
 
-In contrast, Tornado Cash pools have no custodial operator, and users only ever withdraw the tokens they originally deposited (rather than a mixture of tokens from the other users of the service). This is made possible because of important properties of the deposit and withdrawal operations, which are automatically carried out through the use of a privacy-preserving branch of mathematics called “[zero-knowledge cryptography.](https://en.wikipedia.org/wiki/Zero-knowledge_proof)” This zero-knowledge cryptography is included in Tornado Cash’s smart contract code, and forms the foundation on which the deposit and withdrawal operations function.
+传统上，保证（每个用户只能提取自己的代币）将由 *托管* 服务提供：例如保险箱示例中的银行，或一组在其他常见加密货币安排中运行“混合服务”的人。像 Blender.io 这样的混合服务商，直接从他们的客户那里接受代币，聚合和混合它们，然后将资金返还给他们的客户（通常在这个过程中收取一些费用）。在中间聚合和混合阶段，相关资金完全由混合服务的运营商控制并混合。在混合过程的最后阶段，用户将收到资金， 这些资金直接来自于那些也使用该服务的无数其他用户。
+
+相比之下，Tornado Cash 池没有托管运营商，用户只能提取他们最初存入的代币（而不是来自该服务的其他用户的混合代币）。之所以可能做到这样，是因为使用了一种可以保护隐私的数学工具，“[零知识密码学](https://en.wikipedia.org/wiki/Zero-knowledge_proof)”。 零知识密码工具被包含在 Tornado Cash 的智能合约代码中，构成了存款和取款功能的基础。
+
 
 #### Zero-Knowledge Proofs
 
