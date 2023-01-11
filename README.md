@@ -29,7 +29,7 @@
 | ![](https://learnblockchain.cn/image/avatar/720_big.jpg?sIcrUsWl) |[Johnathan](https://learnblockchain.cn/people/720) | Github: https://github.com/dajuguan |
 |  |寒星| Twitter: https://twitter.com/coldStar1993|
 |  |Falchion| |
-|  |梁杰s |Github:  https://github.com/liangjies |
+| ![](https://avatars.githubusercontent.com/u/11037807?v=4) |梁杰s |Github:  https://github.com/liangjies |
 
 
 有 Twitter 账号的小伙伴可补充自己的 Twitter。
