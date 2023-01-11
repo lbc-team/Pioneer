@@ -27,7 +27,9 @@
 |                                                          | difengJ | Github: https://github.com/difengJ |
 | | [will](https://learnblockchain.cn/people/617) | Github: https://github.com/peizihui |
 | ![](https://learnblockchain.cn/image/avatar/720_big.jpg?sIcrUsWl) |[Johnathan](https://learnblockchain.cn/people/720) | Github: https://github.com/dajuguan |
-
+|  |寒星| Twitter: https://twitter.com/coldStar1993|
+|  |Falchion| |
+|  |梁杰s |Github:  https://github.com/liangjies |
 
 
 有 Twitter 账号的小伙伴可补充自己的 Twitter。
@@ -52,6 +54,7 @@
  * [Cosmos SDK 中文文档](https://learnblockchain.cn/docs/cosmos/)
  * [Tendermint 中文文档](https://learnblockchain.cn/docs/tendermint/)
  * [Libra 中文文档](https://learnblockchain.cn/docs/libra/docs/welcome-to-libra/)
+ * [Foundry 中文文档](https://learnblockchain.cn/docs/foundry/i18n/zh/)
 
 
 ## 版权
