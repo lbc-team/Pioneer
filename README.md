@@ -1,5 +1,9 @@
 # 登链翻译计划
 
+[![](https://img.learnblockchain.cn/pics/20230203152047.png)](https://img.learnblockchain.cn/pics/20230208153852.png)[![](https://img.learnblockchain.cn/pics/20230203152058.png)](https://twitter.com/NUpchain)[![](https://img.learnblockchain.cn/pics/20230203152217.png)](https://discord.gg/hRZrM92hfw)
+
+
+
 [登链社区](https://learnblockchain.cn/)是一个区块链技术极客社区，登链翻译计划是为国内区块链爱好者引入优质的区块链技术文章。
 
 ## 翻译指南
