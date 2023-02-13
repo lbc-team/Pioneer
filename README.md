@@ -32,7 +32,7 @@
 | | [will](https://learnblockchain.cn/people/617) | Github: https://github.com/peizihui |
 | ![](https://learnblockchain.cn/image/avatar/720_big.jpg?sIcrUsWl) |[Johnathan](https://learnblockchain.cn/people/720) | Github: https://github.com/dajuguan |
 |  |寒星| Twitter: https://twitter.com/coldStar1993|
-|  |Falchion| |
+|  |风吹雨| Github: https://github.com/cuiyuchain |
 | |梁杰s |Github:  https://github.com/liangjies |
 
 
