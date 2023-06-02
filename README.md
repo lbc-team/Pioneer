@@ -1,6 +1,6 @@
 # 登链翻译计划
 
-[![](https://img.learnblockchain.cn/pics/20230203152047.png)](https://img.learnblockchain.cn/pics/20230208153852.png)[![](https://img.learnblockchain.cn/pics/20230203152058.png)](https://twitter.com/NUpchain)[![](https://img.learnblockchain.cn/pics/20230203152217.png)](https://discord.gg/hRZrM92hfw)
+[![](https://img.learnblockchain.cn/pics/20230203152047.png)](https://img.learnblockchain.cn/pics/20230208153852.png)[![](https://img.learnblockchain.cn/pics/20230203152058.png)](https://twitter.com/UpchainDAO)[![](https://img.learnblockchain.cn/pics/20230203152217.png)](https://discord.gg/hRZrM92hfw)
 
 
 
