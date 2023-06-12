@@ -6,7 +6,7 @@ Many approaches to account abstraction have been proposed and implemented to var
 
 ERC-4337 attempts to do the same thing that EIP-2938 does, but through extra-protocol means. Users are expected to send off-chain messages called *user operations*, which get collected and packaged in bulk into a single transaction by either the block proposer or a builder producing bundles for block proposers. The proposer or builder is responsible for filtering the operations to ensure that they only accept operations that pay fees. There is a separate mempool for user operations, and nodes connected to this mempool do ERC-4337-specific validations to ensure that a user operation is guaranteed to pay fees before forwarding it.
 
-![0_IThEWr1KugkIQHrf](/Users/mac/Desktop/0_IThEWr1KugkIQHrf.png)
+![image.png](https://img.learnblockchain.cn/attachments/2023/06/XcQI72Md6486cee5a9a08.png)
 
 ERC-4337 can do a lot as a purely voluntary ERC. However, there are a few key areas where it is weaker than a truly in-protocol solution:
 
