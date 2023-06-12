@@ -41,8 +41,7 @@ Several ZK-Identity apps can in fact be built today with the existing state of i
 - **Anonymous but credible attestations.** These identity tools can be used for proving membership in a group without revealing your exact identity—for example, proving ownership of a Dark Forest planet and joining an NFT-gated community without revealing your identity; making a post as an anonymous but popular Twitter user, proving that you have at least 1m+ Twitter followers without revealing your account; or proving that you’re a member of a legislature and anonymously signaling consensus in an upcoming vote. Some of these applications are discussed more in our ZK Group Signatures [post](https://0xparc.org/blog/zk-group-sigs).
 
 ## ZK Circuits for Cryptographic Identity Primitive
-
-![zkid_circuits](/Users/mac/Desktop/zkid_circuits.png)
+![image](https://github.com/lbc-team/Pioneer/assets/68583807/29064e7c-3660-46ea-b0e9-15d1f7c40b4d)
 
 Stepping one level deeper in the stack, we need efficient, audited implementations of ZK circuits for core cryptographic primitives and the mathematical operations underlying them. Here is a sample of some key operations, in a very rough dependency ordering.
 
