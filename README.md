@@ -8,7 +8,7 @@
 
 ## 翻译指南
 
-查看 [Wiki-如何参与翻译](https://github.com/lbc-team/Pioneer/wiki)
+查看 [Wiki-如何参与翻译](https://github.com/lbc-team/Pioneer/wiki/%E5%8F%82%E4%B8%8E%E7%99%BB%E9%93%BE%E7%BF%BB%E8%AF%91%E8%AE%A1%E5%88%92%EF%BC%8C%E5%81%9A-web3-%E4%B8%AD%E6%96%87%E5%86%85%E5%AE%B9%E7%9A%84%E6%8B%93%E8%8D%92%E8%80%85)
 
 
 
