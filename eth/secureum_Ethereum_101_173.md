@@ -8,322 +8,322 @@
 
 ## Ethereum 101
 
-### 101 key aspects of Ethereum
+### 关于以太坊的101处关键方面
 
-1. Ethereum is “A Next-Generation Smart Contract and Decentralized Application Platform” (See [here](https://ethereum.org/en/whitepaper/))
-2. Ethereum is a blockchain with a built-in Turing-complete programming language, allowing anyone to write smart contracts and decentralized applications where they can create their own arbitrary rules for ownership, transaction formats and state transition functions. (See [here](https://ethereum.org/en/whitepaper/))
-3. Ethereum is an open source, globally decentralized computing infrastructure that executes programs called smart contracts. It uses a blockchain to synchronize and store the system’s state changes, along with a cryptocurrency called ether to meter and constrain execution resource costs. It is often described as "the world computer.” (See [here](https://github.com/ethereumbook/ethereumbook/blob/develop/01what-is.asciidoc))
-4. The Ethereum platform enables developers to build powerful decentralized applications with built-in economic functions. While providing high availability, auditability, transparency, and neutrality, it also reduces or eliminates censorship and reduces certain counterparty risks. (See [here](https://github.com/ethereumbook/ethereumbook/blob/develop/01what-is.asciidoc))
-5. Ethereum’s purpose is not primarily to be a digital currency payment network. While the digital currency ether is both integral to and necessary for the operation of Ethereum, ether is intended as a utility currency to pay for use of the Ethereum platform as the world computer. (See [here](https://github.com/ethereumbook/ethereumbook/blob/develop/01what-is.asciidoc))
-6. Unlike Bitcoin, which has a very limited scripting language, Ethereum is designed to be a general-purpose programmable blockchain that runs a virtual machine capable of executing code of arbitrary and unbounded complexity. Where Bitcoin’s Script language is, intentionally, constrained to simple true/false evaluation of spending conditions, Ethereum’s language is Turing complete, meaning that Ethereum can straightforwardly function as a general-purpose computer. (See [here](https://github.com/ethereumbook/ethereumbook/blob/develop/01what-is.asciidoc))
-7. The original blockchain, namely Bitcoin’s blockchain, tracks the state of units of bitcoin and their ownership. You can think of Bitcoin as a distributed consensus state machine, where transactions cause a global state transition, altering the ownership of coins. The state transitions are constrained by the rules of consensus, allowing all participants to (eventually) converge on a common (consensus) state of the system, after several blocks are mined. Ethereum is also a distributed state machine. But instead of tracking only the state of currency ownership, Ethereum tracks the state transitions of a general-purpose data store, i.e., a store that can hold any data expressible as a key–value tuple. (See [here](https://github.com/ethereumbook/ethereumbook/blob/develop/01what-is.asciidoc))
-8. Ethereum’s core components (See [here](https://github.com/ethereumbook/ethereumbook/blob/develop/01what-is.asciidoc)):
-   1. P2P network: Ethereum runs on the Ethereum main network, which is addressable on TCP port 30303, and runs a protocol called ÐΞVp2p.
-   2. Transactions: Ethereum transactions are network messages that include (among other things) a sender, recipient, value, and data payload.
-   3. State machine: Ethereum state transitions are processed by the Ethereum Virtual Machine (EVM), a stack-based virtual machine that executes bytecode (machine-language instructions). EVM programs, called "smart contracts," are written in high-level languages (e.g., Solidity or Vyper) and compiled to bytecode for execution on the EVM.
-   4. Data structures: Ethereum’s state is stored locally on each node as a database (usually Google’s LevelDB), which contains the transactions and system state in a serialized hashed data structure called a Merkle Patricia Tree.
-9. Ethereum’s core components (continued):
-   1. Consensus algorithm: Ethereum uses Bitcoin’s consensus model, Nakamoto Consensus, which uses sequential single-signature blocks, weighted in importance by Proof-of-Work (PoW) to determine the longest chain and therefore the current state. 
-   2. However, this is being transitioned to a Proof-of-Stake (PoS) algorithm in Ethereum 2.0.
-   3. Economic security: Ethereum currently uses a PoW algorithm called Ethash, but this is being transitioned to a PoS algorithm in Ethereum 2.0.
-   4. Clients: Ethereum has several interoperable implementations of the client software, the most prominent of which are Go-Ethereum (Geth) and OpenEthereum. The others are Erigon, Nethermind and Turbo-geth. OpenEthereum is being deprecated to transition to Erigon, which is the former Turbo-geth. (See [here](https://www.ethernodes.org/))
-10. Ethereum’s ability to execute a stored program, in a state machine called the Ethereum Virtual Machine, while reading and writing data to memory makes it a Turing-complete system. Turing-complete systems face the challenge of the halting problem i.e. given an arbitrary program and its input, it is not solvable to determine whether the program will eventually stop running. So Ethereum cannot predict if a smart contract will terminate, or how long it will run. Therefore, to constrain the resources used by a smart contract, Ethereum introduces a metering mechanism called gas. (See [here](https://github.com/ethereumbook/ethereumbook/blob/develop/01what-is.asciidoc))
-11. As the EVM executes a smart contract, it carefully accounts for every instruction (computation, data access, etc.). Each instruction has a predetermined cost in units of gas. When a transaction triggers the execution of a smart contract, it must include an amount of gas that sets the upper limit of what can be consumed running the smart contract. The EVM will terminate execution if the amount of gas consumed by computation exceeds the gas available in the transaction. Gas is the mechanism Ethereum uses to allow Turing-complete computation while limiting the resources that any program can consume. (See [here](https://github.com/ethereumbook/ethereumbook/blob/develop/01what-is.asciidoc))
-12. Ether needs to be sent along with a transaction and it needs to be explicitly earmarked for the purchase of gas, along with an acceptable gas price. Just like at the pump, the price of gas is not fixed. Gas is purchased for the transaction, the computation is executed, and any unused gas is refunded back to the sender of the transaction. (See [here](https://github.com/ethereumbook/ethereumbook/blob/develop/01what-is.asciidoc))
-13. A Decentralized Application, abbreviated as ÐApp, is a web application that is built on top of open, decentralized, peer-to-peer infrastructure services and typically combines smart contracts with a web interface.
-14. ÐApps represent a transition from “Web 2.0” where applications are centrally owned and managed to “Web 3.0” where applications are built on decentralised peer-to-peer protocols for compute (i.e. blockchain), storage and messaging.
-15. Ethereum blockchain represents the decentralized compute part of Web 3.0. Swarm represents the decentralized storage and Whisper (now Waku) represents the decentralized messaging protocol.
-16. Decentralization can be considered as three types (See [here](https://medium.com/@VitalikButerin/the-meaning-of-decentralization-a0c92b76a274)):
-    1. Architectural decentralization
-    2. Political decentralization
-    3. Logical decentralization
-17. Ethereum’s currency unit is called ether or “ETH.” Ether is subdivided into smaller units and the smallest unit is named wei. 10**3 wei is 1 Babbage, 10**6 wei is 1 Lovelace, 10**9 wei is 1 Shannon and 10**18 wei is 1 Ether.
-18. Ethereum uses public key cryptography to create public–private key pairs (considered a "pair" because the public key is derived from the private key) which are not used for encryption but for digital signatures.
-19. Ethereum uses Elliptic Curve Digital Signature Algorithm (ECDSA) for digital signatures (SECP-256k1 curve) which is based on Elliptic-curve cryptography (ECC), an approach to public-key cryptography based on the algebraic structure of elliptic curves over finite fields. (See [here](https://en.wikipedia.org/wiki/Elliptic-curve_cryptography))
-20. An Ethereum private key is a 256-bit random number that uniquely determines a single Ethereum address also known as an account
-21. An Ethereum public key is a point on an elliptic curve calculated from the private key using elliptic curve multiplication. One cannot calculate the private key from the public key.
-22. Ethereum state is made up of objects called "accounts", with each account having a 20-byte address and state transitions being direct transfers of value and information between accounts. (See [here](https://ethereum.org/en/whitepaper/#ethereum-accounts))
-23. Ethereum account contains four fields:
-    1. The nonce, a counter used to make sure each transaction can only be processed once
-    2. The account's current ether balance
-    3. The account's contract code, if present
-    4. The account's storage (empty by default)
-24. Ethereum has two different types of accounts:
-    1. Externally Owned Accounts (EOAs) controlled by private keys
-    2. Contract Accounts controlled by their contract code
-25. Ownership of ether by EOAs is established through private keys, Ethereum addresses, and digital signatures. Anyone with a private key has control of the corresponding EOA account and any ether it holds.
-26. An EOA has no code, and one can send messages from an EOA by creating and signing a transaction
-27. A contract account has code and associated storage and every time it receives a message its code activates, allowing it to read and write to internal storage and send other messages or create contracts in turn.
-28. Smart contracts can be thought of as "autonomous agents" that live inside of the Ethereum execution environment, always executing a specific piece of code when "poked" by a message or transaction, and having direct control over their own ether balance and their own key/value store to keep track of persistent variables.
-29. Ethereum uses Keccak-256 as its cryptographic hash function. Keccak-256 was the winning candidate for the SHA-3 competition held by NIST but is different from the finally adopted SHA-3 standard. (See [here](https://github.com/ethereumbook/ethereumbook/blob/develop/04keys-addresses.asciidoc))
-30. Ethereum address of an EOA account is the last 20 bytes (least significant bytes) of the Keccak-256 hash of the public key of the EOA’s key pair.
-31. Transactions are signed messages originated by an externally owned account (EOA), transmitted by the Ethereum network, and recorded on the Ethereum blockchain. Only transactions can trigger a change of state. Ethereum is a transaction-based state machine. (See [here](https://github.com/ethereumbook/ethereumbook/blob/develop/06transactions.asciidoc))
-32. Transaction properties:
-    1. Atomic: it is all or nothing i.e. cannot be divided or interrupted by other transactions
-    2. Serial: Transactions are processed sequentially one after the other without any overlapping by other transactions
-    3. Inclusion: Transaction inclusion is not guaranteed and depends on network congestion and gasPrice among other things. Miners determine inclusion.
-    4. Order: Transaction order is not guaranteed and depends on network congestion and gasPrice among other things. Miners determine order.
-33. A transaction is a serialized binary message that contains the following components (See [here](https://github.com/ethereumbook/ethereumbook/blob/develop/06transactions.asciidoc)):
-    1. nonce: A sequence number, issued by the originating EOA, used to prevent message replay
-    2. gasPrice: The amount of ether (in wei) that the originator is willing to pay for each unit of gas
-    3. gasLimit: The maximum amount of gas the originator is willing to pay for this transaction
-    4. recipient: The destination Ethereum address
-    5. value: The amount of ether (in wei) to send to the destination
-    6. data: The variable-length binary data payload
-    7. v,r,s: The three components of an ECDSA digital signature of the originating EOA
-34. Nonce: A scalar value equal to the number of transactions sent from the EOA account or, in the case of Contract accounts, it is the number of contract-creations made by the account. (See [here](https://github.com/ethereumbook/ethereumbook/blob/develop/06transactions.asciidoc#the-transaction-nonce))
-35. Gas price: The price a transaction originator is willing to pay in exchange for gas. The price is measured in wei per gas unit. The higher the gas price, the faster the transaction is likely to be confirmed on the blockchain. The suggested gas price depends on the demand for block space at the time of the transaction.
-36. Gas limit: The maximum number of gas units the transaction originator is willing to pay in order to complete the transaction
-37. Recipient: The 20-byte Ethereum address of the transaction’s recipient which can be an EOA or a Contract account.
-    1. The Ethereum protocol does not validate recipient addresses in transactions. One can send a transaction to an address that has no corresponding private key or contract. Validation should be done at the user interface level.
-    2. Note that there is no *from* address in the transaction because the EOA’s public key can be derived from the v,r,s components of the ECDSA signature and the transaction originator’s address can be derived from this public key
-38. Value: The value of ether sent to the transaction recipient. If the recipient is an EOA then that account’s balance will be increased by this value. If the recipient is a contract address then the result depends on any data that is sent as part of this transaction. If there is no data, the recipient contract’s *receive* or *fallback* function is called if they are present. Depending on the implementation of those functions, the ether value is added to the contract account’s balance or an exception occurs and this ether remains with the originator’s account.
-39. Data: The information (typically) sent to a contract account indicating the contract’s function to be called and the arguments to that function.
-40. v,r,s: *r* and *s* are the two parts of the ECDSA signature produced by the transaction originator using the private key. *v* is the recovery identifier which is calculated as either one of 27 or 28, or as the chain ID (Ethereum mainnet chainID is 1) doubled plus 35 or 36. (See [here](https://github.com/ethereumbook/ethereumbook/blob/develop/06transactions.asciidoc#digital-signatures))
-41. A digital signature serves three purposes in Ethereum: 1) proves that the owner of the private key, who is by implication the owner of an Ethereum account, has authorized the spending of ether, or execution of a contract 2) guarantees non-repudiation: the proof of authorization is undeniable 3) proves that the transaction data has not been and cannot be modified by anyone after the transaction has been signed.
-42. Contract creation transactions are sent to a special destination address called the zero address i.e. 0x0. A contract creation transaction contains a data payload with the compiled bytecode to create the contract. An optional ether amount in the value field will create the new contract with a starting balance.
-43. Transactions vs Messages:
-    1. A transaction is produced by an EOA where an external actor sends a signed data package which either: 1) triggers a message to another EOA where it leads to a transfer of value or 2) triggers a message to a contract account where it leads to the recipient contract account running its code
-    2. A message is either: 1) triggered by a transaction to another EOA or contract account or 2) triggered internally within the EVM by a contract account when it executes the CALL family of opcodes and leads to the recipient contract account running its code or value transfer to the recipient EOA 
-44. Transactions are grouped together into blocks. A blockchain contains a series of such blocks that are chained together.
-45. Blocks: are batches of transactions with a hash of the previous block in the chain. This links blocks together (in a chain) because hashes are cryptographically derived from the block data. This prevents fraud, because one change in any block in history would invalidate all the following blocks as all subsequent hashes would change and everyone running the blockchain would notice. To preserve the transaction history, blocks are strictly ordered (every new block created contains a reference to its parent block), and transactions within blocks are strictly ordered as well. (See [here](https://ethereum.org/en/developers/docs/blocks/))
-46. Ethereum node/client: A node is a software application that implements the Ethereum specification and communicates over the peer-to-peer network with other Ethereum nodes. A client is a specific implementation of Ethereum node. The two most common client implementations are Geth and OpenEthereum. Ethereum transactions are sent to Ethereum nodes to be broadcast across the peer-to-peer network. (See [here](https://www.ethernodes.org/))
-47. Miners: are entities running Ethereum nodes that validate and execute these transactions and combine them into blocks. The process of validating each block by having a miner provide a mathematical proof is known as a “proof of work.” Miners are rewarded for blocks accepted into the blockchain with a block reward in ether (currently 2 ETH). A miner also gets fees which is the ether spent on gas by all the transactions included in the block.
-48. Block gas limit is set by miners and refers to the cap on the total amount of gas expended by all transactions in the block, which ensures that blocks can’t be arbitrarily large. Blocks therefore are not a fixed size in terms of the number of transactions because different transactions consume different amounts of gas. See [here](https://etherscan.io/chart/gaslimit) for historical block gas limits.
-49. Blocks take time to propagate through the network and multiple miners are simultaneously producing valid blocks. This leads to the blockchain considering multiple blocks at the same level but ultimately choosing only one block at any level that creates the canonical blockchain. This choice is dictated by Ethereum’s Greedy Heaviest Observed Subtree (GHOST) protocol which includes stale blocks up to seven levels in the calculation of the longest chain. Stale blocks are called uncles or ommers.
-50. Consensus: Decentralized consensus in the context of Ethereum refers to the process of determining which miner’s block should be appended next to the blockchain. This involves two key components of Proof-of-Work (PoW) and the Longest-chain Rule. Miners apply these rules to build on the canonical blockchain. This is referred to as "Nakamoto Consensus” and is adapted from Bitcoin.
-51. State is a mapping between addresses and account states implemented as a modified Merkle Patricia tree or trie. A Merkle tree or trie is a type of binary tree composed of a set of nodes with:
-    1. Leaf nodes at the bottom of the tree that contain the underlying data
-    2. Intermediate nodes, where each node is the hash of its two child nodes
-    3. A single root node formed from the hash of its two child nodes representing the top of the tree
-52. Ethereum’s proof-of-work algorithm is called “Ethash” (previously known as Dagger-Hashimoto). 
-    1. The algorithm is formally defined as *m = Hm* ∧ *n <= 2**256/Hd* with *(m, n) = PoW(Hn’, Hn, d)* where Hn’ is the new block’s header but without the nonce and mix-hash components; Hn is the nonce of the header; d is a large data set needed to compute the mixHash and Hd is the new block’s difficulty value
-    2. PoW is the proof-of-work function which evaluates to an array with the first item being the mixHash and the second item being a pseudorandom number cryptographically dependent on H and d.
-53. Blocks contain block header, transactions and ommers’ block headers. Block header contains (See [here](https://ethereum.github.io/yellowpaper/paper.pdf)):
-    1. *parentHash*: The Keccak 256-bit hash of the parent block’s header, in its entirety
-    2. *ommersHash*: The Keccak 256-bit hash of the ommers list portion of this block
-    3. *beneficiary*: The 160-bit address to which all fees collected from the successful mining of this block be transferred
-    4. *stateRoot*: The Keccak 256-bit hash of the root node of the state trie, after all transactions are executed and finalisations applied
-    5. *transactionsRoot*: The Keccak 256-bit hash of the root node of the trie structure populated with each transaction in the transactions list portion of the block
-    6. *receiptsRoot*: The Keccak 256-bit hash of the root node of the trie structure populated with the receipts of each transaction in the transactions list portion of the block
-    7. *logsBloom*: The Bloom filter composed from indexable information (logger address and log topics) contained in each log entry from the receipt of each transaction in the transactions list
-    8. *difficulty*: A scalar value corresponding to the difficulty level of this block. This can be calculated from the previous block’s difficulty level and the timestamp
-    9. *number*: A scalar value equal to the number of ancestor blocks. The genesis block has a number of zero; 
-    10. gasLimit: A scalar value equal to the current limit of gas expenditure per block
-    11. *gasUsed*: A scalar value equal to the total gas used in transactions in this block
-    12. *timestamp*: A scalar value equal to the reasonable output of Unix’s time() at this block’s inception
-    13. *extraData*: An arbitrary byte array containing data relevant to this block. This must be 32 bytes or fewer
-    14. *mixHash*: A 256-bit hash which, combined with the nonce, proves that a sufficient amount of computation has been carried out on this block
-    15. *nonce*: A 64-bit value which, combined with the mixhash, proves that a sufficient amount of computation has been carried out on this block
-54. *stateRoot*, *transactionsRoot* and *receiptsRoot* are 256-bit hashes of the root nodes of modified Merkle-Patricia trees. The leaves of stateRoot are key-value pairs of all Ethereum address-account pairs, where each respective account consists of:
-    1. nonce: A scalar value equal to the number of transactions sent from this address or, in the case of accounts with associated code, the number of contract-creations made by this account
-    2. balance: A scalar value equal to the number of Wei owned by this address
-    3. storageRoot: A 256-bit hash of the root node of a modified Merkle-Patricia tree that encodes the storage contents of the account (a mapping between 256-bit integer values), encoded into the trie as a mapping from the Keccak 256-bit hash of the 256-bit integer keys to the RLP-encoded 256-bit integer values.
-    4. codeHash: The hash of the EVM code of this account—this is the code that gets executed should this address receive a message call; it is immutable and thus, unlike all other fields, cannot be changed after construction.
-55. Transaction receipt is a tuple of four items comprising: 
-    1. The cumulative gas used in the block containing the transaction receipt as of immediately after the transaction has happened
-    2. The set of logs created through execution of the transaction
-    3. The Bloom filter composed from information in those logs
-    4. The status code of the transaction
-56. Gas refund and beneficiary: Any unused gas in a transaction (gasLimit minus gas used by the transaction) is refunded to the sender’s account at the same gasPrice. Ether used to purchase gas used for the transaction is credited to the beneficiary address (specified in the block header), the address of an account typically under the control of the miner. This is the transaction “fees” paid to the miner.
-57. EVM is a quasi Turing complete machine where the quasi qualification comes from the fact that the computation is intrinsically bounded through a parameter, gas, which limits the total amount of computation done. EVM is the runtime environment for smart contracts.
-58. The code in Ethereum contracts is written in a low-level, stack-based bytecode language, referred to as "Ethereum virtual machine code" or "EVM code". The code consists of a series of bytes (hence called bytecode), where each byte represents an operation.
-59. The EVM is a simple stack-based architecture consisting of the stack, volatile memory, non-volatile storage with a word size of 256-bit (chosen to facilitate the Keccak256 hash scheme and elliptic-curve computations) and Calldata.
-60. Stack is made up of 1024 256-bit elements. EVM instructions can operate with the top 16 stack elements. Most EVM instructions operate with the stack (stack-based architecture) and there are also stack-specific operations e.g. PUSH, POP, SWAP, DUP etc.
-61. Memory is a linear byte-array addressable at a byte-level and is volatile. All locations are well-defined initially as zero. This is accessed with MLOAD, MSTORE and MSTORE8 instructions.
-62. Storage is a 256-bit to 256-bit key-value store. Unlike memory, which is volatile, storage is non-volatile and is maintained as part of the system state. All locations are well-defined initially as zero. This is accessed with SLOAD/SSTORE instructions.
-63. Calldata is a read-only byte-addressable space where the data parameter of a transaction or call is held. This is accessed with CALLDATASIZE/CALLDATALOAD/CALLDATACOPY instructions.
-64. EVM does not follow the standard von Neumann architecture. Rather than storing program code in generally accessible memory or storage, it is stored separately in a virtual ROM accessible only through a specialized instruction.
-65. EVM uses big-endian ordering where the most significant byte of a word is stored at the smallest memory address and the least significant byte at the largest
-66. EVM instruction set can be classified into 11 categories:
-    1. Stop and Arithmetic Operations
-    2. Comparison & Bitwise Logic Operations
+1. 以太坊是 “下一代智能合约和去中心化应用平台” (See [here](https://ethereum.org/en/whitepaper/))
+2. 以太坊是一个内置图灵完备编程语言的区块链, 允许任何人编写智能合约和去中心化应用程序，他们可以在其中为所有权、交易格式和状态转换功能创建自己的任意规则. (See [here](https://ethereum.org/en/whitepaper/))
+3. 以太坊是一个开源的、全球去中心化的计算基础设施，它执行称为智能合约的程序. 它使用区块链来同步和存储系统的状态变化，以及一种称为以太币的加密货币来计量和限制执行资源成本. 它通常被描述为“世界计算机”。 (See [here](https://github.com/ethereumbook/ethereumbook/blob/develop/01what-is.asciidoc))
+4. 以太坊平台使开发人员能够构建具有内置经济功能的强大去中心化应用程序。 在提供高可用性、可审计性、透明性和中立性的同时，它还减少或消除了审查制度并降低了某些交易对手风险。 (See [here](https://github.com/ethereumbook/ethereumbook/blob/develop/01what-is.asciidoc))
+5. 以太坊的主要目的不是成为数字货币支付网络。 虽然数字货币以太币对于以太坊的运作来说既是不可或缺的，也是必不可少的， 以太币旨在作为一种实用货币来支付使用以太坊平台作为世界计算机的费用。 (See [here](https://github.com/ethereumbook/ethereumbook/blob/develop/01what-is.asciidoc))
+6. 与脚本语言非常有限的比特币不同，以太坊被设计成一个通用的可编程区块链，它运行一个能够执行任意和无限复杂代码的虚拟机。 比特币的脚本语言有意限制为对花费条件进行简单的真假评估, 而以太坊的语言是图灵完备的，这意味着以太坊可以直接充当通用计算机。 (See [here](https://github.com/ethereumbook/ethereumbook/blob/develop/01what-is.asciidoc))
+7. 原始区块链，即比特币的区块链，跟踪比特币单位的状态及其所有权。 你可以将比特币视为分布式共识状态机，其中交易会导致全局状态转换，从而改变货币的所有权。 状态转换受到共识规则的约束，允许所有参与者（最终）在挖掘多个区块后收敛于系统的共同（共识）状态。 以太坊也是一个分布式状态机。但不是只跟踪货币所有权的状态，以太坊跟踪通用数据存储的状态转换，即可以保存任何可表示为键值元组的数据的存储 (See [here](https://github.com/ethereumbook/ethereumbook/blob/develop/01what-is.asciidoc))
+8. 以太坊的核心组件 (See [here](https://github.com/ethereumbook/ethereumbook/blob/develop/01what-is.asciidoc)):
+   1. P2P 网络：以太坊运行在以太坊主网上，可在 TCP 端口 30303 上寻址， 并且运行着一个称作“ÐΞVp2p”（译者注：其实就是DEVp2p）的连接协议.
+   2. 交易：以太坊交易是网络消息，包括（除其他外）发送者、接收者、价值和数据负载。
+   3. 状态机：以太坊状态转换由以太坊虚拟机 (EVM) 处理，EVM 是一种基于堆栈的虚拟机，可执行字节码（机器语言指令）。EVM 程序，称为“智能合约”，是用高级语言（例如 Solidity 或 Vyper）编写的，并编译为字节码以在 EVM 上执行。
+   4. 数据结构：以太坊的状态作为数据库（通常是谷歌的 LevelDB）本地存储在每个节点上，其中包含称为 Merkle Patricia Tree 的序列化哈希数据结构中的交易和系统状态。
+9. 以太坊的核心组件（持续更新中）:
+   1. 共识算法：以太坊使用比特币的共识模型 Nakamoto Consensus，它使用连续的单一签名块，通过工作量证明 (PoW) 对重要性进行加权以确定最长的链，从而确定当前状态。
+   2. 然而，这正在过渡到以太坊 2.0 中的权益证明 (PoS) 算法。
+   3. 经济安全性：以太坊目前使用称为 Ethash 的 PoW 算法，但在以太坊 2.0 中正在过渡到 PoS 算法。
+   4. 客户端：以太坊有多个可互操作的客户端软件实现，其中最突出的是 Go-Ethereum (Geth) 和 OpenEthereum。其他的是 Erigon、Nethermind 和 Turbo-geth。 OpenEthereum 正在被弃用以过渡到 Erigon，即以前的 Turbo-geth。(See [here](https://www.ethernodes.org/))
+10. 以太坊能够在称为以太坊虚拟机的状态机中执行存储的程序，同时在内存中读取和写入数据，使其成为图灵完备的系统。图灵完备系统面临停机问题的挑战，即给定一个任意程序及其输入，无法确定程序是否最终会停止运行。 所以以太坊无法预测智能合约是否会终止，或者它会运行多长时间。因此，为了限制智能合约使用的资源，以太坊引入了一种称为燃料（gas）的计量机制。 (See [here](https://github.com/ethereumbook/ethereumbook/blob/develop/01what-is.asciidoc))
+11. 当 EVM 执行智能合约时，它会仔细考虑每条指令（计算、数据访问等）。每条指令都有一个预先确定的成本，以 gas 为单位。当交易触发智能合约的执行时，它必须包含一定数量的燃料，以设置运行智能合约可以消耗的上限。 如果计算消耗的gas量超过交易中可用的gas量，则 EVM 将终止执行。 Gas 是以太坊用来允许图灵完备计算同时限制任何程序可以消耗的资源的机制。(See [here](https://github.com/ethereumbook/ethereumbook/blob/develop/01what-is.asciidoc))
+12. 以太需要与交易一起发送，并且需要明确指定用于购买燃料，以及可接受的燃料价格。 就像加油站一样，汽油的价格不是固定的。 购买燃料是为了交易，执行计算，并将任何未使用的燃料退还给交易的发送者。 (See [here](https://github.com/ethereumbook/ethereumbook/blob/develop/01what-is.asciidoc))
+13. 去中心化应用程序，缩写为 ÐApp，是一种构建在开放、去中心化、点对点基础设施服务之上的网络应用程序，通常将智能合约与web界面相结合。
+14. ÐApps 代表了从应用程序集中拥有和管理的“Web 2.0”到“Web 3.0”的过渡，在“Web 3.0”中，应用程序构建在用于计算（即区块链）、存储和消息传递的去中心化对等协议上。
+15. 以太坊区块链代表 Web 3.0 的去中心化计算部分。 Swarm 代表去中心化存储，而 Whisper（现在的 Waku）代表去中心化消息传递协议。
+16. 去中心化可以被认为是三种类型 (See [here](https://medium.com/@VitalikButerin/the-meaning-of-decentralization-a0c92b76a274)):
+    1. 架构去中心化
+    2. 政治去中心化
+    3. 逻辑去中心化
+17. 以太坊的货币单位称为以太币或“ETH”。 以太被细分为更小的单位，最小的单位被命名为wei。 10的3次方 wei 是 1 Babbage, 10的6次方 wei 是 1 Lovelace, 10的9次方 wei 是 1 Shannon and 10的18次方 wei 是 1 Ether.
+18. 以太坊使用公钥加密来创建公私密钥对(被认为是“一对”，因为公钥是从私钥派生的) 不用于加密但用于数字签名.
+19. 以太坊使用椭圆曲线数字签名算法 (ECDSA) 进行基于椭圆曲线密码学 (ECC) 的数字签名（SECP-256k1 曲线）, 一种基于有限域上椭圆曲线代数结构的公钥密码学方法。 (See [here](https://en.wikipedia.org/wiki/Elliptic-curve_cryptography))
+20. 以太坊私钥是一个 256 位的随机数，它唯一地确定一个单一的以太坊地址，也称为账户。
+21. 以太坊公钥是使用椭圆曲线乘法从私钥计算出的椭圆曲线上的一个点。不能从公钥计算出私钥。
+22. 以太坊状态由称为“账户”的对象组成，每个账户都有一个 20 字节的地址，状态转换是账户之间价值和信息的直接转移。 (See [here](https://ethereum.org/en/whitepaper/#ethereum-accounts))
+23. 以太坊账户包含四个字段:
+    1. nonce，用于确保每笔交易只能处理一次的计数器
+    2. 账户当前的以太币余额
+    3. 账户的合约代码（如果存在）
+    4. 账户的存储空间（默认为空）
+24. 以太坊有两种不同类型的账户:
+    1. 由私钥控制的外部拥有账户 (EOA)
+    2. 合约代码控制的合约账户
+25. EOA 对以太币的所有权是通过私钥、以太坊地址和数字签名建立的。任何拥有私钥的人都可以控制相应的 EOA 账户及其持有的任何以太币。
+26. EOA 没有代码，可以通过创建和签署交易从 EOA 发送消息。
+27. 一个合约账户有代码和相关的存储，每次它收到一条消息，它的代码就会激活，允许它读取和写入内部存储并依次发送其他消息或创建合约。
+28. 智能合约可以被认为是存在于以太坊执行环境中的“自治代理”, 当被消息或者交易触发时总是会执行特定代码片段,并直接控制他们自己的以太币余额和他们自己的键值存储以跟踪持久变量.
+29. 以太坊使用 Keccak-256 作为其加密哈希函数。 Keccak-256 是 NIST 举办的 SHA-3 竞赛的获胜候选者，但与最终采用的 SHA-3 标准不同。 (See [here](https://github.com/ethereumbook/ethereumbook/blob/develop/04keys-addresses.asciidoc))
+30. EOA 账户的以太坊地址是 EOA 密钥对公钥的 Keccak-256 散列的最后 20 个字节（最低有效字节）。
+31. 交易是由外部拥有的帐户 (EOA) 发起的签名消息, 由以太坊网络传输，并记录在以太坊区块链上。只有交易才能触发状态的改变。以太坊是一个基于交易的状态机。 (See [here](https://github.com/ethereumbook/ethereumbook/blob/develop/06transactions.asciidoc))
+32. 交易属性:
+    1. 原子的（Atomic）: 它是全有或全无，即不能被其他交易分割或中断
+    2. 顺序的（Serial）: 交易按顺序依次处理，不与其他交易重叠
+    3. 包含与否（Inclusion）: 不能保证交易被包含（打包），并且取决于网络拥塞和 gasPrice 等因素。 矿工决定打包与否。
+    4. 排序: 交易顺序无法保证，取决于网络拥塞和 gasPrice 等因素。矿工决定顺序。
+33. 交易是包含以下组件的序列化二进制消息 (See [here](https://github.com/ethereumbook/ethereumbook/blob/develop/06transactions.asciidoc)):
+    1. nonce: 由原始 EOA 发布的序列号，用于防止消息重播
+    2. gasPrice: 发起人愿意为每单位燃料支付的以太币数量（以 wei 为单位）
+    3. gasLimit: 发起人愿意为此交易支付的最大gas量
+    4. recipient: 目标以太坊地址
+    5. value: 发送到目的地的以太币数量（以 wei 为单位）
+    6. data: 可变长度二进制数据有效载荷
+    7. v,r,s: 原始 EOA 的 ECDSA 数字签名的三个组成部分
+34. Nonce:标量值等于从 EOA 账户发送的交易数量，或者在合约账户的情况下，它是帐户创建合约的数量。 (See [here](https://github.com/ethereumbook/ethereumbook/blob/develop/06transactions.asciidoc#the-transaction-nonce))
+35. Gas price: 交易发起者愿意为换取 gas 支付的价格。价格以单位燃料 wei 为单位。 gas 价格越高，交易在区块链上得到确认的速度就越快。建议的 gas 价格取决于交易时对区块空间的需求。
+36. Gas limit: 交易发起者为完成交易愿意支付的最大gas单位数
+37. Recipient: 交易接收者的 20 字节以太坊地址，可以是 EOA 或合约账户。
+    1. 以太坊协议不验证交易中的接收人地址。可以将交易发送到没有对应私钥或合约的地址。验证应该在用户界面级别完成。
+    2. 请注意，交易中没有发送者地址，因为 EOA 的公钥可以从 ECDSA 签名的 v,r,s 组件派生，交易发起人的地址可以从这个公钥中导出。
+38. Value: 发送给交易接收者的以太币价值。 如果收件人是 EOA，则该帐户的余额将增加此值。 如果收件人是合约地址，则结果取决于作为此交易的一部分发送的任何数据。 如果没有数据，则调用接收者合约的接收（receive）或回退（fallback）函数（如果它们存在）。 根据这些功能的实现，以太值会添加到合约账户的余额中，或者发生异常则该以太币保留在发起人的帐户中。
+39. Data: 发送到合约账户的信息，（通常）表示要调用的合约函数和该函数的参数。
+40. v,r,s: r 和 s 是交易发起方使用私钥生成的 ECDSA 签名的两部分。v 是恢复标识符，计算为 27 或 28 之一, 或者作为链 ID（以太坊主网 chainID 为 1）加倍加 35 或 36。 (See [here](https://github.com/ethereumbook/ethereumbook/blob/develop/06transactions.asciidoc#digital-signatures))
+41. 数字签名在以太坊中有三个用途: 1) 证明私钥的所有者，即以太坊帐户的所有者，已授权以太币的支出或合约的执行 2) 保证不可否认性: 授权证明是不可否认的 3) 证明交易数据在交易签署后没有被也不能被任何人修改。
+42. 合约创建交易被发送到一个特殊的目标地址，称为零地址，即 0x0。 合约创建交易包含一个数据有效负载，其中包含用于创建合约的已编译字节码。value字段中的可选以太币金额将创建具有初始余额的新合约。
+43. 交易 vs 消息:
+    1. 交易由EOA生成，其中外部参与者发送签名的数据包，该数据包 或者: 1) 触发消息到另一个它发送价值的EOA， 或者 2) 触发消息到一个合约账户，在此账户将执行他的合约代码。
+    2. 消息是 要么: 1) 由指向另一个EOA或合约账户的交易触发 要么 2) 在EVM内部有合约账户执行CALL系列字节码并导致合约接受者账户运行代码或价值转移给接受者EOA时触发。
+44. 交易被分组到块中。区块链包含一系列这样的块，这些块被链接在一起。
+45. Blocks: 是具有链中前一个区块哈希值的批量交易。这将块链接在一起（在一条链中），因为哈希是从块数据中加密导出的。这可以防止欺诈，因为历史上任何区块的一次更改都会使所有后续区块无效，因为所有后续哈希值都会发生变化，并且运行区块链的每个人都会注意到。 为了保留交易历史，块是严格排序的（每个创建的新块都包含对其父块的引用）， 区块内的交易也是严格有序的。 (See [here](https://ethereum.org/en/developers/docs/blocks/))
+46. Ethereum node/client: 节点是实现以太坊规范并通过点对点网络与其他以太坊节点通信的软件应用程序。 客户端是以太坊节点的具体实现。两种最常见的客户端实现是 Geth 和 OpenEthereum。 以太坊交易被发送到以太坊节点以在点对点网络中广播。 (See [here](https://www.ethernodes.org/))
+47. Miners: 是运行以太坊节点的实体，它们验证和执行这些交易并将它们组合成块。 通过让矿工提供数学证明来验证每个区块的过程称为“工作量证明”。矿工因被区块链接受的区块而获得以太币（目前为 2 ETH）的区块奖励。 矿工还获得费用，这是区块中包含的所有交易在gas上花费的以太币。
+48. 区块gas limit由矿工设定，是指区块内所有交易消耗的gas总量上限， 这确保块不能任意大。 因此，就交易数量而言，区块的大小并不是固定的，因为不同的交易会消耗不同数量的gas。 See [here](https://etherscan.io/chart/gaslimit) for historical block gas limits.
+49. 块需要时间通过网络传播，并且多个矿工同时生产有效块。这导致区块链会考虑同一级别的多个区块，但最终只选择创建规范区块链的任何级别的一个区块。 这种选择是由以太坊的贪婪最重观察子树 (GHOST) 协议决定的，该协议在最长链的计算中包括多达七个级别的陈旧块。过时的块称为叔块或 ommers(译者注：“ommer”一词是阿姨叔叔的中性替代词。 )。
+50. Consensus: 以太坊上下文中的去中心化共识是指确定哪个矿工的区块应该附加到下一个区块链的过程。这涉及到两个关键部分：工作量证明和最长链规则。 旷工应用这些规则创建标准的区块链。 这被称为“中本聪共识”，改编自比特币。
+51. 状态是地址和帐户状态之间的映射，以修改后的 Merkle Patricia 树或特里树的形式实现。 Merkle 树或 trie 是一种二叉树，由一组具有以下特征的节点组成:
+    1. 树底部的叶节点包含基础数据
+    2. 中间节点，其中每个节点都是其两个子节点的哈希值
+    3. 单个根节点由其代表树顶部的两个子节点的哈希值形成
+52. 以太坊的工作量证明算法称为“Ethash”（以前称为 Dagger-Hashimoto）. 
+    1. 该算法正式定义为 m = Hm ∧ n <= 2256Hd 且 (m, n) = PoW(Hn’, Hn, Hd) 其中 Hn’ 是新区块的标头，但没有随机数和混合哈希组件；Hn 是标头的随机数； d 是计算 mixHash 所需的大数据集，Hd 是新块的难度值
+    2. PoW 是工作量证明函数，其计算结果为一个数组，其中第一项是 mixHash，第二项是加密依赖于 H 和 d 的伪随机数。
+53. 区块包含区块头、交易和 ommers 的区块头。区块头包含 (See [here](https://ethereum.github.io/yellowpaper/paper.pdf)):
+    1. *parentHash*: 整个父区块头的 Keccak 256 位哈希
+    2. *ommersHash*: 此块的 ommers 列表部分的 Keccak 256 位哈希
+    3. *beneficiary*: 160 位地址，该区块成功挖矿所收取的所有费用将转移到该地址
+    4. *stateRoot*: 状态树根节点的 Keccak 256 位散列，在执行所有交易并应用终结后
+    5. *transactionsRoot*: 块的交易列表部分中的每个交易填充的 trie 结构的根节点的 Keccak 256 位哈希
+    6. *receiptsRoot*: trie 结构根节点的 Keccak 256 位散列，其中填充了区块交易列表部分中每笔交易的收据
+    7. *logsBloom*: Bloom filter 由交易列表中每笔交易的每个日志条目中包含的可索引信息（记录器地址和日志主题）组成
+    8. *difficulty*: 与该块的难度级别相对应的标量值。 这可以根据前一个块的难度级别和时间戳计算得出
+    9. *number*: 一个标量值等于祖先块的数量。创世块的编号为零
+    10. gasLimit: 一个标量值等于当前每个区块的gas消耗限制
+    11. *gasUsed*: 一个标量值，等于该区块中交易中使用的总gas量
+    12. *timestamp*: 标量值等于 Unix 的 time() 在此块开始时的合理输出
+    13. *extraData*: 包含与此块相关的数据的任意字节数组。这必须是 32 字节或更少
+    14. *mixHash*: 一个 256 位哈希值，与随机数结合，证明已对该块进行了足够量的计算
+    15. *nonce*: 一个 64 位值，与mixHash结合，证明已对该块执行了足够的计算量
+54. *stateRoot*, *transactionsRoot* and *receiptsRoot* 是修改后的 Merkle-Patricia 树的根节点的 256 位哈希值。stateRoot 的叶子是所有以太坊地址-账户对的键值对， 其中每个相应的帐户包括:
+    1. nonce: 标量值等于从该地址发送的交易数量，或者对于具有关联代码的账户，该账户创建的合约数量
+    2. balance: 一个标量值，等于该地址拥有的 Wei 数量
+    3. storageRoot: 修改后的 Merkle-Patricia 树根节点的 256 位hash，对帐户的存储内容进行编码（256 位整数值之间的映射）,作为从 256 位整数键的 Keccak 256 位散列到 RLP 编码的 256 位整数值的映射，编码到 trie 中。
+    4. codeHash: 该账户EVM代码的hash—如果此地址收到消息调用，将会执行的代码； 它是不可变的，因此与所有其他字段不同，它在构建后无法更改。
+55. 交易收据是四项的元组，包括：
+    1. 交易发生后立即在包含交易收据的区块中使用的累计gas
+    2. 通过执行交易创建的一组日志
+    3. 由这些日志中的信息组成的布隆过滤器
+    4. 交易的状态码
+56. gas退回和受益人: 交易中任何未使用的 gas（gas Limit 减去交易使用的 gas）将以相同的 gas Price 退还给发送者的账户。 用于购买用于交易的gas的以太币记入受益人地址（在区块标头中指定），该地址通常由矿工控制。 这是支付给矿工的交易“费用”。
+57. EVM 是一个准图灵完备机，其中准资格来自于计算本质上受参数、gas 限制的事实，它限制了完成的计算总量。EVM 是智能合约的运行时环境。
+58. 以太坊合约中的代码是用一种低级的、基于堆栈的字节码语言编写的，称为“以太坊虚拟机代码”或“EVM 代码”。该代码由一系列字节（因此称为字节码）组成，其中每个字节代表一个操作。
+59. EVM 是一个简单的基于堆栈的架构，由堆栈、易失性存储器、字长为 256 位的非易失性存储（被选择以促进 Keccak256 哈希方案和椭圆曲线计算）和 Calldata 组成。
+60. 堆栈由 1024 个 256 位元素组成。 EVM 指令可以操作栈顶的 16 个元素。 大多数 EVM 指令使用堆栈（基于堆栈的体系结构）进行操作，并且还有特定于堆栈的操作，例如PUSH、POP、SWAP、DUP 等。
+61. 内存是一个线性字节数组，可在字节级别寻址，并且是易失性的。所有位置最初都明确定义为零。这是通过 MLOAD、MSTORE 和 MSTORE8 指令访问的。
+62. 存储是一个 256 位到 256 位的键值存储。 与易失性内存不同，存储是非易失性的，并且作为系统状态的一部分进行维护。 所有位置最初都明确定义为零。这是通过 SLOAD/SSTORE 指令访问的。
+63. Calldata 是一个只读的字节可寻址空间，其中保存了交易或调用的数据参数。这是通过 CALLDATASIZE/CALLDATALOAD/CALLDATACOPY 指令访问的。
+64. EVM 不遵循标准的冯诺依曼架构。 它不是将程序代码存储在通常可访问的内存或存储器中，而是单独存储在只能通过专用指令访问的虚拟 ROM 中。
+65. EVM 使用大端排序，其中一个字的最高有效字节存储在最小的内存地址中，最低有效字节存储在最大的内存地址中
+66. EVM指令集可分为11类:
+    1. 停止和算术运算
+    2. 比较和按位逻辑运算
     3. SHA3
-    4. Environmental Information
-    5. Block Information
-    6. Stack, Memory, Storage and Flow Operations
-    7. Push Operations
-    8. Duplication Operations
-    9. Exchange Operations
-    10. Logging Operations
-    11. System Operations
-67. Stop and Arithmetic Operations (Opcode, Mnemonic, Stack items removed, Stack items placed, Description):
-    1. 0x00 STOP 0 0 Halts execution
-    2. 0x01 ADD 2 1 Addition operation
-    3. 0x02 MUL 2 1 Multiplication operation
-    4. 0x03 SUB 2 1 Subtraction operation
-    5. 0x04 DIV 2 1 Integer division operation
-    6. 0x05 SDIV 2 1 Signed integer division operation (truncated)
-    7. 0x06 MOD 2 1 Modulo remainder operation
-    8. 0x07 SMOD 2 1 Signed modulo remainder operation
-    9. 0x08 ADDMOD 3 1 Modulo addition operation
-    10. 0x09 MULMOD 3 1 Modulo multiplication operation
-    11. 0x0a EXP 2 1 Exponential operation
-    12. 0x0b SIGNEXTEND 2 1 Extend length of two’s complement signed integer
-68. Comparison & Bitwise Logic Operations (Opcode, Mnemonic, Stack items removed, Stack items placed, Description):
-    1. 0x10 LT 2 1 Less-than comparison
-    2. 0x11 GT 2 1 Greater-than comparison
-    3. 0x12 SLT 2 1 Signed less-than comparison
-    4. 0x13 SGT 2 1 Signed greater-than comparison
-    5. 0x14 EQ 2 1 Equality comparison
-    6. 0x15 ISZERO 1 1 Simple not operator
-    7. 0x16 AND 2 1 Bitwise AND operation
-    8. 0x17 OR 2 1 Bitwise OR operation
-    9. 0x18 XOR 2 1 Bitwise XOR operation
-    10. 0x19 NOT 1 1 Bitwise NOT operation
-    11. 0x1a BYTE 2 1 Retrieve single byte from word
-    12. 0x1b SHL 2 1 Left shift operation
-    13. 0x1c SHR 2 1 Logical right shift operation
-    14. 0x1d SAR 2 1 Arithmetic (signed) right shift operation
-69. SHA3 (Opcode, Mnemonic, Stack items removed, Stack items placed, Description):
-    1. 0x20 SHA3 2 1 Compute Keccak-256 hash
-70. Environmental Information (Opcode, Mnemonic, Stack items removed, Stack items placed, Description):
-    1. 0x30 ADDRESS 0 1 Get address of currently executing account
-    2. 0x31 BALANCE 1 1 Get balance of the given account
-    3. 0x32 ORIGIN 0 1 Get execution origination address
-    4. 0x33 CALLER 0 1 Get caller address
-    5. 0x34 CALLVALUE 0 1 Get deposited value by the instruction/transaction responsible for this execution
-    6. 0x35 CALLDATALOAD 1 1 Get input data of current environment
-    7. 0x36 CALLDATASIZE 0 1 Get size of input data in current environment
-    8. 0x37 CALLDATACOPY 3 0 Copy input data in current environment to memory
-    9. 0x38 CODESIZE 0 1 Get size of code running in current environment
-    10. 0x39 CODECOPY 3 0 Copy code running in current environment to memory
-    11. 0x3a GASPRICE 0 1 Get price of gas in current environment
-    12. 0x3b EXTCODESIZE 1 1 Get size of an account’s code
-    13. 0x3c EXTCODECOPY 4 0 Copy an account’s code to memory
-    14. 0x3d RETURNDATASIZE 0 1 Get size of output data from the previous call from the current environment
-    15. 0x3e RETURNDATACOPY 3 0 Copy output data from the previous call to memory
-    16. 0x3f EXTCODEHASH 1 1 Get hash of an account’s code
-71. Block Information (Opcode, Mnemonic, Stack items removed, Stack items placed, Description):
-    1. 0x40 BLOCKHASH 1 1 Get the hash of one of the 256 most recent complete blocks
-    2. 0x41 COINBASE 0 1 Get the block’s beneficiary address
-    3. 0x42 TIMESTAMP 0 1 Get the block’s timestamp
-    4. 0x43 NUMBER 0 1 Get the block’s number
-    5. 0x44 DIFFICULTY 0 1 Get the block’s difficulty
-    6. 0x45 GASLIMIT 0 1 Get the block’s gas limit
-72. Stack, Memory, Storage and Flow Operations (Opcode, Mnemonic, Stack items removed, Stack items placed, Description):
-    1. 0x50 POP 1 0 Remove item from stack
-    2. 0x51 MLOAD 1 1 Load word from memory
-    3. 0x52 MSTORE 2 0 Save word to memory
-    4. 0x53 MSTORE8 2 0 Save byte to memory
-    5. 0x54 SLOAD 1 1 Load word from storage
-    6. 0x55 SSTORE 2 0 Save word to storage
-    7. 0x56 JUMP 1 0 Alter the program counter
-    8. 0x57 JUMPI 2 0 Conditionally alter the program counter
-    9. 0x58 PC 0 1 Get the value of the program counter prior to the increment corresponding to this instruction
-    10. 0x59 MSIZE 0 1 Get the size of active memory in bytes
-    11. 0x5a GAS 0 1 Get the amount of available gas, including the corresponding reduction for the cost of this instruction
-    12. 0x5b JUMPDEST 0 0 Mark a valid destination for jumps. This operation has no effect on machine state during execution.
-73. Push Operations (Opcode, Mnemonic, Stack items removed, Stack items placed, Description):
-    1. 0x60 PUSH1 0 1 Place 1 byte item on stack
-    2. 0x61 PUSH2 0 1 Place 2-byte item on stack
-    3. PUSH3, PUSH4, PUSH5…PUSH31 place 3, 4, 5..31 byte items on stack respectively
+    4. 环境信息
+    5. 区块信息
+    6. 堆栈、内存、存储和流操作
+    7. push操作
+    8. 复制操作
+    9. 交互操作
+    10. 日志操作
+    11. 系统操作
+67. 停止和算术运算（操作码、助记符、栈元素被移除个数、栈元素被放置个数、描述）:
+    1. 0x00 STOP 0 0 停止执行
+    2. 0x01 ADD 2 1 加法运算
+    3. 0x02 MUL 2 1 乘法运算
+    4. 0x03 SUB 2 1 减法运算
+    5. 0x04 DIV 2 1 整数除法运算
+    6. 0x05 SDIV 2 1 有符号整数除法运算（截断）
+    7. 0x06 MOD 2 1 取余运算
+    8. 0x07 SMOD 2 1 有符号模余运算
+    9. 0x08 ADDMOD 3 1 模加法运算
+    10. 0x09 MULMOD 3 1 模乘运算
+    11. 0x0a EXP 2 1 指数运算
+    12. 0x0b SIGNEXTEND 2 1 扩展二进制补码有符号整数的长度
+68. 比较和按位逻辑运算（操作码、助记符、栈元素被移除个数、栈元素被放置个数、描述）:
+    1. 0x10 LT 2 1 小于比较
+    2. 0x11 GT 2 1 大于比较
+    3. 0x12 SLT 2 1 有符号小于比较
+    4. 0x13 SGT 2 1 有符号大于比较
+    5. 0x14 EQ 2 1 相等比较
+    6. 0x15 ISZERO 1 1 简单非操作符
+    7. 0x16 AND 2 1 按位与操作符
+    8. 0x17 OR 2 1 按位或操作符
+    9. 0x18 XOR 2 1 按位异或操作符
+    10. 0x19 NOT 1 1 按位非操作符
+    11. 0x1a BYTE 2 1 从一个字中获取一个字节
+    12. 0x1b SHL 2 1 左移操作符
+    13. 0x1c SHR 2 1 逻辑右移操作符
+    14. 0x1d SAR 2 1 算数（有符号的）右移操作符
+69. SHA3 (操作码、助记符、栈元素被移除个数、栈元素被放置个数、描述):
+    1. 0x20 SHA3 2 1 计算 Keccak-256 hash
+70. 环境信息 (操作码、助记符、栈元素被移除、栈元素被放置、描述):
+    1. 0x30 ADDRESS 0 1 获取当前执行账户地址
+    2. 0x31 BALANCE 1 1 获取给定账户余额
+    3. 0x32 ORIGIN 0 1 获取执行源地址
+    4. 0x33 CALLER 0 1 获取调用者地址
+    5. 0x34 CALLVALUE 0 1 通过负责本次执行的指令/交易获得存入的价值
+    6. 0x35 CALLDATALOAD 1 1 获取当前环境的输入数据
+    7. 0x36 CALLDATASIZE 0 1 获取当前环境下输入数据的大小
+    8. 0x37 CALLDATACOPY 3 0 将当前环境中的输入数据复制到内存中
+    9. 0x38 CODESIZE 0 1 获取在当前环境中运行的代码大小
+    10. 0x39 CODECOPY 3 0 拷贝当前环境运行的代码到内存
+    11. 0x3a GASPRICE 0 1 获取当前环境中的gas价格
+    12. 0x3b EXTCODESIZE 1 1 获取帐户代码的大小
+    13. 0x3c EXTCODECOPY 4 0 将帐户代码复制到内存
+    14. 0x3d RETURNDATASIZE 0 1 从当前环境中获取上一次调用的输出数据大小
+    15. 0x3e RETURNDATACOPY 3 0 将上一次调用的输出数据复制到内存
+    16. 0x3f EXTCODEHASH 1 1 获取帐户代码的哈希值
+71. 区块信息 (操作码、助记符、栈元素被移除个数、栈元素被放置个数、描述):
+    1. 0x40 BLOCKHASH 1 1 获取 256 个最近完整块之一的哈希值
+    2. 0x41 COINBASE 0 1 获取区块的受益人地址
+    3. 0x42 TIMESTAMP 0 1 获取区块的时间戳
+    4. 0x43 NUMBER 0 1 获取块的编号
+    5. 0x44 DIFFICULTY 0 1 获取区块的难度
+    6. 0x45 GASLIMIT 0 1 获取区块的 gas limit
+72. 堆栈、内存、存储和流操作 (操作码、助记符、栈元素被移除个数、栈元素被放置个数、描述):
+    1. 0x50 POP 1 0 从堆栈中移除元素
+    2. 0x51 MLOAD 1 1 从内存中加载一个字
+    3. 0x52 MSTORE 2 0 保存字到内存中
+    4. 0x53 MSTORE8 2 0 将字节保存到内存
+    5. 0x54 SLOAD 1 1 从存储中加载字
+    6. 0x55 SSTORE 2 0 保存字到存储器
+    7. 0x56 JUMP 1 0 改变程序计数器
+    8. 0x57 JUMPI 2 0有条件地改变程序计数器
+    9. 0x58 PC 0 1 获取与该指令对应的递增之前的程序计数器的值
+    10. 0x59 MSIZE 0 1 获取活动内存的大小（以字节为单位）
+    11. 0x5a GAS 0 1 获取可用gas的数量，包括本条指令花费对应的减少
+    12. 0x5b JUMPDEST 0 0 标记有效的跳转目的地。此操作在执行期间对机器状态没有影响。
+73. Push 操作 (操作码、助记符、栈元素被移除个数、栈元素被放置个数、描述):
+    1. 0x60 PUSH1 0 1 将 1 字节元素目放入堆栈
+    2. 0x61 PUSH2 0 1 将 2 字节的元素放入堆栈
+    3. PUSH3, PUSH4, PUSH5…PUSH31 相应地将 3, 4, 5..31 字节元素目放入堆栈
     4. 0x7f PUSH32 0 1 Place 32-byte (full word) item on stack
-74. Duplication Operations (Opcode, Mnemonic, Stack items removed, Stack items placed, Description):
-    1. 0x80 DUP1 1 2 Duplicate 1st stack item
-    2. DUP2, DUP3..DUP15 duplicate 2nd, 3rd..15th stack item respectively
+74. Duplication Operations (操作码、助记符、栈元素被移除个数、栈元素被放置个数、描述):
+    1. 0x80 DUP1 1 2 复制第一个堆栈元素
+    2. DUP2, DUP3..DUP15 复制 2nd, 3rd..15th 相应堆栈元素
     3. 0x8f DUP16 16 17 Duplicate 16th stack item
-75. Exchange Operations (Opcode, Mnemonic, Stack items removed, Stack items placed, Description):
-    1. 0x90 SWAP1 2 2 Exchange 1st and 2nd stack items
-    2. 0x91 SWAP2 3 3 Exchange 1st and 3rd stack items
-    3. SWAP3, SWAP4..SWAP15 exchange 1st and 4th..15th stack items respectively
+75. 交互操作 (操作码、助记符、栈元素被移除个数、栈元素被放置个数、描述):
+    1. 0x90 SWAP1 2 2 交换第一和第二个栈元素
+    2. 0x91 SWAP2 3 3 交换第一和第三个栈元素
+    3. SWAP3, SWAP4..SWAP15 交互 1st and 4th..15th 个相应栈元素
     4. 0x9f SWAP16 17 17 Exchange 1st and 17th stack items
-76. Logging Operations (Opcode, Mnemonic, Stack items removed, Stack items placed, Description):
-    1. 0xa0 LOG0 2 0 Append log record with no topics
-    2. 0xa1 LOG1 3 0 Append log record with one topic
-    3. 0xa2 LOG2 4 0 Append log record with two topics
-    4. 0xa3 LOG3 5 0 Append log record with three topics
-    5. 0xa4 LOG4 6 0 Append log record with four topics
-77. System Operations (Opcode, Mnemonic, Stack items removed, Stack items placed, Description):
-    1. 0xf0 CREATE 3 1 Create a new account with associated code
-    2. 0xf1 CALL 7 1 Message-call into an account
-    3. 0xf2 CALLCODE 7 1 Message-call into this account with an alternative account’s code
-    4. 0xf3 RETURN 2 0 Halt execution returning output dat
-    5. 0xf4 DELEGATECALL 6 1 Message-call into this account with an alternative account’s code, but persisting the current values for sender and value
-    6. 0xf5 CREATE2 4 1 Create a new account with associated code
-    7. 0xfa STATICCALL 6 1 Static message-call into an account
-    8. 0xfd REVERT 2 0 Halt execution reverting state changes but returning data and remaining gas
-    9. 0xfe INVALID ∅ ∅ Designated invalid instruction
-    10. 0xff SELFDESTRUCT 1 0 Halt execution and register account for later deletion
-78. Gas costs for different instructions are different depending on their computational/storage load on the client. Examples are:
-    1. STOP, INVALID and REVERT are 0 gas
-    2. Most arithmetic, logic and stack operations are 3-5 gas
-    3. CALL*, BALANCE and EXT* are 2600 gas
-    4. MLOAD/MSTORE/MSTORE8 are 3 gas
-    5. SLOAD is 2100 gas and SSTORE is 20,000 gas to set a storage slot from 0 to non-0 and 5,000 gas otherwise
-    6. CREATE is 32000 gas and SELFDESTRUCT is 5000 gas 
-79. A transaction reverts for different exceptional conditions such as running out of gas, invalid instructions etc. in which case all state changes made so far are discarded and the original state of the account is restored as it was before this transaction executed.
-80. A transaction with a contract address destination has the contract’s function target and the required arguments in the data field of the transaction. These are encoded according to the Application Binary Interface (ABI):
-81. Application Binary Interface (ABI): The Contract Application Binary Interface (ABI) is the standard way to interact with contracts in the Ethereum ecosystem, both from outside the blockchain and for contract-to-contract interaction.
-    1.  Interface functions of a contract are strongly typed, known at compilation time and static.
-    2. Contracts will have the interface definitions of any contracts they call available at compile-time. 
-82. Function Selector: The first four bytes of the call data for a function call specifies the function to be called. 
-    1. It is the first (left, high-order in big-endian) four bytes of the Keccak-256 hash of the signature of the function. 
-    2. The signature is defined as the canonical expression of the basic prototype without data location specifier, i.e. the function name with the parenthesised list of parameter types. Parameter types are split by a single comma - no spaces are used.
-    3. Function Arguments: The encoded arguments follow the function selector from the fifth byte onwards.
-83. Block explorers: are portals that allow anyone to see real-time data on blocks, transactions, accounts, contract interactions etc. A popular Ethereum block explorer is [etherscan.io](http://etherscan.io/).
-84. Mainnet: Short for "main network," this is the main public Ethereum blockchain. There are other Ethereum “testnets” where protocol or smart contract developers test their protocol upgrades or contracts. While mainnet uses real ETH, testnets use test ETH that can be obtained from faucets. The popular testnets are:
-    1. Görli: A proof-of-authority (a small number of nodes are allowed to validate transactions and create blocks) testnet that works across clients
-    2. Kovan: A proof-of-authority testnet for those running OpenEthereum clients
-    3. Rinkeby: A proof-of-authority testnet for those running Geth client
-    4. Ropsten: A proof-of-work testnet. This means it's the best representation of mainnet Ethereum
-85. Ethereum Improvement Proposals (EIPs) describe standards for the Ethereum platform, including core protocol specifications, client APIs, and contract standards. Standards Track EIPs are separated into a number of types: (See [here](https://eips.ethereum.org/))
-    1. Core: Improvements requiring a consensus fork as well as changes that are not necessarily consensus critical but may be relevant to “core dev” discussions
-    2. Networking: Includes improvements around devp2p and Light Ethereum Subprotocol, as well as proposed improvements to network protocol specifications of whisper and swarm
-    3. Interface: Includes improvements around client API/RPC specifications and standards, and also certain language-level standards like method names and contract ABIs. The label “interface” aligns with the interfaces repo and discussion should primarily occur in that repository before an EIP is submitted to the EIPs repository
-    4. ERC: Application-level standards and conventions, including contract standards such as token standards (ERC-20), name registries, URI schemes, library/package formats, and wallet formats 
-    5. Meta: Describes a process surrounding Ethereum or proposes a change to (or an event in) a process
-    6. Informational: Describes a Ethereum design issue, or provides general guidelines or information to the Ethereum community, but does not propose a new feature
-86. Eth2 or Ethereum 2.0: refers to a set of interconnected upgrades that will make Ethereum more scalable, more secure, and more sustainable (See [here](https://ethereum.org/en/eth2/))
-87. Immutable code: Once a contract's code is deployed, it becomes immutable (with exceptions noted below). Standard software development practices that rely on being able to fix bugs and add new features to deployed code do not apply here. This represents a significant security challenge for smart contract development. There are three exceptions:
-    1. The modified contract can be deployed at a new address (and old state carried over) but all interacting entities should be notified/enabled to interact with the updated contract at the new address. This is typically considered impractical.
-    2. The modified contract can be deployed as a new implementation in a proxy pattern where the proxy points to the modified contract after the update. This is the most commonly used approach to update/add functionality.
-    3. CREATE2 opcode allows updating in place using init_code
-88. Web3: is a permissionless, trust-minimized and censorship-resistant network for transfer of value and information. 
-    1. The popular approach to realise Web3 is to build it over a foundation of peer-to-peer network of nodes for compute, communication and storage. 
-    2. In the Ethereum ecosystem, this is a combination of the Ethereum blockchain, Waku (previously Whisper) and Swarm respectively. 
-    3. Privacy and anonymity are big motivating factors in Web3.
-    4. Most of the foundational security design principles and development practices from Web2 still apply to Web3. But Web3 security is indeed a paradigm shift along many frontiers.
-89. Languages: Web2 programming languages such as JavaScript, Go, Rust and Nim are used extensively in Web3. But the entire domain of smart contracts is new and specific to Web3. Languages such as Solidity and Vyper were created exclusively for Web3.
-90. On-chain vs Off-chain: Smart contracts are “on-chain” Web3 components and they interact with “off-chain” components that are very similar to Web2 software. So the major differences in security perspectives between Web3 and Web2 mostly narrow down to security considerations of smart contracts vis-a-vis Web2 software.
-91. Open-source & Transparent: Given the emphasis on trust-minimization, Web3 software, especially smart contracts, are expected to be open-source by default. 
-    1. The deployed bytecode is also expected to be source code verified (on a service such as Etherscan). Security by obscurity with proprietary code is not part of Web3's ethos.
-    2. All interactions with smart contracts are recorded on the blockchain as transactions. This includes the transactions’ senders, data and outcome. Having complete visibility into the entire history of transactions and state transitions is akin to having a publicly accessible audit log of a system since inception. 
-    3. Furthermore, transactions that are still “in flight” and are yet to be confirmed on the blockchain are also publicly visible in pending transaction queues (i.e. mempools) and lend to front-running attacks.
-92. Unstoppable & Immutable: Web3 applications, popularly known as Decentralized Applications ( ÐApps), are expected to be unstoppable and immutable because they run on a decentralized blockchain network. 
-    1. There should not be any one entity that can unilaterally decide to stop a running ÐApp or make changes to it. Transactions and data on the blockchain are guaranteed to be immutable unless a majority of the network decides otherwise. 
-    2. Smart contracts, in general, are expected (by users) to not have kill switches controlled by deployers. They are also expected to not be arbitrarily upgradeable. Both these stem from the Web3 goal of trust-minimization, i.e. lack of need to trust potentially malicious ÐApp developers. However, this makes fixing security vulnerabilities in deployed code and responding to exploits very challenging.
-93. Pseudonymous Teams & DAOs: Perhaps inspired by Bitcoin’s Satoshi Nakamoto, there is a trend among some project teams in Web3 to be pseudonymous and known only by their online handles. 
-    1. One reason for this could be to avoid any potential legal implications in future, given the regulatory uncertainty in this space. This makes it harder to associate any social reputation as it pertains to perceived security trustworthiness of the product or the processes behind its development. It also makes it tricky to hold anyone legally/socially liable or accountable. 
-    2. “Trust software not wetware” (i.e. people) is the mantra here. While this may be an extreme view, there are still social processes around rollout and governance of projects which affect security posture. 
-    3. To minimise the role and influence of a few privileged individuals in the lifecycle of projects, there is an increasing trend towards governance by token-holding community members — a Decentralized Autonomous Organization (DAO) of pseudonymous token-holding blockchain addresses making voting-based decisions on project treasury spending and protocol changes. While this reduces centralized points of wetware failure, it potentially slows down decision-making on security-critical aspects and may even lead to project forks.
-94. New Architecture, Language & Toolchains: Ethereum has a new virtual machine (EVM) architecture which is a stack-based machine with 256-bit words and associated gas semantics. 
-    1. Solidity language continues to dominate smart contracts without much real competition (except Vyper perhaps). 
-    2. The associated toolchains which include development environments (e.g. Truffle, Brownie, Hardhat), libraries (e.g. OpenZeppelin), security tools (e.g. Slither, MythX, Securify) and wallets (e.g. Metamask) are maturing but still playing catch up to the exponential growth of the space.
-95. Byzantine Threat Model: The Web3 threat model is based on byzantine faults dealing with arbitrary malicious behavior and governed by mechanism design. 
-    1. Given the aspirational absence of trusted intermediaries, everyone and everything is meant to be untrusted by default. Participants in this model include developers, miners/validators, infrastructure providers and users, all of whom could potentially be adversaries.
-    2. This is a fundamentally different threat model from that of Web2 where there are generalized notions of trusted insiders with authorized access to resources/assets that have to be protected against untrusted outsiders (and malicious insiders). Web3 is the ultimate zero-trust scenario.
-96. Keys & Tokens: While “crypto” may indeed mean cryptocurrencies to some non-technical observers, it factually refers to cryptography which is a fundamental bedrock of Web3. As much as we unknowingly use cryptography in the Web2 world, Web3 is taking it to the masses. Cryptographic keys are first-class members of the Web3 world.
-    1. Without the presence of Web2 trusted intermediaries who can otherwise reset passwords or restore accounts/assets from their centralized databases, Web3 ideologically pushes the onus of managing keys (and the assets they control) to end users in their wallets. Loss of private keys (or seed phrases) is irreversible and many assets have been lost to such incidents. This is a significant mindset shift from the Web2 world where passwords have become far too common, security pundits are tired of bemoaning the use of commonly reused simple passwords, password databases continue to be dumped and password-killing technologies continue to evade us. Web2 passwords here symbolize the role of trusted centralized intermediaries that Web3 is seeking to replace.
-    2. Web2 security breaches targeting financial assets (i.e. excluding ransomware and botnets for DDoS) typically involve stealing of financial or personal data which is then sold on the dark web and used for monetary gain. This is getting much harder because of various checks and measures (both technical and regulatory) being put in place (at centralized intermediaries) to reduce such cybersecurity incidents and prevent anomalous asset transfers. When such unauthorised asset transfers do happen, the involved intermediaries may even cooperate to reverse such transactions and make good.
-    3. The notion of assets in Web3 is fundamentally different. Cryptoassets are borderless digital tokens whose accounting ledger is managed by consensus on the blockchain and ownership is determined by access to corresponding cryptographic keys. If someone gets access to your private keys controlling cryptoassets, they can transfer those assets to blockchain addresses controlled by their keys. In a perfectly decentralized world, no intermediary (e.g. centralized exchange) should exist that can reverse such a loss — transactions are immutable. Because there are limited response options, preventive security measures become more critical in the Web3 space.
-97. Composability by Design: Permissionless innovation and censorship-resistance are core aspirational goals of Web3. 
-    1. There are numerous stories of Web2 companies that initially enticed developers to build on their platforms only to shut them out later when they were perceived as a competitive threat.
-    2. Web3 applications, especially smart contracts, are open by design and can be accessed permissionlessly by end users and other smart contracts alike. 
-    3. This composability lends itself to applications that can be layered on top of others like legos, which is great if everything holds up and new lego toys are reliably built on others. However, this unconstrained composability introduces unexpected cross-systemic dependencies that may trigger invalid assumptions across components (likely built by different teams with different constraints in mind) and expose attack surfaces or modes previously unconsidered. 
-    4. This makes characterizing Web3 vulnerabilities and exploit scenarios very challenging without deep knowledge of all interacting components, constraints and configurations.
-98. Compressed Timescales: It feels like innovation in the Web3 space moves at warp speed. Aspects of transparent-development and composability-by-design are strong catalysts to accelerating permissionless and borderless participation which is further incentivized by Internet-native cryptoeconomic tokens — a perfect storm. 
-    1. This shrinks innovation timescales by orders of magnitude where new waves of experiments happen over weeks or months instead of the years it typically takes within the walled gardens of Web2. It may seem like the only moat here is the speed of execution.
-    2. This compressed timescale has a tangible impact on security considerations during design, development and deployment. Corners are cut and shortcuts taken to ride new waves of hype. The end result is a poorly tested system that holds millions of dollars worth of tokens but is vulnerable to exploits.
-99. Test-in-Prod: A combination of compressed timescale, unrestricted composability, byzantine threat model and challenges of replicating full state for predicting failure modes of interacting components built with rapidly evolving experimental software/tools in many ways forces realistic testing to happen only in production, i.e. on the “mainnet”. This implies that complex technical and cryptoeconomic exploits may only be discoverable upon production deployment.
-100. Audit-as-a-Silver-Bullet: Secure Software Development Lifecycle (SSDLC) processes for Web2 products have evolved over several decades to a point where they are expected to meet some minimum requirements of a combination of internal validation, external assessments (e.g. product/process audits, penetration testing) and certifications depending on the value of managed assets, anticipated risk, threat model and the market domain of products (e.g. financial sector has stricter regulatory compliance requirements).
-101. Web3 projects seem to increasingly rely on external audits as a stamp of security approval. This is typically justified by the lack of sufficient in-house security expertise. While the optics of this approach seems to falsely convince speculators, this approach is untenable for several reasons: 
-     1. Audits currently are very expensive because demand is much greater than supply for top-rated audit teams that have the experience and reputation to analyze complex projects
-     2. Audits are typically commissioned once at the end of project development just before production release
-     3. Upgrades to projects go unaudited for commercial or logistical reasons
-     4. The expectation (from the project team and users) is that audits are a panacea for all vulnerabilities and that the project is “bug-free” after a short audit (typically few weeks)
+76. 日志操作 (操作码、助记符、栈元素被移除个数、栈元素被放置个数、描述):
+    1. 0xa0 LOG0 2 0 附加没有主题的日志记录
+    2. 0xa1 LOG1 3 0 附加一个主题的日志记录
+    3. 0xa2 LOG2 4 0 附加两个主题的日志记录
+    4. 0xa3 LOG3 5 0 附加三个主题的日志记录
+    5. 0xa4 LOG4 6 0 附加四个主题的日志记录
+77. 系统操作 (操作码、助记符、栈元素被移除个数、栈元素被放置个数、描述):
+    1. 0xf0 CREATE 3 1 使用关联代码创建一个新帐户
+    2. 0xf1 CALL 7 1 对账户进行消息调用
+    3. 0xf2 CALLCODE 7 1 使用另一个可选账户的代码对账户进行消息调用
+    4. 0xf3 RETURN 2 0 停止执行返回输出数据
+    5. 0xf4 DELEGATECALL 6 1 使用另一个可选账户的代码对账户进行消息调用, 但是会为发送者和值保持当前值
+    6. 0xf5 CREATE2 4 1 使用关联代码创建一个新帐户
+    7. 0xfa STATICCALL 6 1 静态地对账户进行消息调用
+    8. 0xfd REVERT 2 0 停止执行，恢复状态变化，但返回数据和保持gas不变
+    9. 0xfe INVALID ∅ ∅ 指定无效指令
+    10. 0xff SELFDESTRUCT 1 0 停止执行并注册帐户以供以后删除
+78. 不同指令的 Gas 成本根据它们在客户端上的计算存储负载而不同。例子是:
+    1. STOP, INVALID and REVERT 是 0 gas
+    2. 大多数算术、逻辑和堆栈操作都是 3-5 gas
+    3. CALL*, BALANCE and EXT* 是 2600 gas
+    4. MLOAD/MSTORE/MSTORE8 是 3 gas
+    5. SLOAD 是 2100 gas ，从0到非0设置存储槽，SSTORE 指令花费20,000 gas，反过来则需要5,000 gas;
+    6. CREATE 是 32000 gas ，SELFDESTRUCT 是 5000 gas 
+79. 交易会在不同的异常情况下恢复，例如 gas 耗尽、指令无效等。 在这种情况下，到目前为止所做的所有状态更改都将被丢弃，帐户的原始状态将恢复为该交易执行之前的状态。
+80. 具有合约地址目的地的交易在交易的data字段中具有合约的功能目标和所需的参数。 这些是根据应用程序二进制接口 (ABI) 编码的:
+81. 应用程序二进制接口 (ABI): 合约应用程序二进制接口 (ABI) 是与以太坊生态系统中的合约进行交互的标准方式，无论是从区块链外部还是用于合约到合约的交互。
+    1. 合约的接口函数是强类型的，在编译时已知并且是静态的。
+    2. 合约将在编译时拥有它们调用的任何合约的接口定义。
+82. 函数选择器：函数调用的调用数据的前四个字节指定要调用的函数。 
+    1. 它是函数签名的 Keccak-256 散列的第一个（左侧，大端高阶）四个字节。 
+    2. 签名被定义为没有数据位置说明符的基本原型的规范表达式，即带有参数类型括号列表的函数名称。 参数类型由单个逗号分隔 - 不使用空格。
+    3. 函数参数：编码的参数从第五个字节开始跟随函数选择器。
+83. 区块浏览器：是允许任何人查看区块、交易、账户、合约交互等实时数据的门户。一个流行的以太坊区块浏览器是 [etherscan.io](http://etherscan.io/).
+84. Mainnet：“Main Network”的缩写，这是主要的公共以太坊区块链。 还有其他以太坊“测试网”，协议或智能合约开发人员可以在其中测试他们的协议升级或合约。主网使用真实的ETH，而测试网使用可以从水龙头获得的测试ETH。流行的测试网是：
+    1. Görli: 权威证明 （允许少量节点验证交易和创建区块）跨客户端工作的测试网
+    2. Kovan: 运行 OpenEthereum 客户端的权威证明测试网
+    3. Rinkeby:运行 Geth 客户端的权威证明测试网
+    4. Ropsten:工作量证明测试网。这意味着它是主网以太坊的最佳代表
+85. 以太坊改进提案 (EIP) 描述了以太坊平台的标准，包括核心协议规范、客户端 API 和合约标准。 Standards Track EIP 分为多种类型： (See [here](https://eips.ethereum.org/))
+    1. 核心：需要共识分叉的改进以及不一定是共识关键但可能与“核心开发”讨论相关的更改
+    2. 网络：包括围绕 devp2p 和 Light Ethereum Subprotocol 的改进，以及对 whisper 和 swarm 网络协议规范的改进建议
+    3. 接口：包括围绕客户端 API/RPC 规范和标准的改进，以及某些语言级别的标准，如方法名称和合同 ABI。 “interface”标签与 interfaces repo 一致，在将 EIP 提交到 EIPs 存储库之前，讨论应该主要发生在该存储库中
+    4. ERC: 应用层标准和约定，包括代币标准 (ERC-20)、名称注册、URI 方案、库包格式和钱包格式等合约标准
+    5. Meta: 描述围绕以太坊的流程或提议对流程（或事件）进行更改
+    6. 信息性：描述以太坊设计问题，或向以太坊社区提供一般指南或信息，但不提出新功能
+86. Eth2 或以太坊 2.0：指的是一组相互关联的升级，将使以太坊更具可扩展性、更安全和更可持续 (See [here](https://ethereum.org/en/eth2/))
+87. 不可变代码：一旦部署了合约的代码，它就变得不可变（下面提到的例外情况）。 依赖于能够修复错误并向已部署代码添加新功能的标准软件开发实践不适用于此处。这对智能合约开发来说是一个重大的安全挑战。有以下三种例外情况：
+    1. 修改后的合约可以部署在新地址（并保留旧状态），但应通知所有交互实体能够在新地址与更新后的合约进行交互。 这通常被认为是不切实际的。
+    2. 修改后的合约可以部署为代理模式中的新实现，其中代理在更新后指向修改后的合约。这是更新添加功能最常用的方法。
+    3. CREATE2 操作码允许使用 init_code 就地更新
+88. Web3: 是一个无需许可、最小化信任和抗审查的网络，用于传输价值和信息。 
+    1. 实现 Web3 的流行方法是在计算、通信和存储节点的对等网络基础上构建它。
+    2.在以太坊生态系统中，这分别是以太坊区块链、Waku（之前的 Whisper）和 Swarm 的组合。
+    3. 隐私和匿名是 Web3 的重要激励因素。
+    4. Web2 的大部分基础安全设计原则和开发实践仍然适用于 Web3。但 Web3 安全性确实是许多领域的范式转变。
+89. 语言：Web2 编程语言，如 JavaScript、Go、Rust 和 Nim，在 Web3 中被广泛使用。但是智能合约的整个领域都是新的并且特定于 Web3。 Solidity 和 Vyper 等语言是专门为 Web3 创建的。
+90. 链上 vs 链下：智能合约是“链上”Web3 组件，它们与与 Web2 软件非常相似的“链下”组件交互。 因此，Web3 和 Web2 在安全方面的主要差异主要归结为智能合约相对于 Web2 软件的安全考虑。
+91. 开源和透明：鉴于对信任最小化的强调，Web3 软件，尤其是智能合约，期待默认情况下是开源的。
+    1. 部署的字节码也应该经过源代码验证（在 Etherscan 等服务上）。 隐匿专有代码的安全性不是 Web3 精神的一部分。
+    2. 与智能合约的所有交互都作为交易记录在区块链上。这包括交易的发送者、数据和结果。对交易和状态转换的整个历史具有完整的可见性，类似于从一开始就拥有一个可公开访问的系统审计日志。
+    3. 此外，仍在“进行中”且尚未在区块链上得到确认的交易在待处理交易队列（即内存池）中也是公开可见的，并可能引发抢先交易攻击。
+92. 不可阻挡和不可变：Web3 应用程序，通常被称为去中心化应用程序（ÐApps），预计将是不可阻挡和不可变的，因为它们运行在去中心化的区块链网络上。
+    1. 不应该有任何一个实体可以单方面决定停止正在运行的 DApp 或对其进行更改。除非大多数网络另有决定，否则区块链上的交易和数据保证是不可变的。
+    2. 通常，（用户）期望智能合约没有由部署者控制的终止开关。 它们也不能被任意升级。这两者都源于 Web3 的信任最小化目标，即不需要信任潜在的恶意 DApp 开发人员。 然而，这使得修复已部署代码中的安全漏洞和响应漏洞利用变得非常具有挑战性。
+93. 假名团队和 DAO：也许受比特币中本聪的启发，Web3 中的一些项目团队有一种趋势是使用假名，并且只知道他们的在线句柄。
+    1. 考虑到该领域的监管不确定性，这样做的一个原因可能是为了避免将来产生任何潜在的法律影响。这使得与任何社会声誉相关联变得更加困难，因为它与产品或其开发背后的流程的感知安全可信度有关。这也使得追究任何人的法律社会责任或责任变得棘手。
+    2. “相信软件而不是湿件”（即人）是这里的口头禅。虽然这可能是一个极端的观点，但围绕影响安全态势的项目的推出和治理仍然存在社会过程。 
+    3. 为了尽量减少少数特权人士在项目生命周期中的作用和影响， 由持有代币的社区成员进行治理的趋势越来越明显 — 假名代币持有区块链地址的去中心化自治组织 (DAO) 对项目资金支出和协议变更做出基于投票的决策。 虽然这减少了湿件（人为）故障的集中点，但它可能会减慢对安全关键方面的决策，甚至可能导致项目分叉。
+94. 新架构、语言和工具链: 以太坊有一个新的虚拟机 (EVM) 架构，它是一个基于堆栈的机器，具有 256 位字和相关的gas语义。
+    1. Solidity 语言在没有太多真正竞争的情况下继续主导智能合约（也许 Vyper 除外）。 
+    2. 相关的工具链，包括开发环境（例如 Truffle、Brownie、Hardhat）、库（例如 OpenZeppelin）、安全工具（例如 Slither、MythX、Securify）和 钱包（例如 Metamask）正在成熟，但仍在追赶空间的指数增长。
+95. 拜占庭威胁模型: Web3 威胁模型基于处理任意恶意行为的拜占庭故障，并受制于机制设计。
+    1. 鉴于缺乏值得信赖的中介机构， 默认情况下，每个人和所有事物都是不受信任的。 该模型的参与者包括开发人员、矿工验证者、基础设施提供商和用户，他们都可能成为潜在的对手。
+    2. 这是一个与 Web2 的威胁模型根本不同的威胁模型，在 Web2 中存在受信任的内部人员的一般概念，这些内部人员具有对资源资产的授权访问权限，这些资源资产必须受到保护以免受不受信任的外部人员（和恶意内部人员）的侵害。Web3 是最终的零信任场景。
+96. 密钥和令牌: 虽然“crypto”对于一些非技术观察者来说确实意味着加密货币，但它实际上指的是密码学，这是 Web3 的基本基石。 尽管我们在 Web2 世界中不知不觉地使用了密码学，但 Web3 正在将其推向大众。加密密钥是 Web3 世界的一级成员。
+    1. 不像Web2 有可信中介的存在，他们可以通过其他方式重置密码或从其集中式数据库中恢复帐户资产，Web3 在意识形态上将管理密钥（及其控制的资产）的责任推给了终端钱包用户。 私钥（或种子短语）的丢失是不可逆转的，许多资产已因此类事件而丢失。 这是密码变得过于普遍的 Web2 世界的重大思维转变，安全专家厌倦了抱怨使用通常重复使用的简单密码，密码数据库继续被丢弃，密码破解技术继续躲避我们。 这里的 Web2 密码象征着 Web3 正在寻求取代的可信中心化中介的角色。
+    2. 针对金融资产的 Web2 安全漏洞（即不包括用于 DDoS 的勒索软件和僵尸网络）通常涉及窃取金融或个人数据，然后在暗网上出售这些数据并用于获取金钱利益。由于（在中心化中介机构）实施了各种检查和措施（包括技术和监管）以减少此类网络安全事件并防止异常资产转移，因此这变得越来越困难。当这种未经授权的资产转移确实发生时，所涉及的中介机构甚至可能会合作扭转此类交易并进行补偿。
+    3. Web3 中资产的概念非常不同。 加密资产是无边界的数字代币，其会计分类账由区块链上的共识管理，所有权由对相应加密密钥的访问决定。如果有人可以访问您控制加密资产的私钥，他们可以将这些资产转移到由他们的密钥控制的区块链地址。 在一个完全去中心化的世界中，不应该存在可以扭转这种损失的中介（例如中心化交易所） — 交易是不可变的. 由于响应选项有限，因此预防性安全措施在 Web3 空间中变得更加重要。
+97. 设计的可组合性: 无需许可的创新和抗审查是 Web3 的核心理想目标。 
+    1. 有许多关于 Web2 公司的故事，这些公司最初吸引开发人员在他们的平台上进行构建，但后来当他们被视为竞争威胁时将他们拒之门外。
+    2. Web3 应用程序，尤其是智能合约，在设计上是开放的，最终用户和其他智能合约都可以在未经许可的情况下访问。
+    3. 这种可组合性适用于可以叠加在其他应用程序之上的应用程序，例如乐高积木，如果一切顺利并且新的乐高玩具可靠地构建在其他应用程序之上，那就太棒了。然而，这种不受约束的可组合性引入了意想不到的跨系统依赖性，可能会触发跨组件的无效假设（可能由考虑了不同约束的不同团队构建）并暴露之前未考虑的攻击面或模式。
+    4. 如果不深入了解所有交互组件、约束和配置，这使得描述 Web3 漏洞和运用场景变得非常具有挑战性。
+98. 压缩时间尺度: 感觉 Web3 领域的创新以惊人的速度发展。透明开发和设计可组合性方面是加速无许可和无边界参与的强大催化剂，互联网原生加密经济代币进一步激励了这种参与——一场完美风暴。
+    1. 这将创新时间尺度缩短了几个数量级，新的实验浪潮在数周或数月内发生，而不是在 Web2 的围墙花园内通常需要数年时间。似乎这里唯一的护城河是执行速度。
+    2. 这种压缩的时间尺度对设计、开发和部署期间的安全考虑产生了切实的影响。偷工减料，走捷径，以驾驭新一轮的炒作浪潮。 最终结果是一个未经充分测试的系统，它持有价值数百万美元的代币，但容易受到攻击。
+99. 生产中测试:压缩时间尺度、不受限制的可组合性的组合，拜占庭威胁模型和复制完整状态的挑战，以预测使用快速发展的实验软件工具构建的交互组件的故障模式，以多种方式迫使现实测试仅在生产中进行，即在“主网上”。 这意味着复杂的技术和加密经济漏洞可能只有在生产部署时才能被发现。
+100. 审计作为银弹（silver bullet）: Web2 产品的安全软件开发生命周期 (SSDLC) 流程已经发展了几十年，预计它们将满足内部验证组合的一些最低要求，外部评估（例如产品流程审计、渗透测试）和认证取决于所管理资产的价值， 预期风险、威胁模型和产品的市场领域（例如，金融部门有更严格的合规要求）。
+101. Web3 项目似乎越来越依赖外部审计作为安全批准的标志。 这通常是因为缺乏足够的内部安全专业知识。虽然这种方法的光学原理似乎错误地说服了投机者，由于以下几个原因，这种方法是站不住脚的：
+     1. 目前的审计非常昂贵，因为对具有分析复杂项目的经验和声誉的顶级审计团队的需求远远大于供应
+     2. 审计通常在项目开发结束时，即生产发布之前委托进行一次
+     3. 出于商业或协调上的原因，项目升级未经审计
+     4. （来自项目团队和用户的）期望是审计是解决所有漏洞的灵丹妙药，并且项目在短期审计（通常为几周）后“没有错误”
 
-**References**:
+**参考**:
 
 1. https://ethereum.org/en/whitepaper/
 2. https://ethereum.github.io/yellowpaper/paper.pdf
