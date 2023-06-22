@@ -1,57 +1,57 @@
 原文链接：https://a16z.com/2021/02/05/on-crypto-governance/
 
-# On Crypto Governance
+# 谈加密货币的治理
 
-Crypto protocols are meant to be governed by decentralized communities of stakeholders. Not because it’s more efficient, or important for ideological reasons, but because it’s necessary to unlock their core value proposition: that the underlying protocols will continue to run as designed, and will remain open to anyone who wants to use or build on them, without having the rules shift under their feet. 
+加密货币协议的治理应该由利益相关者的去中心化社区来实施。这并不仅仅是因为它更高效或出于重视意识形态的原因，而是因为这是解锁其核心价值主张所必需的：底层协议将继续按设计运行，并将对任何想使用或构建它们的人保持开放，而不会使规则在他们的脚下发生变化。
 
-Bitcoin is the original embodiment of these concepts, creating the first internet-native money at scale. But they are equally applicable (and valuable) to other types of open financial primitives as well, including things like [borrowing](https://makerdao.com/en/), [lending](https://compound.finance/), [trading](https://uniswap.org/), and so on. Though the specific application may differ, the need for decentralized governance remains the same.
+比特币就是这些理念的最初体现，创造了第一个大规模的互联网原生货币。这些理念同样适用于（也有价值）其他类型的开放金融原语，包括[借贷](https://makerdao.com/en/)，[贷款](https://compound.finance/)，[交易](https://uniswap.org/)，等等。虽然具体的应用程序可能有差异，但它们对去中心化治理的需求是相同的。
 
-For crypto startups, transitions towards community governance are complicated, and raise difficult questions around ongoing development, voter participation, and incentive alignment between stakeholders. But they are ultimately necessary in order for the protocols to transcend their original developers and provide enduring value as open financial infrastructure. 
+对于加密货币的初创公司来说，向去中心化社区治理转型是复杂的，在可持续发展、选民参与和利益相关者之间的激励一致方面都遇到了一些难题。但这样的转型终究是必需的，只有如此才能使协议超越其最初开发者，作为开放的金融基础设施提供持久的价值。
 
-As committed stakeholders in many of these networks, we wanted to briefly expand on how we at a16z think about crypto governance, and how we see our role in it going forward.
+作为众多这类网络的坚定的利益相关者，我们想简要介绍一下我们（a16z）如何看待加密货币的治理，以及如何看待未来我们在其中将扮演的角色。
 
-**Put simply, our primary objective in governance is to create the conditions necessary for protocols to achieve long-term adoption and self-sustainability.** As a general principle, we believe that protocols that achieve greater decentralization along certain key dimensions — voting power, development work, economic upside, etc. — are more likely to reach this ultimate goal than those that do not. As a result, we focus our governance efforts on those initiatives that have the effect of increasing decentralization in these key areas. We believe this is the highest-leverage way for us to participate and is more likely to hasten the transition of the underlying protocols towards long-term sustainability than any other approach. 
+**简单来说，我们治理的主要目标是为协议的长期采用和自我可持续发展创造必要的条件**。作为一般原则，我们认为，在某些关键维度（例如投票权、开发工作、经济回报等）上实现了更大程度的去中心化的协议，比那些没有这么做的协议更有可能实现去中心化的最终目标。因此，我们把治理工作的重点放在能加强这些关键领域的去中心化的倡议上。我们认为，这是我们参与的最有效的方式，比任何其他方法更有可能加快底层协议向长期可持续发展的演进。 
 
-What are some examples of this?
+这方面有哪些例子？
 
-**1.** **Delegated Voting** 
+**1. 委托投票** 
 
-Over the last year or so we’ve seen significant innovation in token-based governance models among leading crypto applications. One of the most important new features to emerge is delegated voting, which allows token holders to transfer their voting rights to others so that those delegates may more actively participate in governance.
+在过去一年里，我们看到领先的加密货币应用在代币的治理模型上进行了重大创新。出现的最重要的新功能之一是委托投票，它允许代币持有人将其投票权转让给他人（代理人），使得这些代理人可以更积极地参与治理。
 
-We are strong supporters of delegation and view it as an important tool to increase the overall diversity of perspectives in governance, to reduce the concentration of voting power across the network, and to increase overall engagement throughout the community. That’s why we’ve committed to delegating a significant portion of our voting power in networks like Compound, Uniswap, and others to a wide range of qualified participants. 
+我们是委托投票的坚定支持者，把它当成一个重要工具：从治理的视角，它可以增加整体多样性，降低整个网络的投票权的中心化程度，加强整个社区的全面参与度。正因如此，我们承诺将我们在Compound、Uniswap等网络中的很大一部分投票权委托给广大的合格参与者。
 
-Given the implications of these decisions, we take this responsibility seriously and look for candidates who not only bring diverse perspectives, but also meet other key criteria. These include things like:
+鉴于这些决策的影响，我们会负责任地寻找那些不仅能带来多样化观点，而且符合其他关键标准的候选人。这些标准包括：
 
-- **Alignment**. Are they aligned with the protocol’s overall success, or do they have potential sources of conflict? 
-- **Commitment**. Are they committed to the protocol’s long-term health and sustainable growth, or do they take a more short-term approach? 
-- **Independence**. Are they fully independent and arms-length from a16z, such that they can freely vote as they see fit in the best interest of the protocol?
-- **Expertise**. Do they have a sufficient degree of expertise, or are they still learning the core subject matter? 
-- **Stewardship**. Are they overall good stewards and representatives for the protocol and its underlying mission?  
+- **一致性**. 他们是与协议的整体成功保持一致，还是存在潜在的利益冲突？
+- **承诺**. 他们是致力于协议的长期健康和可持续增长，还是采取更短期的策略？
+- **独立性**. 他们是否完全独立，与16z保持一定距离，能够根据协议的最大利益自由投票？
+- **专业度**. 他们是具备足够的专业知识，还是仍在学习核心主题？
+- **管理能力**. 他们总体上是否是协议和其基本使命的良好管理者和代表者？
 
-For participants who meet these criteria, we delegate a meaningful amount of voting power, and ensure that they have full discretion to participate in governance as they see fit.
+对于符合这些标准的参与者，我们将授予相当大的投票权，并确保他们完全自主地参与治理，按照自己认为最合适的方式行事。
 
-Who are some of the early examples that we’ve selected so far? They include student-run organizations (like [Stanford Blockchain Club](https://blockchain.stanford.edu/), [Harvard Law Blockchain & Fintech Initiative](https://orgs.law.harvard.edu/hlsbfi/), [Blockchain at UCLA](https://www.blockchainatucla.com/), and [Blockchain at Berkeley](https://blockchain.berkeley.edu/)) who are passionate about crypto and represent the next generation of crypto leaders. They include existing crypto companies (like [Argent](https://www.argent.xyz/) and [Dharma](https://www.dharma.io/)) who have experience building on the underlying protocols and engaging with their communities. They include industry experts (like [Gauntlet](https://gauntlet.network/)) who specialize in protocol governance and bring a quantitative rigor to the discipline. These are only a few early examples, and we look forward to seeing an even more diverse ecosystem of delegates emerge over time. Let us know if that might be you!
+到目前为止，我们选择的早期案例有哪些？他们包括学生自主组织（如[斯坦福区块链俱乐部](https://blockchain.stanford.edu/)，[哈佛法律区块链与金融科技倡议](https://orgs.law.harvard.edu/hlsbfi/)，[加州大学洛杉矶分校的区块链](https://www.blockchainatucla.com/)，和[伯克利区块链](https://blockchain.berkeley.edu/)），他们对加密货币充满热情，代表着下一代加密货币领导者。还包括现有的加密货币公司（如[Argent](https://www.argent.xyz/)和[Dharma](https://www.dharma.io/)），他们有在底层协议基础上构建和参与社区的经验。包括行业专家（如[Gauntlet](https://gauntlet.network/)），他们专门从事协议治理，并为该领域带来了定量的严谨性。这些只是早期的几个例子，随着时间的推移，我们期待着看到一个更加多样化的代理人生态系统的出现。如果你符合条件，请告诉我们！
 
-**2. Protocol Grant Programs**
+**2. 协议赞助计划**
 
-Many protocols today possess significant financial resources in the form of their on-chain treasuries. These treasuries represent a powerful tool that can be used to fund ongoing development from the community and set the protocol on a path towards long-term sustainability. 
+如今，许多协议以链上资金储备的形式拥有着相当可观的财务资源。这些储备金相当于一个强大的工具，可以用于从社区中资助持续发展，并使协议朝着长期可持续发展的道路上前进。
 
-We support governance initiatives (such as grant programs) that look to strategically deploy these funds over time, and believe they are beneficial for a number of reasons. First, they allow a protocol to leverage an immense amount of third-party developer talent and resources around the world, far greater than any one company or developer team could bring to bear. Second, and relatedly, they create a meaningful economic opportunity for a variety of people around the world who would otherwise not have access to this work, or would be forced to do it for free. And finally, they reduce the degree of reliance on the efforts of the original development team, which may in turn reduce regulatory risk for the protocol in certain key contexts.
+我们支持治理倡议（如赞助计划），旨在逐步战略性地利用这些资金，并认为它们有许多好处。首先，它们使协议能够利用全球范围内大量第三方开发者的才能和资源，远远超过任何一家公司或开发团队所能提供的。其次，它们为世界各地的许多人创造了有价值的经济机会，否则他们将无法获得这项工作，或者被迫免费从事这项工作。最后，它们减少了对原始开发团队努力的依赖程度，在某些关键背景下有可能减少协议的监管风险。
 
-To give a concrete example, Uniswap token holders control an on-chain treasury worth over $7 billion (vesting over the next four years). These funds can be used to incentivize things like gas optimizations for the underlying protocol, or integrations with other apps, or new front-end interfaces, or even marketing activities designed to boost growth. They could even be used to fund protocol delegates to further decentralize the governance process, as discussed above. We were excited to support the creation of a formal [Uniswap grant program](https://app.uniswap.org/#/vote/3) last year, and look forward to supporting similar efforts to incentivize community engagement in other protocols as well.
+举个具体的例子，Uniswap代币持有者控制着价值超过70亿美元的链上资金储备（在未来四年内授予）。这些资金可以用于激励底层协议的Gas优化、集成其他应用程序、新的前端界面，甚至是旨在促进增长的营销活动。这些资金甚至可以用于资助协议代理人，使治理过程进一步去中心化，正如上面所讨论的那样。去年，我们很高兴支持了创建正式的[Uniswap赞助计划](https://app.uniswap.org/#/vote/3)。我们期待着支持类似的努力，以激励社区参与其他协议。
 
-**3. Early Adopter Rewards** 
+**3. 早期采用者奖励** 
 
-Finally, we believe that token distribution models that reward bonafide early users and contributors are likely to create more engaged communities, and therefore more sustainable protocols. These are the types of users and developers who add value *before* a protocol achieves real network effects, or even has much inherent utility. Examples include [the early users](https://cointelegraph.com/news/meet-turkeys-unexpected-winners-of-uniswaps-uni-giveaway) and liquidity providers on Uniswap and [the early developers](https://www.coindesk.com/defi-startups-built-on-compound-weigh-what-to-do-with-200-comp-tokens) who built applications on top of Compound. We believe that these are the types of users who are likely to be the best long-term stewards of the protocol. While any token distribution model must take into account regulatory considerations, we generally believe that efforts to reward these types of early adopters are likely to position a protocol for long-term success, and we look to support them wherever possible. 
+最后，我们认为，奖励真正的早期用户和贡献者的代币分配模型可能会创建更具参与度的社区，从而创建更可持续的协议。早期采用者是那种在协议形成真正的网络效应之前，甚至在协议的本身实用性有限的情况下，就为其贡献价值的用户和开发者。例如，Uniswap的[早期用户](https://cointelegraph.com/news/meet-turkeys-unexpected-winners-of-uniswaps-uni-giveaway)和提供流动性的参与者，以及在Compound上构建应用的[早期开发者](https://www.coindesk.com/defi-startups-built-on-compound-weigh-what-to-do-with-200-comp-tokens)。我们认为，这些类型的用户可能是协议的最佳长期管理者。虽然任何代币分发模式都必须考虑到监管方面的因素，但我们通常认为，奖励这些类型的早期采用者的努力很可能为协议的长期成功打下基础，我们将尽可能支持他们。
 
 
 
-Protocols that achieve meaningful decentralization are more likely to gain long-term adoption and sustainability than those that do not. While the potential design space of governance is massive, we remain guided by this basic principle, and support initiatives that we feel embody it. We’ve provided a few such examples here, and look forward to helping identify and develop others that may emerge over time.
+相对于未能有效实现去中心化的协议，那些能够有效地实现去中心化的协议更有可能获得长期的采用和可持续性。虽然治理的潜在设计空间巨大，但我们始终以这个基本原则为指导，支持我们认为能体现这一原则的倡议。在此我们提供了一些这类例子，希望能帮助识别和开发未来可能出现的其他例子。
 
  
 
-*The views expressed here are those of the individual AH Capital Management, L.L.C. (“a16z”) personnel quoted and are not the views of a16z or its affiliates. Certain information contained in here has been obtained from third-party sources, including from portfolio companies of funds managed by a16z. While taken from sources believed to be reliable, a16z has not independently verified such information and makes no representations about the enduring accuracy of the information or its appropriateness for a given situation. In addition, this content may include third-party advertisements; a16z has not reviewed such advertisements and does not endorse any advertising content contained therein.*
+*这里表达的观点是引用的AH Capital Management，L.L.C.（“a16z”）个人的观点，不代表a16z或其关联公司的观点。此处包含的某些信息来自第三方来源，包括由a16z管理的基金的投资组合公司。虽然这些信息来源被认为是可靠的，但a16z并未对此类信息进行独立核实，并不对信息的持久准确性或其在特定情况下的适用性作出任何陈述。此外，本内容可能包括第三方广告；a16z未审核此类广告，且不认可其中包含的任何广告内容。*
 
-*This content is provided for informational purposes only, and should not be relied upon as legal, business, investment, or tax advice. You should consult your own advisers as to those matters. References to any securities or digital assets are for illustrative purposes only, and do not constitute an investment recommendation or offer to provide investment advisory services. Furthermore, this content is not directed at nor intended for use by any investors or prospective investors, and may not under any circumstances be relied upon when making a decision to invest in any fund managed by a16z. (An offering to invest in an a16z fund will be made only by the private placement memorandum, subscription agreement, and other relevant documentation of any such fund and should be read in their entirety.) Any investments or portfolio companies mentioned, referred to, or described are not representative of all investments in vehicles managed by a16z, and there can be no assurance that the investments will be profitable or that other investments made in the future will have similar characteristics or results. A list of investments made by funds managed by Andreessen Horowitz (excluding investments for which the issuer has not provided permission for a16z to disclose publicly as well as unannounced investments in publicly traded digital assets) is available at https://a16z.com/investments/.*
+*本内容仅供参考，不应作为法律、商业、投资或税务建议。关于这些事情，您应咨询自己的顾问。对于任何证券或数字资产的提及仅为说明目的，不构成投资建议或提供投资咨询服务的要约。此外，本内容不针对任何投资者或潜在投资者使用，也不能在任何情况下作为决定投资于a16z管理的任何基金的依据。（投资a16z基金的要约仅通过相应基金的私募备忘录、认购协议和其他相关文件进行，应全文阅读。）提到、参考或描述的任何投资或投资组合公司并不代表a16z管理的所有投资，无法保证这些投资将获利，也无法保证将来进行的其他投资具有类似的特征或结果。Andreessen Horowitz管理的基金的投资清单（不包括发行人未允许a16z公开披露的投资以及对公开交易数字资产的未经宣布的投资）可在https://a16z.com/investments/上找到。*
 
-*Charts and graphs provided within are for informational purposes solely and should not be relied upon when making any investment decision. Past performance is not indicative of future results. The content speaks only as of the date indicated. Any projections, estimates, forecasts, targets, prospects, and/or opinions expressed in these materials are subject to change without notice and may differ or be contrary to opinions expressed by others. Please see https://a16z.com/disclosures for additional important information.*
+*此处提供的图表仅供参考，在做出任何投资决策时不应依赖。过去的表现并不代表未来的结果。内容仅在所示日期起生效。这些材料中表达的任何预测、估计、预测、目标、前景和/或意见都可能发生变化，恕不另行通知，并且可能与其他人表达的意见不同或相反。请参阅https://a16z.com/disclosures以获取更多信息。*
