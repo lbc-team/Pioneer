@@ -1,136 +1,85 @@
-https://soliditydeveloper.com/uniswap4
-
-# How to integrate Uniswap 4 and create custom hooks
-
-## Let's dive into Uniswap v4's new features and integration
-
-**Uniswap v4 adds several key updates to improve gas efficiency, customizability, and functionality.**
-
-So let's not lose time and dive into it!
-
-![DEX-vs-CEX-Meme](https://cdn0.scrvt.com/b095ee27d37b3d7b6b150adba9ac6ec8/d3ab897c06188906/a85600257cd0/v/74ead17b5fdb/dex-vs-cex.jpeg)
-
-By now you've probably heard of Uniswap and so-called **AMMs** (automated market makers). But if you're not familiar with [Uniswap](https://uniswap.exchange/) yet, it's a fully decentralized protocol for automated liquidity provision on Ethereum. An easier-to-understand description would be that it's a decentralized exchange (DEX) relying on external liquidity providers that can add tokens to smart contract pools and users can trade those directly.
-
-Since it's running on Ethereum, what we can trade are Ethereum ERC-20 tokens and ETH. Originally for each token there was its own smart contract and liquidity pool, now in **Uniswap 4** there is one smart contract that manages the state for all pools. A pool is any two tokens with some customizations for what fees and hooks. We'll discuss this later in more detail.
-
-Uniswap - being fully decentralized - has no restrictions to which tokens can be added. If no pools for a token pair + customization exist yet, **anyone can create** one and **anyone can provide liquidity** to a pool.
-
-**The** **price of a token is determined by the liquidity in a pool**. For example if a user is buying *TOKEN1* with *TOKEN2*, the supply of *TOKEN1* in the pool will decrease while the supply of *TOKEN2* will increase and the price of *TOKEN1* will increase. Likewise, if a user is selling *TOKEN1*, the price of *TOKEN1* will decrease. Therefore the token price always reflects the supply and demand. This behavior can be described using the known formula: `**x \* y = k**`.
-
-And of course a user doesn't have to be a person, it can be a smart contract. That allows us to add Uniswap to our own contracts for adding additional payment options for users of our contracts. Uniswap makes this process very convenient, see below for how to integrate it.
-
-![Uniswap UI](https://cdn0.scrvt.com/b095ee27d37b3d7b6b150adba9ac6ec8/64fffff02c44018e/2b54bfc6c00f/v/f970f09c6aad/uniswap-ui.png)
-
-![One Pool Meme](https://cdn0.scrvt.com/b095ee27d37b3d7b6b150adba9ac6ec8/56c721fadf283308/1a8abba51891/v/7910c36ef457/one-pool-meme.jpeg)
+> * 原文链接： https://soliditydeveloper.com/uniswap4
+> * 译文出自：[登链翻译计划](https://github.com/lbc-team/Pioneer)
+> * 译者：[翻译小组](https://learnblockchain.cn/people/412)  校对：[Tiny 熊](https://learnblockchain.cn/people/15)
+> * 本文永久链接：[learnblockchain.cn/article…](https://learnblockchain.cn/article/1)
 
 
 
-## What is new in UniSwap v4?
+# 如何集成Uniswap 4 并创建自定义Hook
 
-We've discussed what's new in Uniswap v3 [here](https://soliditydeveloper.com/uniswap3), but now let's see what's new in Uniswap v4:
+>  让我们深入了解Uniswap v4的新功能和如何集成
 
-1. **Hooks**: At the heart of Uniswap v4 is a new concept known as 'hooks'. Think of hooks like plugins you can add to your music software to create a new sound effect. Similarly, these hooks can be used to add new functionalities or features to the liquidity pools in Uniswap v4. In practical terms, hooks can enable a variety of functions like setting up limit orders, dynamic fees or creating custom oracle implementations. We'll take a closer look at this feature!
-2. **Singleton and Flash Accounting**: In previous versions, every new token pair had its own contract. However, Uniswap v4 introduces the singleton design pattern, meaning all pools are managed by a single contract. And Uniswap v4 uses a system called 'flash accounting'. This method only transfers tokens externally at the end of a transaction, updating an internal balance throughout the process. All this improves gas costs a lot.
-3. **Native ETH**: Uniswap v4 is bringing back support for native ETH. So, instead of wrapping your ETH into an ERC-20 token for trading, you can trade directly using ETH. Another feature for saving gas.
-4. **ERC1155 Accounting**: With Uniswap v4, you can keep your tokens within the singleton (that mega contract we talked about earlier) and avoid constant transfers to and from the contract. The accounting itself uses the ERC1155 standard which is a multi-token standard. It allows you to send multiple different token classes in one transaction. We've discussed the standard [here](https://soliditydeveloper.com/erc-1155) before. 
-5. **Governance Updates**: Uniswap v4 also brings changes to how fees are managed. There are two separate governance fee mechanisms - swap fees and withdrawal fees. The governing body can take a certain percentage of these fees.
-6. **Donate Function**: Uniswap v4 introduces a `donate` function that allows users to pay liquidity providers directly in the tokens of the pool.
+Uniswap v4增加了几个关键的更新，以提高Gas效率、可定制性和功能。
 
-![Uniswap Brain Meme](https://cdn0.scrvt.com/b095ee27d37b3d7b6b150adba9ac6ec8/963cec0ea9cea6ea/7a9e75949a55/v/b3eff58053dc/uniswap-evolution-meme.jpeg)
+因此，让我们不要耽误时间，潜心研究吧!
 
+![DEX-vs-CEX-Meme](https://img.learnblockchain.cn/2023/07/07/99796.jpeg)
 
+现在你可能已经听说过Uniswap和所谓的**AMMs**（自动做市商）。但如果你还不熟悉[Uniswap](https://learnblockchain.cn/article/2747)（[官网](https://uniswap.exchange/)），它是一个完全去中心化的交易所 DEX协议，依靠外部流动性提供者可以将代币添加到智能合约池中，用户可以直接交易这些代币。
 
-## Further Resources
+由于Uniswap 在以太坊上运行，我们可以交易的是以太坊ERC-20代币和ETH。原本每种代币都有自己的智能合约和流动性池合约，现在在**Uniswap 4**中，由一个智能合约管理所有流动池的状态。一个流动池是任何两个代币，有一些自定义的费用和Hook。我们将在后面详细讨论这个问题。
 
-- [Source code + Whitepaper](https://github.com/Uniswap/v4-core/tree/main)
-- [Introduction Blog Post + Vision](https://blog.uniswap.org/uniswap-v4)
+Uniswap--作为完全去中心化的--对哪些代币可以被添加没有限制。如果还没有代币对+定制的流动池存在，**任何人都可以创建**一个，**任何人都可以为流动池提供流动性**。
 
+**代币的价格是由池中的流动性决定的**。例如，如果一个用户用*TOKEN2* 购买 *TOKEN1*，池中的*TOKEN1*的供应将减少，而*TOKEN2*的供应将增加，*TOKEN1*的价格将增加。同样，如果一个用户正在出售*TOKEN1*，*TOKEN1*的价格将下降。因此，代币价格总是反映了供需关系。这种行为可以用已知的公式来描述：`x * y = k`。
 
+当然，用户不一定是人，也可以是一个智能合约。这使得我们可以将Uniswap添加到我们自己的合约中，为我们合约的用户增加额外的支付选项。Uniswap使这个过程非常方便，请看下面的集成方法。
 
-## What happens to Uniswap v3?
+![Uniswap UI](https://img.learnblockchain.cn/2023/07/07/9931.png)
 
-![Uni Hayden Meme](https://cdn0.scrvt.com/b095ee27d37b3d7b6b150adba9ac6ec8/8d8c78f071b4d6b6/163a2aa4dc4e/v/806cedd05d9a/uni-haryden-meme.jpg)
-
-# "
-
-'Uniswap is an automated, decentralized set of smart contracts. It will continue functioning for as long as Ethereum exists.'
-
-Hayden Adams, Founder of Uniswap
+![One Pool Meme](https://img.learnblockchain.cn/2023/07/07/34993.jpeg)
 
 
 
-## Integrating UniSwap v4
+## UniSwap v4 有什么新功能？
 
-Doing a swap within your contracts is now a little more complex in Uniswap 4. So let's take a look at one example:
+在[这里](https://learnblockchain.cn/article/2580)，我们已经讨论了Uniswap v3的新内容，现在来看看Uniswap v4的新内容：
 
-- We'll import the contracts directly via URL, so you could take this example and **plug it right into Remix**.
-- We're working with the code from commit `blob/86b3f657`, make sure to update this to `**/blob/main**` **to get the latest version**.
+1. **Hook**：Uniswap v4的核心是一个被称为 "Hook" 的新概念。把Hook想象成你可以添加到音乐软件中的插件，以创造新的声音效果。同样的，这些Hook可以用来为Uniswap v4的流动性池添加新的功能或特性。在实际操作中，Hook可以实现各种功能，如设置限价单、动态费用或创建自定义的oracle实现。我们会仔细看看这个功能。
 
-Let's investigate the `swapTokens` function that takes in three parameters: 
+2. **Singleton和Flash记账**：在以前的版本中，每个新的代币对都有自己的合约。然而，Uniswap v4引入了单例设计模式，这意味着所有的流动池都由一个合约管理。而且Uniswap v4使用了一个叫做 "闪电记账 "的系统。这种方法只在交易结束时从外部转账代币，在整个过程中更新内部余额。所有这些都降低了Gas成本。
 
-1. `IPoolManager.PoolKey poolKey`
-2. `IPoolManager.SwapParams calldata swapParams`
-3. `uint256 deadline`
+3. **原生ETH**：Uniswap v4带回了对原生 ETH 的支持。因此，你可以直接使用ETH进行交易，而不是将你的ETH包装成ERC-20代币进行交易。又是一个节省Gas的功能。
 
-The `poolKey` is the identifier for which pool you want to use for the swap. This not only consists of the two token addresses, but also of the specified fees, tick spacing and hooks:
+4. **ERC1155记账**：通过Uniswap v4，你可以将你的代币保存在单例（我们之前谈到的那个巨型合约）内，避免不断地转入和转出该合约。记账本身使用 [ERC1155](https://learnblockchain.cn/article/3411) 标准，这是一个多代币标准。它允许你在一个交易中发送多个不同的代币类别。我们之前在[这里](https://soliditydeveloper.com/erc-1155)讨论过这个标准。
 
-```solidity
-struct PoolKey {
-    Currency currency0;
-    Currency currency1;
-    uint24 fee;
-    int24 tickSpacing;
-    IHooks hooks;
-}
-```
+5. **治理更新**：Uniswap v4也带来了对费用管理方式的改变。有两个独立的治理费用机制--兑换费用和提款费用。治理机构可以从这些费用中抽取一定的比例。
 
-That means there will be an **infinite amount of pools per token pair** now! It **will be up to you** to determine which ones to use.
+6. **捐赠功能**：Uniswap v4引入了 "捐赠 "功能，允许用户将资金池的代币直接支付给流动性提供者。
 
-The currency here is actually using the new Solidity feature of custom types:
 
-```solidity
-type Currency is address;
-```
 
-So in other words `Currency` is just an address type. Typically an **ERC20** token address. So why not IERC20? Because `Currency` can also mean **native ETH**. In this case you have to pass `address(0)`.
+下面这个图诠释了 V1 到 V4 的变化：
 
-As for the `IHooks`, we'll discuss this in greater details later.
+![Uniswap Brain Meme](https://img.learnblockchain.cn/2023/07/07/72464.jpeg)
 
-Now the second parameter we send is `SwapParams` which consists of:
 
-1. **zeroForOne**: A boolean indicating the direction (buy vs. sell)
-2. **amountSpecified**: The actual amount you want to swap.
-3. **sqrtPriceLimitX96**: This represents the lowest price you are fine to accept. It's represented as the square root of the `x * y` formula. And X96 refers to this being represented as a fixed-point decimal with 96 bits of precision to the right of the decimal point.
 
-```solidity
-struct SwapParams {
-    bool zeroForOne;
-    int256 amountSpecified;
-    uint160 sqrtPriceLimitX96;
-}
-```
+ 了解 V4 还可以查看这些资源：
 
-Now we look at the flow from `swapTokens` next, here's where some magic happens. `swapTokens` calls the `lock` function on the `poolManager`. By calling `lock`, you're asking Uniswap to allow trading against it.
+- [源代码+白皮书](https://github.com/Uniswap/v4-core/tree/main)
+- [介绍博客文章+愿景](https://blog.uniswap.org/uniswap-v4)
 
-**This allows Uniswap to** **allow you to get negative balances****. Why?**
 
-As soon as the `lock` is called, the `poolManager` contract from Uniswap automatically calls `lockAcquired` on your contract again. Inside here we can do all the trades and interaction we want. After the call to `lockAcquired` is finished (so your code is done executing), Uniswap does **one last check** still:
 
-```solidity
-if (lockState.nonzeroDeltaCount != 0) {
-    revert CurrencyNotSettled();
-}
-```
+## Uniswap v3 会怎样？
 
-So at the end of it all, you must have settled your balances again. This keeps token transfers to an absolute minimum, because we have to do it only once at the end.
+![Uni Hayden Meme](https://img.learnblockchain.cn/2023/07/07/79703.jpeg)
 
-The function `_settleCurrencyBalance` is called for each currency involved in the swap. If we have a negative delta it means the **pool still owes us money**. We can take it back by calling `take`.
+“ 'Uniswap是一套自动化、去中心化的智能合约。只要以太坊存在一天，它就会继续运作。”
 
-In the other case we have to **pay back** the amount using **settle**:
+Hayden Adams，Uniswap 的创始人
 
-- For ETH we can just send the amount directly along with the `settle` call.
-- For ERC20 tokens we have to transfer them to the pool manager and then call `settle` separately.
+
+
+## 集成UniSwap v4
+
+
+
+在Uniswap v4中，在你的合约中进行兑换现在变得有点复杂了。所以我们来看看一个例子：
+
+- Remix 支持将通过URL 直接导入合约，所以你可以把这个例子直接拖到Remix中。
+- 我们使用的是`blob/86b3f657`提交的代码，请确保将其更新到`/blob/main`。
 
 ```solidity
 // SPDX-License-Identifier: MIT
@@ -218,7 +167,88 @@ contract UniSwapTest {
 }
 ```
 
-**And voila! Your tokens have been swapped.**
+
+
+
+
+让我们研究一下 `swapTokens` 函数，它接收了三个参数：
+
+1. `IPoolManager.PoolKey poolKey`.
+
+2. `IPoolManager.SwapParams calldata swapParams`。
+
+3. `uint256 deadline`。
+
+`poolKey`是你想用来兑换的流动池的标识符。这不仅包括两个token地址，还包括指定的费用、tick间隔和Hook：
+
+```solidity
+struct PoolKey {
+    Currency currency0;
+    Currency currency1;
+    uint24 fee;
+    int24 tickSpacing;
+    IHooks hooks;
+}
+```
+
+现在每个代币对将有**不限量的 PoolKey ，**将由你来决定使用哪一个。
+
+这里的货币（Currency）实际上是使用Solidity新功能， 自定义类型：
+
+```solidity
+type Currency is address;
+```
+
+所以换句话说，`Currency`只是一个地址类型。通常是一个**ERC20**代币地址。那么为什么不是 IERC20？因为`Currency`也可以是**原生 ETH **，此时你必须传递`address(0)`。
+
+至于`IHooks`，我们将在后面更详细地讨论。
+
+现在我们发送的第二个参数是`SwapParams`，它包括：
+
+1. **zeroForOne**：表示方向的布尔值（买入与卖出）。
+
+2. **指定的金额**：你想要兑换的实际金额。 
+
+3. **sqrtPriceLimitX96**：这代表你可以接受的最低价格。它被表示为`x * y`公式的平方根。而X96指的是它被表示为小数点右边96位精度的定点小数。
+
+```solidity
+struct SwapParams {
+    bool zeroForOne;
+    int256 amountSpecified;
+    uint160 sqrtPriceLimitX96;
+}
+```
+
+现在我们看一下来自`swapTokens`的流程，这里有一些神奇的事情发生。`swapTokens`调用`poolManager`的`lock`函数。通过调用`lock`，你请求 Uniswap 允许对其进行交易。
+
+**Uniswap 允许你获得负余额**，为什么？
+
+一旦调用`lock`，Uniswap的`poolManager`合约就会自动再次调用你合约上的`lockAcquired`。在这里面可以做所有我们想做的交易和交互。在对`lockAcquired `的调用结束后（所以你的代码已经执行完毕），Uniswap 仍然做最后检查：
+
+```solidity
+if (lockState.nonzeroDeltaCount != 0) {
+    revert CurrencyNotSettled();
+}
+```
+
+所以在这一切结束后，你必须再次结算你的余额。
+
+代币转账保持在绝对最低的水平，因为我们只需要在最后做一次。
+
+函数`_settleCurrencyBalance`对参与兑换的每个货币都被调用。如果我们有一个负的delta，这意味着**流动池仍然欠我们钱**。我们可以通过调用`take`将其收回。
+
+在另一种情况下，我们必须使用 **settle** 来偿还资金：
+
+- 对于 ETH，我们可以在调用`settle`时直接发送该金额。
+- 对于 ERC20 代币，我们必须将其转账到 poolManager，然后单独调用`settle`。
+
+
+
+**然后就可以了! 你的代币已经被兑换了**。
+
+
+
+与上面的架构相比，另一个稍微灵活的架构也可以是下边的这个：
 
 ```solidity
 function lock(bytes calldata data) public payable {
@@ -249,21 +279,21 @@ function swapTokens(
 }
 ```
 
-An alternative architecture to the above one that's slightly more flexible could also be this one on the left.
-
-Here we're basically just passing any data from the caller to the lock which is then passed to the lockAcquired. From there we simply call `address(this).call(data)`.
-
-In our case the data then to execute `swapTokens` should be the `swapTokens` function signature combined with its input parameters.
-
-![Uniswap Hooks Meme](https://cdn0.scrvt.com/b095ee27d37b3d7b6b150adba9ac6ec8/584eb9d4bbe4e152/6f2aa265697a/v/9a26cddb0bcf/Uniswap-Hooks.jpeg)
 
 
+在这里，我们基本上只是将任何数据从调用者传递给 lock，再传递给lockAcquired。从那里我们简单地调用`address(this).call(data)`。
 
-## Entering a New Uniswap Era with Hooks
+在我们的例子中，执行`swapTokens`的数据应该是`swapTokens`函数签名和它的输入参数。
 
-Now let's discuss the biggest new feature, the hooks. There are **three different hook interfaces** available.
+![Uniswap Hooks Meme](https://img.learnblockchain.cn/2023/07/07/90490.jpeg)
 
-The first and biggest one is `IHooks`:
+
+
+## 进入全新 Uniswap Hook 时代
+
+现在让我们来讨论一下最大的新功能，Hook。有**三种不同的Hook接口**。
+
+第一个也是最大的一个是 "IHooks"：
 
 ```solidity
 interface IHooks {
@@ -285,23 +315,25 @@ interface IHooks {
 }
 ```
 
-The `IHooks` interface in Uniswap 4 provides you with an option to interact with different stages of transactions in your liquidity pools. You can consider hooks as operations that get triggered before and after key operations in your pool.
+Uniswap 4中的 "IHooks "接口为你提供了一个选项，可以在流动性池中的不同阶段与你交互。你可以把Hook看作是在你的资金池中关键操作前后被触发的操作。
 
-- **`beforeInitialize` and `afterInitialize`**: When a new pool is initialized, e.g. if you want to add some additional setup logic when creating a new pool, this is the place.
+- `beforeInitialize`和`afterInitialize`：当一个新的流动池被初始化时，例如，如果你想在创建一个新的流动池时添加一些额外的设置逻辑，可以在这里添加。
 
-  
+- `beforeModifyPosition`和`afterModifyPosition`：当池中的LP位置被改变时，换句话说，每次LP增加/删除流动性或改变其LP位置的参数时被调用。
 
-- **`beforeModifyPosition` and `afterModifyPosition`**: When an LP position in a pool is being changed, in other words every time an LP adds/removes liquidity or changes parameters of his LP position.
+- `beforeSwap`和`afterSwap`：在兑换操作发生之前和之后。你可以在下边看到这个流程。
 
-- **`beforeSwap` and `afterSwap`**: Before and after a swap operation happens. You can see the flow on the right.
+- `beforeDonate`和`afterDonate`：当流动性通过新的`Donate`函数被添加到池中。
 
-- **`beforeDonate` and `afterDonate`**: When liquidity is being added to the pool via the new `donate` function.
 
-Remember, you don't need to implement all the hooks. Depending on your requirements, you can choose to implement only those that you need.
 
-We'll explore how you can add these hooks to a pool soon, but first let's take a look at two other hook interfaces.
+![Uniswap Swap Flow](https://img.learnblockchain.cn/2023/07/07/88134.png)
 
-![Uniswap Swap Flow](https://cdn0.scrvt.com/b095ee27d37b3d7b6b150adba9ac6ec8/d1007a7c91fd4f90/4b904462457b/v/555751a48d9f/uniswap-swap-flow.png)
+记住，你不需要实现所有的Hook。根据自己的要求，可以选择只实现需要的那些。
+
+我们很快会探讨如何将这些 Hook 添加到资金池中，但首先让我们看看另外两个Hook接口。
+
+
 
 ```solidity
 interface IHookFeeManager {
@@ -315,14 +347,16 @@ interface IHookFeeManager {
 }
 ```
 
-The `IHookFeeManager` is a separate interface from the `IHooks` related to allowing a hook itself to take some fee.
 
-- **`getHookSwapFee`**: This method allows a hook to define how much cut a hook should get when a swap happens.
-- **`getHookWithdrawFee`**: This method sets how much a hook can charge when assets are withdrawn from the pool.
 
-Lastly the `IDynamicFeeManager` interface is used for determining the regular swap fees:
+IHookFeeManager 是一个独立于 "IHooks" 的接口，与允许 Hook 收取一些费用。
 
-- **`getFee`**: This method returns the dynamic fee for a pool. This allows for more flexible and potentially changing fee structures, e.g. you could base fees on factors like market conditions.
+- `getHookSwapFee`：这个方法允许一个 Hook 定义当兑换发生时，一个Hook应该得到多少分成。
+- `getHookWithdrawFee`：这个方法设置当资产从流动池中提走时，Hook可以收取多少费用。
+
+最后，"IDynamicFeeManager" 接口用于确定常规兑换费用：
+
+- `getFee`：该方法返回一个流动池的动态费用。这允许更灵活和可能变化的费用结构，例如，你可以根据市场情况等因素来收费。
 
 ```solidity
 interface IDynamicFeeManager {
@@ -332,52 +366,53 @@ interface IDynamicFeeManager {
 }
 ```
 
-Now those hooks in total are available.
+这就是所有可用 的Hook 。
 
-**But how do you now create a pool with custom hooks?**
+但如何用自定义Hook创建一个流动池？
 
 
 
-## Creating Custom Uniswap 4 Hooks
+## 创建自定义Uniswap 4Hook
 
-![Customization is key](https://cdn0.scrvt.com/b095ee27d37b3d7b6b150adba9ac6ec8/fd344d92324e69a7/1f271d45a23a/v/867985edfa91/customization-is-key.jpg)
+![自定义是关键](https://img.learnblockchain.cn/2023/07/07/48212.jpeg)
 
-Well the short answer is, you can use this new template I created for foundry as a starting point:
+好吧，简短的回答是，你可以使用我为 Foundry 创建的这个新模板作为一个起点：
 
 ```bash
 $ forge init my-project --template https://github.com/soliditylabs/uniswap-v4-custom-pool
 ```
 
-And check out the repository over at https://github.com/soliditylabs/uniswap-v4-custom-pool.
+你可以在 https://github.com/soliditylabs/uniswap-v4-custom-pool 上查看代码。
 
-But now to the longer answer with some explanations. There are **two different mechanisms for how the fees are executed**:
+但现在是更长的答案，有一些解释。有**种不同的机制来执行费用**：
 
-1. The **prefix of the deployed Ethereum address** itself of your Hooks contract.
-2. **Special flags in the fee** definition, if set to 1, will trigger the specific fee hook. 
+1. 你的Hooks合约的**部署的以太坊地址的前缀**本身。
 
-Let's start with the first one. There's a bit of magic in here, but it's not too hard.
+2. 费用**定义中的**特殊标志，如果设置为1，将触发特定的费用挂钩。
 
-`IHooks` has 8 defined hook functions. **Each function corresponds to a bit in the beginning of your Ethereum address.**
+让我们从第一条开始。这里面有一点神奇，但并不难。
 
-What do we mean with that?
+`IHooks`有8个定义的Hook函数。**每个函数都对应于你的以太坊地址开头的一个位。
 
-Imagine you have a random address like `0x480f0d4887ed4f16d2299031dffec90782826269`. The first two characters ``0x48`` represented in binary will be `01001000`.
+我们这样做是什么意思？
 
-This will result in the hooks `afterInitialize` and `beforeSwap` being executed.
+想象一下，你有一个随机地址，如`0x480f0d4887ed4f16d2299031dffec90782826269`。`0x48`的前两个字符用二进制表示将是`01001000`。
 
-If you want to run all hooks for example, you must make sure that your deployed address starts with ``0xff``.
+这将导致Hook`afterInitialize`和`beforeSwap`被执行。
 
-Now the next question is, **how do you ensure that the address starts with the correct bits?**
+例如，如果你想运行所有的Hook，你必须确保你部署的地址以`0xff`开头。
 
-Usually the address of a deployed contract will be a combination of the deployer address, its transaction nonce and the deployed bytecode.  That would make deployments quite challenging.
+现在，下一个问题是，**你如何确保地址以正确的位开始？
 
-**Fortunately Ethereum has a second way to deploy contracts using the `CREATE2` opcode.**
+通常情况下，部署合约的地址将是部署者地址、其交易nonce和部署字节码的组合。 这将使部署工作具有相当大的挑战性。
 
-![Uniswap Hook Bits](https://cdn0.scrvt.com/b095ee27d37b3d7b6b150adba9ac6ec8/c53d7f4251460a30/d1246b3f2e0e/v/9573aa0dda1d/UniHookBits.png)
+**幸运的是，以太坊有第二种方法来部署合约，使用`CREATE2`操作码。
+
+![Uniswap Hook Bits](https://img.learnblockchain.cn/2023/07/07/27667.png)
 
 
 
-### Deploying Hook at the Correct Address
+## # 在正确的地址上部署Hook
 
 ```solidity
 contract UniswapHooksFactory {
@@ -405,15 +440,15 @@ contract UniswapHooksFactory {
 }
 ```
 
-CREATE2 deployments take in a salt parameter. In Solidity this can be done by simply adding `{salt: salt}` to the deployment call.
+CREATE2部署需要一个盐参数。在 Solidity 中，这可以通过简单地在部署调用中添加 `{salt: salt}` 来完成。
 
-This allows for deterministic addresses that are not based on the transaction nonce and deployer address anymore. Instead it **depends solely on the salt and contract bytecode.**
+这允许确定的地址，不再基于交易nonce和部署者地址。相反，它只依赖于盐和合约字节码。
 
-We can then also easily precompute what the address of such a Hook would be. Note that the 0xff here is a different concept and has nothing to do with the hooks. You can read the `CREATE2` EIP [here](https://eips.ethereum.org/EIPS/eip-1014), to learn more on this.
+然后，我们也可以很容易地预先计算出这样一个Hook的地址是什么。请注意，这里的0xff是一个不同的概念，与Hooks没有关系。你可以阅读`CREATE2`EIP[这里](https://eips.ethereum.org/EIPS/eip-1014)，以了解更多这方面的信息。
 
-Given this easy way to determine the address, to deploy our hooks we only need to find the correct salt that gives us the address we want. This is a small **brute-force effort**.
+鉴于这种确定地址的简单方法，为了部署我们的Hook，我们只需要找到正确的盐，让我们得到我们想要的地址。这是一个小的**裸的努力。
 
-If you're using Foundry, you can add something like this to your deploy script:
+如果你使用Foundry，你可以在你的部署脚本中添加类似这样的内容：
 
 ```solidity
 for (uint256 i = 0; i < 1500; i++) {
@@ -430,7 +465,7 @@ function _doesAddressStartWith(address _address,uint160 _prefix) private pure re
 }
 ```
 
-This will ensure you're deploying with the correct salt!
+这将确保你用正确的盐进行部署!
 
 ```solidity
 import {Hooks} from "@uniswap/v4-core/contracts/libraries/Hooks.sol";
@@ -458,21 +493,21 @@ function getHooksCalls() public pure returns (Hooks.Calls memory) {
 }
 ```
 
-**Now as a last way to verify you have set the address correctly**, we can use the `Hooks.validateHookAddress` function provided by Uniswap.
+**现在，作为验证你已经正确设置了地址的最后一个方法**，我们可以使用Uniswap提供的`Hooks.validateHookAddress`函数。
 
-Inside the constructor of our Hook we can call `validateHookAddress` with the booleans set exactly to those hooks we want to have registered.
+在我们的Hook的构造函数中，我们可以调用`validateHookAddress`，并将布尔值精确地设置为我们想要注册的那些Hook。
 
-If the address doesn't match this specification, the deployment will fail.
+如果地址不符合这个规范，部署就会失败。
 
-For example on the left it would only succeed if the address actually starts with ``0xff``, because we have set all hooks to be required.
+例如左边的例子，只有当地址实际以`0xff`开头时才会成功，因为我们已经将所有的Hook都设置为必需。
 
 
 
-### Setting Fee Hooks
+### 设置收费Hook
 
-Now the mechanism for the fee hooks is slightly different.
+现在，收费Hook的机制略有不同。
 
-When you initialize a pool in the poolManager, you have to call something like on the right. If you want the fee hooks to be executed, you have to set the specific flags here for `myFees`, if not you would put a static fee number here.
+当你在poolManager中初始化一个池时，你必须调用右边的东西。如果你想让收费Hook被执行，你必须在这里为`myFees`设置特定的标志，如果不是，你会在这里放一个静态的收费号码。
 
 ```solidity
 poolManager.initialize(IPoolManager.PoolKey({
@@ -484,29 +519,34 @@ poolManager.initialize(IPoolManager.PoolKey({
 }), sqrtPriceX96);
 ```
 
-For example if you want all fee hooks to be executed, you would just set all flags by setting `myFees` like this:
+例如，如果你想让所有的费用Hook都被执行，你只需像这样设置`myFees`来设置所有的标志：
 
 ```solidity
 uint24 myFees = Fees.DYNAMIC_FEE_FLAG + Fees.HOOK_SWAP_FEE_FLAG + Fees.HOOK_WITHDRAW_FEE_FLAG;
 ```
 
-That's it! You can dive into the full examples over at https://github.com/soliditylabs/uniswap-v4-custom-pool.
+这就是了!你可以在https://github.com/soliditylabs/uniswap-v4-custom-pool 上深入了解完整的例子。
 
-And use them as a starting point in Foundry like this:
+并像这样在Foundry中使用它们作为一个起点：
 
 ```bash
 $ forge init my-project --template https://github.com/soliditylabs/uniswap-v4-custom-pool
 ```
 
-And also worth noting, you can find some **examples for implemented hooks** here: https://github.com/Uniswap/v4-periphery/tree/main/contracts/hooks/examples.
+另外值得注意的是，你可以在这里找到一些**实施Hook的例子：https://github.com/Uniswap/v4-periphery/tree/main/contracts/hooks/examples。
 
-One interesting example is the feature to enable limit orders. On a high level it works as follows. The hook contract  has two functions:
+一个有趣的例子是启用限价订单的功能。在高层次上，它的工作原理如下。Hook合约有两个功能：
 
-1. `function placeLimitOrder(PoolKey calldata key, int24 tickLower, bool zeroForOne, uint128 liquidity)`: Allow users to add liquidity to the hook at specified ticks.
-2. `function afterSwap`: Inside the hook, we can check the new ticks and modify the hook's LP position accordingly.
+1.`函数placeLimitOrder(PoolKey calldata key, int24 tickLower, bool zeroForOne, uint128 liquidity)`：允许用户在指定的点位向Hook添加流动资金。
 
-That's it. You've reached the end. Now good luck on your Uniswap journey.
 
-**Onwards and upwards.**
+2.2. `功能 afterSwap`：在Hook内部，我们可以检查新的点位并相应地修改Hook的LP位置。
 
-![Uniswap Onwards and Upwards](https://cdn0.scrvt.com/b095ee27d37b3d7b6b150adba9ac6ec8/982d099c44fe42ac/b59de49a4cd1/v/54dad2d0950a/Uniswap-onwards-upwards.png)
+就这样了。你已经到达了终点。现在祝你的Uniswap之旅好运。
+
+**向前走，向上走。
+
+![Uniswap Onwards and Upwards](https://img.learnblockchain.cn/2023/07/07/81841.png)
+
+感谢 [Chaintool](https://chaintool.tech/) 对本翻译的支持， Chaintool 是一个为区块链开发者准备的开源工具箱
+本翻译由 [DeCert.me](https://decert.me/) 协助支持， 来DeCert码一个未来， 支持每一位开发者构建自己的可信履历。
