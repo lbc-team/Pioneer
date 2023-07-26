@@ -1,534 +1,489 @@
-# A Friendly Introduction to Zero Knowledge
+> * 原文链接： https://zkintro.com/articles/friendly-introduction-to-zero-knowledge
+> * 译文出自：[登链翻译计划](https://github.com/lbc-team/Pioneer)
+> * 译者：[翻译小组](https://learnblockchain.cn/people/412)  校对：[Tiny 熊](https://learnblockchain.cn/people/15)
+> * 本文永久链接：[learnblockchain.cn/article…](https://learnblockchain.cn/article/1)
 
-![img](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%271344%27%20height=%27896%27/%3e)![ZKP Magic](https://zkintro.com/_next/image?url=%2Fstatic%2Fimages%2Fzkp-magic7-tiny.png&w=3840&q=75)
+# 友好的零知识介绍
 
-## Introduction
+![ZKP魔法](https://img.learnblockchain.cn/2023/07/21/57940.png)
 
-Zero Knowledge Proofs are magic. They allow us to do things we couldn't dream of before.
+## 零知识证明是魔法
 
-Let me start with a few quotes to tickle your brain. Some might be familiar, while others might be new to you.
+零知识证明是一种魔法。它能让我们做到以前想都不敢想的事情。
 
-> Any sufficiently advanced technology is indistinguishable from magic.
+首先，让我引用几句名言来刺激你的大脑。有些可能是你耳熟能详的，有些可能是你第一次听说。
+
+> 任何足够先进的技术都与魔法无异 - 来自阿瑟-C-克拉克
 >
-> - Arthur C. Clarke
 
-> Civilization advances by extending the number of operations we can perform without thinking about them.
+> 人类文明的进步是通过增加我们不假思索就能完成的操作数量来实现的。- 来自阿尔弗雷德-诺斯-怀特海
 >
-> - Alfred North Whitehead
 
-> I have made this longer than usual, only because I have not had the time to make it shorter.
+> 我把这篇文章写得比平时长，只是因为我没有时间把它缩短。- 来自布莱斯-帕斯卡尔
 >
-> - Blaise Pascal
 
-> Privacy is the power to selectively reveal oneself to the world.
+> 隐私是一种有选择地向世界展示自己的能力。- 来自赛博朋克宣言
 >
-> - A Cypherpunk's Manifesto
 
-> The future is already here. It's just not evenly distributed yet.
+> 未来已来。只是分布还不均匀。- 来自威廉-吉布森
 >
-> - William Gibson
 
-Magic technology, advancing civilization, short letters, privacy, and a future that's already here. That's Zero Knowledge Proofs (ZKPs) in a nutshell. What's going on?
+神奇的技术、不断进步的文明、简短的文字、隐私以及已经到来的未来。这就是零知识证明（ZKP）。这是怎么回事？
 
-In the last century, computers and the Internet have taken over the world. These technologies are everywhere, in everything we do, for better or worse. On top of these, we build platforms, companies, empires. These are things like your MAMAA (Microsoft, Apple, Meta, Alphabet, Amazon). Then there's the belly of the beast - your payment networks, governmental services, and the plethora of B2B applications that silently run the world. Finally, there's a long tail of other things - your cute filter image app, language learning platform, or online community.
+上个世纪，计算机和互联网席卷了整个世界。这些技术无处不在，我们所做的一切都离不开它们，无论好坏。在此基础上，我们建立了平台、公司和巨头。这些就像你的 MAMAA（微软、苹果、Meta、Alphabet、亚马逊）。然后是巨头的腹部 --支付网络、政府服务和大量的 B2B 应用程序，它们默默地运行着这个世界。最后，还有一条长尾应用 -- 可爱的滤镜图片应用、语言学习平台或在线社区。
 
-You expect to achieve a specific goal when you input data into yet another online service. It might be a small goal, like reaching out to a friend, distracting yourself from work, or something big like applying for a mortgage. But what happens to all this data? This includes the data you consciously know about and the iceberg of hidden data you are unaware of. Will what you are trying to achieve actually happen, or will there be some problem, either straight away or a year from now?
+当你向另一个在线服务输入数据时，你期望实现一个特定小目标，比如联系朋友，或者是申请抵押贷款这样的大目标。但所有这些数据会发生什么变化呢？还有你不知道的冰山一角的隐藏数据。
 
-Who actually understands these systems and the consequences of how we use them? And how they, in turn, use us? While some people might understand some systems better than others, no one understands all of them, and even less how they interact together to create unforeseen consequences.
+谁真正了解这些系统以及我们如何使用它们的后果？反过来，它们又是如何利用我们的？虽然有些人可能比其他人更了解某些系统，但没有人了解所有系统，更不可能了解它们是如何相互作用产生不可预见的后果的。
 
-What's a human to do? Trust. But who do you trust? And why?
+人类该怎么办？信任, 但你相信谁呢？
 
-This is a hard problem. Our human brains have not evolved to think about this. The Internet, great as it is in connecting us and making things easier, has created a bit of a mess in this regard. In the past, when you had a private conversation with someone, the wind would blow away the sounds you made. When you were locked out of your house, you could get a locksmith, or break the lock yourself. Who do you talk to when you are locked out of your Google account and stare at an "Access denied" screen? No one, you are standing in front of an invisible and impenetrable castle.
+这是一个难题。我们人类的大脑还没有进化到可以思考这个问题的程度。互联网虽然能把我们联系在一起，让事情变得更简单，但也在这方面却造成了一些混乱。过去，当你与人私下交谈时，风会吹走你发出的声音。当你被锁在屋外时，你可以找锁匠，也可以自己撬锁。当你被锁在谷歌账户外，盯着 "拒绝访问 "的屏幕时，你能怎么办，你正站在一座无形而坚不可摧的城堡前。
 
-ZKPs can help. Perhaps not for everything, everywhere, or at this precise moment. But it applies to numerous things, in various places, and increasingly so. In the rest of this article, I'll try to convince you why and how. Let's follow the magic.
+ZKP 可以帮助你。也许不是任何事情都可以搬到你，也不是此刻。但它可适用于许多事情、许多地方，而且越来越多。在本文的其余部分，我将尝试说服你为什么以及如何做到。让我们跟随魔法的脚步。
 
-## What is a Zero Knowledge Proof?
+## 什么是零知识证明？
 
-*This section introduces the notion of a Zero Knowledge Proof*
+*本节将介绍零知识证明的概念*。
 
-This is the first in a series of posts on Zero Knowledge Proofs and their application. We'll look at what Zero Knowledge Proofs are, why you should care, how they work, and see where they can be used.
+这是关于零知识证明及其应用系列文章的第一篇。我们将介绍什么是零知识证明、为什么你应该关注它、它是如何工作的，以及它的应用场合。
 
-Imagine you go to a bar and can prove you are over 18 without revealing anything else, including your ID with personal information on it. Or you can prove that you've paid your taxes correctly, without revealing the details of your income or assets to anyone. These are the kind of things Zero Knowledge Proofs (ZKPs) enables. The term *zero knowledge* simply means we don't reveal any more information beyond what is intended.
+想象一下，你去酒吧，可以证明自己年满 18 岁，而无需透露任何其他信息，包括带有个人信息的身份证。或者，你可以证明自己正确缴税，而无需向任何人透露你的收入或资产详情。这些都是零知识证明（ZKP）可以实现的。所谓 "零知识"，简单地说就是我们不会透露任何超出预期的信息。
 
-ZKPs allow you to prove something without revealing anything but that the statement is true.
+ZKP 可以让你在不透露任何信息的情况下证明某件事情，只需证明该声明是真实的即可。
 
-What does this mean? Let's take the classic example of "Where's Waldo". The game is about finding Waldo in a big picture. I can prove to you that I know where Waldo is without revealing the location of Waldo. How?
+这意味着什么呢？让我们以经典的 "沃尔多在哪里"为例。这个游戏是关于在一幅大图中找到沃尔多。我可以向你证明我知道沃尔多在哪里，而不透露沃尔多的位置。怎么证明？
 
-Imagine I have a picture of "Where's Waldo" and a large piece of paper four times the size of that picture. I make a small hole in the paper and put this paper in front of the "Where's Waldo" picture, carefully positioning it so that Waldo is visible through the hole. This means you can see Waldo, but only Waldo and nothing else. You thus know that I know where Waldo is, but I haven't revealed anything about where Waldo actually is located in the picture.
+想象一下，我有一张 "沃尔多在哪里 "的图片和一张比图片大四倍的大纸。我在纸上开一个小洞，然后把这张纸放在 "沃尔多在哪里 "图片的前面，小心地摆好位置，这样沃尔多就可以通过小洞看到了。这意味着你可以看到瓦尔多，但只能看到瓦尔多，看不到其他东西。这样，你就知道我知道沃尔多在哪里，但我并没有透露沃尔多在图片中的具体位置。
 
-![img](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%271200%27%20height=%27770%27/%3e)![Where's Waldo](https://zkintro.com/_next/image?url=%2Fstatic%2Fimages%2Fwheres-waldo2-tiny.jpg&w=3840&q=75)
+![沃尔多在哪里](https://img.learnblockchain.cn/2023/07/21/61379.jpeg)
 
-This is obviously a toy example, but hopefully it gives some intuition for how such a proof is even possible. But what does this mean? What are we proving more precisely? We'll dive deeper into this down the line, but for now let's see what ZKPs gives us more generally.
 
-With ZKPs you can prove arbitrary statements in a general-purpose fashion. More specifically, ZKPs allow us to prove something in a private and succinct way.
 
-This is extremely powerful as we'll see next.
+这显然只是一个例子，但希望它能给我们一些直观的印象，让我们知道这样的证明是如何实现的。但这意味着我们要更精确地要证明什么？我们接下来会深入探讨这个问题，但现在让我们看看 ZKP 给我们带来了什么。
 
-## Why should you care?
+有了 ZKP，你就能以通用的方式证明任意语句。更具体地说，ZKP 能让我们以一种私密而简洁的方式证明一些东西。
 
-*This section explains why someone might care about ZKPs, including going into detail on privacy, compression, and the general-purpose nature of ZKPs*
+这一点非常强大，我们接下来就会看到。
 
-Reading the above section you might think, "ok, that's kinda neat I guess, but why should I care". That's a completely reasonable take. In fact, you probably shouldn't! Just like you shouldn't care about how computers work, where AI is going, or any of these things.
+## 你为什么要注 ZKP？
 
-Why *might you care*? Because you are curious and want to understand how ZKPs work, and what type of interactions it unlocks. The mechanism is very general, and the intuition for many people working in the space is that it is fundamentally a new paradigm that unlocks a lot of new things. We are seeing this already, and it seems like we are just at the very beginning of this. In the rest of this section, I'll give you some intuition as to why and how.
+本节将解释为什么有人会关注 ZKP，包括详细介绍隐私、压缩和 ZKP 的通用性。
 
-Before going deeper into that, let's understand what ZKPs give us at a higher level. ZKPs give us primarily one or both of the following properties:
+读了上面的内容，你可能会想："好吧，我想这还挺不错的，但我为什么要关心呢？这种想法完全合理。事实上，你可能不应该关心！就像你不应该关心计算机的工作原理、人工智能的发展方向或其他任何事情一样。
 
-1. Privacy (more formally known as zero-knowledge)
-2. Compression (more formally known as succinctness)
+为什么*你会关心*？因为你很好奇，想了解 ZKP 是如何工作的，以及它能开启哪种类型的交互。这种机制非常普遍，许多在这一领域工作的人的直觉是，从根本上说，它是一种新的范式，可以释放出许多新的东西。我们已经看到了这一点，而且似乎我们才刚刚开始。在本节的其余部分，我将向你介绍一些直观的原因和方法。
 
-What do we mean by these two notions? Here are some ways to think about these properties.
+在深入探讨之前，让我们先从更高的层面了解一下 ZKP 给我们带来了什么。ZKP 主要具有以下一种或两种特性：
 
-### Privacy
+1. 隐私（更正式的说法是零知识性 zero-knowledge）
 
-There are a lot of things we want to keep private. Here's the definition of "private" in the Oxford Dictionary:
+2. 压缩（更正式的说法是简洁性 succinctness）
 
-> belonging to or for the use of one particular person or group of people only.
+这两个概念是什么意思？下面是一些思考这些特性的方法。
 
-We have private conversations, private bathrooms, private parts. Business secrets, sensitive personal information, in the privacy of your own home. Keys, doors and locks.
+## 隐私（Privacy）
 
-Privacy is normal, and it is all around us. It is closely related to notions of self-sovereignty, self-determination, and independence. These notions come so naturally to us that many important documents, such as the *US Bill of Rights* and the *United Nations Charter* recognize them as fundamental rights for individuals and nations, respectively. [1](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-1) Privacy is a prerequisite for freedom.
+有很多事情我们都想保持隐私。下面是《牛津词典》中 "隐私"的定义：
 
-More formally, the privacy property in ZKPs is often called *zero knowledge* or *data hiding* [2](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-2). A ZKP hides data that is irrelevant for some application to function, and this data is then *bound* together with the relevant application data. These notions are a bit more formal, and they enable privacy. Privacy is a broader and more generally applicable concept, so we'll keep focusing on that for now.
+> 只属于一个人或一群人，或仅供他们使用。
 
-In the digital world, also known as cyberspace, as opposed to meatspace, privacy is essential too, but often neglected. Here's the definition of privacy given in *A Cypherpunk's Manifesto*:
+我们有私人谈话、私人浴室、隐私部位。商业秘密、敏感的个人信息，在自己家中的隐私：钥匙、门和锁。
 
-> Privacy is the power to selectively reveal oneself to the world.
+隐私是正常的，它就在我们身边。它与自我主权、自决和独立的概念密切相关。这些概念对我们来说是如此自然，以至于许多重要文件，如《美国权利法案》*和《联合国宪章》*分别将其视为个人和国家的基本权利。[隐私是自由的前提](https://en.wikipedia.org/wiki/Right_to_privacy)。
+
+更正式地说，ZKP 的隐私属性通常被称为[*零知识*或*数据隐藏*](https://docs.zkproof.org/reference.pdf)。ZKP 隐藏了与某些应用功能无关的数据，然后将被隐藏过这些数据与相关应用数据绑定在一起。这些概念比较正式，可以实现隐私保护。隐私是一个更广泛、更普遍适用的概念，所以我们现在将继续关注这个概念。
+
+在数字世界（也称网络空间，与肉体空间相对）中，隐私也是至关重要的，但却常常被忽视。以下是《赛博朋克宣言》（*A Cypherpunk's Manifesto* ）中对隐私的定义：
+
+> 隐私是有选择地向世界展示自己的能力 by [《赛博朋克宣言》](https://nakamotoinstitute.org/static/docs/cypherpunk-manifesto.txt)
 >
-> - A Cypherpunk's Manifesto [3](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-3)
 
-Conversations, passwords, credit card information. These are examples of things we want to keep private online. The Internet is a fantastic tool that connects us all, but it is also an open and wild sea. There are a lot of strangers and predators, and keeping certain information private is vital. Without it, things like online shopping or private messaging would be impossible.
+对话、密码、信用卡信息。这些都是我们希望在网上保持隐私的例子。互联网是连接我们所有人的奇妙工具，但它也是一个开放而狂野的海洋。这里有很多陌生人和掠夺者，因此保持某些信息的私密性至关重要。
 
-You might think, "We can already keep things like passwords private, what's the big deal?". In a limited sense, you are correct for these specific examples. We'll have to use more imagination to truly understand what general-purpose programmable privacy enables.
+你可能会想，"我们已经可以将密码等信息保密了，有什么大不了的？在有限的意义上，就这些具体例子而言，你是对的。我们必须发挥更多的想象力，才能真正理解通用的可编程隐私功能。
 
-As an example, consider how Augustine, in his *Confessions (400 AD)* found the act of "silent reading" by St Ambrose, a bishop, out of the ordinary. At the time, most people would read out loud. [4](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-4)
 
-> When [Ambrose] read, his eyes scanned the page and his heart sought out the meaning, but his voice was silent and his tongue was still. Anyone could approach him freely and guests were not commonly announced, so that often, when we came to visit him, we found him reading like this in silence, for he never read aloud.
 
-![img](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%271092%27%20height=%27728%27/%3e)![Silent reading](https://zkintro.com/_next/image?url=%2Fstatic%2Fimages%2Fsilent-reading2-tiny.jpg&w=3840&q=75)
+举个例子，想一想奥古斯丁在他的《忏悔录》(公元400年)中是如何发现主教圣安布罗斯的“[默念](https://en.wikipedia.org/wiki/Silent_reading#History_of_silent_reading)”行为与众不同的。当时，大多数人都大声朗读。
 
-Nowadays, everyone takes silent reading for granted. It is even hard to imagine that it had to be invented. The idea that what you read was something for your eyes only used to be foreign. What other similar inventions are possible in our modern era? Things that most of us are currently unable to imagine.
+> 当（奥古斯丁）朗读时，他的眼睛扫视着书页，他的心在寻找其中的含义，但他的声音是沉默的，他的舌头是静止的。任何人都可以自由地接近他，而客人来访也通常不会事先通知，因此，当我们去拜访他时，经常会发现他就这样静静地读书，因为他从不大声朗读。
 
-In future sections, we'll get a glimpse of what such inventions using ZKPs, both existing and upcoming, look like.
+![默读](https://img.learnblockchain.cn/2023/07/21/46122.jpeg)
 
-### Compression
 
-> I have made this longer than usual, only because I have not had the time to make it shorter.
+
+如今，每个人都认为默念是理所当然的。我们甚至很难想象，默念是怎样被发明出来的。以前，只为眼睛阅读的想法是陌生的。
+
+在我们的现代，还有哪些类似的发明是可能的？这些都是我们大多数人当前是无法想象的。
+
+在未来的章节中，我们将看到使用 ZKP 的现有和即将出现的此类发明的模样。
+
+## 压缩
+
+> 我把这篇文章写得比平时长，只是因为我没有时间把它缩短， 来自 [布莱斯-帕斯卡](https://quoteinvestigator.com/2012/04/28/shorter-letter) 
 >
-> - Blaise Pascal [5](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-5)
 
-To compress something is defined as:
+压缩（compress）是指 “把东西压缩到更小的空间”
 
-> to press something into a smaller space
+同样，简洁（succinctness）的定义是 “用几个词清楚地表达某事的行为”
 
-Similarly, succinctness is defined as:
+具有压缩特性的 ZKP 意味着，我们可以用非常简短的语句来证明某事为真。例如，某个计算的所有步骤都已正确执行。这在某些资源需求量大、价格昂贵的情况下最为实用。以太坊区块链就是如此，但在其他情况下，这也是一个非常有用的特性。更难能可贵的是，无论我们要证明的事情有多复杂，这个证明的大小都是一样的！
 
-> the act of expressing something clearly in a few words
+我们所说的 "证明 "和 "证明的大小 "是什么意思？这些都是数学上的精确概念，其中有很多细微差别。在以后的章节中，我们将结合 ZKP 深入探讨证明的概念。现在，我们可以把它看作是一个我们知道是真的，或者可以通过某种方式验证是真实的简短陈述。
 
-ZKPs having the property of compression means we can prove that something is true with a very short statement. For example, that all the steps in some computation have been executed correctly. This is most immediately useful when some resource is in high demand and expensive. This is true in the case of the Ethereum blockchain, but it is also a very useful property in other circumstances. What is more remarkable, is that the size of this proof stays the same regardless of how complex the thing we are trying to prove is!
+![福尔摩斯](https://img.learnblockchain.cn/2023/07/21/94214.jpeg)
 
-What do we mean by "proof" and the "size of the proof"? These are mathematically precise notions that possess a great deal of nuance. In future sections, we'll go deeper into this notion of a proof in the context of ZKPs. For now, we can think of it as a short statement that we know is true, or can somehow verify is true.
+在典型的侦探小说（如福尔摩斯探案集）中，侦探要收集证据，直到能够证明凶手犯下了谋杀罪。然后，他们会在最后的大结局中证明他们是如何知道这一点的。我们可以把最后这句话看作证据。
 
-![img](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%271023%27%20height=%27964%27/%3e)![Sherlock Holmes](https://zkintro.com/_next/image?url=%2Fstatic%2Fimages%2Fsherlock-holmes.jpg&w=2048&q=75)
+更正式地说，我们将这一属性称为*[简洁性（*succinctness*）](https://docs.zkproof.org/reference.pdf)* 。无论我们要证明什么，证明的大小都是一样的。就公共区块链而言，这也与*可扩展性*的概念有关。对于以太坊这样的公共区块链来说，区块空间有限且昂贵，ZKP 可以让交易更便宜、更快速。如何做到这一点？我们创建一个证明，证明某些交易已经发生，并将这个微小的证明放在链上，而不是让所有交易占用区块链的空间。有了 ZKP，这可以变得非常安全。
 
-In a typical whodunit like a Sherlock Holmes murder mystery, the detective gathers evidence until they can prove that the perpetrator has committed the murder. They then prove exactly how they know this in a grand finale. We can think of this final statement as the proof. [6](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-6)
+简洁性是一种通用属性，与 "区块链"无关 -- 只是出于多种原因，它们恰好非常适合。一般来说，简短地证明某事属实是非常有用的。有几种方法可以说明原因。
 
-More formally, we call this property *succinctness* [7](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-7). This is what keeps the size of the proof the same regardless of what we are trying to prove. In the context of public blockchains, this also relates to the notion of *scalability*. For public blockchains like Ethereum, where block space is limited and expensive, ZKPs can make transactions a lot cheaper and faster. How? We create a proof that some set of transactions have taken place and put that tiny proof on-chain, as opposed to having all transactions take up space on the blockchain. With ZKPs, this can be made very secure.
+一种方法是考虑*[交易成本](https://en.wikipedia.org/wiki/Transaction_cost)*。一般来说，交易成本越低，创造的价值和财富就越多。如果需要验证的事情减少了，或者验证变得更容易了，那么我们就可以更自由、更轻松地做事。
 
-Succinctness is a general property and orthogonal to "blockchains" - they just happen to be a good fit, for many reasons. More generally, having a short proof that something is true is very useful. There are a few ways to see why.
+有时，当我们填写表格时，会被要求写两次电子邮件地址，以确认是否正确。这样做的目的是防止人为错误，使数据转账更加稳健。还有像校验和这样的东西，在你的 UPS 包裹代码、信用卡号或书籍的 ISBN 代码中多加一个数字，就可以简单地检查所有数字是否正确。显然，所有这些都不是为了防止恶意使用，而只是为了防止[无意的错误](https://en.wikipedia.org/wiki/Checksum)。
 
-One way of looking at it is to consider *transaction costs* [8](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-8). Generally speaking, the lower these are, the more value and wealth is created. If there are fewer things to verify, or it is easier to do, then we can do things more freely and with ease.
+在计算机文件系统中，*哈希*通常用于确保文件的完整性。如果文件的一小部分发生损坏，哈希值就会完全改变。由于哈希值简洁明了（例如一个 64 个字符的字符串），即使底层文件非常庞大，也很容易保存和检查。在此案例中，哈希函数能以安全的方式确保完整性。如果我们只通过保留文件的副本来检查文件的完整性，那就太不切实际了。大文件、小文件都无所谓，哈希值的大小保持不变。哈希值的简洁性使得这种应用成为可能。
 
-Sometimes when we fill in a form we are asked to write our email twice to confirm it is correct. The idea is to protect against human errors and make the transmission of data more robust. There are also things like checksums, where an extra digit in your UPS package code, credit card number, or ISBN code for books acts as a simple check that all the numbers are probably correct. All of these are - obviously - not meant to protect against malicious use, but only against innocent mistakes. [9](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-9)
+## 你知道什么？
 
-In computer file systems, a *hash* is often used to ensure the integrity of files. If something happens to just a small part of a file, corrupting it, the hash changes completely. Because the hash is succinct (say, a 64 character string), it is easy to keep around and check even if the underlying file is huge. In this case, hash functions ensure integrity in a secure way. If we checked the integrity of a file by just keeping a copy of the file it'd be a lot more impractical. Big file, small file, it doesn't matter; the hash stays the same size. The succinctness of a hash enables this use case.
+让我们从压缩、简洁和证明中抽离出来。我们将绕道知识、精神开销和信任。然后，我们将在本节末尾将其与 ZKP 联系起来。
 
-### What do you know?
 
-Let's take a step back from compression, succinctness, and proofs. We'll go on a little detour into knowledge, mental overhead, and trust. We'll then connect this back with ZKPs at the end of the section.
 
-In your everyday life, what do you know is true, and why? If you see the sun rise every day, you likely expect it to rise again tomorrow. In the modern world, we are largely protected from the harsh environment in nature, but on the flip side, we have a lot of other, more modern, concerns. Many of these are related to various institutions we deal with on a daily basis.
+在日常生活中，你知道什么是真的，为什么？如果你每天都看到太阳升起，那么你很可能会期待它明天再次升起。在现代社会，我们在很大程度上可以免受自然界恶劣环境的影响，但另一方面，我们也有很多其他更现代的担忧。其中许多都与我们日常打交道的各种机构有关。
 
-If you are able to withdraw cash from your bank every day, do you expect to be able to withdraw it again the next day? Most people would probably say yes, but not everyone all the time. This depends on a lot of factors: if the bank is trustworthy, if you're living in a safe jurisdiction, if something major has happened in the world economy recently, what your personal circumstances are like etc. All of these things together make up some data points, and based on that you make a determination.
+如果你每天都能从银行提取现金，你是否希望第二天还能再次提取？大多数人可能会说是的，但并不是每个人都能一直这样做。这取决于很多因素：银行是否值得信赖，你是否生活在一个安全的司法管辖区，最近世界经济是否发生了重大事件，你的个人情况如何等等。所有这些因素加在一起构成了一些数据判断点，你可以据此做出判断。
 
-This is obviously a trivial example, but life is full of such interactions. All of this can be seen as a form of mental overhead. The extent to which this is a concern can depend on your personal situation and the complexity of your day-to-day dealings. For instance, a business might give these factors a lot more thought when entering into a contract with another party.
+这显然是一个很小的例子，但生活中充满了这样的交互。所有这些都可以看作是一种精神开销。这在多大程度上会引起关注，取决于你的个人情况和日常交易的复杂程度。例如，企业在与另一方签订合约时可能会更多地考虑这些因素。
 
-We create mechanisms and rules to counteract this uncertainty, such as using reputation services, independent auditing, imposing fines to discourage bad behavior, seeking accreditation by some trusted institutions, etc. All these measures are basically duct tape, trying to get to the crux of the matter. Is something what it claims to be? Does it follow the rules we have established? And is it trustworthy and usable?
+我们建立了一些机制和规则来应对这种不确定性，比如使用声誉服务、独立审计、罚款以阻止不良行为、寻求一些可信机构的认证等。所有这些措施基本上都是胶带，试图找到问题的关键。某些东西是否如其所言？它是否遵循我们制定的规则？它是否值得信赖和可用？
 
-All of this mental overhead gets compounded when you are dealing with multiple institutions, jurisdictions, companies, and people. You can get cascading effects, such as your bank failing and you being unable to pay your employees, thus leading to your business being unable to service its customers [10](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-10). More control measures are needed. More pauses to consider if things are right and what can go wrong.
+当你要与多个机构、辖区、公司和人员打交道时，所有这些精神负担都会变得更加沉重。你可能会受到连带影响，比如你的银行倒闭，你无法支付员工工资，从而导致你的企业无法为客户提供服务。需要更多的控制措施。需要更多的停顿来考虑事情是否正确，以及哪些地方会出错。
 
-I'll end this section with a quote:
+我引用一段话来结束本节：
 
-> Civilization advances by extending the number of operations we can perform without thinking about them.
+> 文明的进步是通过增加我们不假思索就能完成的操作数量来实现的。 来自 阿尔弗雷德-诺斯-怀特海
 >
-> - Alfred North Whitehead [11](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-11)
 
-For example, when you light the stove to make dinner, you don't even have to think about making a fire. This is very different from having to gather wood, keep it dry, create a fire, and keep it going, a very time-consuming process. In mathematics, without calculus, we wouldn't be able to go to the moon.
+例如，当你点燃炉子做晚饭时，你甚至不用考虑生火的问题。这与拾柴、保持干燥、生火、持续生火这一非常耗时的过程截然不同。在数学方面，如果没有微积分，我们就无法登上月球。
 
-![img](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%271024%27%20height=%271024%27/%3e)![Aldrin, Apollo 11](https://zkintro.com/_next/image?url=%2Fstatic%2Fimages%2Fapollo-11-aldrin2-tiny.jpg&w=2048&q=75)
+![阿波罗 11 号奥尔德林](https://img.learnblockchain.cn/2023/07/21/25907.jpeg)
 
-With ZKPs and succinct proofs, we are able to introduce more certainty and clarity into opaque systems. This gets even more powerful when we consider *composing* ZKPs. That is combining multiple proofs into one in some fashion, such as with aggregation or recursion.
+有了 ZKP 和简洁的证明，我们就能为不透明的系统引入更多确定性和清晰度。当我们考虑*组合*ZKP时，这一点变得更加强大。即以某种方式将多个证明合二为一，如聚合或递归。
 
-All of this presumes we can translate some of the mechanisms or rules mentioned above - which are often messy and inconsistent - into a form that ZKPs can comprehend. How can we do that?
+所有这一切都假定我们可以将上面提到的一些机制或规则（通常是混乱和不一致的）转化为 ZKP 可以理解的形式。我们如何才能做到这一点呢？
 
-### General-purpose
+## 通用(General-purpose)
 
-Recall that ZKPs allow us to prove arbitrary statements in a general-purpose fashion. Why does this matter and how is this powerful?
+回想一下，ZKP 允许我们以通用方式证明任意语句。为什么这很重要？
 
-The difference between similar existing tools and ZKPs is like the difference between a calculator and a computer. One is meant for a very specific task, and the other is general-purpose. It is the difference between this calculating machine [12](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-12) and a modern computer:
+现有的类似工具和 ZKP 之间的区别就像计算器和计算机之间的区别。一个是用于非常特殊的任务，而另一个则是通用的。这就是计算器和现代计算机之间的区别：
 
-![img](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%271024%27%20height=%27450%27/%3e)![Pascal's calculator](https://zkintro.com/_next/image?url=%2Fstatic%2Fimages%2Fpascals-calculator2.jpg&w=2048&q=75)
+![帕斯卡计算器](https://img.learnblockchain.cn/2023/07/21/27102.jpeg)
 
-Recall the specific examples we gave above to represent privacy and succinctness more concretely. A password is a private piece of information that allows you to log in to some service [13](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-13). In the case of a hash of some input data, such as a file, it gives us something succinct to check equality to.
+回顾我们上面举过的具体例子，可以更具体地说明隐私和简洁性。密码是允许你登录某些服务的隐私信息。对于某些输入数据（如文件）的哈希值来说，它为我们提供了一个简洁的东西来检查相等性。
 
-We can visualize a hash function as follows:
+我们可以将哈希函数形象化如下：
 
-![img](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%27776%27%20height=%27118%27/%3e)![Hash function](https://zkintro.com/_next/image?url=%2Fstatic%2Fimages%2Fgraphviz-hash.png&w=1920&q=75)
+![哈希函数](https://img.learnblockchain.cn/2023/07/21/25215.png)
 
-We apply a specific hash function, such as SHA256 [14](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-14), on some known input data. For example, using the sentence "The quick brown fox jumps over the lazy dog" (without quotation marks) as input and applying the SHA256 hash function results in the hash `d7a8fbb307d7809469ca9abcb0082e4f8d5651e46d3cdb762d02d0bf37c9e592`. Adding a "." at the end of the sentence gives a completely different hash value: "The quick brown fox jumps over the lazy dog." hashes to `ef537f25c895bfa782526529a9b63d97aa631564d5d789c2b765448c8635fb6c`.
+我们在一些已知输入数据上应用特定的哈希函数，如 [SHA256](https://en.wikipedia.org/wiki/SHA-2)  。例如，使用句子 `敏捷的棕狐狸会跳过懒惰的狗`（不带引号）作为输入，并应用 SHA256 哈希函数，结果是哈希值`d7a8fbb307d7809469ca9abcb0082e4f8d5651e46d3cdb762d02d0bf37c9e592`。在句末添加一个`.`，就会得到完全不同的哈希值：`敏捷的棕狐狸会跳过懒惰的狗.`散列值为 `ef537f25c895bfa782526529a9b63d97aa631564d5d789c2b765448c8635fb6c`。
 
-Even though the sentence just changed a tiny bit, the resulting hashes are very different [15](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-15). Hash functions that are secure are hard to "break" and have some nice properties. For example, if you have the hash value, you can't recreate the initial input. You also can't easily construct a message that hashes to a specific, predetermined hash value. These hash functions are called *cryptographic hash functions*. [16](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-16)
 
-The SHA256 hash function we used above is a specific cryptographic hash function that took a lot of time and many people to make secure. The hash itself also doesn't prove anything. It only makes sense when compared with something else, such as having direct access to the message or file.
 
-Informally, we can think of a hash function as providing a proof that some specific message corresponds to a particular hash. We can only verify this with the original message. Sometimes people use this to prove they wrote something and make predictions - they write "On April 1, 2040, aliens will land on top of Big Ben in London, and the lottery number 25742069 will win a jackpot." and then post the hash of this message publicly ahead of time, say on Twitter. When it turns out they are right, they can reveal the original message, and people can be convinced that they did predict the future and are the next Nostradamus.
+尽管句子只改变了一点点，但得到的哈希值却大相径庭。安全的哈希函数很难被 "破解"，而且具有一些很好的特性。例如，如果掌握了哈希值，就无法创建新的初始输入。此外，你也无法轻易构造出一个散列为特定、预定散列值的信息。这些哈希函数被称为*[加密哈希函数](https://en.wikipedia.org/wiki/Cryptographic_hash_function)*。
 
-In contrast, we can visualize a ZKP as follows:
+我们上面使用的 SHA256 哈希函数是一种特定的加密哈希函数，它的安全需要大量时间和许多人的努力。哈希值本身并不能证明什么。它只有在与其他东西（如直接访问信息或文件）进行比较时才有意义。
 
-![img](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%27874%27%20height=%27262%27/%3e)![ZKP](https://zkintro.com/_next/image?url=%2Fstatic%2Fimages%2Fgraphviz-zkp.png&w=1920&q=75)
+非正式地讲，我们可以把哈希函数看作是证明某些特定信息对应于特定哈希值的证据。我们只能用原始信息来验证这一点。有时，人们会用哈希函数来证明自己写了什么并进行预测--他们写道："2040 年 4 月 1 日，外星人将降落在伦敦大本钟顶端，彩票号码 25742069 将中大奖。"然后提前公开发布这条信息的哈希值，比如在 Twitter 上。当事实证明他们是对的时候，他们就可以公开原始信息，让人们相信他们确实预测了未来，是下一个诺斯特拉达穆斯。
 
-Unlike in the hash function above, there are a few big differences:
 
-- We have multiple private and public inputs as opposed to only a single (public) input
-- We can use any program, not just a cryptographic hash function
-- We produce a self-contained proof that can be verified
 
-In the hash function example above, we need to make the input public in order to verify that the message corresponds to the hash. For ZKPs, we can also have *private input*. Private input is something that only you can see. That is, you don't need to reveal it to anyone in order to produce a proof.
+相比之下，我们可以将 ZKP 形象化如下：
 
-For example, in the "Where's Waldo" case at the beginning of this article, the public input would be the picture of Where's Waldo. The private input is the actual location of Waldo. I can produce a proof that I know where Waldo is without revealing the private input, the location of Waldo, to you.
+![ZKP](https://img.learnblockchain.cn/2023/07/21/56348.png)
 
-Similarly, if I have a Sudoku puzzle (a popular logic puzzle), I can prove to you that I know a solution to the puzzle without revealing the solution to you. In this case, the public input is the initial puzzle, and the private input is the solution to the puzzle.
+与上面的哈希函数不同，ZKP 有几个很大的不同点：
 
-You might have noticed that Where's Waldo and solving a Sudoku puzzle are two very different problems. Yet we can write a simple program that expresses how either of these works and uses ZKP to create a proof. That is because the logic inside this special program is general-purpose and can compute anything a computer can.
+- 我们有多个隐私和公共输入，而不是只有一个（公共）输入
+- 我们可以使用任何程序，而不仅仅是加密哈希函数
+- 我们能生成可验证及自足（self-contained）证明
 
-We have turned what was originally a problem of cryptography or math - defining and making a cryptographic hash function secure - into one of programming. To see why this is extremely powerful, consider some of the following examples.
+在上面的哈希函数示例中，我们需要公共输入，以便验证信息是否与散列一致。
 
-We can now prove that we know the private data that results in a certain hash [17](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-17). This means you can prove that you are in possession of a certain message, such as an important document, without revealing the message itself.
+对于 ZKP，我们也可以使用*隐私输入*。隐私输入是指只有你能看到的输入。也就是说，你不需要把它透露给任何人，就能生成证明。
 
-To better understand the power of doing general-purpose computing, let's take a closer look at group signature. Group signatures are a way for a group of individuals to sign a document together, without revealing who they are. For example, the Federalist Papers were signed by the pseudonym Publius which represented multiple individuals [18](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-18). Just like in the case of the SHA256 hash function, there's a way to express group signatures with cryptography and math. This is very impressive and took a lot of cryptographic engineering to develop. But with general-purpose ZKPs anyone can express the same thing in just a few dozen lines of Circom, a programming language for ZKPs, code [19](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-19).
+例如，在本文开头的 "沃尔多在哪里"案例中，公共输入是 "沃尔多在哪里" 的图片。隐私输入则是 Waldo 的实际位置。我可以证明我知道沃尔多在哪里，而无需向你透露隐私输入，即沃尔多的位置。
 
-Due to its general nature, we can easily make ad hoc constructions. For example, you might have an ID card that has your full name, address, and other personal information. To enter an event, you might need to be over 18 and have a valid ticket. You might not want a random person or online system to see your address or risk having your ID stolen. With ZKPs you can prove that:
+同样，如果我有一个数独谜题（一种流行的逻辑谜题），我可以向你证明我知道谜题的解法，而不向你透露解法。在此案例中，公共输入是初始谜题，隐私输入是谜题的解答。
 
-- You possess a valid ID
-- The ID has been issued by an approved institution in the last 5 years
-- The ID has not been revoked or reported stolen recently
-- You are over 18 years of age
-- You have paid for a valid ticket to the event
-- The ticket has not been used before
+你可能已经注意到，"沃尔多在哪里" 和解数独谜题是两个完全不同的问题。然而，我们可以编写一个简单的程序来表达这两个问题的工作原理，并使用 ZKP 进行证明。这是因为这个特殊程序中的逻辑是通用的，可以计算计算机所能计算的任何东西。
 
-All without revealing any single fact about yourself other than what is listed above.
+我们把原本属于密码学或数学的问题--定义加密哈希函数并使其安全--变成了编程问题。要想知道这为什么如此强大，请看下面的一些例子。
 
-With ZKPs, we now have a *better tool* for people to coordinate in various ways, especially when it comes to systems where you want *privacy* and *succinctness*. We'll see even more examples in the application section.
+我们现在可以证明，我们知道产生某个哈希值的隐私数据。这就意味着，你可以在不泄露信息本身的情况下，证明你掌握了某条信息，比如一份重要文件。
 
-Often, it is your imagination that is the limit in terms of what you can express.
+为了更好地理解通用计算的强大功能，让我们来详细了解一下群签名（group signature）。群签名是一群人共同签署一份文件的方式，但不会暴露他们的身份。例如，《联邦党人文集》就是由代表多个个人的化名 Publius 签署的。就像 SHA256 哈希函数一样，有一种方法可以用密码学和数学来表达群签名。这非常了不起，需要大量的密码工程技术才能开发出来。但有了通用 ZKP，任何人都可以用几十行 Circom（一种 ZKP 编程语言）代码来表达同样的内容。
 
-### Why now?
+由于其通用性，我们可以很容易地进行特别构造。例如，你可能有一张身份证，上面有你的全名、地址和其他个人信息。要参加某个活动，你可能需要年满 18 岁并持有有效门票。你可能不希望随便一个人或在线系统看到你的地址，或冒着身份证被盗的风险。有了 ZKP，你就可以证明这一点：
 
-Why are ZKPs becoming a thing now? There are both technical and social reasons for this.
+- 你持有有效身份证件
 
-Technically, ZKPs are fairly new. Mathematically they've only existed for a few decades [20](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-20). Similar to computing itself, it then took a while to become performant and practical, even in theory. [21](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-21)
 
-After that, someone had to take these papers and cryptographic protocols and turn them into something practical. The first notable example of this was Zcash, the privacy-preserving cryptocurrency, in 2016. It started as a paper written by cypherpunks and researchers [22](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-22). The first version was an impressive feat of research and engineering applied to an end product and system. While the system had many issues and was far from optimal, it was the first real practical example of using ZKPs in the real world. This showed people that it was possible and practical to use ZKPs in the real world. This has led to an explosion of research and engineering efforts in ZKP, especially in recent years.
+- 该身份证在过去 5 年内由认可机构签发
+- 身份证最近未被吊销或报失
+- 年满 18 周岁
+- 你已购买有效的活动门票
+- 门票之前未被使用过
 
-Public blockchains like Ethereum and Zcash, a privacy-preserving cryptocurrency, had a big role to play in this. What blockchains excel at are things like censorship resistance and transparency [23](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-23). This comes at the cost of a lack of privacy and scalability, something that ZKPs excel at. In this sense, they are a natural fit. Couple that with the blockchain community's appetite for advanced cryptography [24](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-24), and it is no wonder a lot of the innovation is happening at the intersection between blockchain and ZKPs [25](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-25). Due to the many well-capitalized blockchain projects, this has also led to more investment into research and engineering in a traditionally more academic space.
+除上述情况外，不透露你的任何其他信息。
 
-Considering the complexity involved, spanning applied mathematics, cryptography, papers on specific ZKP systems, implementing novel proof systems, tooling, and applications that touch other complex domains, things are moving extremely fast. Every year - even every month - there are new research papers with novel techniques, improved tooling, and applications. The feedback loop between new research and it being implemented and then used is getting tighter. While still difficult, it is getting easier and easier to get started. As tooling is improved, developers need to understand the math behind ZKPs less and less.
+有了 ZKP，我们现在就有了一个好的工具，可以让人们以各种方式进行协调，尤其是在需要隐私和简洁的系统中。我们将在应用部分看到更多的例子。
 
-In terms of the performance of ZKPs, there's a form of Moore's law happening. Moore's law is the observation that the number of transistors doubles about every two years. This is what led to the computer revolution. In ZKPs, projects that were just pipe dreams a few years ago, seen as completely unpractical, are now being executed on, things like *zkVM* and *zkML*. As a rule of thumb, it has been observed in the ZKP world that things improve by an order of magnitude every other year or so [26](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-26). This is because it is a new technology, and it is possible to aggressively optimize on many layers of the stack, from the programs we write, to the systems we use, to the hardware itself. We have no reason to believe this will stop any time soon.
+很多时候，你的想象力才是你所能表达的极限。
 
-![img](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%273133%27%20height=%272318%27/%3e)![Moore's Law](https://zkintro.com/_next/image?url=%2Fstatic%2Fimages%2Fmoores-law-tiny.png&w=3840&q=75)
+## 为什么是现在？
 
-## How does it work?
+为什么现在开始流行 ZKP？这既有技术原因，也有社会原因。
 
-*This section explains how Zero Knowledge Proofs work at a high level*
+从技术上讲，[ZKP 相当新](https://en.wikipedia.org/wiki/Zero-knowledge_proof#History)。从数学上讲，它们只存在了几十年。与计算本身类似，即使在理论上，它也需要一段时间才能变得高性能和实用。
 
-This section provides a high-level overview of how ZKPs work. It will not include any mathematics or code.
+在此之后，必须有人将这些论文和密码协议转化为实用的东西。第一个值得注意的例子是 2016 年的隐私保护加密货币 [Zcash](https://eprint.iacr.org/2014/349.pdf)。它最初是由密码朋克和研究人员撰写的一篇论文)。第一个版本是将研究和工程应用于最终产品和系统的一项令人印象深刻的壮举。虽然该系统存在许多问题，而且远非最佳，但它是在现实世界中使用 ZKP 的第一个真正实用的例子。这向人们表明，在现实世界中使用 ZKP 是可能的，也是切实可行的。这导致了 ZKP 研究和工程工作的爆炸式增长，尤其是在最近几年。
 
-### Basics
+以太坊和 Zcash（一种保护隐私的加密货币）等公共区块链在其中发挥了重要作用。区块链最擅长的是抗审查和透明度。这是以缺乏隐私和可扩展性为代价的，而这正是 ZKP 所擅长的。从这个意义上说，它们是天然的契合点。再加上区块链社区对高级加密技术的需求，难怪很多创新都发生在区块链和 ZKP 的交叉点上。由于许多资本雄厚的区块链项目，这也让传统上学术性较强的研究和工程领域有了更多投资。
 
-We start by introducing some terminology. There'll be a few new terms to learn, but as we go along, you'll get the hang of it.
+考虑到所涉及的复杂性，包括应用数学、密码学、关于特定 ZKP 系统的论文、新型证明系统的实施、工具以及涉及其他复杂领域的应用，事情发展得非常快。每年，甚至每个月，都会有新的研究论文，其中包括新技术、改进的工具和应用。新研究成果与实施和应用之间的反馈环越来越紧密。虽然难度依然很大，但入门却越来越容易。随着工具的改进，开发人员需要了解 ZKP 背后的数学知识也越来越少。
 
-- **Protocol**: system of rules that explain the correct conduct to be followed
-- **Proof**: argument establishing the truth of a statement
-- **Prover**: someone who proves or demonstrates something
-- **Verifier**: someone who vouches for the correctness of a statement
-- **Private input**: Input that only the prover can see, often called **witness**
-- **Public input**: Input that both prover and verifier can see, often called **instance**
 
-While it is useful to learn the terminology used in the field, some metaphors can be helpful in getting a better sense of what's going on. We'll introduce more terms as we go.
 
-Protocols exist everywhere and can be implicit or explicit. In the game of chess, the protocol is that you have two players who take turns to play a move according to the rules of the game until the game ends, and one person wins, or there is a draw. In theory, the time it takes to make a move doesn't matter, but in practice, we try to minimize the communication costs between the two parties interacting. We can thus think of it as a really fast game of chess.
+就 ZKP 的性能而言，摩尔定律的形式正在发生。摩尔定律是指晶体管的数量大约每两年翻一番。这就是计算机革命的起因。在 ZKPs 中，几年前还只是白日梦、被视为完全不切实际的项目，现在已经开始实施，比如 zkVM 和 zkML。根据经验，在 ZKP 领域，每隔一年左右就会有一个数量级的进步。这是因为它是一项新技术，可以在堆栈的多个层面（从我们编写的程序到我们使用的系统，再到硬件本身）进行积极优化。我们没有理由相信这种趋势会很快停止。
 
-We can think of Sherlock Holmes as the prover, and in his final statement he produces an elegant series of arguments, a proof, that someone is the murderer. This must then be verified by a verifier to be true, for example by a judge or jury, *beyond a reasonable doubt* [27](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-27). The 'prover' refers to an entity, here Holmes, producing the proof, which must then be verified. Because the proof is self-contained, anyone can be a verifier, including you as the reader, who must be convinced of the reasoning provided to make the story believable. [28](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-28)
 
-The private input would be some knowledge that only Sherlock Holmes knows, for example some secret information someone whispered in his ears. This is often confusingly called witness, presumably because a witness in a courtroom has some private information, and this is added to the pile of evidence. In the case of ZKPs, this private information would not be shared with the verifier, or judge and jury in this example.
 
-ZKPs establish a *protocol* between a *prover* and a *verifier*. This protocol is *non-interactive* if the prover and verifier don't have to interact or communicate directly, like in a game of chess or in a dance. Instead, the prover produces a single self-contained proof, and at some later point, this gets verified. Most ZKPs start off as *interactive* - that is, requiring multiple back and forths - and we then use some mathematical tricks to make it non-interactive [29](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-29). You can think of non-interactivity kind of as two chess players who, after uttering a few words, know every single move the other player will play, so they don't even start the game because they already know how it will end.
+![摩尔定律](https://img.learnblockchain.cn/2023/07/21/3327.png)
 
-There are many types of ZKPs. We often talk about *zk-SNARK*s, which stands for Zero Knowledge Succinct Non-Interactive ARguments of Knowledge. Zero Knowledge and Succinctness correspond to privacy and compression above, respectively. Non-interactive was mentioned. "ARguments of knowledge" is basically the same thing as a proof [30](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-30). There are many different types of zk-SNARKs too.
+## ZKP 是如何工作的？
 
-A good mental model is to think of ZKPs as a zoo. There are a lot of animals there, and we can categorize them in various ways: these animals have four legs, these have stripes, Bob brought these in last year [31](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-31), etc. Some categories are more useful than others. In fact, some of these systems don't even have Zero Knowledge! These are usually called just SNARKs. As a community, we often call this zoo of different animals ZK, even if there are many systems that don't actually use the Zero Knowledge property. [32](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-32)
+本节从高层次解释了零知识证明的工作原理*。
 
-### Protocol
+本节从高层次概述了零知识证明的工作原理。其中不包括任何数学或代码。
 
-Going back to our protocol, we have a prover and verifier. The prover creates a proof using a *prover key*, private input and public input. The verifier verifies the proof using a *verification key* and public input, and outputs true or false.
+### 基础知识
 
-We have two new things, a prover key and a verifier key. This is what allows the prover and verifier to do their magic. You can think of them as a regular key that allows you to enter somewhere and do something, or you can think of them as a magic wand that allows you to do something. We get these keys from a special ceremony called a *setup*, which is an initial preparation phase that we won't go into detail about in this article [33](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-33).
+我们首先介绍一些术语。会有一些新的术语需要学习，但随着学习的深入，你会慢慢掌握的。
 
-Notice that only the prover has access to the private input. How does the prover use the prover key, private input and public input to turn it into a proof?
+- **协议（Protocol）**：解释应遵循的正确行为的规则体系
+- **证明（Proof）**：确定陈述真实性的论据
+- **证明者（Prover）**：证明或演示某事的人
 
-Recall the illustration of a ZKP from before:
 
-![img](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%27874%27%20height=%27262%27/%3e)![ZKP](https://zkintro.com/_next/image?url=%2Fstatic%2Fimages%2Fgraphviz-zkp.png&w=1920&q=75)
+- **验证者（Verifier）**：保证陈述正确的人
+- **隐私输入（Private input）**：只有证明者能看到的输入，通常称为**见证（witness）**
+- **公共输入（Public input）**：证明者和验证者都能看到的输入，通常称为**实例（instance）**。
 
-We have a special program (formally known as a *circuit*) that encodes the logic a user cares about. For example, proving that they know the data that results in a certain hash value. Unlike a normal computer program, this program is made up of *constraints* [34](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-34). We are proving that all the constraints hold together with the private and public input.
+虽然学习该领域的术语很有帮助，但一些比喻也有助于更好地理解其中的含义。我们将陆续介绍更多术语。
 
-Finally, the verifier takes this short proof, combines it with the verification key, public input and the special program with all the constraints and convinces itself beyond a reasonable doubt that the proof is correct and outputs "true". If it isn't correct it'll output "false".
+协议无处不在，可以是隐性的，也可以是显性的。在国际象棋游戏中，约定俗成的规则是两位棋手轮流按照游戏规则走一步棋，直到游戏结束，其中一人获胜，或者双方和棋。从理论上讲，下一步棋所需的时间并不重要，但在实际操作中，我们会尽量减少互动双方之间的通信成本。因此，我们可以将其视为一盘真正的快棋。
 
-This is a somewhat simplified view but it captures the essence of what is going on.
+我们可以把夏洛克-福尔摩斯想象成证明者，在他的最后陈述中，他提出了一系列优雅的论据，即证明（proof），证明某人是凶手。然后，这必须由验证者（例如法官或陪审团）验证为真，排除合理怀疑。证明者指的是一个实体，这里是福尔摩斯，他提出证明，然后必须进行验证。因为证明是自足的（self-contained），所以任何人都可以成为验证者，包括作为读者的你，你必须相信所提供的推理，使故事可信。
 
-### Constraints
+隐私输入是一些只有福尔摩斯知道的知识，例如有人在他耳边说的一些秘密信息。这通常被混淆地称为见证（witness），大概是因为法庭上的证人拥有一些隐私信息，而这些信息会被添加到证据堆中。而在 ZKP ，这些隐私信息不会与验证者共享，在这个例子中也不会与法官和陪审团共享。
 
-What are these constraints that make up the special program above? A constraint is a limitation or restriction. For example, "a number between 1 and 9" is a constraint. The number 7 satisfies this constraint, and the number 11 doesn't. How do we write a program as a set of constraints? This is an art on its own, but let's start by looking at a simple example: Sudoku.
+ZKP 在证明者（Prover）和验证者（Verifier）之间建立了一个协议（Protocol）。如果证明者和验证者不需要像下棋或跳舞那样直接互动或交流，那么这个协议就是非交互式的。取而代之的是，证明者提出一个独立的证明，并在稍后的某个时刻得到验证。大多数ZKP一开始都是*交互式*的--即需要多次来回--然后我们使用一些数学技巧使其成为[非交互式](https://en.wikipedia.org/wiki/Fiat%E2%80%93Shamir_heuristic)。你可以把 "非交互式" 想象成两个棋手，他们在说了几句话之后，就知道了对方要走的每一步棋，所以他们甚至都不用开始下棋，因为他们已经知道了棋局的结局。
 
-In the game of Sudoku the goal is to find a solution to a board that satisfies some constraints. Each row should include the numbers 1 to 9 but only once. The same goes for each column and each 3x3 subsquare. We are given some initial starting position, and then our job is to fill in the rest in a way that satisfies all these constraints. The tricky part is finding numbers that satisfy all the constraints at once.
+ZKP 有很多种。我们经常谈论zk-SNARKs，它代表零知识简洁非交互式知识论证（Zero Knowledge Succinct Non-Interactive ARguments of Knowledge）。零知识和简洁分别对应于上述的隐私和压缩。提到了非交互式。"知识论据"与证明基本上是一回事。zk-SNARKs 也有许多不同的类型。
 
-![img](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%272560%27%20height=%272560%27/%3e)![Sudoku](https://zkintro.com/_next/image?url=%2Fstatic%2Fimages%2Fsudoku.png&w=3840&q=75)
+一个好的思维模型是把 ZKP 想象成一个动物园。那里有很多动物，我们可以用不同的方式对它们进行分类：这些动物有四条腿，这些动物有条纹，鲍勃去年带来的动物，等等。有些类别比其他类别更有用。事实上，有些系统甚至没有 "零知识"（Zero Knowledge）！这些系统通常只被称为 SNARK。作为一个社区，我们通常称这种不同动物的动物园为 ZK，即使有许多系统实际上并不使用零知识属性。
 
-With ZKPs, a prover can construct a proof that they know the solution to a certain puzzle. In this case, the proving consists of using some public input, the initial board position, and some private input, their solution to the puzzle, and a circuit. The circuit consists of all the constraints that express the puzzle.
+### 协议（Protocol）
 
-It is called a circuit because these constraints are related to each other, and we wire these constraints together, kind of like an electric circuit. In this case the circuit isn't dealing with current, but with values. For example, we can't stick any value like "banana" in our row constraint, it has to be a number, and the number has to be between 1 and 9, and so on.
+回到我们的协议，我们有一个证明者和验证者。证明者使用证明者密钥（prover key,）、隐私输入和公共输入创建一个证明。验证者使用验证密钥（*verification key* ）和公共输入验证证明，并输出真或假。
 
-The verifier has the same circuit and public input, and can verify the proof the prover sent them. Assuming the proof is valid, the verifier is convinced that the prover has a solution to that specific puzzle.
+我们有了两个新东西：证明者密钥和验证者密钥。这就是证明者和验证者施展魔法的地方。你可以把它们想象成一把普通的钥匙，让你进入某个地方并做某些事情，也可以把它们想象成一根魔法棒，让你做某些事情。我们从一个叫做*setup*的特殊仪式中获得这些密钥，这是一个初始准备阶段，本文不再详述。
 
-It turns out that a lot of problems can be expressed as a set of constraints. In fact, any problem we can solve with a computer can be expressed as a set of constraints.
+请注意，只有证明者才能访问隐私输入。证明者如何使用证明者密钥、隐私输入和公共输入将其转化为证明呢？
 
-### Sudoku example
+回想一下之前的 ZKP 插图：
 
-Let's apply what we learned about the various parts of a ZKP to the Sudoku example above.
 
-For Sudoku, our special program, the circuit, takes two inputs:
 
-- A Sudoku puzzle as public input
-- A solution to a Sudoku puzzle as private input
+![ZKP](https://img.learnblockchain.cn/2023/07/21/32584.png)
 
-The circuit is made up of a set of constraints. All of these constraints have to be true. The constraints look like this:
+我们有一个特殊的程序（正式名称为*电路 - circuit*），可以编码用户关心的逻辑。例如，证明他们知道得出某个哈希值的数据。与普通的计算机程序不同，这个程序是由*约束（constraints）*组成的。我们要证明的是，所有约束条件都与隐私和公共输入保持一致。
 
-- All digits in the puzzle and solution have to be between 1 and 9
-- The solution has to be equal to the puzzle in all the places where digits are already placed
-- All rows must contain digits 1 through 9 exactly once
-- All columns must contain digits 1 through 9 exactly once
-- All subsquares must contain digits 1 through 9 exactly once
+最后，验证器将这个简短的证明与验证密钥、公共输入和包含所有约束条件的特殊程序结合起来，并在排除合理怀疑的情况下确信证明是正确的，然后输出 "true"。如果不正确，则输出 "假"。
 
-If all of these constraints are true for a puzzle and its solution, we know that it is a valid solution.
+以上观点略显简单，但却抓住了事情的本质。
 
-A prover Peggy uses her magic prover key, the puzzle and the solution, combines it with the special program and creates a proof. The proof is very short, less than 1000 characters. The proof is self-contained and with it the verifier has all information they need to verify the proof. You can think of it as a magic spell that does what you want, without you having to understand the details of it [35](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-35).
+#### 约束（constraints）
 
-Here's a spell from a book of magic spells, written by a Welsh physician in the 19th century:
+构成上述特殊程序的约束条件是什么？约束是一种限制或制约。例如，"1 到 9 之间的数字 "就是一个约束。数字 7 满足这个约束，而数字 11 不满足。如何将程序写成一组约束？这本身就是一门艺术，让我们先看一个简单的例子：数独
 
-![img](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%27946%27%20height=%271242%27/%3e)![Magic spell](https://zkintro.com/_next/image?url=%2Fstatic%2Fimages%2Fmagic-spell-big-tiny.png&w=1920&q=75)
+在数独游戏中，我们的目标是在棋盘上找到满足某些约束条件的解。每一行都必须包含数字 1 到 9，但只能包含一次。每列和每个 3x3 子方格也是如此。我们会得到一些初始的起始位置，然后我们的任务就是以满足所有这些约束条件的方式填入其余的位置。最棘手的部分是找到同时满足所有限制条件的数字。
 
-Here's an example of a Zero Knowledge Proof produced by the Circom/snarkjs library:
+![数独](https://img.learnblockchain.cn/2023/07/21/74126.png)
 
-![img](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%271748%27%20height=%271184%27/%3e)![Circom proof](https://zkintro.com/_next/image?url=%2Fstatic%2Fimages%2Fcircom-proof-tiny.png&w=3840&q=75)
+通过 ZKP，证明者可以构建一个证明，证明他们知道某个谜题的解。在此案例中，证明包括使用一些公共输入（初始棋盘位置）和一些隐私输入（谜题的解法）以及一个电路。**电路由表达谜题的所有约束条件组成**。
 
-Except in this case, the magic actually works.
+之所以称其为电路，是因为这些约束条件彼此相关，我们将这些约束条件连接起来，有点像电路。在此案例中，电路处理的不是电流，而是数值。例如，我们不能把任何类似 "香蕉 "的值添加到我们的行约束中，它必须是一个数字，而且这个数字必须介于 1 和 9 之间，以此类推。
 
-Victor the verifier uses his verifier key, the original puzzle input, and verifies that the proof Peggy sent is indeed correct. If it is, the output is "true", and if it isn't, the output is "false". The spell either works or it doesn't. With this, Victor is convinced that Peggy knows a solution to that specific puzzle, without actually having seen the solution. Et voilà. [36](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-36)
+验证者拥有相同的电路和公共输入，可以验证证明者发送给他们的证明。如果证明是有效的，验证者就会确信证明者已经找到了该谜题的解。
 
-### Some properties
+事实证明，很多问题都可以用一组约束来表示。事实上，我们能用计算机解决的任何问题都可以用一组约束来表示。
 
-We say that a ZKP has certain technical properties:
+### 数独示例
 
-- Completeness - if the statement is true, then the verifier will be convinced by the proof
-- Soundness - if the statement is false, the verifier won't be convinced by the proof, except with a negligible probability
-- Zero Knowledge - if the statement is true, it won't reveal anything but the fact that it is true
+让我们把学到的有关 ZKP 各部分的知识应用到上面的数独例子中。
 
-Additionally, for zk-SNARKs, the proof is succinct, meaning it basically doesn't get bigger as the program gets more complex [37](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-37).
+在数独游戏中，我们的特殊程序电路需要两个输入：
 
-There are many other properties we care about when it comes to practical ZKPs:
+- 作为公共输入的数独谜题
+- 数独谜题的解作为隐私输入
 
-- What mathematical assumptions is the system making?
-- How secure is it?
-- Does it require a trusted setup?
-- How hard is it to generate the proof? In time and other resources
-- How hard is it to verify the proof? In time and other resources
-- Does the ZKP system allow for aggregating and combining multiple proofs together?
-- Are there any good libraries for a ZKP system that can be used by programmers?
-- How expressive is the language used to write programs for a particular ZKP system?
-- And so on
+电路由一系列约束条件组成。所有这些约束条件都必须为真。这些约束条件是这样的
 
-As you can see, there are quite a lot of considerations and different variations of ZKPs. Don't worry though, the gist is basically the same, and depending on where your interest lies you can remain blissfully unaware of many of the technical details involved. Going back to the zoo metaphor, just like with animals, you might not want to become a biologist. Instead, you might want to work with some animals, or maybe you just want a pet, or even just pet your friend's dog.
+- 谜题和谜底中的所有数字必须介于1和9之间
+- 解决方案必须是谜题中所有位置均放置了数字
+- 所有行中必须包含从1到9的数字，且每个数字只出现一次
+- 所有列中必须包含从1到9的数字，且每个数字只出现一次
+- 所有子方格中必须包含从1到9的数字，且每个数字只出现一次
 
-## Applications
+如果一道谜题及其解法的所有这些限制条件都为真，那么我们就知道它是一个有效的解法。
 
-*This section gives examples of current and future applications of ZK*
+证明者 Peggy 使用她的神奇证明者密钥、谜题和解法，将其与特殊程序结合，创建一个证明。证明非常简短，不到 1000 个字符。证明是自足的（self-contained），验证者可以通过它获得验证证明所需的所有信息。你可以把它想象成一个魔法咒语，它能实现你的愿望，而你无需了解其中的细节。
 
-There are many applications of ZKPs. Generally speaking, we are still in the early stages. A lot of the focus is still on the underlying protocols and infrastructure, as well as blockchain-specific applications. To better appreciate the blockchain-specific examples, it is useful to have some understanding of how public blockchains work and the challenges they have. However, this isn't a requirement. In this section we'll look at some of the more interesting applications. We'll start by looking at applications that are live now and then look at those on the horizon.
+下面是 19 世纪一位威尔士医生写的一本魔法书中的咒语：
 
-> The future is already here. It's just not evenly distributed yet.
+![魔法咒语](https://img.learnblockchain.cn/2023/07/21/91893.png)
+
+下面是一个由 Circom/snarkjs 库生成的零知识证明示例：
+
+![Circom 证明](https://img.learnblockchain.cn/2023/07/21/93073.png)
+
+在此案例中，魔法确实起作用了。
+
+验证者 Victor 使用他的验证密钥、原始谜题输入，验证 Peggy 发送的证明是否正确。如果正确，则输出 "真"；如果不正确，则输出 "假"。咒语要么有效，要么无效。这样，Victor 就确信 Peggy 知道那个特定谜题的解法，而实际上并没有看到解法。就是这样。
+
+
+
+#### 一些特性
+
+我们说 ZKP 具有某些技术特性：
+
+- 完备性（Completeness） -- 如果声明为真，那么验证者将被证明所说服
+- 可靠性（Soundness） -- 如果语句为假，验证者将不会被证明所说服
+- 零知识（Zero Knowledge） -- 如果语句为真，除了它为真这一事实外，不会透露任何其他信息
+
+此外，对于 zk-SNARKs 来说，证明是简洁的，这意味着它基本上不会随着程序变得越来越复杂而变大。
+
+在实际的 ZKP 中，我们还关心许多其他特性：
+
+- 系统做了哪些数学假设？
+- 安全性如何？
+- 是否需要可信的设置？
+- 生成证明有多难？时间和其他资源
+- 验证证明有多难？时间和其他资源
+- ZKP 系统是否允许将多个证明聚合在一起？
+- 是否有可供程序员使用的 ZKP 系统库？
+- 用于编写特定 ZKP 系统程序的语言的表现力如何？
+- 等等。
+
+正如你所看到的，ZKP 有很多考虑因素和不同的变体。不过不用担心，要点基本上都是一样的，而且根据你的兴趣所在，你可以对其中涉及的许多技术细节一无所知。回到动物园的比喻，就像对待动物一样，你可能并不想成为一名生物学家。相反，你可能想和一些动物打交道，或者你只是想养一只宠物，甚至只是想摸摸你朋友的狗。
+
+## 应用
+
+*本节将举例说明 ZK 当前和未来的应用*。
+
+ZKP 有许多应用。一般来说，我们仍处于早期阶段。很多焦点仍然集中在底层协议和基础设施，以及区块链的特定应用上。要想更好地理解区块链的具体例子，最好对公共区块链的工作原理及其面临的挑战有一定的了解。不过，这并不是必要条件。在本节中，我们将介绍一些更有趣的应用。我们将先看看现在已经上线的应用，然后再看看即将上线的应用。
+
+> 未来已来。只是分布还不均匀。来自 威廉-吉布森
 >
-> - William Gibson [38](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-38)
 
-![img](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%271344%27%20height=%27896%27/%3e)![ZKP Magic](https://zkintro.com/_next/image?url=%2Fstatic%2Fimages%2Fzkp-magic7-tiny.png&w=3840&q=75)
+![ZKP魔法](https://img.learnblockchain.cn/2023/07/21/1261.png)
 
-### Live now
+### 当前已应用
 
-**Electronic cash**. To make a cash-like payments systems online it needs to be fungible and private like physical cash. Fungibility refers to the property of a commodity being replaceable by another identical item. That is, there's no difference between your money and my money; they are equally valid forms of payment. We can use ZK to make the transaction graph private, unlike in Bitcoin or Ethereum. This way, your transaction history remains private, ensuring that electronic cash is fungible. This is currently live in systems like Zcash, and related systems like Tornado Cash [39](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-39).
+**电子现金**：要在网上建立类似现金的支付系统，就必须像实物现金一样具有可替代性和私密性。可替代性是指一种商品可被另一种相同商品替代的特性。也就是说，你的钱和我的钱没有区别，它们都是同样有效的支付形式。与比特币或以太坊不同，我们可以使用 ZK 使交易历史隐私化。这样，你的交易历史就不会被公开，从而确保电子现金的可替代性。目前，Zcash 等系统以及[Tornado Cash](https://learnblockchain.cn/tags/Tornado.cash)等相关系统都采用了这种方式。
 
-**Anonymous signaling.** Often, we might need to prove our affiliation with a group that possesses certain characteristics, without revealing our identities. One such example is proving that you are part of some group of people; another is voting. This means you don't tie your identity to sensitive actions such as which party you voted for, or reveal other unnecessary information. Currently live in systems like Semaphore [40](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-40), and similar mechanisms with many variations exist.
+**匿名信号** ：通常，我们可能需要在不暴露身份的情况下证明自己隶属于一个具有某些特征的群体。其中一个例子是证明自己是某个群体的一员；另一个例子是投票。这意味着你不会把自己的身份与敏感的行为联系在一起，比如你投票给哪个政党，或者泄露其他不必要的信息。目前，[Semaphore](https://semaphore.appliedzkp.org/)等系统中就有类似的机制，而且还有很多变种。
 
-**ZK Rollup.** Allow for more, cheaper and faster transactions. The Ethereum blockchain space is limited and expensive with a lot of demand. We use a so-called Layer 2 (L2) rollup, that does transactions separate from the main blockchain (L1). Once a certain number of transactions have hit the L2, it "rolls it up" to the L1. ZKPs are great for this because we can (i) prove that transactions are executed correctly and (ii) create a succinct proof that takes up a small amount of space on the L1. This makes transactions cheaper and faster for users, with near-equal security. Due to the complexity of proving the execution of the entire Ethereum Virtual Machine (EVM) many ZK Rollup solutions only focus on the exchange of simple commodities and assets. Currently live in systems like Loopring, zkSync Lite, dYdX, and Starknet. [41](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-41)
+**ZK Rollup**： 允许更多、更便宜、更快速的交易。以太坊区块链空间有限，价格昂贵，需求量大。我们使用所谓的第二层（L2） [Rollup](https://learnblockchain.cn/tags/Rollup) ，与主区块链（L1）分开进行交易。一旦有一定数量的交易进入 L2 层，它就会将其 "打包"到 L1 层。ZKP 在这方面非常有用，因为我们可以（i）证明交易执行正确，（ii）创建一个简洁的证明，只占用 L1 上的少量空间。这就使得交易对用户来说更便宜、更快捷，同时具有近乎同等的安全性。由于证明整个以太坊虚拟机（EVM）执行的复杂性，许多 ZK Rollup 解决方案从关注简单商资产的交换开始。目前在 Loopring、zkSync Lite、dYdX 和 Starknet 等系统中都有应用。
 
-**ZK-EVM.** Similar to ZK Rollup, but universal, since any type of transaction or program can be executed. Ethereum has an EVM that acts as a worldwide globally shared, general purpose computer (that anyone can write to). By writing the logic of this machine using ZKPs we can prove the correct execution of any program written on Ethereum and construct a succinct proof that it was executed correctly. This has several use cases, but most immediately for scaling and allowing for cheaper and faster transactions. Currently live in systems like Polygon zkEVM, zkSync Era, with several others on their way. [42](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-42)
 
-**ZK-VM.** Partially due to the complexity of targeting a "snark-unfriendly" [43](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-43) platform like the EVM, many projects have chosen to do a new blockchain, separate from Ethereum. This means they can optimize the VM to work better with ZK in the first place. Depending on the specific system, this allows for privacy and succinct verification of the blockchain state. Mina is live, and systems like Aleo are under active development. [44](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-44)
 
-**Dark Forest**. Dark Forest is an incomplete information real-time-strategy game. Incomplete information games based on ZK have a "cryptographic fog of war" where players can only see part of the world, as enforced by ZK. Compared to traditional games like Starcraft, not even a central server has access to all the information. Due to its programmatic nature this enables novel ways of playing a game. [45](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-45)
+**ZK-EVM:** 与 ZK Rollup 类似，但具有通用性，因为可以执行任何类型的交易或程序。以太坊有一个 EVM，它就像一台全球共享的通用计算机（任何人都可以写入）。通过使用 ZKP 编写该机器的逻辑，我们可以证明在以太坊上编写的任何程序的正确执行，并构建一个简洁的证明，证明该程序被正确执行。这有多种使用场景，但最直接的使用场景是扩展和允许更便宜、更快速的交易。目前已在 Polygon zkEVM、zkSync Era 等系统中使用，其他一些[ZKEVM](https://learnblockchain.cn/article/5024)系统也即将使用 。
 
-**ZK Bridges**. Bridges allow you to move assets between different blockchains and systems. These bridges can be hard to make secure, and they often get hacked. With ZK, we can bridge assets more securely and faster, without relying on trusted third parties or error-prone approaches. Currently live with zkBridge and also being worked on by projects such as Succinct Labs. [46](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-46)
+**ZK-VM: **部分原因是针对像 EVM 这样的 "SNARK不友好" 平台的复杂性，许多项目选择做一个独立于以太坊的新区块链。这意味着他们可以首先优化虚拟机，以便更好地与 ZK 协同工作。根据具体系统的不同，这可以实现区块链状态的隐私和简洁验证。Mina 已经上线，Aleo 等系统正在积极开发中。
 
-**Private identity**. As more siloed systems require and host our online identities [47](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-47), it is desirable for individuals to be able to own, aggregate and keep these fragmented online identities private. Currently live projects like Sismo enable this, and other projects are working on similar systems. [48](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-48)
+> 对snark不友好的平台或函数指的是大多数现代计算机原语都是为特定的计算机体系结构设计的。这种架构与编写约束时的架构非常不同。例如，SHA256哈希函数就是一个典型的snark不友好哈希。有些人创建了SNARK或zk友好的函数，例如Poseidon哈希函数，专门设计用于zkp。这些在zkp中更容易实现，并且效率可以提高100倍或更多
 
-These are just a few examples and by no means complete. We didn't talk about things like private non-repudiable reputation, exporting web2 reputation, sybil-resistant denial-of-service protection, coercion-resistant proving, proof of replication, anonymous airdrops, proving degrees of separation, etc. [49](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-49)
+**黑暗森林**: 黑暗森林是一款不完全信息实时策略游戏。基于 ZK 的不完全信息游戏有一个 "加密战争迷雾"，玩家只能看到世界的一部分，这是 ZK 强制实施的。与《星际争霸》等传统游戏相比，即使是中心化服务器也无法获得所有信息。由于其程序化的特性，这使得新颖的游戏方式成为可能。 
 
-### On the horizon
+**ZK 跨链桥** - 跨链桥允许你在不同的区块链和系统之间移动资产。这些跨链桥很难保证安全，而且经常被黑客攻击。有了 ZK，我们可以更安全、更快速地连接资产，而无需依赖可信的第三方或容易出错的方法。目前，zkBridge 已投入使用，Succinct Labs 等项目也正在进行相关工作。
 
-**ZK-EVM (Ethereum-equivalence)**. There are different types of ZK-EVM, and the more challenging ones to implement are the ones that are fully Ethereum-equivalent. Other ZK-EVM takes some shortcuts to make it easier to generate proofs. With a fully Ethereum-equivalent ZK-EVM there's no difference with the current Ethereum system. This means we can prove the correct execution of every single block in existence in a succinct proof. You can use a phone to verify the integrity of the entire chain, relying solely on mathematics, without needing to trust third parties or use expensive machines. Currently being worked on by the ZK-EVM Community Edition team. [50](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-50)
+**隐私身份** : 随着越来越多的独立系统需要并托管我们的在线身份，个人最好能够拥有、整合并保持这些去中心化的在线身份的私密性。目前，Sismo 等项目已经实现了这一点，其他项目也在开发类似的系统。
 
-**General purpose provable computation**. Most computation in the world doesn't happen in the EVM, but in other systems. WASM and LLVM-based programs are very common [51](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-51). We can leverage the same approach in ZK-EVM to do general-purpose private provable computation. For example, we can prove that a database contains a specific record, without revealing any other information. Currently being worked on by many different teams, for example Delphinus Labs, RISC Zero, Orochi Network, and nil.foundation. [52](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-52)
+以上只是几个例子，绝不完整。我们还没有谈到隐私不可抵赖声誉、导出 Web2 声誉、抗sybil 拒绝服务保护、抗胁迫证明、复制证明、匿名空投、分离度证明等。
 
-**ZK Machine Learning (ZK ML)**. We can prove that some computation was done correctly privately, off-chain, and then publish a proof that the computation was done correctly. This means we can use private data for training better models, without revealing that data. For example, sensitive documents, voice or even things like DNA to find health problems. This improves both scalability and privacy for users. Current proof of concept (PoC) exists for things like MNIST, a common test used in Machine Learning to recognize handwritten digits, and people are working on more complex things like neural networks inside ZKPs. [53](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-53)
+## 即将来临的
 
-**Photo authenticity**. Prove provenance of content such as photos and videos, including standard post-processing edits. That is, prove that a photo was taken at a certain time and place, and has only been edited with basic resizing, cropping, and use of greyscale (AP approved list of operations). Some work has been done, including a PoC. [54](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-54)
+**ZK-EVM（以太坊等价性）**： [ZK-EVM](https://learnblockchain.cn/article/5024) 有不同的类型，实现起来更具挑战性的是那些完全等同于以太坊的 ZK-EVM。其他 ZK-EVM 会采取一些捷径，让生成证明变得更容易。完全等同于以太坊的 ZK-EVM 与当前的以太坊系统没有区别。这意味着我们可以用简洁的证明来证明存在的每一个区块的正确执行。你可以用手机验证整个链的完整性，完全依靠数学，而无需信任第三方或使用昂贵的机器。目前 ZK-EVM 社区团队正在开发中。
 
-**Compliance**. Prove that a private transaction is compliant with some regulation, or that an asset isn't on a specific blacklist. Prove that an exchange is solvent without revealing its assets. Some work has been done by systems such as Espresso Labs, and some systems have simple versions of this already.
+**通用可证明计算**：世界上大多数计算都不在 EVM 中进行，而是在其他系统中进行。基于 WASM 和 LLVM 的程序非常常见。我们可以利用 ZK-EVM 中的相同方法，进行通用的隐私可证明计算。例如，我们可以在不透露任何其他信息的情况下证明数据库包含特定记录。目前，许多不同的团队，例如 Delphinus Labs、RISC Zero、Orochi Network 和 nil.foundation，都在研究这一技术。
 
-**Shielded and private intents.** Users of public blockchains have specific goals they want to achieve, which can be expressed as *intents*. For example, a user might have the intent to exchange one token for another. A user can tell other users about their intents and be matched with a suitable counterparty. It is desirable to keep these intents shielded (hiding the "who" but not the "what", similar to shielded transactions in Zcash) or completely private. Currently worked on by Anoma, starting with shielded intent-matching. To make intents-matching fully private likely requires breakthrough advances in cryptography, similar to the last example in this section.
 
-**Autonomous worlds**. A continuation of things like Dark Forest. A world can be physical or conceptual, like The World of Narnina, Christianity, The World of the US Dollar, Bitcoin or Commonwealth law. Depending on where these worlds run, these can be autonomous if anyone can change the rules without damaging its objectivity. Currently being explored by the 0xPARC Foundation in the context of games and creating these worlds. [55](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-55)
 
-**Proof of data authenticity**. Export data from web applications and prove facts about it in a private way. Uses the TLS protocol which means it works on any modern website. Currently being worked on by TLSNotary. [56](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-56)
+**ZK 机器学习（ZK ML）**：我们可以在链外私下证明某些计算是正确完成的，然后公布计算正确的证明。这意味着，我们可以使用隐私数据来训练更好的模型，而不会泄露这些数据。例如，敏感文件、语音，甚至 DNA 等用于发现健康问题的数据。这既提高了可扩展性，又保护了用户隐私。目前已有一些概念验证（PoC），如 MNIST（机器学习中用于识别手写数字的常用测试），人们正在研究更复杂的东西，如 ZKP 内部的神经网络。 
 
-**Nuclear disarmament.** Allow people inspecting nuclear sites to confirm that an object is or isn't a nuclear weapon without inspecting any of the sensitive internal workings of said object. Paper with physical simulation work exists. [57](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-57)
+**照片真实性**：证明照片和视频等内容的出处，包括标准的后期处理编辑。也就是说，证明照片是在特定时间和地点拍摄的，并且只进行了基本的大小调整、裁剪和灰度使用（美联社认可的操作列表）。已经有一些概念证明工作。
 
-**Peace talks and high-stakes negotiation**. Often in negotiations people have certain hard limits that they do not wish to reveal to their counterparty to weaken their ability to negotiate. By explicitly encoding these, two parties can negotiate over some highly complex domain and reach an agreement without revealing the details of their precise parameters and limits. This allows people who do not trust each other to fruitfully come to some agreement. Likely requires some breakthroughs in Multi-Party Computation (MPC), which allows us to do computation on shared secrets. [58](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-58)
+**合规性**：证明隐私交易符合某些规定，或某项资产不在特定的黑名单上。在不泄露资产的情况下证明交易所有偿付能力。Espresso Labs 等系统已经做了一些工作，有些系统已经有了简单的版本。
 
-Again, this didn't mention all the types of things people are working on or thinking about. There will surely be many more things in the future. As you can tell there are a lot of things we can do with ZK.
+**隐藏意图** ：公共区块链的用户有他们想要实现的特定目标，这些目标可以用*意图*来表达。例如，用户可能想用一种代币兑换另一种代币。用户可以将自己的意图告诉其他用户，并与合适的对手方进行匹配。最好能对这些意图进行屏蔽（隐藏 "谁 "而不是 "什么"，类似于 Zcash 中的屏蔽交易）或完全保密。目前，Anoma 正在从屏蔽意向匹配开始研究。要使意图匹配完全保密，可能需要在密码学方面取得突破性进展，这与本节最后一个例子类似。
 
-You might wonder why many of these applications involve a blockchain. This was partially answered in the previous section "Why now?". ZK is an orthogonal technology to blockchains like Ethereum and we can do without the blockchain, but quite often it is simply a good tool that makes sense to leverage.
+**自主世界**：这是《黑暗森林》等作品的延续。世界可以是物理的，也可以是概念的，如纳尼亚世界、基督教、美元世界、比特币或英联邦法律。根据这些世界的运行情况，如果任何人都可以在不破坏其客观性的情况下改变规则，那么这些世界就可以是自主的。目前，0xPARC 基金会正在游戏和创建这些世界的背景下进行探索。
 
-Similarly, the group of people working on these things and the immediate problems they care about are often overlapping. As the space matures, we can expect the "blockchain" part of ZK applications to disappear as simply an implementation detail, and this has already happened to some degree. Looking further, the "ZK" part will likely also fall into the background and it'll simply be an application that happens to use ZKP.
+**数据真实性证明**：从网络应用程序中导出数据，并以非公开方式证明相关事实。使用 TLS 协议，这意味着它可以在任何现代网站上运行。目前由 TLSNotary 负责开发。
 
-Finally, when cryptography for online messaging and similar was developed, it was used and developed by the military and Internet companies. It was not something that was innovated on by the post office or some company involved in the secure transport of physical goods, even if in theory that was a possibility. [59](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-59).
+**核裁军**：  允许检查核设施的人在不检查任何敏感的内部工作原理的情况下，确认某个物体是否是核武器。已有物理模拟工作的论文。
 
-I'll end this section with a quote from Barry Whitehat, a well-known ZK researcher who works with the Privacy and Scalability Explorations (PSE) team at the Ethereum Foundation, when asked for predictions on the future of ZK:
+**和谈与高风险谈判**： 在谈判中，人们通常会有一些硬性限制，他们不希望向对方透露这些限制，以削弱自己的谈判能力。通过对这些限制进行明确编码，双方可以就一些高度复杂的领域进行谈判，并在不透露其精确参数和限制细节的情况下达成协议。这样，互不信任的双方也能达成某种协议。这可能需要在多方计算（MPC）方面取得一些突破，它允许我们在共享秘密的基础上进行计算。
 
-> "By 2040, someone will have won a Nobel Peace Prize for using Zero Knowledge Proofs." [60](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-60)
+同样，这里并没有提到人们正在研究或思考的所有类型的问题。未来肯定还会有更多的东西。正如你所看到的，我们可以用 ZK 做很多事情。
 
-Outlandish and bold? Certainly. Will it turn out to be true? Maybe not. But could it? Absolutely. It is an intriguing prospect to consider. What is the difference between the mental model that sees this as a real possibility, versus one that writes it off immediately? What would have to happen for such an event to be a realistic outcome?
+你可能会问，为什么这些应用中有很多涉及区块链。上一节 "为什么是现在？"已经部分回答了这个问题。ZK 是一种与以太坊等区块链正交的技术，我们可以不使用区块链，但在很多情况下，它只是一种可以利用的好工具。
 
-ZKPs represent a new and incredibly potent tool. Often, it's our imagination about its potential applications that limits us.
+同样，从事这些工作的人群和他们关心的直接问题往往是重叠的。随着这个领域的成熟，我们可以预见，ZK 应用中的 "区块链 "部分将不再仅仅是一个实施细节，而这在某种程度上已经发生了。再进一步看，"ZK"部分也很可能会消失，它将只是一个碰巧使用 ZKP 的应用程序。
 
-## Conclusion
 
-*This section summarizes the article and provides next steps*
 
-In this article, we've looked at what ZKPs are, why we should care about them and when they are useful. We've also looked at how they work and what properties they give us. Finally, we looked at some applications, both current and future ones.
+最后，当在线信息和类似的加密技术被开发出来时，它是由军方和互联网公司使用和开发的。这不是邮局或某些从事实物安全运输的公司的创新成果，即使理论上有这种可能性。
 
-I hope this has led you to better understand the nature of ZKPs, and perhaps led to some aha moments and inspired some new ways of thinking about things. Perhaps it even helps you follow the magic of ZKPs in the future.
+在本节的最后，我想引用巴里-怀特哈特（Barry Whitehat）在被问及对 ZK 未来的预测时的一段话作为结束语，他是一位著名的 ZK 研究员，在以太坊基金会的隐私和可扩展性探索（PSE）团队工作：
 
-In future posts, we'll go even deeper into some of these aspects, and we'll also look at more technical aspects to better understand how ZKPs work and where they can be used.
+> "到 2040 年，会有人因为使用零知识证明而获得诺贝尔和平奖"。
 
-If something specific piqued your interest, or there is something specific you'd like to see in future articles, feel free to contact me on Twitter or by email. I'll include the best comments as footnotes!
+离奇而大胆？当然。结果会是真的吗？也许不会。但可能吗？绝对有可能。这是一个耐人寻味的前景。将其视为真实可能的心智模式与立即将其一笔勾销的心智模式之间有什么区别？要让这样的事件成为现实的结果，必须发生什么？
 
-## Acknowledgements
+ZKP 是一种全新的、非常有效的工具。限制我们的往往是我们对其潜在应用的想象力。
 
-Thanks to Michelle Lai, Chih-Cheng Liang, Jenny Lin, Anna Lindegren and Eve Ko for reading drafts and providing feedback on this.
+## 结论
 
-### Images
+*本节对文章进行了总结，并提出了下一步的计划*。
 
-- *Where's Waldo* - Unknown source, Where's Waldo originally created by [Martin Handford](https://en.wikipedia.org/wiki/Where's_Wally%3F)
-- *Silent Reading* - Jorge Royan, CC BY-SA 3.0, via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Austria_-_Heiligenkreuz_Abbey_-_1726.jpg)
-- *Sherlock Holmes* - Sidney Paget, Public domain, via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Strand_paget.jpg)
-- *Moon landing* - Neil A. Armstrong, Public domain, via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Aldrin_Apollo_11.jpg)
-- *Pascal's Calculator* - kitmasterbloke, CC-BY 2.0, via [Openverse](https://openverse.org/image/0feadae2-6b51-4dc7-8838-18c157f7f0ce)
-- *Moore's law* - Max Roser, Hannah Ritchie, CC-BY 4.0, via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Moore's_Law_Transistor_Count_1970-2020.png)
-- *Sudoku puzzle* - Tim Stellmach, CC0, via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Sudoku_Puzzle_by_L2G-20050714_standardized_layout.svg)
-- *Magic spell* - National Library of Wales, CC0, via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Book_of_incantations_f.7v.png)
-- *Cyberpunk* - bloodlessbaron, Public Domain, via [Openverse](https://openverse.org/image/3d3d3cd9-7df6-4781-9778-cdb1e1738de1)
+在本文中，我们了解了什么是 ZKP、为什么要关注它们以及它们何时有用。我们还了解了它们的工作原理，以及它们为我们提供了哪些属性。最后，我们探讨了一些应用，包括当前和未来的应用。
 
-## References
+我希望这能让你更好地理解 ZKP 的本质，或许还能让你产生一些 "啊哈"时刻，并启发你以新的方式思考问题。也许它还能帮助你在未来追随 ZKP 的魔力。
 
-## Footnotes
+在今后的文章中，我们将更深入地探讨其中的一些方面，我们还将研究更多技术方面的问题，以便更好地理解 ZKP 的工作原理以及它们的用途。
 
-1. While the concepts are related, there's some legal controversy around if the "the right to privacy" itself is protected in many jurisdictions around the world. See the Wikipedia article on [Right to privacy](https://en.wikipedia.org/wiki/Right_to_privacy) for more. [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-1)
-2. Zero knowledge has a precise mathematical definition, but we won't go into this in this article. See [ZKProof Community Reference](https://docs.zkproof.org/reference.pdf) for a more precise definition. [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-2)
-3. See [A Cypherpunk Manifesto](https://nakamotoinstitute.org/static/docs/cypherpunk-manifesto.txt) for the full text. Also see Wikipedia on [Cypherpunks](https://en.wikipedia.org/wiki/Cypherpunk). [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-3)
-4. Some people have different interpretations of this specific passage, but it is still the case that humans made the transition from primarily oral storytelling to silent reading at some point not too long ago. See Wikipedia on [History of silent reading](https://en.wikipedia.org/wiki/Silent_reading#History_of_silent_reading) for more on silent reading. [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-4)
-5. Original quote in French: *Je n'ai fait celle-ci plus longue que parce que je n'ai pas eu le loisir de la faire plus courte.* See [Quote Investigator ](https://quoteinvestigator.com/2012/04/28/shorter-letter)on this quote. [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-5)
-6. Kudos to Juraj Bednar for [suggesting](https://twitter.com/jurbed/status/1650782361590669313) using murder mystery as a way to explain the notion of a proof. [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-6)
-7. Succinctness has a precise mathematical definition, but we won't go into this in this article. See [ZKProof Community Reference](https://docs.zkproof.org/reference.pdf) for a more precise definition. [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-7)
-8. Transaction costs is an economic concept. See this Wikipedia article on [transaction costs](https://en.wikipedia.org/wiki/Transaction_cost). [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-8)
-9. In a [checksum](https://en.wikipedia.org/wiki/Checksum), we do some basic operations like adding and subtracting the initial digits, and if the final digit isn't the same we know something went wrong. Fun fact: Unlike most similar ID systems, a Social Security Number (SSN) in the US [does not have a checksum](https://en.wikipedia.org/wiki/Social_Security_number#Valid_SSNs). If a checksum is just one digit long it is sometimes just called a [check digit](https://en.wikipedia.org/wiki/Check_digit). [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-9)
-10. While more common in less developed countries, this happened recently with bank failures in the US. See Wikipedia article on effects of [Collapse of Silicon Valley Bank](https://en.wikipedia.org/wiki/Collapse_of_Silicon_Valley_Bank#Effects). [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-10)
-11. Full quote: "It is a profoundly erroneous truism, repeated by all copy-books and by eminent people when they are making speeches, that we should cultivate the habit of thinking of what we are doing. The precise opposite is the case. **Civilization advances by extending the number of important operations which we can perform without thinking about them.** Operations of thought are like cavalry charges in a battle — they are strictly limited in number, they require fresh horses, and must only be made at decisive moments." See [Wikiquote](https://en.wikiquote.org/wiki/Alfred_North_Whitehead#An_Introduction_to_Mathematics_(1911)). [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-11)
-12. Pascal's calculator, the *Pascaline*, is a mechanical calculator. It was very impressive when it came out in 1642. See [Pascal's calculator](https://en.wikipedia.org/wiki/Pascal's_calculator). [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-12)
-13. In well-designed authentication schemes the provider doesn't see your password either, just a salted hash of it. See Wikipedia on [form of stored passwords](https://en.wikipedia.org/wiki/Password#Form_of_stored_passwords). [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-13)
-14. SHA256 is a an often used cryptographic hash function. See [SHA2](https://en.wikipedia.org/wiki/SHA-2). [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-14)
-15. You can verify this yourself with a [SHA256 calculator online](https://www.movable-type.co.uk/scripts/sha256.html) or do it yourself at your computer with the `sha256sum` utility. [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-15)
-16. Cryptography studies how to keep information safe and hide it from adversaries. It is a blend of mathematics, computer science and engineering. You can also read more about cryptographic hash functions and their purpose [here](https://en.wikipedia.org/wiki/Cryptographic_hash_function). [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-16)
-17. Technically this is called proving knowledge of the *pre-image* of a hash. [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-17)
-18. See the [Federalist Papers](https://en.wikipedia.org/wiki/The_Federalist_Papers). [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-18)
-19. See this article on [group signatures](https://0xparc.org/blog/zk-group-sigs) by 0xPARC. Includes the relevant Circom code. [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-19)
-20. Zero Knowledge Proofs have [existed since 1985](https://en.wikipedia.org/wiki/Zero-knowledge_proof#History), and the authors later won a Gödel Prize for their work. We can compare this to [public-key cryptography](https://en.wikipedia.org/wiki/Public-key_cryptography#History), which took many decades until it was used for things like [TLS](https://en.wikipedia.org/wiki/Transport_Layer_Security), a now indispensable building block for secure Internet usage. [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-20)
-21. For example, Lambda calculus with [Church numerals](https://en.wikipedia.org/wiki/Church_encoding#Church_numerals) and Lisp were initially theoretical and largely unpractical when first proposed. Dan Boneh and others have made the [observation](https://zk-learning.org/) that making prover time quasilinear is what really made ZKPs practical, even in theory. [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-21)
-22. See the origins of Zcash, the [Zerocoin paper](https://eprint.iacr.org/2014/349.pdf). [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-22)
-23. Censorship-resistance means anyone can transact on a public blockchain without permission as long as they follow the basic rules of the protocol. It also means it is very costly for an attacker to alter or disrupt the operation of the system. Transparency refers to transactions being publicly auditable and immutable on the blockchain forever. These notions are closely related to decentralization and security, and are a big part of the value proposition of public blockchains compared to other systems. [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-23)
-24. BLS signatures used in the [Ethereum Consensus Layer](https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/keys/) were deployed and used to secure billions of dollars just a few years after it was [developed](https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-bls-signature-04). See Wikipedia for more on [BLS Signatures](https://en.wikipedia.org/wiki/BLS_digital_signature). [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-24)
-25. Dan Boneh, an applied cryptography professor at Stanford, is a great example of this in terms of his involvement in various cryptocurrency-related projects. [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-25)
-26. Thee author heard about this from gubsheep at [0xPARC](https://0xparc.org/), but it has popped up a few times. This also matches the author's own experience, working on RLN and noticing 1-2 order of magnitude improvements in things like prover time in a few years. [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-26)
-27. In a legal setting, false positives do happen, see for example the [Innocence Project](https://en.wikipedia.org/wiki/Innocence_Project). In a mathematical setting we can make this false positive rate very precise, and it isn't even close to a fair game. That's the power of mathematics. We'll look at this more in future articles on probabilistic proofs. [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-27)
-28. You'd probably want to ask Sherlock Holmes some follow-up questions first though, before throwing our prospective murderer in jail. It is possible Sherlock Holmes is trying to fool you! In ZKPs we assume the prover is untrusted. [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-28)
-29. This is done using the [Fiat-Shamir heuristic](https://en.wikipedia.org/wiki/Fiat–Shamir_heuristic). [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-29)
-30. Sometimes people make a distinction between these two, but it is a technical one (computational vs statistical soundness) and not something we have to concern ourselves with right now. See [ZKProof Community Reference](https://docs.zkproof.org/reference.pdf) for more. [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-30)
-31. Alice and Bob are commonly used characters in cryptographic systems, see [Wikipedia](https://en.wikipedia.org/wiki/Alice_and_Bob). [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-31)
-32. There are also zk-STARKs, so one could argue a more accurate name might be (zk)S(T|N)ARKs. This is obviously a bit of a mouthful, so people tend to use ZK as a shorthand. See for example the name of the ZK podcast, the ZK proof standard, etc. ZK is the most magical property of ZKPs, in the author's opinion. [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-32)
-33. Setups are multi-faceted and a big part of the security assumptions of a ZKP. They are a bit involved mathematically, and to give them full justice would need a dedicated article. There's a great layman's podcast on The Ceremony Zcash held in 2016 that you can listen to [here](https://radiolab.org/podcast/ceremony). [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-33)
-34. Technically speaking this is an *arithmetic circuit* (dealing with numbers), but we won't introduce details of this in this article. See [ZKProof Community Reference](https://docs.zkproof.org/reference.pdf) for more. [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-34)
-35. Unless you want to! ZK is sometimes called "Magic Moon Math", but if you really study it the mathematics you need to get an intuition for how they actually work under the hood isn't as complex as you might think. We won't go into it in this article, though. Here's a [presentation](https://www.youtube.com/watch?v=W1ZkhWNka-c) by the author on some of the mathematical foundations of ZKPs. [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-35)
-36. French for here you go, presto, bingo, ta-da, and Bob's your uncle. [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-36)
-37. There are different notions of succinctness, and this depends on the specific proof system. Technically, we call proofs succinct if they are sublinear in time complexity. [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-37)
-38. Allegedly a quote by William Gibson, see [here](https://www.nytimes.com/2012/01/15/books/review/distrust-that-particular-flavor-by-william-gibson-book-review.html). [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-38)
-39. With many new versions being developed, like [Aztec](https://aztec.network/) and [Railgun](https://railgun.org/). [Tornado Cash (archive)](https://web.archive.org/web/20220808144431/https://tornado.cash/) works quite differently from [Zcash](https://z.cash/), acting more as a mixer. Tornado Cash was also recently [sanctioned](https://en.wikipedia.org/wiki/Tornado_Cash) by the US government. As of this writing there are still a lot of unknowns about this case, but it was a [controversial](https://www.eff.org/deeplinks/2022/08/code-speech-and-tornado-cash-mixer) event that lead to [lawsuits](https://www.coincenter.org/coin-center-is-suing-ofac-over-its-tornado-cash-sanction/]). Some see this as a sequel to the [Crypto Wars](https://en.wikipedia.org/wiki/Crypto_Wars) in the 1990s. There are other alternatives like [Monero](https://www.getmonero.org/) and [Wasabi Wallet](https://wasabiwallet.io/), that are not based on ZKP but have similar design goals. Read more about the [Case for Electronic Cash](https://www.coincenter.org/app/uploads/2020/05/the-case-for-electronic-cash-coin-center.pdf) by Coin Center. [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-39)
-40. See [Semaphore](https://semaphore.appliedzkp.org/) by the [Privacy & Scaling Explorations team](https://www.appliedzkp.org/). [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-40)
-41. This is similar to how the traditional banking system works too, where there are multiple layers of settlement happening. It is just hidden from most end users. See [L2Beat](https://l2beat.com/scaling/summary) for an overview of different Layer 2 solutions, including ZK Rollups. Also see [Loopring](https://loopring.org/#/), [dYdX](https://dydx.exchange/faq). and [Starknet](https://www.starknet.io/en). [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-41)
-42. There are different types of zkEVM, and the difference can be quite subtle. See [this post](https://vitalik.ca/general/2022/08/04/zkevm.html) by Vitalik for more on the difference. Also see [Polygon zkEVM](https://polygon.technology/polygon-zkevm), [zkSync Era](https://zksync.io/). [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-42)
-43. SNARK-unfriendly platforms or functions refer to the fact that most modern computer primitives were designed for a specific computer architecture. This architecture is very different from what is natural when writing constraints. For example, the SHA256 hash function is a typical example of a SNARK-unfriendly hash. Some people create SNARK or ZK-friendly functions, such as the [Poseidon hash function](https://www.poseidon-hash.info/), that are designed specifically to be used in ZKPs. These are much easier to implement in ZKPs, and can be 100 or more times more efficient, but they come with other trade-offs. [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-43)
-44. Mina allows for succinct verification of the whole chain, whereas Aleo focuses more on privacy. Also see [Mina](https://minaprotocol.com/) and [Aleo](https://www.aleo.org/). [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-44)
-45. In [Dark Forest](https://zkga.me/), some people write very complex bots that play the game on its own. They even form private DAOs and create smart contracts that play the game semi-autonomously. [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-45)
-46. Succinct Labs made [Telepathy](https://docs.telepathy.xyz/) is one such project. [zkBridge](https://zkbridge.com/) is another. There are likely many others. [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-46)
-47. A weird, but surprisingly accurate, statement. [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-47)
-48. Proof Carrying Data by 0xPARC, is one such example. See [PCD](https://pcd.team/). Also see [Sismo](https://www.sismo.io/). [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-48)
-49. We won't go into these here, but I encourage the curious reader to search the web to find out how various projects are using or thinking about using ZKPs to achieve their design goals. Example: [Unirep](https://developer.unirep.io/docs/welcome), [Interep](https://interep.link/), [RLN](https://rate-limiting-nullifier.github.io/rln-docs/), [RLNP2P](https://rlnp2p.vac.dev/), [MACI](https://privacy-scaling-explorations.github.io/maci/), [Filecoin](https://docs.filecoin.io/basics/the-blockchain/proofs/), [Stealthdrop](https://github.com/stealthdrop/stealthdrop), [ETHDos](https://ethdos.xyz/), and many more. [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-49)
-50. See [42](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fn-42) above for more on this distinction. [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-50)
-51. LLVM and WASM are compiler and toolchain technologies. Very roughly speaking, they allow you to write code in different programming languages that run in different types of environments, such as in different web browsers and on different types of computers. Understanding the specifics of these systems isn't important for our purposes, just that they allow us to write and use programs in many different environments. See [LLVM](https://en.wikipedia.org/wiki/LLVM), [WASM](https://en.wikipedia.org/wiki/WebAssembly). [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-51)
-52. See [Delphinus Labs](https://delphinuslab.com/zk-wasm/), [RISC Zero](https://www.risczero.com/), [Orochi Network](https://orochi.network/), [nil.foundation](https://orochi.network/). [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-52)
-53. See [zk-MNIST](https://0xparc.org/blog/zk-mnist) and [EZKL](https://docs.ezkl.xyz/). There are also projects doing things like [neural networks](https://github.com/lyronctk/zator) in more modern efficient proof systems like [Nova](https://github.com/microsoft/Nova). [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-53)
-54. See article on [fighting disinformation with ZK](https://medium.com/@boneh/using-zk-proofs-to-fight-disinformation-17e7d57fe52f). [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-54)
-55. See [this essay](https://0xparc.org/blog/autonomous-worlds) by ludens at 0xPARC for more details on this idea. [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-55)
-56. See [TLS Notary](https://tlsnotary.org/) [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-56)
-57. See [article (archive)](https://web.archive.org/web/20170703142802/https://www.pppl.gov/news/2016/09/pppl-and-princeton-demonstrate-novel-technique-may-have-applicability-future-nuclear) [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-57)
-58. Unlike Zero Knowledge Proofs, which allow you to make statements about private data, [Multi-Party Computation](https://en.wikipedia.org/wiki/Secure_multi-party_computation) (MPC) generalizes this concept and allows us to do computation on shared secrets. That is, if Alice and Bob have their own secret, we can write a program that combines these two secrets in some non-trivial way, without revealing anyone's secrets. This is what we want in a negotiation setting, because we want to compare stakeholder's private information in some way to reach an acceptable compromise. Most MPCs that exist today are quite limited and inefficient, but it is an exciting area of research with a lot of potential. [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-58)
-59. A familiar story: see [Sears vs Amazon](https://fortune.com/longform/sears-couldve-been-amazon/). [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-59)
-60. Quote from a [panel at Devcon5](https://www.youtube.com/watch?v=hBupNf1igbY&t=1897s). [↩](https://zkintro.com/articles/friendly-introduction-to-zero-knowledge#user-content-fnref-60)
+如果某些具体内容引起了你的兴趣，或者你希望在今后的文章中看到某些具体内容，请随时通过 [Twitter](https://twitter.com/oskarth) 或电子邮件与我联系。
+
+## 致谢
+
+感谢 Michelle Lai、Chih-Cheng Liang、Jenny Lin、Anna Lindegren 和 Eve Ko 阅读初稿并提供反馈。
+
+
+本翻译由 [DeCert.me](https://decert.me/) 协助支持， 来DeCert码一个未来， 支持每一位开发者构建自己的可信履历。
