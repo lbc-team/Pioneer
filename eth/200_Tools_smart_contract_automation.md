@@ -1,68 +1,69 @@
-# Tools for smart contract automation: Guide with examples
+# 智能合约自动化工具：示例指南
 
 ![](https://img.learnblockchain.cn/attachments/2023/06/1cYwHFkB6487c3112bba7.png)
 
-Smart contracts are not self-executing; their execution depends solely upon on-chain transactions conducted on a blockchain network serving as a call to action that triggers function calls. However, manually executing smart contracts has drawbacks, such as potential security risks, unnecessary delays, and the possibility of human error.
+智能合约并不是自动执行的；它们的执行完全依赖于在区块链网络上进行的链上交易，而这些交易作为触发函数调用的行动号召。然而，手动执行智能合约也有缺点，例如潜在的安全风险、不必要的延迟以及人为错误的可能性。
 
-This article explores the core concepts of smart contract automation and reviews the pros and cons of various smart contract automation tools. Additionally, this guide demonstrates the processes used by popular smart contract automation tools: [Chainlink Keepers](https://chain.link/keepers), the [Gelato Network](https://www.gelato.network/), and [OpenZeppelin Defender](https://www.openzeppelin.com/defender).
+本文探讨了智能合约自动化的核心概念，并回顾了各种智能合约自动化工具的优缺点。此外，本指南还演示了当前主流的智能合约自动化工具（[Chainlink Keepers](https://chain.link/keepers)、[Gelato Network ](https://www.gelato.network/)和 [OpenZeppelin Defender](https://www.openzeppelin.com/defender)）的使用流程。
 
-*Jump ahead:*
+*继续阅读：*
 
-- [Prerequisites](https://blog.logrocket.com/tools-smart-contract-automation-guide/#prerequisites)
-- [Understanding smart contract automation](https://blog.logrocket.com/tools-smart-contract-automation-guide/#understanding-smart-contract-automation)
+- [前提条件](https://blog.logrocket.com/tools-smart-contract-automation-guide/#prerequisites)
+- [了解智能合约自动化](https://blog.logrocket.com/tools-smart-contract-automation-guide/#understanding-smart-contract-automation)
 - Chainlink Keepers
-  - [Demo: Automating a smart contract with Chainlink Keepers](https://blog.logrocket.com/tools-smart-contract-automation-guide/#demo-automating-a-smart-contract-with-chainlink-keepers)
+  - [演示：使用 Chainlink Keepers 自动化智能合约](https://blog.logrocket.com/tools-smart-contract-automation-guide/#demo-automating-a-smart-contract-with-chainlink-keepers)
 - Gelato Network
-  - [Demo: Automating a smart contract with Gelato](https://blog.logrocket.com/tools-smart-contract-automation-guide/#demo-automating-a-smart-contract-with-gelato)
+  - [演示：使用 Gelato 自动化智能合约](https://blog.logrocket.com/tools-smart-contract-automation-guide/#demo-automating-a-smart-contract-with-gelato)
 - OpenZeppelin Defender
-  - [Demo: Automating a smart contract with OpenZeppelin Defender](https://blog.logrocket.com/tools-smart-contract-automation-guide/#demo-automating-a-smart-contract-with-openzeppelin-defender)
-- [Pros and Cons of using Chainlink Keepers, Gelato, and OpenZeppelin Defender](https://blog.logrocket.com/tools-smart-contract-automation-guide/#pros-and-cons)
+  - [演示：使用 OpenZeppelin Defender 自动化智能合约](https://blog.logrocket.com/tools-smart-contract-automation-guide/#demo-automating-a-smart-contract-with-openzeppelin-defender)
+- [使用 Chainlink Keepers、Gelato 和 OpenZeppelin Defender 的优点和缺点](https://blog.logrocket.com/tools-smart-contract-automation-guide/#pros-and-cons)
 
-## Prerequisites
+## 前提条件
 
-To follow along with this article, ensure you have the following:
+要阅读本文，请确保你具备以下条件：
 
-- [MetaMask](https://metamask.io/) installed
-- [OpenZeppelin Defender](https://defender.openzeppelin.com/) account set up
+- 已安装 [MetaMask](https://metamask.io/)
+- 设置[OpenZeppelin Defender](https://defender.openzeppelin.com/) 账户
 - [Remix online IDE](https://remix.ethereum.org/)
-- [Rinkeby](https://www.rinkeby.io/) test network (or [Goerli](https://goerlifaucet.com/))
-- [Basic knowledge of Solidity](https://blog.logrocket.com/writing-smart-contracts-solidity/) and JavaScript programming languages
+- [Rinkeby](https://www.rinkeby.io/) 测试网络 (or [Goerli](https://goerlifaucet.com/))
+- [Solidity](https://blog.logrocket.com/writing-smart-contracts-solidity/)  和 JavaScript 编程语言的基础知识
 
-## Understanding smart contract automation
+## 了解智能合约自动化
 
-Before the advent of smart contract automation, developers used centralized servers to implement various manual processes such as time-based execution, DevOps tasks, off-chain computations, and liquidations.
+在智能合约自动化出现之前，开发人员使用中心化服务器来实现各种手动流程，例如基于时间的执行、DevOps 任务、链下计算和清算。
 
-Manual processes increase security risks for smart contracts as they introduce a central point of failure to decentralized applications. In addition, the network congestion that often results from manual processes can delay the execution of transactions, putting user funds at risk.
+手动流程会增加智能合约的安全风险，因为它们为去中心化应用引入了单点故障。此外，手动流程常常导致网络拥堵，可能会延迟交易的执行，从而使用户资金面临风险。
 
-Smart contract automation enables us to automate several Web3 functions such as yield farming, cross-chain NFT minting, liquidation of under-collateralized loans, gaming, and more.
+智能合约自动化使我们能够自动化多个 Web3 函数，例如流动性挖矿、跨链 NFT 铸造、不足抵押贷款的清算、游戏等等。
 
-Now that we have an overview of smart contract automation, let’s review some popular smart contract automation tools and learn how they work.
+既然我们已经了解了智能合约自动化的概述，让我们来回顾一些流行的智能合约自动化工具，并了解它们的工作原理。
 
 ## Chainlink Keepers
 
-Chainlink Keepers is a smart contract automation tool that runs on multiple blockchains such as [Ethereum](https://ethereum.org/en/), [BNB chain](https://www.bnbchain.org/en), and [Polygon](https://polygon.technology/). This tool enables externally owned accounts to run checks on predetermined conditions in smart contracts and then trigger and execute transactions based on time intervals.
+Chainlink Keepers 是一个在多个区块链上运行的智能合约自动化工具，例如[Ethereum](https://ethereum.org/en/)、[BNB chain](https://www.bnbchain.org/en) 和 [Polygon](https://polygon.technology/)。这个工具允许外部拥有的账户对智能合约中预定条件进行检查，然后根据时间间隔触发和执行交易。
 
-For example, developers can register smart contracts for automated upkeep by monitoring the conditions on the Keepers network. Subsequently, off-chain computations are performed on the Keepers network by nodes until the conditions defined in the smart contract are met.
+例如，开发人员可以通过监控 Keepers 网络上的状况来注册智能合约以进行自动维护。随后，节点在 Keepers 网络上执行链下计算，直到满足智能合约中定义的条件。
 
-If the smart contract conditions are not met, the computations return a value of `false`, and the nodes continue their work. If the smart contract conditions are met, the computations return a value of `true`, and the Keepers network triggers the contract execution.
+如果不满足智能合约条件，计算将返回值 `false` ，并且节点继续其工作。如果满足智能合约条件，计算返回值`true` ，Keepers 网络触发合约执行。
 
-Chainlink Keepers offers many benefits:
+Chainlink Keepers 提供许多好处：
 
-- **Easy integration**: Chainlink Keepers’ user-friendly documentation consists of how-to guides that help developers to get up to speed with their integration
-- **Security and reliability**: The decentralized nature of Chainlink Keepers provides a secure framework for applications by reducing the security risks associated with a centralized server. Chainlink Keepers utilizes a transparent pool for its operations, helping to establish trust among developers and DAOs
-- **Cost efficiency**: The infrastructure of Chainlink Keepers provides features that optimize the cost and improve the stability of gas fees associated with executing smart contracts
-- **Increased productivity**: Chainlink Keepers handles the off-chain computations that run checks on smart contracts, leaving developers with more time to focus on building DApps
+- **轻松集成**：Chainlink Keepers 的文档编写得简明易懂，为开发者提供了操作指南，可帮助开发人员加快集成速度。
+- **安全性和可靠性**： Chainlink Keepers 的去中心化性质通过降低与中心化服务器相关的安全风险，为应用程序提供了一个安全的框架。 Chainlink Keepers 利用透明池进行运营，帮助开发者和 DAO 之间建立信任。
+- **成本效率**： Chainlink Keepers 的基础设施提供了优化成本和改善与执行智能合约相关的燃气费用稳定性的功能。
+- **提高生产力**：Chainlink Keepers 负责处理对智能合约进行检查的链下计算，让开发人员有更多时间专注于构建 DApp。
 
-### Demo: Automating a smart contract with Chainlink Keepers
+### 演示：使用 Chainlink Keepers 自动化智能合约
 
-Let’s investigate how to automate a smart contract with Chainlink Keepers. We’ll use a Solidity contract built on a Remix online IDE and deployed to the Rinkeby test network. The smart contract will implement the interface defined in the Chainlink Keepers [GitHub repository](https://github.com/smartcontractkit/chainlink/blob/develop/contracts/src/v0.8/interfaces/KeeperCompatibleInterface.sol).
+让我们来探讨如何使用 Chainlink Keepers 自动化智能合约。我们将在 Remix 在线集成开发环境上构建 Solidity 合约，并将其部署到 Rinkeby 测试网络上。这个智能合约将实现在 Chainlink Keepers  [GitHub repository](https://github.com/smartcontractkit/chainlink/blob/develop/contracts/src/v0.8/interfaces/KeeperCompatibleInterface.sol)中定义的接口。 
 
-To be compatible with Chainlink Keepers, our smart contract must include the following two methods:
+为了兼容 Chainlink Keepers，我们的智能合约必须包含以下两个方法：
 
-- `checkUpKeep()`: This method performs off-chain computations on the smart contract that executes based on time intervals; the method returns a Boolean value that tells the network whether the upkeep is needed
-- `performUpKeep()`: This method accepts the returned message from the `checkUpKeep()` method as a parameter. Next, it triggers Chainlink Keepers to perform upkeep on the smart contract. Then, it performs some on-chain computations to reverify the result from the `checkUpKeep()` method to confirm that the upkeep is needed
+- `checkUpKeep()`：该方法对基于时间间隔执行的智能合约执行链下计算； 该方法返回一个布尔值，告诉网络是否需要维护
+  - `performUpKeep()`：此方法接受 `checkUpKeep()` 方法返回的消息作为参数。 接下来，它触发Chainlink Keepers 对智能合约进行维护。 然后，它执行一些链上计算以重新验证`checkUpKeep()` 方法的结果，以确认是否需要维护
 
-To get started, add the following code to create a simple counter contract in your Remix IDE:
+
+首先，请将以下代码添加到你的 Remix IDE 中，以创建一个简单的计数器合约：
 
 ```
 // SPDX-License-Identifier: MIT
@@ -100,76 +101,76 @@ contract Counter {
 }
 ```
 
-This contract has a public variable `counter` that increments by one when the difference between the new block and the last block is greater than an interval. Then, it implements the two Keepers-compatible methods.
+该合约有一个公共变量 `counter` ，当新块和最后一个块之间的时间间隔大于某个区间时，`counter`加一。然后，它实现了两个 Keepers 兼容的方法。
 
-Now, navigate to the **Remix menu** button (the third button from the top) and click the **Compile** button (indicated with a green verification mark) to compile the contract:
+现在，导航到 `Remix 菜单`按钮（从顶部数第三个按钮），然后单击 `Compile` 按钮（用绿色验证标记表示）来编译合约：
 
 ![Compile Contract](https://img.learnblockchain.cn/attachments/2023/06/EovpcjXq6487c35f88c79.png)
 
-To proceed, you’ll need to fund your upkeep with some [ERC-677 LINK tokens](https://docs.chain.link/docs/link-token-contracts/). Use Faucets to connect your Rinkeby test network and [get some testnet LINK tokens on chainlink](https://faucets.chain.link/):
+继续，你需要使用一些 [ERC-677 LINK tokens](https://docs.chain.link/docs/link-token-contracts/)  来支付维护费用。 使用 Faucets 连接您的 Rinkeby 测试网络并在 chainlink 上 [获取一些测试网 LINK 代币](https://faucets.chain.link/)：
 
 ![Request Testnet Link](https://img.learnblockchain.cn/attachments/2023/06/Oe1cnubU6487c384c9af8.png)
 
-Choose **Injected Web3** as the environment, and select the **Rinkeby test network**. Then, click **Send request** to get 20 test LINK and 0.1 test ETH sent to your wallet.
+选择 `Injected Web3` 作为环境，并选择 `Rinkeby 测试网络`。然后，点击`发送请求`，将 20 个测试 LINK 和 0.1 个测试 ETH 发送到您的钱包。
 
-Next, deploy the contract by passing 30 seconds as the interval. Once you click **Deploy**, MetaMask should open, asking you to confirm the transaction.
+接下来，以 30 秒为间隔来部署合约。 单击`部署`后，MetaMask 将打开，要求您确认交易。
 
 ------
 
 ![img](https://img.learnblockchain.cn/attachments/2023/06/zhMXWMHi6487c3b93a4a7.png)
 
-## Over 200k developers use LogRocket to create better digital experiences
+## 超过 20 万开发人员使用 LogRocket 创造更好的数字体验
 
 ![img](https://blog.logrocket.com/wp-content/uploads/2022/08/rocket-button-icon.png)Learn more →
 
 ------
 
-Click **Confirm** in your MetaMask wallet:
+在你的 MetaMask 钱包中点击`确认`：
 
 ![Confirm Button MetaMask](https://img.learnblockchain.cn/attachments/2023/06/toYJk7aG6487c5c903e92.png)
 
-Now you can view your deployed contract address:
+现在你可以查看部署的合约地址：
 
 ![Deployed Contract Address](https://img.learnblockchain.cn/attachments/2023/06/wB7kF4rV6487c6fc69c64.png)
 
-Next, navigate to Chainlink Keepers and register your deployed smart contract by selecting the **Time-based** trigger option and entering the address of your deployed smart contract:
+接下来，导航到 Chainlink Keepers 并通过选择**基于时间**的触发选项并输入已部署的智能合约的地址来注册您已部署的智能合约：
 
 ![Register New Upkeep](https://img.learnblockchain.cn/attachments/2023/06/KtEwuVLv6487c71ee2599.png)
 
-Copy your contract’s ABI from your Remix IDE and paste it into the **ABI** field:
+从 Remix IDE 复制合约的 ABI 并将其粘贴到 **ABI** 字段中：
 
 ![ABI Field](https://img.learnblockchain.cn/attachments/2023/06/rVkviSBI6487c9501ef01.png)
 
-Now, enter your contract’s address in the **Function Input** field:
+现在，在**函数输入**字段中输入合约的地址：
 
 ![Function Input](https://img.learnblockchain.cn/attachments/2023/06/Ak9bkzGP6487c972c6ebf.png)
 
-Specify the time schedule for Chainlink Keepers to perform upkeep on your smart contract. In the **Cron expression** field, indicate that upkeep should be performed every 15 minutes.
+指定 Chainlink Keepers 对你的智能合约执行维护的时间表。 在 **Cron expression** 字段中，指示应每 15 分钟执行一次维护。
 
 ![Cron Expression](https://img.learnblockchain.cn/attachments/2023/06/yK0y7CuT6487ca65023a6.png)
 
-Next, provide details for your upkeep by entering the appropriate information into the following fields: **Upkeep** name, **Gas limit**, **Starting balance** of LINK tokens, and **Your email address**. Then, click **Register Upkeep**:
+接下来，通过在以下字段中输入适当的信息来提供维护详细信息：**维护**名称、**Gas 限制**、LINK 代币的**起始余额**和**电子邮件地址**。 然后，单击**注册维护**：
 
 ![Upkeep Details](https://img.learnblockchain.cn/attachments/2023/06/BYChHag16487ca86a0feb.png)
 
-That’s it! Chainlink Keepers has successfully registered your smart contract for automated upkeep.
+就是这样！ Chainlink Keepers 已成功注册你的智能合约以进行自动化维护。
 
 ## Gelato Network
 
-The Gelato Network is a decentralized network of bots that automates the execution of smart contracts on all EVM blockchains. Gelato‘s easy-to-use architecture provides a reliable interface for DeFi applications.
+Gelato 网络是一个去中心化的机器人网络，可以在所有 EVM 区块链上自动执行智能合约。 Gelato 易于使用的架构为 DeFi 应用程序提供了可靠的接口。
 
-### Demo: Automating a smart contract with Gelato
+### 演示：使用 Gelato 自动化智能合约
 
-To automate a smart contract with the Gelato Network, follow these steps:
+要与 Gelato 网络自动执行智能合约，请按照以下步骤操作：
 
-1. Create a new smart contract on Remix IDE that implements a counter
-2. Compile and deploy the smart contract to the Rinkeby test network
-3. Connect your MetaMask wallet to the Gelato Network and make a deposit
-4. Create a task on Gelato with the deployed contract address and some configurations
+1. 在 Remix IDE 上创建一个新的智能合约来实现计数器
+2. 编译智能合约并将其部署到 Rinkeby 测试网络
+3. 将你的 MetaMask 钱包连接到 Gelato 网络并存款
+4. 使用已部署的合约地址和一些配置在 Gelato 上创建任务
 
-Let’s get started!
+让我们开始吧！
 
-On your Remix IDE, create a `gelato` folder with a `GelatoContract.sol` file that defines a function that increments a counter variable based on the following condition:
+在 Remix IDE 上，创建一个包含`GelatoContract.sol`文件的`gelato`文件夹，该文件定义一个根据以下条件递增计数器变量的函数：
 
 ```
 // SPDX-License-Identifier: MIT
@@ -197,63 +198,63 @@ contract Counter {
 }
 ```
 
-Compile the contract and navigate to the [Gelato Network](https://app.gelato.network/). Choose the Rinkeby network from the top, right dropdown. Then, connect your wallet:
+编译合约并导航到[Gelato Network](https://app.gelato.network/)。 从顶部右侧的下拉列表中选择 Rinkeby 网络。 然后，连接您的钱包：
 
 ![Gelato Dashboard](https://img.learnblockchain.cn/attachments/2023/06/NFxAGkXx6487d27ac7860.png)
 
-Next, click on **Funds** and add a deposit of 0.1 ETH:
+接下来，点击 **Funds** 并添加 0.1 ETH 的存款：
 
 ![Add Funds](https://img.learnblockchain.cn/attachments/2023/06/epzRahMX6487d31cec237.png)
 
-Once you click on **Deposit**, MetaMask will open. Click **Confirm** and a message should appear on your screen indicating that the transaction was successful.
+一旦您点击**Deposit**，MetaMask 将打开。 点击**确认**，屏幕上会出现一条消息，表明交易成功。
 
 ![Confirm Message](https://img.learnblockchain.cn/attachments/2023/06/UmG8fCLQ6487d3534f64e.png)
 
-Next, some ETH will be added to your balance.
+接下来，一些 ETH 将添加到您的余额中。
 
 ![ETH Added to Balance](https://img.learnblockchain.cn/attachments/2023/06/FQOkVIMr6487d382caaf3.png)
 
-Now, return to the Remix IDE and deploy your contract on the Rinkeby test network with an interval of 30 seconds.
+现在，返回 Remix IDE 并在 Rinkeby 测试网络上部署您的合约，间隔为 30 秒。
 
 ![Deploy Contract Rinkeby](https://img.learnblockchain.cn/attachments/2023/06/ZM0CtmJE6487d3acd7883.png)
 
-Create a new task by passing your deployed contract address and pasting your contract’s ABI into the **ABI** field.
+通过传递已部署的合约地址并将合约的 ABI 粘贴到 **ABI** 字段来创建新任务。
 
-Then, choose the `incrementCounter()` function from the **Funtion to be automated** dropdown.
+然后，从 **Funtion to be automated** 下拉列表中选择`incrementCounter()`函数。
 
 ![Function Automated Dropdown](https://img.learnblockchain.cn/attachments/2023/06/YO8oRa8164900ff73b5e9.jpeg)
 
-Choose a frequency of five minutes for Gelato to automate the execution of your smart contract. Then, select the **Start immediately** checkbox to instruct Gelato to execute your smart contract as soon as you create the task.
+选择 Gelato 五分钟的频率来自动执行智能合约。 然后，选择 **Start immediately** 复选框，指示 Gelato 在创建任务后立即执行您的智能合约。
 
 ![Start Immediately](https://img.learnblockchain.cn/attachments/2023/06/yYAoXDy46487d4cf975d1.png)
 
-Choose the payment method for the task, click **Create Task**, and confirm your transaction on MetaMask.
+选择任务的付款方式，点击**Create Task**，并在 MetaMask 上确认您的交易。
 
 ![Create Gelato Test Task](https://img.learnblockchain.cn/attachments/2023/06/8so90KB96487d52f90176.png)
 
-On your Remix IDE, if you click on **counter**, you’ll notice that it has increased by one and will continue to increment every five minutes:
+在 Remix IDE 上，如果单击 **counter**，您会注意到它增加了 1，并将继续每五分钟增加一次：
 
 ![Counter Increment](https://img.learnblockchain.cn/attachments/2023/06/GyOxYSkC6487d56ed279c.png)
 
-OK, you’ve successfully set up automation for your smart contract on Gelato!
+好的，你已经成功在 Gelato 上为您的智能合约设置了自动化！
 
 ## OpenZeppelin Defender
 
-OpenZeppelin is a [popular tool for building secure decentralized applications](https://blog.logrocket.com/openzeppelin-secure-smart-contracts/). Defender is an OpenZeppelin product that is made for secure smart contract automation and supports Layer 1 blockchains, Layer 2 blockchains, and sidechains.
+OpenZeppelin 是一个[构建安全去中心化应用程序的流行工具](https://blog.logrocket.com/openzeppelin-secure-smart-contracts/)。 Defender 是OpenZeppelin 专为安全智能合约自动化而设计的一款产品，支持第 1 层区块链、第 2 层区块链和侧链。
 
-OpenZeppelin Defender offers the following features related to smart contract automation:
+OpenZeppelin Defender 提供以下与智能合约自动化相关的功能：
 
-- [**Admin**](https://docs.openzeppelin.com/defender/admin): Enables the transparent management of smart contract processes like access control (administrative rights over an asset), upgrade (fixing bugs encountered or applying new services), and pausing (using pause functionality)
-- [**Relay**](https://docs.openzeppelin.com/defender/relay): Permits the creation of Relayers (externally owned accounts) that easily secure your private API keys for signing, managing (sending) your transactions, and enforcing policies like gas price caps
-- [**Autotasks**](https://docs.openzeppelin.com/defender/autotasks): Connects to Relayers, allowing the writing and scheduling of code scripts in JavaScript that will run on smart contracts periodically with the help of external Web APIs or third-party services
-- [**Sentinel**](https://docs.openzeppelin.com/defender/sentinel): Monitors your smart contracts for transactions and provides notifications about transactions based on specified conditions, functions, or events
-- [**Advisor**](https://docs.openzeppelin.com/defender/advisor): Helps you stay current with security best practices, including the implementation of security procedures for smart contract development, monitoring, operations, and testing
+- [**管理**](https://docs.openzeppelin.com/defender/admin): 实现智能合约流程的透明管理，例如访问控制（对资产的管理权限）、升级（修复遇到的错误或应用新服务）和暂停（使用暂停功能）
+- [**中继器**](https://docs.openzeppelin.com/defender/relay): 允许创建中继器（外部拥有的帐户），轻松保护你的私有 API 密钥，用于签名、管理（发送）交易以及执行 Gas 价格上限等政策
+- [**自动任务**](https://docs.openzeppelin.com/defender/autotasks): 连接到中继器，允许在 JavaScript 中编写和调度代码脚本，这些脚本将在外部 Web API 或第三方服务的帮助下定期在智能合约上运行
+- [**哨兵**](https://docs.openzeppelin.com/defender/sentinel): 监控你的智能合约的交易并根据指定的条件、功能或事件提供有关交易的通知
+- [**Advisor**](https://docs.openzeppelin.com/defender/advisor)：帮助你了解最新的安全最佳实践，包括实施智能合约开发、监控、操作和测试的安全程序
 
-### Demo: Automate a smart contract with OpenZeppelin Defender
+### 演示：使用 OpenZeppelin Defender 自动化智能合约
 
-Now, let’s use the features described above to automate a smart contract with OpenZeppelin Defender.
+现在，让我们使用上述功能通过 OpenZeppelin Defender 实现智能合约的自动化。
 
-First, create a smart contract on your Remix IDE. Use the same code you used previously, but give it a new name and place it in a different folder:
+首先，在 Remix IDE 上创建智能合约。 使用之前使用的相同代码，但给它一个新名称并将其放在不同的文件夹中：
 
 ```
 // SPDX-License-Identifier: MIT
@@ -281,38 +282,38 @@ contract Counter {
 }
 ```
 
-Deploy the contract to the Rinkeby test network and confirm your transaction on MetaMask. Then, carry out the following steps:
+将合约部署到 Rinkeby 测试网络并在 MetaMask 上确认您的交易。 然后，执行以下步骤：
 
-#### Step 1: Create a Relayer
+#### 第 1 步：创建中继器
 
-Navigate to the [OpenZeppelin Defender Relay dashboard](https://defender.openzeppelin.com/#/relay) and create your Relayer by providing a **Name** and selecting a **Network**:
+导航到 [OpenZeppelin Defender 中继器仪表板](https://defender.openzeppelin.com/#/relay) 并通过提供 **名称** 并选择 **网络** 来创建你的中继器：
 
 ![Create Relayer](https://img.learnblockchain.cn/attachments/2023/06/6ayuayX66487d5d604141.png)
 
-Once you create your Relayer, your ETH address, API key, and secret key will be visible on your screen. Copy your secret key, save it somewhere secure, and then copy your ETH address.
+创建 Relayer 后，你的 ETH 地址、API 密钥和密钥将在屏幕上可见。 复制你的密钥，将其保存在安全的地方，然后复制你的 ETH 地址。
 
 ![Sample Relayer](https://img.learnblockchain.cn/attachments/2023/06/H7VjVisL6487d7365a9f3.png)
 
-Next, fund your Relayer address with some ETH by pasting your address in a [Rinkeby faucet](https://rinkebyfaucet.com/). Then, refer to your Relayer to confirm that the ETH has been sent to your OpenZepplin account:
+接下来，将你的地址粘贴到 [Rinkeby faucet](https://rinkebyfaucet.com/) 中，为你的中继器地址注入一些 ETH。 然后，查看中继器确认 ETH 已发送至您的 OpenZepplin 帐户：
 
 ![Confirm Relayer](https://img.learnblockchain.cn/attachments/2023/06/KAeI7qFf6487d8d7f04a8.png)
 
-#### Step 2: Create an Autotask
+#### 第 2 步：创建自动任务
 
-Next, create an Autotask in the [Defender Autotask dashboard](https://defender.openzeppelin.com/#/autotask) that will connect to the Relayer you just created.
+接下来，在 [Defender 自动任务仪表板](https://defender.openzeppelin.com/#/autotask) 中创建一个自动任务，该自动任务将连接到你刚刚创建的中继器。
 
 ![Defender Autotask dashboard](https://img.learnblockchain.cn/attachments/2023/06/7L42h37x6487d9d685cc7.png)
 
-Click on **Add first Autotask**; you’ll have a choice of triggering the task via a schedule or an HTTP request. For this demo, select **Schedule**, select two minutes for the **Runs Every** timeframe, and add your Relayer name in the **Connect to a relayer** field.
+单击**添加第一个自动任务**； 你可以选择通过计划或 HTTP 请求触发任务。 对于此演示，选择 **时间表**，为 **运行频率** 时间范围选择两分钟，然后在 **连接到中继器** 字段中添加你的中继器名称。
 
 ![Schedule Button](https://img.learnblockchain.cn/attachments/2023/06/jP8VqK4U6487ddc5571b2.png)
 
-Now, pass the JavaScript code snippet which uses [ethers.js](https://docs.ethers.io/v5/) with [defender-relay-client](https://www.npmjs.com/package/defender-relay-client) to export a `DefenderRelaySigner` and `DefenderRelayProvider` for signing and sending transactions.
+现在，传递使用 [ethers.js](https://docs.ethers.io/v5/) 和 [defender-relay-client]( https://www.npmjs.com/package/defender-relay-client) 的 JavaScript 代码片段来导出 `DefenderRelaySigner` 和 `DefenderRelayProvider` 进行签名并发送交易。
 
-The following code snippet calls and executes the `incrementCounter()` function defined in your smart contract:
+以下代码片段调用并执行智能合约中定义的`incrementCounter()`函数：
 
 ```
-const { DefenderRelaySigner, DefenderRelayProvider } = require('defender-relay-client');
+const { DefenderRelayProvider, DefenderRelaySigner } = require('@openzeppelin/defender-relay-client/lib/ethers');
 const { ethers } = require("ethers");
 const ABI = [`function incrementCounter() external`];
 
@@ -329,40 +330,40 @@ exports.handler = async function(params) {
           const signer = new DefenderRelaySigner(params, provider, { speed: 'fast' })
     console.log(`Using relayer ${await signer.getAddress()}`);
           await main(signer);
-}openzepp
+}
 ```
 
-Click on **Autotask**. Then, copy and paste the above snippet into the **Code** section of the dashboard:
+单击“**自动任务**”。 然后，将上面的代码片段复制并粘贴到仪表板的 **Code** 部分：
 
 ![Code Field](https://img.learnblockchain.cn/attachments/2023/06/PsOwr5B06487ddecd66e7.png)
 
-Click the **Create** button and Autotask will automatically execute the `incrementFunction()` every two minutes with the ETH balance in your Relayer.
+点击 **Create** 按钮，Autotask 使用中继器的 ETH 余额将每两分钟自动执行一次 `incrementFunction()`。
 
-Once the Autotask starts running, check the counter on your Remix IDE. After two minutes it should increase by one.
+自动任务开始运行后，检查 Remix IDE 上的计数器。 两分钟后它应该增加一。
 
 ![Remix IDE Counter](https://img.learnblockchain.cn/attachments/2023/06/HRcUYpqc6487de09e05af.png)
 
-## Pros and cons of using Chainlink Keepers, Gelato, and OpenZeppelin Defender
+## 使用 Chainlink Keepers、Gelato 和 OpenZeppelin Defender 的优缺点
 
-Chainlink Keepers, the Gelato Network, and OpenZeppelin Defender are all good options for smart contract automation. Here are some of the tradeoffs to keep in mind when selecting a smart contract automation tool for your project.
+Chainlink Keepers、Gelato Network 和 OpenZeppelin Defender 都是智能合约自动化的不错选择。 在为您的项目选择智能合约自动化工具时，请记住以下一些权衡。
 
-| Smart contract automation tool | Pros                                                         | Cons                                                         |
-| :----------------------------- | :----------------------------------------------------------- | :----------------------------------------------------------- |
-| Chainlink Keepers              | – Runs on multiple blockchain networks – Offers comprehensive documentation | – LINK tokens (ERC-677) are needed to pay the network – The smart contract must be compatible with Chainlink Keepers – LINK tokens use the ERC-677 token standard and can not be used directly on non-Ethereum blockchains like BNB chain and Polygon (MATIC) until they are bridged and swapped |
-| Gelato Network                 | – Provides two options to pay for smart contract automation – Supports numerous blockchain networks – Easy-to-use architecture | – Tasks can not be edited after they are created             |
-| OpenZeppelin Defender          | – Supports multiple blockchain networks – Provides quick notifications about transactions via the specified notification pattern (e.g., email) – Provides a transparent means to easily manage tasks | – More complex to use compared to other smart contract automation tools |
+| 智能合约自动化工具    | 优点                                                         | 缺点                                                         |
+| :-------------------- | :----------------------------------------------------------- | :----------------------------------------------------------- |
+| Chainlink Keepers     | 在多个区块链网络上运行 ；提供全面的文档                      | 需要 LINK 代币（ERC-677）来支付网络费用；智能合约必须与 Chainlink Keepers 兼容；LINK 代币使用 ERC-677 代币标准，不能直接在 BNB 链和 Polygon (MATIC) 等非以太坊区块链上使用，除非它们被桥接和交换 |
+| Gelato Network        | 提供两种支付智能合约自动化的选项 ；支持众多区块链网络 ；易于使用的架构 | 任务创建后不可编辑                                           |
+| OpenZeppelin Defender | 支持多个区块链网络；通过指定的通知模式（例如电子邮件）提供有关交易的快速通知 ； 提供透明的方式来轻松管理任务 | 与其他智能合约自动化工具相比，使用起来更复杂                 |
 
-## Conclusion
+## 结论
 
-Enabling the automation of many smart contract functions saves time and improves security. In this article, we reviewed some popular smart contract automation tools (Chainlink Keepers, Gelato Network, and OpenZeppelin Defender), discussed their pros and cons, and demonstrated how to automate a smart contract with each tool.
+启用许多智能合约功能的自动化可以节省时间并提高安全性。 在本文中，我们回顾了一些流行的智能合约自动化工具（Chainlink Keepers、Gelato Network 和 OpenZeppelin Defender），讨论了它们的优缺点，并演示了如何使用每个工具自动化智能合约。
 
-## Join organizations like Bitso and Coinsquare who use [LogRocket](https://lp.logrocket.com/blg/web3-signup) to proactively monitor their Web3 apps
+## 加入 Bitso 和 Coinsquare 等使用 [LogRocket](https://lp.logrocket.com/blg/web3-signup) 的组织来主动监控其 Web3 应用程序
 
-Client-side issues that impact users’ ability to activate and transact in your apps can drastically affect your bottom line. If you’re interested in monitoring UX issues, automatically surfacing JavaScript errors, and tracking slow network requests and component load time, [try LogRocket](https://lp.logrocket.com/blg/web3-signup).![LogRocket Dashboard Free Trial Banner](https://img.learnblockchain.cn/attachments/2023/06/73ZYNbSl6487de6080897.png)https://lp.logrocket.com/blg/web3-signup)[https://logrocket.com/signup/](https://lp.logrocket.com/blg/web3-signup)
+影响用户在您的应用程序中激活和进行交易的能力的客户端问题可能会极大地影响您的利润。 如果您对监控 UX 问题、自动显示 JavaScript 错误以及跟踪缓慢的网络请求和组件加载时间感兴趣，请[尝试 LogRocket](https://lp.logrocket.com/blg/web3-signup)。![LogRocket Dashboard Free Trial Banner](https://img.learnblockchain.cn/attachments/2023/06/73ZYNbSl6487de6080897.png)https://lp.logrocket.com/blg/web3-signup)[https://logrocket.com/signup/](https://lp.logrocket.com/blg/web3-signup)
 
-[LogRocket](https://lp.logrocket.com/blg/web3-signup) is like a DVR for web and mobile apps, recording everything that happens in your web app or site. Instead of guessing why problems happen, you can aggregate and report on key frontend performance metrics, replay user sessions along with application state, log network requests, and automatically surface all errors.
+[LogRocket](https://lp.logrocket.com/blg/web3-signup) 就像网络和移动应用程序的 DVR，记录网络应用程序或网站中发生的所有情况。 您无需猜测问题发生的原因，而是可以汇总和报告关键前端性能指标、重放用户会话以及应用程序状态、记录网络请求并自动显示所有错误。
 
-Modernize how you debug web and mobile apps — [Start monitoring for free](https://lp.logrocket.com/blg/web3-signup).
+现代化调试 Web 和移动应用程序的方式 — [开始免费监控](https://lp.logrocket.com/blg/web3-signup)。
 
 
 
