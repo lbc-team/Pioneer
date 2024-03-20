@@ -66,12 +66,12 @@ Solana 独特的编程模型和执行环境产生了特定的攻击向量。了�
 
 当开发人员未能检查存储在账户上的数据是否与预期的一组值匹配时，就会出现账户数据匹配漏洞。在没有适当的数据验证检查的情况下，程序可能会意外地使用不正确或恶意替换的账户进行操作。
 在涉及权限相关检查的情况下，这种漏洞尤为严重。
+
 ### 示例场景
 
 考虑一个程序，用户可以将代币存入流动性池。该程序必须验证存入的代币属于存款人，并且代币所有者授权了存款。然而，该程序未能验证存款人是否拥有存入的代币：
 
 ```Rust
-解释
 pub fn deposit_tokens(ctx: Context<DepositTokens>, amount: u64) -> Result<()> {
     let depositor_token_account = &ctx.accounts.depositor_token_account;
     let liquidity_pool_account = &ctx.accounts.liquidity_pool_account;
@@ -93,7 +93,6 @@ pub struct DepositTokens<'info> {
     pub liquidity_pool_account: Account<'info, TokenAccount>,
     pub token_program: Program<'info, Token>
 }
-Copy
 ```
 
 ### 推荐的缓解措施
@@ -101,7 +100,6 @@ Copy
 为了缓解这一漏洞，开发人员可以实现显式检查，比较账户密钥和存储的数据与预期值。例如，验证存款人的公钥是否与用于存款的代币账户的所有者字段匹配：
 
 ```Rust
-解释
 pub fn deposit_tokens(ctx: Context<DepositTokens>, amount: u64) -> Result<()> {
     let depositor_token_account = &ctx.accounts.depositor_token_account;
     let liquidity_pool_account = &ctx.accounts.liquidity_pool_account;
@@ -115,13 +113,11 @@ pub fn deposit_tokens(ctx: Context<DepositTokens>, amount: u64) -> Result<()> {
 
     Ok(())
 }
-Copy
 ```
 
 开发人员还可以使用 Anchor 的 **has_one** 和 **constraint** 属性来声明性地强制执行数据验证检查。使用我们上面的示例，我们可以使用 **constraint** 属性来检查存款人的公钥和存款代币账户的所有者是否相等：
 
 ```Rust
-解释
 #[derive(Accounts)]
 pub struct DepositTokens<'info> {
     #[account(mut)]
@@ -135,7 +131,6 @@ pub struct DepositTokens<'info> {
     pub liquidity_pool_account: Account<'info, TokenAccount>,
     pub token_program: Program<'info, Token>
 }
-Copy
 ```
 
 ## 账户数据重新分配
@@ -152,13 +147,11 @@ Copy
 **realloc** 定义如下：
 
 ```Rust
-解释
 pub fn realloc(
     &self,
     new_len: usize,
     zero_init: bool
 ) -> Result<(), ProgramError>
-Copy
 ```
 
 账户数据分配的内存在程序入口点已经进行了零初始化。这意味着在单个交易内将数据重新分配到更大的大小时，新的内存空间已经被清零。重新清零这些内存是不必要的，并导致额外的计算单元消耗。相反，在同一交易内将数据大小减小然后再次增加时，如果 **zero_init** 为 **false**，可能会暴露陈旧数据。
@@ -168,7 +161,6 @@ Copy
 考虑一个代币质押程序，在单个交易内，质押信息的数量（例如，质押者地址和金额）可以动态增加或减少。这可能发生在批处理场景中，其中多个质押根据某些条件进行调整：
 
 ```Rust
-解释
 pub fn adjust_stakes(ctx: Context<AdjustStakes>, adjustments: Vec<StakeAdjustments>) -> ProgramResult {
     // Logic to adjust stakes based on the adjustments provided
     for adjustment in adjustments {
@@ -192,7 +184,6 @@ pub struct AdjustStakes<'info> {
     staking_data: AccountInfo<'info>,
     // Other relevant accounts
 }
-Copy
 ```
 
 在这种情况下，**adjust_stakes** 可能需要重新分配 **staking_data** 以适应调整所需的大小。如果数据大小被减小以移除质押信息，然后在同一交易内再次增加，将 **zero_init** 设置为 **false** 可能会暴露陈旧数据。
@@ -219,7 +210,6 @@ Copy
 通过 CPI 到奖励分配程序来计算并更新用户的奖励。然而，该程序在 CPI 后未更新原始质押账户以反映新的奖励余额：
 
 ```Rust
-解释
 pub fn update_rewards(ctx: Context<UpdateStakingRewards>, amount: u64) -> Result<()> {
     let staking_seeds = &[b"stake", ctx.accounts.staker.key().as_ref(), &[ctx.accounts.staking_account.bump]];
 
@@ -259,7 +249,6 @@ pub struct StakingAccount {
     pub rewards: u64,
     pub bump: u8,
 }
-Copy
 ```
 
 在这个示例中，**update_rewards** 函数尝试通过 CPI 调用到奖励分配程序来更新用户质押账户的奖励。最初，程序在 CPI 后记录 **ctx.accounts.staking_account.rewards**（即奖励余额），然后继续使用陈旧的 **ctx.accounts.staking_account.rewards** 数据的逻辑。问题在于，在 CPI 后质押账户的状态未自动更新，这就是数据陈旧的原因。
@@ -269,7 +258,6 @@ Copy
 为了缓解这个问题，显式调用 Anchor 的[ **reload**](https://docs.rs/anchor-lang/latest/src/anchor_lang/accounts/account.rs.html#271-275) 方法来从存储中重新加载给定账户。在 CPI 后重新加载账户将准确反映其状态：
 
 ```Rust
-解释
 pub fn update_rewards(ctx: Context<UpdateStakingRewards>, amount: u64) -> Result<()> {
     let staking_seeds = &[b"stake", ctx.accounts.staker.key().as_ref(), &[ctx.accounts.staking_account.bump]];
 
@@ -291,7 +279,6 @@ pub fn update_rewards(ctx: Context<UpdateStakingRewards>, amount: u64) -> Result
 
     Ok(())
 }
-Copy
 ```
 
 ## 任意 CPI
@@ -308,7 +295,6 @@ Copy
 然而，该功能在进行 CPI 到分类帐程序之前未验证提供的 **ledger_program**：
 
 ```Rust
-解释
 pub fn distribute_and_record_rewards(ctx: Context<DistributeAndRecord>, reward_amount: u64) -> ProgramResult {
     // Reward distribution logic
 
@@ -332,7 +318,6 @@ pub struct DistributeAndRecord<'info> {
     reward_account: AccountInfo<'info>,
     ledger_program: AccountInfo<'info>,
 }
-Copy
 ```
 
 攻击者可以通过将恶意程序的 ID 作为 **ledger_program** 传递来利用这一点，导致意外后果。
@@ -342,7 +327,6 @@ Copy
 为了防范这种问题，开发人员可以添加一个检查，验证分类帐程序的身份后再执行 CPI。这个检查将确保 CPI 调用是针对预期的程序，从而防止任意 CPI：
 
 ```Rust
-解释
 pub fn distribute_and_record_rewards(ctx: Context<DistributeAndRecord>, reward_amount: u64) -> ProgramResult {
     // Reward distribution logic
 
@@ -371,11 +355,11 @@ pub struct DistributeAndRecord<'info> {
     reward_account: AccountInfo<'info>,
     ledger_program: AccountInfo<'info>,
 }
-Copy
 ```
 
 如果程序是使用 Anchor 编写的，那么它可能具有一个公开可用的 CPI 模块。这使得从另一个 Anchor 程序中调用程序变得简单和安全。
 Anchor CPI 模块会自动检查传入的程序地址是否与存储在模块中的程序地址匹配。另外，硬编码地址可以是一个可能的解决方案，而不是让用户传递它。
+
 ## 权限转移功能
 
 ### 漏洞
@@ -388,7 +372,6 @@ Solana 程序通常将特定的公钥指定为关键功能的权限，例如更�
 考虑一个程序，其中全局管理员权限负责通过**set_params**函数设置特定协议参数。该程序没有包含更改全局管理员的机制：
 
 ```Rust
-解释
 pub fn set_params(ctx: Context<SetParams>, /* parameters to be set */) -> Result<()> {
     require_keys_eq!(
         ctx.accounts.current_admin.key(),
@@ -397,7 +380,6 @@ pub fn set_params(ctx: Context<SetParams>, /* parameters to be set */) -> Result
 
     // Logic to set parameters
 }
-Copy
 ```
 
 在这里，权限被静态定义，无法将其更新为新地址。
@@ -412,7 +394,6 @@ Copy
 这将看起来像这样：
 
 ```Rust
-解释
 pub fn nominate_new_authority(ctx: Context<NominateAuthority>, new_authority: Pubkey) -> Result<()> {
     let state = &mut ctx.accounts.state;
     require_keys_eq!(
@@ -463,12 +444,9 @@ pub struct ProgramState {
     pub pending_authority: Option<Pubkey>,
     // Other relevant program state fields
 }
-Copy
 ```
 
 在此示例中，**ProgramState**账户结构保存了当前**authority**和可选的**pending_authority**。**NominateAuthority**上下文确保当前权限签署交易，使其能够提名新权限。**AcceptAuthority**上下文检查**pending_authority**是否与交易签署者匹配，使其能够接受并成为新的权限。这种设置确保了程序内权限的安全和受控转移。
-
-
 
 ## Bump Seed 规范化
 
@@ -482,7 +460,6 @@ Bump Seed 规范化是指在推导 PDA 时使用最高有效的 bump seed（即�
 考虑一个旨在创建唯一用户配置文件的程序，每个配置文件都使用**create_program_address**明确推导出一个相关的 PDA。该程序允许通过使用用户提供的 bump 来创建配置文件。然而，这是有问题的，因为它引入了使用非规范 bump 的风险：
 
 ```Rust
-解释
 pub fn create_profile(ctx: Context<CreateProfile>, user_id: u64, attributes: Vec<u8>, bump: u8) -> Result<()> {
     // Explicitly derive the PDA using create_program_address and a user-provided bump
     let seeds: &[&[u8]] = &[b"profile", &user_id.to_le_bytes(),&[bump]];
@@ -514,7 +491,6 @@ pub struct UserProfile {
     pub user_id: u64,
     pub attributes: Vec<u8>,
 }
-Copy
 ```
 
 在这种情况下，程序使用**create_program_address**推导出**UserProfile** PDA，其中包括一个用户提供的 bump。使用用户提供的 bump 是有问题的，因为它未能确保使用规范 bump。这将允许恶意行为者为相同的用户 ID 创建具有不同 bump 的多个 PDAs。
@@ -524,7 +500,6 @@ Copy
 为了缓解此问题，我们可以重构我们的示例，使用**find_program_address**推导 PDA 并明确验证 bump seed：
 
 ```Rust
-解释
 pub fn create_profile(ctx: Context<CreateProfile>, user_id: u64, attributes: Vec<u8>) -> Result<()> {
     // Securely derive the PDA using find_program_address to ensure the canonical bump is used
     let seeds: &[&[u8]] = &[b"profile", user_id.to_le_bytes()];
@@ -561,7 +536,6 @@ pub struct UserProfile {
     pub attributes: Vec<u8>,
     pub bump: u8,
 }
-Copy
 ```
 
 在这里，**find_program_address**用于使用规范 bump seed 推导 PDA，以确保确定性和安全的 PDA 创建。规范 bump 存储在**UserProfile**账户中，允许在后续操作中进行高效和安全的验证。我们更喜欢**find_program_address**而不是**create_program_address**，因为后者创建一个有效的 PDA，*而无需搜索 bump seed*。由于它不搜索 bump seed，它可能会对任何给定的 seeds 不可预测地返回错误，并且通常不适合创建 PDAs。**find_program_address**在创建 PDA 时*始终*使用规范 bump。这是因为它通过各种**create_program_address**调用进行迭代，从 bump 为 255 开始，并且每次迭代递减。一旦找到有效地址，函数将返回推导出的 PDA 和用于推导它的规范 bump。
@@ -582,7 +556,6 @@ Copy
 考虑一个允许用户创建和关闭数据存储账户的程序。该程序通过转移其剩余的 lamports 来关闭账户：
 
 ```Rust
-解释
 pub fn close_account(ctx: Context<CloseAccount>) -> ProgramResult {
     let account = ctx.accounts.data_account.to_account_info();
     let destination = ctx.accounts.destination.to_account_info();
@@ -608,7 +581,6 @@ pub struct CloseAccount<'info> {
 pub struct Data {
     data: u64,
 }
-Copy
 ```
 
 这是有问题的，因为程序未将账户数据清零或标记为关闭。仅仅转移其剩余的 lamports 并不能关闭账户。
@@ -618,7 +590,6 @@ Copy
 为了缓解此问题，程序不仅应该转移所有的 lamports，还应该将账户数据清零，并使用一个区分符（即**"CLOSED_ACCOUNT_DISCRIMINATOR"**）标记它。程序还应该实施检查，以防止关闭的账户在未来交易中被重复使用：
 
 ```Rust
-解释
 use anchor_lang::__private::CLOSED_ACCOUNT_DISCRIMINATOR;
 use anchor_lang::prelude::*;
 use std::io::Cursor;
@@ -689,14 +660,11 @@ pub struct CloseAccount<'info> {
 pub struct Data {
     data: u64,
 }
-Copy
 ```
 
 然而，仅仅清零数据并添加关闭区分符是不够的。用户可以通过在指令结束前退还账户的 lamports，阻止账户被垃圾回收。这将使账户处于一种奇怪的悬而未决状态，无法使用或被垃圾回收。因此，我们添加了一个**force_defund**函数来解决这种边缘情况；现在任何人都可以退还关闭的账户的 lamports。
 
 Anchor 通过**#[account(close = destination)]**约束简化了此过程，通过一次操作转移 lamports、清零数据并设置关闭账户区分符，自动化了账户的安全关闭。
-
-
 
 ## 重复可变账户
 
@@ -711,7 +679,6 @@ Anchor 通过**#[account(close = destination)]**约束简化了此过程，通�
 用户应该根据特定的预定标准在一个账户中获得标准奖励，在另一个账户中根据特定的预定标准获得潜在的奖金：
 
 ```Rust
-解释
 pub fn distribute_rewards(ctx: Context<DistributeRewards>, reward_amount: u64, bonus_amount: u64) -> Result<()> {
     let reward_account = &mut ctx.accounts.reward_account;
     let bonus_reward = &mut ctx.accounts.bonus_account;
@@ -735,8 +702,8 @@ pub struct DistributeRewards<'info> {
 pub struct RewardAccount {
     pub balance: u64,
 }
-Copy
 ```
+
 如果恶意行为者将**reward_account**和**bonus_account**设置为相同的帐户，则帐户余额将错误更新两次。
 
 ### 推荐的缓解措施
@@ -744,7 +711,6 @@ Copy
 为了缓解这个问题，在指令逻辑中添加一个检查，以验证这两个帐户的公钥不相同：
 
 ```Rust
-解释
 pub fn distribute_rewards(ctx: Context<DistributeRewards>, reward_amount: u64, bonus_amount: u64) -> Result<()> {
     if ctx.accounts.reward_account.key() == ctx.accounts.bonus_account.key() {
         return Err(ProgramError::InvalidArgument.into())
@@ -759,13 +725,11 @@ pub fn distribute_rewards(ctx: Context<DistributeRewards>, reward_amount: u64, b
 
     Ok(())
 }
-Copy
 ```
 
 开发人员可以使用 Anchor 的帐户约束来对帐户进行更明确的检查。这可以通过使用**#[account]**属性和**constraint**关键字来实现：
 
 ```Rust
-解释
 pub fn distribute_rewards(ctx: Context<DistributeRewards>, reward_amount: u64, bonus_amount: u64) -> Result<()> {
     let reward_account = &mut ctx.accounts.reward_account;
     let bonus_reward = &mut ctx.accounts.bonus_account;
@@ -792,7 +756,6 @@ pub struct DistributeRewards<'info> {
 pub struct RewardAccount {
     pub balance: u64,
 }
-Copy
 ```
 
 ## 前置交易
@@ -806,7 +769,6 @@ Copy
 想象一个处理产品购买和竞价的协议，将卖方的定价信息存储在一个名为**SellInfo**的帐户中：
 
 ```Rust
-解释
 #[derive(Accounts)]
 pub struct SellProduct<'info> {
   product_listing: Account<'info, ProductListing>,
@@ -835,14 +797,12 @@ pub struct ProductListing {
   product_owner: Pubkey,
   product: Pubkey,
 }
-Copy
 ```
 
 要购买列出的**Product**，买家必须传入与他们想要的产品相关的**ProductListing**帐户。但是如果卖方可以更改他们的**sale_price**会怎么样呢？
 
 ```Rust
 pub fn change_sale_price(ctx: Context<ChangeSalePrice>, new_price: u64) -> Result<()> {...}
-Copy
 ```
 
 这将为卖方引入前置交易的机会，特别是如果买家的购买交易不包括**expected_price**检查以确保他们支付的价格不超过他们想要购买的产品的预期价格。如果购买者提交一个交易来购买给定的**Product**，卖方可以通过调用**change_sale_price**，并且使用 Jito，确保这笔交易在购买者的交易之前被包含。恶意的卖方可以将**ProductListing**帐户中的价格更改为天价，使购买者不知情地被迫为**Product**支付比预期的要多得多的价格！
@@ -852,12 +812,10 @@ Copy
 一个简单的解决方案是在交易的购买方包括**expected_price**检查，防止买家为他们想要购买的**Product**支付超出预期的价格：
 
 ```Rust
-解释
 pub fn purchase_product(ctx: Context<PurchaseProduct>, expected_price: u64) -> Result<()> {
   assert!(ctx.accounts.product_listing.sale_price <= expected_price);
   ...
 }
-Copy
 ```
 
 ## 不安全的初始化
@@ -872,7 +830,6 @@ Copy
 ### 不安全的示例及如何缓解
 
 ```Rust
-解释
 pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
   ctx.accounts.central_state.authority = authority.key();
   ...  
@@ -897,7 +854,6 @@ pub struct CentralState {
   authority: Pubkey,
   ...
 }
-Copy
 ```
 
 上面的示例是一个简化的初始化函数，用于为指令调用者设置**CentralState**帐户的权限。然而，这可以是任何调用 initialize 的帐户！如前所述，保护初始化函数的常见方法是使用程序的**upgrade_authority**，在部署时已知。
@@ -905,7 +861,6 @@ Copy
 [下面是来自 Anchor 文档的示例](https://docs.rs/anchor-lang/latest/anchor_lang/accounts/account/struct.Account.html#example-1)，它使用约束来确保只有程序的升级权限可以调用 initialize：
 
 ```Rust
-解释
 use anchor_lang::prelude::*;
 use crate::program::MyProgram;
 
@@ -946,7 +901,6 @@ pub struct SetInitialAdmin<'info> {
     pub program_data: Account<'info, ProgramData>,
     pub system_program: Program<'info, System>,
 }
-Copy
 ```
 
 ## 精度丢失
@@ -973,7 +927,6 @@ Copy
 pub fn calculate_reward(transaction_amount: u64, reward_multiplier: u64) -> u64 {
     transaction_amount.saturating_mul(reward_multiplier)
 }
-Copy
 ```
 
 考虑这样一个情景，**transaction_amount**为 100,000 个代币，**reward_multiplier**为每笔交易 100 个代币。将这两个值相乘将超过**u64**可以容纳的最大值。这意味着它们的乘积将被限制，导致用户被低估的大量精度丢失。
@@ -985,13 +938,11 @@ Copy
 考虑一个 Solana 程序，根据市场条件将抵押品转换为流动性。该程序使用 **try_round_u64()** 来对除法运算的结果进行四舍五入：
 
 ```Rust
-解释
 pub fn collateral_to_liquidity(&self, collateral_amount: u64) -> Result<u64, ProgramError> {
     Decimal::from(collateral_amount)
         .try_div(self.0)?
         .try_round_u64()
 }
-Copy
 ```
 
 
@@ -1010,7 +961,6 @@ Copy
 考虑一个程序函数，定义为允许仅管理员从保险库中提取资金。该函数接收一个配置账户（即 **config**），并使用其 **admin** 字段来检查提供的管理员账户的公钥是否与存储在 **config** 账户中的公钥相同。然而，它未验证 **config** 账户的所有权，假设其是可信任的：
 
 ```Rust
-解释
 pub fn admin_token_withdraw(program_id: &Pubkey, accounts: &[AccountInfo], amount: u64) -> ProgramResult {
     // Account setup
 
@@ -1020,7 +970,6 @@ pub fn admin_token_withdraw(program_id: &Pubkey, accounts: &[AccountInfo], amoun
 
     // Transfer funds logic
 }
-Copy
 ```
 
 
@@ -1031,7 +980,6 @@ Copy
 为了缓解这一问题，执行验证账户的 **owner** 字段的所有权检查：
 
 ```Rust
-解释
 pub fn admin_token_withdraw(program_id: &Pubkey, accounts: &[AccountInfo], amount: u64) -> ProgramResult {
     // Account setup
 
@@ -1045,7 +993,6 @@ pub fn admin_token_withdraw(program_id: &Pubkey, accounts: &[AccountInfo], amoun
 
     // Transfer funds logic
 }
-Copy
 ```
 Anchor 使用 **Account** 类型简化了此检查。**Account<'info, T>** 是 **AccountInfo** 的包装器，用于验证程序所有权并将底层数据反序列化为 **T**（即指定的账户类型）。这使开发人员可以轻松使用 **Account<'info, T>** 来验证账户所有权。开发人员还可以使用 **#[account]** 属性向给定账户添加[ **Owner**](https://docs.rs/anchor-lang/latest/anchor_lang/trait.Owner.html) trait。此 trait 定义了预期拥有账户的地址。此外，开发人员可以使用 **owner** 约束来定义应拥有给定账户的程序，如果它与当前执行的程序不同。例如，在编写预期账户为来自不同程序派生的 PDA 的指令时，这是有用的。**owner** 约束定义为 **#[account(owner = <expr>)]**，其中 **<expr>** 是任意表达式。
 
@@ -1068,7 +1015,6 @@ Anchor 使用 **Account** 类型简化了此检查。**Account<'info, T>** 是 *
 考虑以下函数：
 
 ```Rust
-解释
 pub fn update_admin(program_id: &Pubkey, accounts &[AccountInfo]) -> ProgramResult {
     let account_iter = &mut accounts.iter();
     let config = ConfigAccount::unpack(next_account_info(account_iter)?)?;
@@ -1083,7 +1029,6 @@ pub fn update_admin(program_id: &Pubkey, accounts &[AccountInfo]) -> ProgramResu
 
     Ok(())
 }
-Copy
 ```
 
 
@@ -1097,7 +1042,6 @@ Copy
 更新后的代码示例如下：
 
 ```Rust
-解释
 pub fn update_admin(program_id: &Pubkey, accounts &[AccountInfo]) -> ProgramResult {
     let account_iter = &mut accounts.iter();
     let config = ConfigAccount::unpack(next_account_info(account_iter)?)?;
@@ -1117,7 +1061,6 @@ pub fn update_admin(program_id: &Pubkey, accounts &[AccountInfo]) -> ProgramResu
 
     Ok(())
 }
-Copy
 ```
 Anchor 使用 [**Signer<’info>** 账户类型](https://docs.rs/anchor-lang/latest/anchor_lang/accounts/signer/struct.Signer.html)简化了整个流程。
 
@@ -1135,7 +1078,6 @@ Rust 在调试模式下编译时包括对整数溢出和下溢的检查。如果
 攻击者可以利用释放模式中潜在的溢出/下溢行为，特别是处理代币余额的函数。以以下示例为例：
 
 ```Rust
-解释
 pub fn process_instruction(
     _program_id: & Pubkey,
     accounts: [&AccountInfo],
@@ -1154,7 +1096,6 @@ pub fn process_instruction(
     
     Ok(())
 }
-Copy
 ```
 
 该函数假设余额简单地存储在第一个字节中。它获取账户的余额并从中减去**tokens_to_subtract**。如果用户的余额小于**tokens_to_subtract**，将会导致下溢。例如，拥有 10 个代币的用户将下溢为 165 个代币的总余额。
@@ -1170,7 +1111,6 @@ Copy
 在程序中使用 Rust 的**checked_\***算术函数，可以有策略地检查溢出和下溢。如果发生溢出或下溢，这些函数将返回**None**。这使得程序可以优雅地处理错误。例如，您可以将先前的代码重构为：
 
 ```Rust
-解释
 pub fn process_instruction(
     _program_id: & Pubkey,
     accounts: [&AccountInfo],
@@ -1194,7 +1134,6 @@ pub fn process_instruction(
 
     Ok(())
 }
-Copy
 ```
 
 在修改后的示例中，使用**checked_sub**从**balance**中减去**tokens_to_subtract**。因此，如果**balance**足以 cover 减法，**checked_sub**将返回**Some(new_balance)**。程序将继续安全地更新账户余额并记录它。然而，如果减法会导致下溢，**checked_sub**将返回**None**，我们可以通过返回错误来处理它。
@@ -1209,7 +1148,6 @@ Copy
 use checked_math::checked_math as cm;
 
 cm!((x * y) + z).unwrap()
-Copy
 ```
 
 这样更方便编写，保留了表达式的数学符号，并且只需要一个**.unwrap()**。这是因为该宏将正常的数学表达式转换为一个表达式，如果任何检查步骤返回**None**，则返回**None**。如果成功，将返回**Some(_)**，这就是为什么我们在最后展开表达式。
@@ -1226,7 +1164,6 @@ Copy
 pub fn convert_token_amount(amount: u64) -> Result<u32, ProgramError> {
     u32::try_from(amount).map_err(|_| ProgramError::InvalidArgument)
 }
-Copy
 ```
 
 在这个例子中，如果**amount**超过了**u32**可以容纳的最大值（即 4,294,967,295），转换将失败，程序将返回错误。这可以防止潜在的溢出/下溢发生。
@@ -1242,7 +1179,6 @@ PDA 共享是一种常见的漏洞，当相同的 PDA 在多个权限域或角�
 考虑一个旨在促进代币质押和分发奖励的程序。该程序使用单个 PDA 将代币转入给定池并提取奖励。PDA 是使用静态种子（例如，质押池的名称）派生的，使其在所有操作中都是通用的：
 
 ```Rust
-解释
 pub fn stake_tokens(ctx: Context<StakeTokens>, amount: u64) -> ProgramResult {
     // Logic to stake tokens
     Ok(())
@@ -1274,7 +1210,6 @@ pub struct WithdrawRewards<'info> {
     rewards_pool: AccountInfo<'info>,
     // Other rewards withdrawal-related accounts
 }
-Copy
 ```
 
 这是有问题的，因为质押和奖励提取功能依赖于从**staking_pool_pda**派生的相同 PDA。这可能允许用户操纵合约以未经授权地提取奖励或操纵质押。
@@ -1284,7 +1219,6 @@ Copy
 为不同的功能使用不同的 PDA 来缓解此漏洞。确保每个 PDA 都服务于特定的上下文，并且是使用唯一的、特定于操作的种子派生的：
 
 ```Rust
-解释
 pub fn stake_tokens(ctx: Context<StakeTokens>, amount: u64) -> ProgramResult {
     // Logic to stake tokens
     Ok(())
@@ -1316,7 +1250,6 @@ pub struct WithdrawRewards<'info> {
     rewards_pool: AccountInfo<'info>,
     // Other rewards withdrawal-related accounts
 }
-Copy
 ```
 
 在上面的示例中，用于质押代币和提取奖励的 PDA 是使用不同的种子（**staking_pool**和**rewards_pool**）与特定账户的密钥相结合派生的。这确保了 PDA 与其预期功能的唯一绑定，从而减轻了未经授权操作的风险。
@@ -1332,7 +1265,6 @@ Copy
 考虑一个使用 **ctx.remaining_accounts** 接收用户 PDA 并动态计算奖励的奖励计划：
 
 ```Rust
-解释
 pub fn calculate_rewards(ctx: Context<CalculateRewards>) -> Result<()> {
     let rewards_account = &ctx.accounts.rewards_account;
     let authority = &ctx.accounts.authority;
@@ -1359,7 +1291,6 @@ pub struct RewardsAccount {
     pub total_rewards: u64,
     // Other relevant fields
 }
-Copy
 ```
 
 问题在于没有明确的检查来验证通过 **ctx.remaining_accounts** 传递的帐户，这意味着它未能确保只处理有效和符合条件的用户帐户以计算和分发奖励。
@@ -1423,7 +1354,6 @@ Rust 以其严格的所有权和借用系统实现内存安全性保证而备受
 考虑一个用于各种提案和倡议的去中心化投票平台的程序。为给定提案或倡议的每个投票会话创建唯一标识符，并且用户提交投票。程序同时使用 PDAs 进行投票会话和个别投票：
 
 ```Rust
-解释
 // Creating a Voting Session PDA
 #[derive(Accounts)]
 #[instruction(session_id: String)]
@@ -1455,7 +1385,6 @@ pub struct SubmitVote<'info> {
     pub vote: Account<'info, Vote>,
     pub system_program: Program<'info, System>,
 }
-Copy
 ```
 
 在这种情况下，攻击者将尝试精心制作一个投票会话，当与静态种子 **"session"** 结合时，会导致与另一个投票会话的 PDA 巧合。故意创建与另一个投票会话的 PDA 相冲突的 PDA 可能会通过阻止对提案的合法投票或拒绝将新倡议添加到平台来扰乱平台的运作，因为 Solana 的运行时无法区分发生碰撞的 PDAs。
@@ -1481,7 +1410,6 @@ Copy
 然而，该程序未检查帐户的判别器，并在未确认帐户是否为管理员的情况下反序列化用户帐户数据：
 
 ```Rust
-解释
 pub fn update_admin_settings(ctx: Context<UpdateSettings>) -> ProgramResult {
     // Deserialize without checking the discriminator
     let user = User::try_from_slice(&ctx.accounts.user.data.borrow()).unwrap();
@@ -1501,7 +1429,6 @@ pub struct UpdateSettings<'info> {
 pub struct User {
     authority: Pubkey,
 }
-Copy
 ```
 
 问题在于 **update_admin_settings** 反序列化传入的用户帐户时未检查帐户的角色判别器，部分原因是 **User** 结构缺少一个判别器字段！
@@ -1511,7 +1438,6 @@ Copy
 为了缓解这个问题，开发人员可以在 **User** 结构中引入一个判别器字段，并在反序列化过程中进行验证：
 
 ```Rust
-解释
 pub fn update_admin_settings(ctx: Context<UpdateSettings>) -> ProgramResult {
     let user = User::try_from_slice(&ctx.accounts.user.data.borrow()).unwrap();
 
@@ -1542,7 +1468,6 @@ pub enum AccountDiscriminant {
     Admin,
     // Other account types
 }
-Copy
 ```
 
 Anchor 通过 **Account<'info, T>** 包装器简化了类型模仿漏洞的缓解，通过自动管理帐户时间的判别器来实现。Anchor 通过在反序列化过程中自动检查判别器来确保类型安全。这使开发人员可以更多地专注于其程序的业务逻辑，而不是手动实现各种类型检查。
