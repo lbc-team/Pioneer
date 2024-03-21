@@ -298,7 +298,9 @@ pub fn update_rewards(ctx: Context<UpdateStakingRewards>, amount: u64) -> Result
 
 ### 漏洞
 
-当程序调用另一个程序而不验证目标程序的身份时，就会发生任意 CPI。这种漏洞存在是因为 Solana 运行时允许任何程序调用另一个程序，只要调用者具有被调用程序的程序 ID 并遵守被调用程序的接口。
+当程序调用另一个程序而不验证目标程序的身份时，就会发生任意 CPI。
+
+这种漏洞存在是因为 Solana 运行时允许任何程序调用另一个程序，只要调用者具有被调用程序的程序 ID 并遵守被调用程序的接口。
 
 如果程序基于用户输入执行 CPI 而不验证被调用程序的程序 ID，它可能在受攻击者控制的程序中执行代码。
 
@@ -385,7 +387,7 @@ Solana 程序通常将特定的公钥指定为关键功能的权限，例如更�
 
 ### 示例场景
 
-考虑一个程序，其中全局管理员权限负责通过**set_params**函数设置特定协议参数。该程序没有包含更改全局管理员的机制：
+考虑一个程序，其中全局管理员权限负责通过 **set_params** 函数设置特定协议参数。该程序没有包含更改全局管理员的机制：
 
 ```Rust
 pub fn set_params(ctx: Context<SetParams>, /* parameters to be set */) -> Result<()> {
@@ -402,10 +404,10 @@ pub fn set_params(ctx: Context<SetParams>, /* parameters to be set */) -> Result
 
 ### 推荐的缓解措施
 
-缓解此问题的安全方法是创建一个用于转移权限的两步流程。该流程允许当前权限提名新的**pending_authority**，后者必须明确接受该角色。这不仅提供了权限转移功能，还可以防止意外转移或恶意接管。流程如下：
+缓解此问题的安全方法是创建一个用于转移权限的两步流程。该流程允许当前权限提名新的 **pending_authority**，后者必须明确接受该角色。这不仅提供了权限转移功能，还可以防止意外转移或恶意接管。流程如下：
 
-- **当前权限提名**：当前权限通过调用**nominate_new_authority**提名新的**pending_authority**，从而在程序状态中设置**pending_authority**字段
-- **新权限接受**：被提名的**pending_authority**调用**accept_authority**接受其新角色，将权限从当前权限转移至**pending_authority**
+- **当前权限提名**：当前权限通过调用 **nominate_new_authority** 提名新的 **pending_authority**，从而在程序状态中设置 **pending_authority** 字段
+- **新权限接受**：被提名的 **pending_authority** 调用 **accept_authority** 接受其新角色，将权限从当前权限转移至 **pending_authority**
 
 这将看起来像这样：
 
@@ -462,7 +464,7 @@ pub struct ProgramState {
 }
 ```
 
-在此示例中，**ProgramState**账户结构保存了当前**authority**和可选的**pending_authority**。**NominateAuthority**上下文确保当前权限签署交易，使其能够提名新权限。**AcceptAuthority**上下文检查**pending_authority**是否与交易签署者匹配，使其能够接受并成为新的权限。这种设置确保了程序内权限的安全和受控转移。
+在此示例中，**ProgramState** 账户结构保存了当前 **authority** 和可选的 **pending_authority**。**NominateAuthority** 上下文确保当前权限签署交易，使其能够提名新权限。**AcceptAuthority** 上下文检查 **pending_authority** 是否与交易签署者匹配，使其能够接受并成为新的权限。这种设置确保了程序内权限的安全和受控转移。
 
 ## Bump Seed 规范化
 
@@ -473,7 +475,7 @@ Bump Seed 规范化是指在推导 PDA 时使用最高有效的 bump seed（即�
 
 ### 示例场景
 
-考虑一个旨在创建唯一用户配置文件的程序，每个配置文件都使用**create_program_address**明确推导出一个相关的 PDA。该程序允许通过使用用户提供的 bump 来创建配置文件。然而，这是有问题的，因为它引入了使用非规范 bump 的风险：
+考虑一个旨在创建唯一用户配置文件的程序，每个配置文件都使用 **create_program_address** 明确推导出一个相关的 PDA。该程序允许通过使用用户提供的 bump 来创建配置文件。然而，这是有问题的，因为它引入了使用非规范 bump 的风险：
 
 ```Rust
 pub fn create_profile(ctx: Context<CreateProfile>, user_id: u64, attributes: Vec<u8>, bump: u8) -> Result<()> {
@@ -509,11 +511,11 @@ pub struct UserProfile {
 }
 ```
 
-在这种情况下，程序使用**create_program_address**推导出**UserProfile** PDA，其中包括一个用户提供的 bump。使用用户提供的 bump 是有问题的，因为它未能确保使用规范 bump。这将允许恶意行为者为相同的用户 ID 创建具有不同 bump 的多个 PDAs。
+在这种情况下，程序使用 **create_program_address** 推导出 **UserProfile** PDA，其中包括一个用户提供的 bump。使用用户提供的 bump 是有问题的，因为它未能确保使用规范 bump。这将允许恶意行为者为相同的用户 ID 创建具有不同 bump 的多个 PDAs。
 
 ### 推荐的缓解措施
 
-为了缓解此问题，我们可以重构我们的示例，使用**find_program_address**推导 PDA 并明确验证 bump seed：
+为了缓解此问题，我们可以重构我们的示例，使用 **find_program_address** 推导 PDA 并明确验证 bump seed：
 
 ```Rust
 pub fn create_profile(ctx: Context<CreateProfile>, user_id: u64, attributes: Vec<u8>) -> Result<()> {
@@ -554,9 +556,9 @@ pub struct UserProfile {
 }
 ```
 
-在这里，**find_program_address**用于使用规范 bump seed 推导 PDA，以确保确定性和安全的 PDA 创建。规范 bump 存储在**UserProfile**账户中，允许在后续操作中进行高效和安全的验证。我们更喜欢**find_program_address**而不是**create_program_address**，因为后者创建一个有效的 PDA，*而无需搜索 bump seed*。由于它不搜索 bump seed，它可能会对任何给定的 seeds 不可预测地返回错误，并且通常不适合创建 PDAs。**find_program_address**在创建 PDA 时*始终*使用规范 bump。这是因为它通过各种**create_program_address**调用进行迭代，从 bump 为 255 开始，并且每次迭代递减。一旦找到有效地址，函数将返回推导出的 PDA 和用于推导它的规范 bump。
+在这里，**find_program_address** 用于使用规范 bump seed 推导 PDA，以确保确定性和安全的 PDA 创建。规范 bump 存储在 **UserProfile** 账户中，允许在后续操作中进行高效和安全的验证。我们更喜欢 **find_program_address** 而不是 **create_program_address**，因为后者创建一个有效的 PDA，*而无需搜索 bump seed*。由于它不搜索 bump seed，它可能会对任何给定的 seeds 不可预测地返回错误，并且通常不适合创建 PDAs。**find_program_address** 在创建 PDA 时*始终*使用规范 bump。这是因为它通过各种 **create_program_address** 调用进行迭代，从 bump 为 255 开始，并且每次迭代递减。一旦找到有效地址，函数将返回推导出的 PDA 和用于推导它的规范 bump。
 
-请注意，Anchor 通过其**seeds**和**bump**约束强制执行 PDA 推导的规范 bump，简化了整个流程，以确保安全和确定性的 PDA 创建和验证。
+请注意，Anchor 通过其 **seeds** 和 **bump** 约束强制执行 PDA 推导的规范 bump，简化了整个流程，以确保安全和确定性的 PDA 创建和验证。
 
 
 
@@ -603,7 +605,7 @@ pub struct Data {
 
 ### 推荐的缓解措施
 
-为了缓解此问题，程序不仅应该转移所有的 lamports，还应该将账户数据清零，并使用一个区分符（即**"CLOSED_ACCOUNT_DISCRIMINATOR"**）标记它。程序还应该实施检查，以防止关闭的账户在未来交易中被重复使用：
+为了缓解此问题，程序不仅应该转移所有的 lamports，还应该将账户数据清零，并使用一个区分符（即 **"CLOSED_ACCOUNT_DISCRIMINATOR"**）标记它。程序还应该实施检查，以防止关闭的账户在未来交易中被重复使用：
 
 ```Rust
 use anchor_lang::__private::CLOSED_ACCOUNT_DISCRIMINATOR;
@@ -678,9 +680,10 @@ pub struct Data {
 }
 ```
 
-然而，仅仅清零数据并添加关闭区分符是不够的。用户可以通过在指令结束前退还账户的 lamports，阻止账户被垃圾回收。这将使账户处于一种奇怪的悬而未决状态，无法使用或被垃圾回收。因此，我们添加了一个**force_defund**函数来解决这种边缘情况；现在任何人都可以退还关闭的账户的 lamports。
+然而，仅仅清零数据并添加关闭区分符是不够的。用户可以通过在指令结束前退还账户的 lamports，阻止账户被垃圾回收。这将使账户处于一种奇怪的悬而未决状态，无法使用或被垃圾回收。 
+因此，我们添加了一个 **force_defund** 函数来解决这种边缘情况；现在任何人都可以退还关闭的账户的 lamports。
 
-Anchor 通过**#[account(close = destination)]**约束简化了此过程，通过一次操作转移 lamports、清零数据并设置关闭账户区分符，自动化了账户的安全关闭。
+Anchor 通过 **#[account(close = destination)]** 约束简化了此过程，通过一次操作转移 lamports、清零数据并设置关闭账户区分符，自动化了账户的安全关闭。
 
 ## 重复可变账户
 
@@ -720,7 +723,7 @@ pub struct RewardAccount {
 }
 ```
 
-如果恶意行为者将**reward_account**和**bonus_account**设置为相同的帐户，则帐户余额将错误更新两次。
+如果恶意行为者将 **reward_account** 和 **bonus_account** 设置为相同的帐户，则帐户余额将错误更新两次。
 
 ### 推荐的缓解措施
 
@@ -743,7 +746,7 @@ pub fn distribute_rewards(ctx: Context<DistributeRewards>, reward_amount: u64, b
 }
 ```
 
-开发人员可以使用 Anchor 的帐户约束来对帐户进行更明确的检查。这可以通过使用**#[account]**属性和**constraint**关键字来实现：
+开发人员可以使用 Anchor 的帐户约束来对帐户进行更明确的检查。这可以通过使用 **#[account]** 属性和 **constraint** 关键字来实现：
 
 ```Rust
 pub fn distribute_rewards(ctx: Context<DistributeRewards>, reward_amount: u64, bonus_amount: u64) -> Result<()> {
@@ -774,15 +777,15 @@ pub struct RewardAccount {
 }
 ```
 
-## 前置交易
+## 抢先交易
 
 ### 漏洞
 
-随着交易捆绑器的日益流行，前置交易是 Solana 上建立的协议应该认真对待的一个问题。 [随着 Jito 的内存池的移除](https://x.com/jito_labs/status/1766228889888514501?s=20) ，我们在这里提到前置交易是指恶意行为者通过精心构造的交易来操纵预期值与实际值之间的差异。
+随着交易捆绑器的日益流行，抢先交易是 Solana 上建立的协议应该认真对待的一个问题。 [随着 Jito 的内存池的移除](https://x.com/jito_labs/status/1766228889888514501?s=20) ，我们在这里提到抢先交易是指恶意行为者通过精心构造的交易来操纵预期值与实际值之间的差异。
 
 ### 示例场景
 
-想象一个处理产品购买和竞价的协议，将卖方的定价信息存储在一个名为**SellInfo**的帐户中：
+想象一个处理产品购买和竞价的协议，将卖方的定价信息存储在一个名为 **SellInfo** 的帐户中：
 
 ```Rust
 #[derive(Accounts)]
@@ -815,17 +818,17 @@ pub struct ProductListing {
 }
 ```
 
-要购买列出的**Product**，买家必须传入与他们想要的产品相关的**ProductListing**帐户。但是如果卖方可以更改他们的**sale_price**会怎么样呢？
+要购买列出的 **Product**，买家必须传入与他们想要的产品相关的 **ProductListing** 帐户。但是如果卖方可以更改他们的 **sale_price** 会怎么样呢？
 
 ```Rust
 pub fn change_sale_price(ctx: Context<ChangeSalePrice>, new_price: u64) -> Result<()> {...}
 ```
 
-这将为卖方引入前置交易的机会，特别是如果买家的购买交易不包括**expected_price**检查以确保他们支付的价格不超过他们想要购买的产品的预期价格。如果购买者提交一个交易来购买给定的**Product**，卖方可以通过调用**change_sale_price**，并且使用 Jito，确保这笔交易在购买者的交易之前被包含。恶意的卖方可以将**ProductListing**帐户中的价格更改为天价，使购买者不知情地被迫为**Product**支付比预期的要多得多的价格！
+这将为卖方引入抢先交易的机会，特别是如果买家的购买交易不包括 **expected_price** 检查以确保他们支付的价格不超过他们想要购买的产品的预期价格。如果购买者提交一个交易来购买给定的 **Product**，卖方可以通过调用 **change_sale_price**，并且使用 Jito，确保这笔交易在购买者的交易之前被包含。恶意的卖方可以将 **ProductListing** 帐户中的价格更改为天价，使购买者不知情地被迫为 **Product** 支付比预期的要多得多的价格！
 
 ### 推荐的缓解措施
 
-一个简单的解决方案是在交易的购买方包括**expected_price**检查，防止买家为他们想要购买的**Product**支付超出预期的价格：
+一个简单的解决方案是在交易的购买方包括 **expected_price** 检查，防止买家为他们想要购买的 **Product** 支付超出预期的价格：
 
 ```Rust
 pub fn purchase_product(ctx: Context<PurchaseProduct>, expected_price: u64) -> Result<()> {
@@ -836,12 +839,12 @@ pub fn purchase_product(ctx: Context<PurchaseProduct>, expected_price: u64) -> R
 
 ## 不安全的初始化
 
-与部署到 EVM 的合同不同，Solana 程序没有构造函数来设置状态变量。相反，它们是手动初始化的（通常是通过一个名为**initialize**或类似的函数）。初始化函数通常设置诸如程序的权限或创建构成部署的程序的基础的帐户（即，中央状态帐户或类似的东西）等数据。
+与部署到 EVM 的合同不同，Solana 程序没有构造函数来设置状态变量。相反，它们是手动初始化的（通常是通过一个名为 **initialize** 或类似的函数）。初始化函数通常设置诸如程序的权限或创建构成部署的程序的基础的帐户（即，中央状态帐户或类似的东西）等数据。
 
 由于初始化函数是手动调用的，而不是在程序部署时自动调用的，这个指令必须由程序开发团队控制的已知地址调用。
-否则，攻击者可能会前置初始化，可能使用攻击者控制的帐户设置程序。
+否则，攻击者可能会抢先初始化，可能使用攻击者控制的帐户设置程序。
 
-一个常见的做法是使用程序的**upgrade_authority**作为授权地址来调用**initialize**函数，如果程序有升级权限的话。
+一个常见的做法是使用程序的 **upgrade_authority** 作为授权地址来调用 **initialize** 函数，如果程序有升级权限的话。
 
 ### 不安全的示例及如何缓解
 
@@ -872,7 +875,7 @@ pub struct CentralState {
 }
 ```
 
-上面的示例是一个简化的初始化函数，用于为指令调用者设置**CentralState**帐户的权限。然而，这可以是任何调用 initialize 的帐户！如前所述，保护初始化函数的常见方法是使用程序的**upgrade_authority**，在部署时已知。
+上面的示例是一个简化的初始化函数，用于为指令调用者设置 **CentralState** 帐户的权限。然而，这可以是任何调用 initialize 的帐户！如前所述，保护初始化函数的常见方法是使用程序的 **upgrade_authority**，在部署时已知。
 
 [下面是来自 Anchor 文档的示例](https://docs.rs/anchor-lang/latest/anchor_lang/accounts/account/struct.Account.html#example-1)，它使用约束来确保只有程序的升级权限可以调用 initialize：
 
@@ -933,13 +936,13 @@ pub struct SetInitialAdmin<'info> {
 
 虽然[结合律](https://en.wikipedia.org/wiki/Associative_property)对大多数数学运算成立，但在计算机算术中应用它可能导致意外的精度丢失。
 
-精度丢失的一个经典例子是在除法后进行乘法，这可能会产生与在除法前进行乘法不同的结果。例如，考虑以下表达式：**(a / c) \* b** 和 **(a \* b) / c**。从数学上讲，这些表达式是结合的 - 它们*应该*产生相同的结果。然而，在 Solana 和定点算术的背景下，操作的顺序非常重要。首先执行除法**(a / c)** 可能会导致精度丢失，如果商在乘以**b**之前被舍入到下一个整数。这可能导致比预期更小的结果。
+精度丢失的一个经典例子是在除法后进行乘法，这可能会产生与在除法前进行乘法不同的结果。例如，考虑以下表达式：**(a / c) \* b** 和 **(a \* b) / c**。从数学上讲，这些表达式是结合的 - 它们*应该*产生相同的结果。然而，在 Solana 和定点算术的背景下，操作的顺序非常重要。首先执行除法**(a / c)** 可能会导致精度丢失，如果商在乘以 **b** 之前被舍入到下一个整数。这可能导致比预期更小的结果。
 
-相反，先乘以**(a \* b)**再除以**c**可能会保留更多的原始精度。这种差异可能导致不正确的计算，产生意外的程序行为和/或套利机会。
+相反，先乘以 **(a \* b)** 再除以 **c**可能会保留更多的原始精度。这种差异可能导致不正确的计算，产生意外的程序行为和/或套利机会。
 
 ### saturating_\* 算术函数
 
-虽然**saturating_\*** 算术函数通过将值限制在其最大或最小可能值来防止溢出和下溢，但如果意外达到了这个上限，它们可能导致微妙的错误和精度丢失。
+虽然 **saturating_\*** 算术函数通过将值限制在其最大或最小可能值来防止溢出和下溢，但如果意外达到了这个上限，它们可能导致微妙的错误和精度丢失。
 
 当程序的逻辑假设仅仅通过饱和就能保证准确的结果，并忽略了潜在的精度或准确性丢失时，就会发生这种情况。
 
@@ -951,11 +954,11 @@ pub fn calculate_reward(transaction_amount: u64, reward_multiplier: u64) -> u64 
 }
 ```
 
-考虑这样一个情景，**transaction_amount**为 100,000 个代币，**reward_multiplier**为每笔交易 100 个代币。将这两个值相乘将超过**u64**可以容纳的最大值。这意味着它们的乘积将被限制，导致用户被低估的大量精度丢失。
+考虑这样一个情景，**transaction_amount** 为 100,000 个代币，**reward_multiplier** 为每笔交易 100 个代币。将这两个值相乘将超过 **u64** 可以容纳的最大值。这意味着它们的乘积将被限制，导致用户被低估的大量精度丢失。
 
 ### 舍入误差
 
-舍入操作是编程中常见的精度丢失。舍入方法的选择可能会显著影响计算的准确性和 Solana 程序的行为。**try_round_u64()**函数将小数值四舍五入到最接近的整数。向上舍入是有问题的，因为它可能会人为地夸大值，导致实际计算和预期计算之间的差异。
+舍入操作是编程中常见的精度丢失。舍入方法的选择可能会显著影响计算的准确性和 Solana 程序的行为。**try_round_u64()** 函数将小数值四舍五入到最接近的整数。向上舍入是有问题的，因为它可能会人为地夸大值，导致实际计算和预期计算之间的差异。
 
 考虑一个 Solana 程序，根据市场条件将抵押品转换为流动性。该程序使用 **try_round_u64()** 来对除法运算的结果进行四舍五入：
 
@@ -1097,7 +1100,7 @@ Anchor 使用 [**Signer<’info>** 账户类型](https://docs.rs/anchor-lang/lat
 整数是没有分数部分的数字。Rust 将整数存储为固定大小的变量。这些变量由它们的 [ signedness](https://en.wikipedia.org/wiki/Signedness)（即有符号或无符号）和它们在内存中占用的空间量来定义。例如，**u8** 类型表示一个占用 8 位空间的无符号整数。它能够保存从 0 到 255 的值。存储超出该范围的值将导致整数溢出或下溢。
 整数溢出是指变量超出其最大容量并环绕到其最小值。整数下溢是指变量低于其最小容量并环绕到其最大值。
 
-Rust 在调试模式下编译时包括对整数溢出和下溢的检查。如果检测到这种情况，这些检查将导致程序在运行时*panic*。然而，在使用**--release**标志编译释放模式时，Rust 不包括对整数溢出和下溢的检查。这种行为可能会引入潜在的漏洞，因为溢出或下溢会悄无声息地发生。 [伯克利数据包过滤器（BPF）](https://en.wikipedia.org/wiki/Signedness) 工具链对 Solana 的开发环境至关重要，因为它编译 Solana 程序。**cargo build-bpf**命令将 Rust 项目编译为 BPF 字节码以进行部署。*问题在于它默认以释放模式编译程序*。因此，Solana 程序容易受到整数溢出和下溢的影响。
+Rust 在调试模式下编译时包括对整数溢出和下溢的检查。如果检测到这种情况，这些检查将导致程序在运行时*panic*。然而，在使用**--release** 标志编译释放模式时，Rust 不包括对整数溢出和下溢的检查。这种行为可能会引入潜在的漏洞，因为溢出或下溢会悄无声息地发生。 [伯克利数据包过滤器（BPF）](https://en.wikipedia.org/wiki/Signedness) 工具链对 Solana 的开发环境至关重要，因为它编译 Solana 程序。**cargo build-bpf** 命令将 Rust 项目编译为 BPF 字节码以进行部署。*问题在于它默认以释放模式编译程序*。因此，Solana 程序容易受到整数溢出和下溢的影响。
 
 ### 示例场景
 
@@ -1124,17 +1127,17 @@ pub fn process_instruction(
 }
 ```
 
-该函数假设余额简单地存储在第一个字节中。它获取账户的余额并从中减去**tokens_to_subtract**。如果用户的余额小于**tokens_to_subtract**，将会导致下溢。例如，拥有 10 个代币的用户将下溢为 165 个代币的总余额。
+该函数假设余额简单地存储在第一个字节中。它获取账户的余额并从中减去 **tokens_to_subtract**。如果用户的余额小于 **tokens_to_subtract**，将会导致下溢。例如，拥有 10 个代币的用户将下溢为 165 个代币的总余额。
 
 ### 推荐的缓解措施
 
 #### overflow-checks
 
-缓解此漏洞的最简单方法是在项目的**Cargo.toml**文件中将关键字**overflow-checks**设置为**true**。在这种情况下，Rust 将在编译器中添加溢出和下溢检查。然而，添加溢出和下溢检查会增加[计算成本](https://solana.com/docs/core/runtime#compute-budget) 。在需要优化计算的情况下，将**overflow-checks**设置为**false**可能更有利。
+缓解此漏洞的最简单方法是在项目的 **Cargo.toml** 文件中将关键字 **overflow-checks** 设置为 **true**。在这种情况下，Rust 将在编译器中添加溢出和下溢检查。然而，添加溢出和下溢检查会增加[计算成本](https://solana.com/docs/core/runtime#compute-budget) 。在需要优化计算的情况下，将 **overflow-checks** 设置为 **false** 可能更有利。
 
 #### checked_\* 算术
 
-在程序中使用 Rust 的**checked_\***算术函数，可以有策略地检查溢出和下溢。如果发生溢出或下溢，这些函数将返回**None**。这使得程序可以优雅地处理错误。例如，你可以将先前的代码重构为：
+在程序中使用 Rust 的 **checked_\*** 算术函数，可以有策略地检查溢出和下溢。如果发生溢出或下溢，这些函数将返回 **None**。这使得程序可以优雅地处理错误。例如，你可以将先前的代码重构为：
 
 ```Rust
 pub fn process_instruction(
@@ -1162,11 +1165,11 @@ pub fn process_instruction(
 }
 ```
 
-在修改后的示例中，使用**checked_sub**从**balance**中减去**tokens_to_subtract**。因此，如果**balance**足以 cover 减法，**checked_sub**将返回**Some(new_balance)**。程序将继续安全地更新账户余额并记录它。然而，如果减法会导致下溢，**checked_sub**将返回**None**，我们可以通过返回错误来处理它。
+在修改后的示例中，使用 **checked_sub** 从 **balance** 中减去 **tokens_to_subtract**。因此，如果 **balance** 足以 cover 减法，**checked_sub** 将返回 **Some(new_balance)**。程序将继续安全地更新账户余额并记录它。然而，如果减法会导致下溢，**checked_sub** 将返回 **None**，我们可以通过返回错误来处理它。
 
 #### Checked Math Macro
 
-[Checked Math](https://github.com/blockworks-foundation/checked-math)是一个[过程宏](https://doc.rust-lang.org/book/ch19-06-macros.html#procedural-macros-for-generating-code-from-attributes) ，用于在不大幅改变这些表达式的情况下改变检查数学表达式的属性。**checked_\***算术函数的问题在于失去了数学符号。相反，必须使用笨拙的方法，如**a.checked_add(b).unwrap()**，而不是**a + b**。例如，如果我们想使用 checked 算术函数编写**(x \* y) + z**，我们将编写**x.checked_mul(y).unwrap().checked_add(z).unwrap()**。
+[Checked Math](https://github.com/blockworks-foundation/checked-math)是一个[过程宏](https://doc.rust-lang.org/book/ch19-06-macros.html#procedural-macros-for-generating-code-from-attributes) ，用于在不大幅改变这些表达式的情况下改变检查数学表达式的属性。**checked_\***算术函数的问题在于失去了数学符号。相反，必须使用笨拙的方法，如 **a.checked_add(b).unwrap()**，而不是 **a + b**。例如，如果我们想使用 checked 算术函数编写 **(x \* y) + z**，我们将编写 **x.checked_mul(y).unwrap().checked_add(z).unwrap()**。
 
 相反，使用 Checked Math 宏的以下表达式将如下所示：
 
@@ -1176,15 +1179,15 @@ use checked_math::checked_math as cm;
 cm!((x * y) + z).unwrap()
 ```
 
-这样更方便编写，保留了表达式的数学符号，并且只需要一个**.unwrap()**。这是因为该宏将正常的数学表达式转换为一个表达式，如果任何检查步骤返回**None**，则返回**None**。如果成功，将返回**Some(_)**，这就是为什么我们在最后展开表达式。
+这样更方便编写，保留了表达式的数学符号，并且只需要一个 **.unwrap()**。这是因为该宏将正常的数学表达式转换为一个表达式，如果任何检查步骤返回 **None**，则返回 **None**。如果成功，将返回 **Some(_)**，这就是为什么我们在最后展开表达式。
 
 ### 强制转换
 
-同样，使用**as**关键字在不进行适当检查的情况下在整数类型之间进行强制转换可能会引入整数溢出或下溢漏洞。这是因为强制转换可能以意想不到的方式截断或扩展值。当从较大的整数类型转换为较小的整数类型（例如**u64**到**u32**）时，Rust 将截断原始值中不适合目标类型的高位。当从较小的整数类型转换为较大的整数类型（例如**i16**到**i32**）时，Rust 将扩展该值。对于无符号类型来说，这很简单。然而，这可能会导致有符号整数的[符号扩展](https://en.wikipedia.org/wiki/Sign_extension) ，从而引入意外的负值。
+同样，使用 **as** 关键字在不进行适当检查的情况下在整数类型之间进行强制转换可能会引入整数溢出或下溢漏洞。这是因为强制转换可能以意想不到的方式截断或扩展值。当从较大的整数类型转换为较小的整数类型（例如 **u64** 到 **u32**）时，Rust 将截断原始值中不适合目标类型的高位。当从较小的整数类型转换为较大的整数类型（例如 **i16** 到 **i32**）时，Rust 将扩展该值。对于无符号类型来说，这很简单。然而，这可能会导致有符号整数的[符号扩展](https://en.wikipedia.org/wiki/Sign_extension) ，从而引入意外的负值。
 
 #### 推荐的缓解措施
 
-使用 Rust 的安全转换方法来缓解这种漏洞。这包括诸如 [**try_from**](https://doc.rust-lang.org/std/convert/trait.TryFrom.html#tymethod.try_from) 和[**from**](https://doc.rust-lang.org/std/convert/trait.From.html#tymethod.from)等方法。使用**try_from**将返回一个**Result**类型，允许明确处理值不适合目标类型的情况。使用 Rust 的**from**方法可以用于安全的、隐式的转换，用于保证无损失的转换（例如**u8**到**u32**）。例如，假设程序需要安全地将**u64**代币数量转换为**u32**类型进行处理。那么，它可以这样做：
+使用 Rust 的安全转换方法来缓解这种漏洞。这包括诸如 [**try_from**](https://doc.rust-lang.org/std/convert/trait.TryFrom.html#tymethod.try_from) 和[**from**](https://doc.rust-lang.org/std/convert/trait.From.html#tymethod.from)等方法。使用 **try_from** 将返回一个 **Result** 类型，允许明确处理值不适合目标类型的情况。使用 Rust 的 **from** 方法可以用于安全的、隐式的转换，用于保证无损失的转换（例如 **u8** 到 **u32**）。例如，假设程序需要安全地将 **u64**代币数量转换为 **u32**类型进行处理。那么，它可以这样做：
 
 ```Rust
 pub fn convert_token_amount(amount: u64) -> Result<u32, ProgramError> {
@@ -1192,7 +1195,7 @@ pub fn convert_token_amount(amount: u64) -> Result<u32, ProgramError> {
 }
 ```
 
-在这个例子中，如果**amount**超过了**u32**可以容纳的最大值（即 4,294,967,295），转换将失败，程序将返回错误。这可以防止潜在的溢出/下溢发生。
+在这个例子中，如果 **amount** 超过了 **u32** 可以容纳的最大值（即 4,294,967,295），转换将失败，程序将返回错误。这可以防止潜在的溢出/下溢发生。
 
 ## PDA 共享
 
@@ -1238,7 +1241,7 @@ pub struct WithdrawRewards<'info> {
 }
 ```
 
-这是有问题的，因为质押和奖励提取功能依赖于从**staking_pool_pda**派生的相同 PDA。这可能允许用户操纵合约以未经授权地提取奖励或操纵质押。
+这是有问题的，因为质押和奖励提取功能依赖于从 **staking_pool_pda** 派生的相同 PDA。这可能允许用户操纵合约以未经授权地提取奖励或操纵质押。
 
 ### 推荐的缓解措施
 
@@ -1278,13 +1281,13 @@ pub struct WithdrawRewards<'info> {
 }
 ```
 
-在上面的示例中，用于质押代币和提取奖励的 PDA 是使用不同的种子（**staking_pool**和**rewards_pool**）与特定账户的密钥相结合派生的。这确保了 PDA 与其预期功能的唯一绑定，从而减轻了未经授权操作的风险。
+在上面的示例中，用于质押代币和提取奖励的 PDA 是使用不同的种子（**staking_pool** 和 **rewards_pool**）与特定账户的密钥相结合派生的。这确保了 PDA 与其预期功能的唯一绑定，从而减轻了未经授权操作的风险。
 
 ## 剩余账户
 
 ### 漏洞
 
-**ctx.remaining_accounts**提供了一种将额外账户传递到最初未指定的**Accounts**结构中的函数的方法。这为开发人员提供了更大的灵活性，使他们能够处理需要动态数量账户的情况（即，处理可变数量的用户或与不同程序交互的情况）。然而，这种增加的灵活性伴随着一个警告：通过**ctx.remaining_accounts**传递的账户不会经过与**Accounts**结构中定义的账户相同的验证。因为**ctx.remaining_accounts**不会验证传入的账户，恶意行为者可以通过传入程序未打算与之交互的账户来利用这一点，从而导致未经授权的操作或访问。
+**ctx.remaining_accounts** 提供了一种将额外账户传递到最初未指定的 **Accounts** 结构中的函数的方法。这为开发人员提供了更大的灵活性，使他们能够处理需要动态数量账户的情况（即，处理可变数量的用户或与不同程序交互的情况）。然而，这种增加的灵活性伴随着一个警告：通过 **ctx.remaining_accounts** 传递的账户不会经过与 **Accounts** 结构中定义的账户相同的验证。因为 **ctx.remaining_accounts** 不会验证传入的账户，恶意行为者可以通过传入程序未打算与之交互的账户来利用这一点，从而导致未经授权的操作或访问。
 
 ### 示例场景
 
@@ -1413,7 +1416,9 @@ pub struct SubmitVote<'info> {
 }
 ```
 
-在这种情况下，攻击者将尝试精心制作一个投票会话，当与静态种子 **"session"** 结合时，会导致与另一个投票会话的 PDA 巧合。故意创建与另一个投票会话的 PDA 相冲突的 PDA 可能会通过阻止对提案的合法投票或拒绝将新倡议添加到平台来扰乱平台的运作，因为 Solana 的运行时无法区分发生碰撞的 PDAs。
+在这种情况下，攻击者将尝试精心制作一个投票会话，当与静态种子 **"session"** 结合时，会导致与另一个投票会话的 PDA 巧合。
+
+故意创建与另一个投票会话的 PDA 相冲突的 PDA 可能会通过阻止对提案的合法投票或拒绝将新倡议添加到平台来扰乱平台的运作，因为 Solana 的运行时无法区分发生碰撞的 PDAs。
 
 ### 推荐的缓解措施
 
