@@ -1,0 +1,84 @@
+name: proofread translation
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [master]
+    paths:
+      - 'translations/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 2
+        token: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
+
+    - name: Get changed files
+      id: getfile
+      run: |
+        echo "::set-output name=files::$(git diff-tree --no-commit-id --name-only -r HEAD~1 HEAD | grep translations/)"
+      
+    - name: Read files and send request
+      env:
+        URL: http://123.88.4.114:8088/api/article/update
+        # bot
+        USER_NAME: 'github-actions[bot]'
+        USER_EMAIL: '41898282+github-actions[bot]@users.noreply.github.com'
+      run: |
+       git config --global url."https://${{ secrets.PERSONAL_GITHUB_TOKEN }}@github.com/".insteadOf "https://github.com/"
+        for file in ${{steps.getfile.outputs.files}}
+        do
+          content=`cat ${file}`
+          filename=$(basename -- "$file")  # 去除路径
+          filename="${filename%.*}" # 去除后缀
+
+           # 校对者
+          PR_USER=${{ github.event.pull_request.user.login }}
+          PR_USER_URL=https://github.com/${{ github.actor }}
+          reviewer_info="\[${PR_USER}\]\(${PR_USER_URL}\)"
+          reviewer_info2="[${PR_USER}](${PR_USER_URL})"
+          
+          # 添加校对者到文本内容
+          if [[ ${content} =~ ">- 译者：[AI翻译官](https://learnblockchain.cn/people/19584)  校对：" ]];
+          then          
+            if [[ ${content} == *"${reviewer_info2}"* ]]
+            then
+              echo "审阅者信息已经存在，跳过添加。"
+            else
+              content=$(echo "${content}" | perl -0777 -pe "s#(>- 译者：\[AI翻译官\]\(https://learnblockchain.cn/people/19584\)  校对：.*)#\$1 $reviewer_info#g")
+              # content=$(echo "${content}" | perl -0777 -pe "s#(>- 译者：\[翻译小组\]\(https://learnblockchain.cn/people/412\) 校对：).*(\n)#\$1\2 ${reviewer_info}#g")
+              # content=$(echo "${content}" | perl -0777 -pe "s#(>- 译者：\[翻译小组\]\(https://learnblockchain.cn/people/412\) 校对：.*?)(\n)#\$1 ${reviewer_info}\$2#gs")
+              # 将内容写回文件
+              
+              echo "content: '${content}'"
+              
+              echo "${content}" > ${file}
+
+              # 配置 Git
+              git config --local user.email "$USER_EMAIL"
+              git config --local user.name "$USER_NAME"
+              
+              # 提交并推送更改
+              git add ${file}
+              git commit -m "Added proofreader info to file ${file}"
+              git push origin main
+            fi
+         else
+            # 如果没有找到匹配的字符串，输出一个消息
+            echo "没有找到匹配的字符串。"   
+          fi
+          
+          # jsonPayload=$(jq -n --arg article_id "$filename" --arg content "$content" '{article_id: $article_id, content: $content}')
+          # response=$(curl -X POST -H "Content-Type:multipart/form-data" -H "x-api-key:${{ secrets.UPCHAIN_API_KEY }}" -d "$jsonPayload" "${URL}")
+
+          # response=$(curl -X POST -H "Content-Type:application/json" -d '{"article_id":"'${filename}'", "content":"'${content}'"}' "${URL}")
+          # response=$(curl -X POST -H 'Content-Type: multipart/form-data' -F 'article_id='${filename} -F 'content='${content} "${URL}")
+          response=$(curl -X POST -H 'Content-Type: multipart/form-data' -H "x-api-key:${{ secrets.UPCHAIN_API_KEY }}" -F "article_id=${filename}" -F "content=${content}" "${URL}")
+          
+          echo ${response}
+        done
