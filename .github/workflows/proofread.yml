@@ -50,9 +50,7 @@ jobs:
             then
               echo "审阅者信息已经存在，跳过添加。"
             else
-              content=$(echo "${content}" | perl -0777 -pe "s#(>- 译者：\[AI翻译官\]\(https://learnblockchain.cn/people/19584\)  校对：.*)#\$1 $reviewer_info#g")
-              # content=$(echo "${content}" | perl -0777 -pe "s#(>- 译者：\[翻译小组\]\(https://learnblockchain.cn/people/412\) 校对：).*(\n)#\$1\2 ${reviewer_info}#g")
-              # content=$(echo "${content}" | perl -0777 -pe "s#(>- 译者：\[翻译小组\]\(https://learnblockchain.cn/people/412\) 校对：.*?)(\n)#\$1 ${reviewer_info}\$2#gs")
+              content=$(echo "${content}" | perl -0777 -pe "s#(>- 译者：\[AI翻译官\]\(https://learnblockchain.cn/people/19584\)  校对：.*)#\$1$reviewer_info #g")
               # 将内容写回文件
               
               echo "content: '${content}'"
@@ -73,12 +71,6 @@ jobs:
             echo "没有找到匹配的字符串。"   
           fi
           
-          # jsonPayload=$(jq -n --arg article_id "$filename" --arg content "$content" '{article_id: $article_id, content: $content}')
-          # response=$(curl -X POST -H "Content-Type:multipart/form-data" -H "x-api-key:${{ secrets.UPCHAIN_API_KEY }}" -d "$jsonPayload" "${URL}")
-
-          # response=$(curl -X POST -H "Content-Type:application/json" -d '{"article_id":"'${filename}'", "content":"'${content}'"}' "${URL}")
-          # response=$(curl -X POST -H 'Content-Type: multipart/form-data' -F 'article_id='${filename} -F 'content='${content} "${URL}")
           response=$(curl -X POST -H 'Content-Type: multipart/form-data' -H "x-api-key:${{ secrets.UPCHAIN_API_KEY }}" -F "article_id=${filename}" -F "content=${content}" "${URL}")
-          
           echo ${response}
         done
