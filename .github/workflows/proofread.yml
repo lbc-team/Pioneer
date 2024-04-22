@@ -63,10 +63,10 @@ jobs:
               git config --local user.email "$USER_EMAIL"
               git config --local user.name "$USER_NAME"
               
-              # 提交并推送更改
+              # 提交并推送更改，留意不同分支
               git add ${file}
               git commit -m "Added proofreader info to file ${file}"
-              git push origin main
+              git push origin master 
             fi
          else
             # 如果没有找到匹配的字符串，输出一个消息
