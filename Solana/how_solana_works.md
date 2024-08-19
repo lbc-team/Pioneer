@@ -2,7 +2,7 @@
 
 衷心感谢 [0xIchigo](https://x.com/0xIchigo)、[dubbelosix](https://x.com/dubbel06)、[Jacob Creech](https://x.com/jacobvcreech)、[Maël Bomane](https://x.com/mael_bomane)、Nagaprasad Vr 和 [Rex St. John](https://x.com/rexstjohn) 阅读本报告的早期版本并提供了宝贵的反馈。
 
-![](https://cdn.prod.website-files.com/641ba798c17bb180d832b666/66b5494019c5527ba72b0aaf_66b5492cca2c05958ae970fa_Slide1%2520(1).jpeg)
+![](https://img.learnblockchain.cn/attachments/migrate/1724074431581.jpeg)
 
 本报告的 PDF 版本可[在此下载](https://drive.google.com/file/d/1puEThjO9rmnZmIj_05WvU99FPmUiZ4pb/view) 。
 
@@ -31,7 +31,7 @@ Solana 正在迅速发展，最近的发展包括 SVM rollups 和 [ZK Compressio
 
 **记住**
 
-_对 Solana 核心协议的重大更改通过提交 Solana 改进文档 (SIMD) 的正式透明[流程](https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0001-simd-process.md)进行，社区成员和核心工程师将公开评论。然后由网络对 SIMD 进行投票。_‍
+_对 Solana 核心协议的重大更改通过提交 Solana 改进文档 (SIMD) 的正式透明[流程](https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0001-simd-process.md)进行，社区成员和核心工程师将公开评论。然后由网络对 SIMD 进行投票。_
 
 ### 六个阶段
 
@@ -63,7 +63,7 @@ _对 Solana 核心协议的重大更改通过提交 Solana 改进文档 (SIMD) �
 
 Solana 使用 [Ed25519](https://en.wikipedia.org/wiki/EdDSA#Ed25519)，一种广泛使用的椭圆曲线数字签名算法，来满足其公钥加密需求。Ed25519 因其较小的密钥和签名、快速计算和对许多常见攻击的免疫性而受到青睐。每个 Solana 钱包地址代表 Ed25519 椭圆曲线上的一个点。
 
-![](https://cdn.prod.website-files.com/641ba798c17bb180d832b666/66b4308f97325534b13d2287_66b4301c70f691555c899730_Solana%2520Report%2520Visuals%2520for%2520Helius%2520Blog.pptx%2520(9).png)用户使用他们的私钥签署交易。此签名包含在交易数据中，其他参与者可以使用发送者的公钥进行验证。这个过程确保了交易没有被篡改，并且是由对应私钥的所有者授权的。签名还充当交易的唯一标识符。
+![](https://img.learnblockchain.cn/attachments/migrate/1724074431582.png)用户使用他们的私钥签署交易。此签名包含在交易数据中，其他参与者可以使用发送者的公钥进行验证。这个过程确保了交易没有被篡改，并且是由对应私钥的所有者授权的。签名还充当交易的唯一标识符。
 
 ### Solana 交易
 
@@ -94,7 +94,7 @@ _SOL 的最小单位称为“lamport”，相当于一亿分之一的 SOL，类�
 
 ### 发送交易
 
-![](https://cdn.prod.website-files.com/641ba798c17bb180d832b666/66b4308f97325534b13d2284_66b4307e1b70b8398684582c_Solana%2520Report%2520Visuals%2520for%2520Helius%2520Blog.pptx%2520(2).png)
+![](https://img.learnblockchain.cn/attachments/migrate/1724074431583.png)
 
 用户将他们的钱包连接到应用程序，允许应用读取用户的公钥。私钥保持加密状态，并在与应用程序分离的安全环境中沙箱化。
 
@@ -118,7 +118,7 @@ RPC（远程过程调用）指的是 RPC 节点。这些节点可以被视为与
 
 Solana 脱颖而出，因为它从一开始就设计为无需内存池运行。与使用八卦协议随机且广泛地在网络上传播交易的传统区块链不同，Solana 将所有交易转发给每个插槽的预定主验证者，称为领导者。
 
-![](https://cdn.prod.website-files.com/641ba798c17bb180d832b666/66b41fe65de8a0d019876ca9_66b41ed9148c9cd7c37237a0_Solana%2520Report%2520Visuals%2520for%2520Helius%2520Blog.pptx%2520(4).png)
+![](https://img.learnblockchain.cn/attachments/migrate/1724074431584.png)
 
 **提示**
 
@@ -130,7 +130,7 @@ _Solana 运行四个集群：Localnet、Testnet、Devnet 和 Mainnet-Beta。当�
 
 2024 年初，Solana 引入了一种新的机制，旨在防止垃圾邮件并增强 Sybil 抵抗力，称为“基于权益的服务质量”（SWQoS）。该系统使领导者能够优先处理通过其他有权益的验证者代理的交易消息。在这里，拥有更高权益的验证者被授予按比例更高的容量，以将交易消息包传输给领导者。这种方法有效地减轻了来自网络中无权益节点的 Sybil 攻击。
 
-![](https://cdn.prod.website-files.com/641ba798c17bb180d832b666/66b41fe65de8a0d019876cae_66b41fbd718582eb77853717_Solana%2520Report%2520Visuals%2520for%2520Helius%2520Blog.pptx%2520(1).png)
+![](https://img.learnblockchain.cn/attachments/migrate/1724074431585.png)
 
 在这种模式下，验证者还可以与 RPC 节点达成协议，将其基于权益的容量租赁给 RPC 节点。作为回报，RPC 节点获得增加的带宽，使其能够在区块中实现更高的交易包含率。值得注意的是，领导者的 80% 容量（2000 个连接）保留给 SWQoS。剩余的 20%（500 个连接）分配给来自无权益节点的交易消息。这种分配策略类似于高速公路上的优先车道，司机支付通行费以避免交通堵塞。
 
@@ -140,7 +140,7 @@ SWQoS 通过提高将交易转发给领导者的要求并减少垃圾邮件攻�
 
 2022 年底，Solana 采用了 [QUIC 网络协议](https://en.wikipedia.org/wiki/QUIC)来管理交易消息传输给领导者。这一转变是由于机器人在链上 NFT 铸造时造成的网络中断而引发的。QUIC 促进了快速、异步通信。
 
-![](https://cdn.prod.website-files.com/641ba798c17bb180d832b666/66b41fe65de8a0d019876ca6_66b41f7990bc020d3bc0e8af_Solana%2520Report%2520Visuals%2520for%2520Helius%2520Blog.pptx%2520(19).png)
+![](https://img.learnblockchain.cn/attachments/migrate/1724074431586.png)
 
 QUIC 最初由 [Google](https://research.google/pubs/the-quic-transport-protocol-design-and-internet-scale-deployment/) 于 2012 年开发，试图提供两全其美的解决方案。它促进了类似于 UDP 的快速、异步通信，但具有 TCP 的安全会话和高级流量控制策略。这允许对单个流量源进行限制，以便网络可以专注于处理真实交易。它还具有独立流的概念；因此，如果一个交易被丢弃，不需要阻塞其余的交易。简而言之，QUIC 可以被认为是试图结合 TCP 和 UDP 的最佳特性。
 
@@ -250,7 +250,7 @@ Solana 程序账户仅包含可执行逻辑。这意味着当程序运行时，�
 
 ### 租金
 
-租金是一种旨在激励用户关闭账户并减少状态膨胀的机制。要创建一个新账户，该账户必须持有SOL的最低余额，即“免租金”金额。这可以被视为在验证者内存中保持账户存活的存储成本。如果账户数据的大小增加，需要的最低余额租金也会成比例增加。当账户不再需要时，可以关闭账户，租金将返还给账户所有者。
+租金是一种旨在激励用户关闭账户并减少状态膨胀的机制。要创建一个新账户，该账户必须持有 SOL 的最低余额，即“免租金”金额。这可以被视为在验证者内存中保持账户存活的存储成本。如果账户数据的大小增加，需要的最低余额租金也会成比例增加。当账户不再需要时，可以关闭账户，租金将返还给账户所有者。
 
 例如，如果用户持有美元计价的稳定币，这种状态存储在一个代币账户中。目前，代币账户的免租金金额为 0.002 SOL。如果用户将其全部稳定币余额转移给朋友，则可以关闭代币账户，用户将收回其 0.002 SOL。程序通常会自动为用户处理账户关闭。几种应用程序可帮助用户清理旧的、未使用的账户并收回存储在其中的小额 SOL。
 
@@ -423,7 +423,7 @@ Solana 通过在每个 epoch 发行新的 SOL 代币来分配质押奖励，从�
 
 当领导者使用 Jito 验证客户端时，他们的交易最初会被定向到 Jito-Relayer。这款开源软件充当交易代理路由器。其他网络节点不知道 Jito-Relayer 的存在，因为它们只是将交易发送到领导者节点在 gossip 网络上公布的地址和端口配置，认为这是领导者节点的 ingress_socket。
 
-![](https://cdn.prod.website-files.com/641ba798c17bb180d832b666/66b41fe65de8a0d019876ca2_66b41fd8bd58bc7bf7d972c8_Solana%2520Report%2520Visuals%2520for%2520Helius%2520Blog.pptx%2520(15).png)
+![](https://img.learnblockchain.cn/attachments/migrate/1724074431587.png)
 
 中继器将所有交易保留 200 毫秒，然后再转发给领导者节点。这种“减速带”机制会延迟传入的交易消息，为进行拍卖提供了一个简短的窗口。在 200 毫秒后，中继器乐观地释放交易，而不管拍卖结果如何。
 
